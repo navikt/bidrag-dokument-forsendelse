@@ -1,6 +1,10 @@
-name: bidrag-template-spring
+name: bidrag-dokument-forsendelse
 ingresses:
-  - https://bidrag-template-spring.intern.nav.no
-azure:
-  person: bidrag-person.prod-fss-pub.nais.io
-  person_clientid: prod-fss.bidrag.bidrag-person
+  - https://bidrag-dokument-forsendelse.intern.nav.no
+env:
+  BIDRAG_PERSON_URL: https://bidrag-person.prod-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
+database:
+  dbname: bidrag-dokument-forsendelse
+  autoResize: false
+  tier: db-custom-1-3840

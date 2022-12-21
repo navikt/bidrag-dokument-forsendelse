@@ -1,12 +1,10 @@
-# Bidrag-template-spring
+# Bidrag-dokument-forsendelse
 Template repo for å opprette ny Spring applikasjon for Bidrag
 
-[![continuous integration](https://github.com/navikt/bidrag-template-spring/actions/workflows/ci.yaml/badge.svg)](https://github.com/navikt/bidrag-dialog/actions/workflows/ci.yaml)
-[![release bidrag-template-spring](https://github.com/navikt/bidrag-template-spring/actions/workflows/release.yaml/badge.svg)](https://github.com/navikt/bidrag-dialog/actions/workflows/release.yaml)
+[![continuous integration](https://github.com/navikt/bidrag-dokument-forsendelse/actions/workflows/ci.yaml/badge.svg)](https://github.com/navikt/bidrag-dialog/actions/workflows/ci.yaml)
+[![release bidrag-dokument-forsendelse](https://github.com/navikt/bidrag-dokument-forsendelse/actions/workflows/release.yaml/badge.svg)](https://github.com/navikt/bidrag-dialog/actions/workflows/release.yaml)
 
 ## Beskrivelse
-
-Erstatt alt som har postfix `-template-spring` med din applikasjonsnavn
 
 Legg til Github secret `NAIS_DEPLOY_APIKEY` hvor secret hentes fra [Api key](https://deploy.nais.io/apikeys)
 
@@ -32,3 +30,26 @@ For at dette skal fungere må det gjøres noe endringer i Intellij instillingene
 
 * Gå til `Preference -> Compiler -> check "Build project automatically"`
 * Gå til `Preference -> Advanced settings -> check "Allow auto-make to start even if developed application is currently running"`
+
+#### Kjøre lokalt mot sky
+For å kunne kjøre lokalt mot sky må du gjøre følgende
+
+Åpne terminal på root mappen til `bidrag-dokument-forsendelse`
+Konfigurer kubectl til å gå mot kluster `dev-fss`
+```bash
+# Sett cluster til dev-fss
+kubectx dev-fss
+# Sett namespace til bidrag
+kubens bidrag 
+
+# -- Eller hvis du ikke har kubectx/kubens installert 
+# (da må -n=bidrag legges til etter exec i neste kommando)
+kubectl config use dev-fss
+```
+Deretter kjør følgende kommando for å importere secrets. Viktig at filen som opprettes ikke committes til git
+
+```bash
+kubectl exec --tty deployment/bidrag-dokument-forsendelse-feature printenv | grep -E 'AZURE_APP_CLIENT_ID|AZURE_APP_CLIENT_SECRET|TOKEN_X|AZURE_OPENID_CONFIG_TOKEN_ENDPOINT|AZURE_APP_TENANT_ID|AZURE_APP_WELL_KNOWN_URL|KODEVERK_URL|PDL_URL|KRR_URL|KODEVERK_URL|SCOPE' > src/main/resources/application-lokal-nais-secrets.properties
+```
+
+Deretter kan tokenet brukes til å logge inn på swagger-ui http://local

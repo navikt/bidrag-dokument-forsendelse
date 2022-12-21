@@ -9,6 +9,10 @@ spec:
   azure:
     application:
       enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
   secureLogs:
     enabled: true
   image: {{ image }}
@@ -25,6 +29,15 @@ spec:
   prometheus:
     enabled: true
     path: /actuator/prometheus
+  gcp:
+    sqlInstances:
+      - name: {{ database.dbname }}
+        type: POSTGRES_14
+        diskAutoresize: {{ database.autoResize }}
+        tier: {{ database.tier }}
+        databases:
+          - name: bidrag-dokument-forsendelse
+            envVarPrefix: DB
   resources:
     limits:
       cpu: 1000m
@@ -37,8 +50,8 @@ spec:
     - {{url}}
   {{/each}}
   env:
-    - name: BIDRAG_PERSON_URL
-      value: https://{{ azure.person }}
-    - name: BIDRAG_PERSON_SCOPE
-      value: {{ azure.person_clientid }}
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}
 

@@ -5,10 +5,10 @@ management:
         include: "prometheus,health"
 
 springdoc:
-  packages-to-scan: no.nav.bidrag.template.controller
+  packages-to-scan: no.nav.bidrag.dokument.forsendelse.controller
 spring.main.banner-mode: off
 ---
-spring.config.activate.on-profile: nais,local
+spring.config.activate.on-profile: nais,lokal-nais
 
 no.nav.security.jwt:
   client:
@@ -24,3 +24,17 @@ no.nav.security.jwt:
   issuer.aad:
     discovery_url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
     accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
+
+---
+spring.config.activate.on-profile: nais
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?user=${DB_USERNAME}&password=${DB_PASSWORD}
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+  jpa:
+    hibernate.connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    database: postgresql

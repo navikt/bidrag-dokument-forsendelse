@@ -9,13 +9,14 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nav</groupId>
-	<artifactId>bidrag-template-spring</artifactId>
+	<artifactId>bidrag-dokument-forsendelse</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bidrag-template-spring</name>
+	<name>bidrag-dokument-forsendelse</name>
 	<properties>
 		<java.version>17</java.version>
+		<bidrag-dokument-dto.version>1.5.16</bidrag-dokument-dto.version>
 		<kotlin.version>1.7.22</kotlin.version>
-		<bidrag-commons.version>0.7.4</bidrag-commons.version>
+		<bidrag-commons.version>0.7.21</bidrag-commons.version>
 		<logback-encoder.version>7.2</logback-encoder.version>
 		<token-support.version>2.1.9</token-support.version>
 		<springdoc.version>1.6.13</springdoc.version>
@@ -24,6 +25,9 @@
 		<bidrag-commons-test.version>0.2.2</bidrag-commons-test.version>
 		<kotest.version>5.5.4</kotest.version>
 		<mockk.version>4.0.0</mockk.version>
+		<testcontainers.version>1.17.6</testcontainers.version>
+		<flyway.version>9.10.1</flyway.version>
+		<kotlin-logging-jvm.version>3.0.2</kotlin-logging-jvm.version>
 	</properties>
 	<dependencies>
 
@@ -31,6 +35,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -75,6 +83,45 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>io.github.microutils</groupId>
+			<artifactId>kotlin-logging-jvm</artifactId>
+			<version>${kotlin-logging-jvm.version}</version>
+		</dependency>
+
+		<!-- Database -->
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+			<version>2.1.214</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<!--SpringDoc-->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -109,6 +156,11 @@
 			<groupId>no.nav.bidrag</groupId>
 			<artifactId>bidrag-commons</artifactId>
 			<version>${bidrag-commons.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.bidrag.dokument</groupId>
+			<artifactId>bidrag-dokument-dto</artifactId>
+			<version>${bidrag-dokument-dto.version}</version>
 		</dependency>
 
 		<!--Diverse-->
@@ -241,11 +293,6 @@
 					<dependency>
 						<groupId>org.jetbrains.kotlin</groupId>
 						<artifactId>kotlin-maven-allopen</artifactId>
-						<version>${kotlin.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.jetbrains.kotlin</groupId>
-						<artifactId>kotlin-maven-noarg</artifactId>
 						<version>${kotlin.version}</version>
 					</dependency>
 					<dependency>
