@@ -4,6 +4,10 @@ ingresses:
 env:
   BIDRAG_PERSON_URL: https://bidrag-person-feature.dev-fss-pub.nais.io/bidrag-person
   BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
+
+  BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon-feature.dev-fss-pub.nais.io/bidrag-organisasjon
+  BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon-feature
+
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 database:
   dbname: bidrag-dokument-forsendelse-feature

@@ -18,5 +18,11 @@ CREATE TABLE IF NOT EXISTS dokument
 
 CREATE INDEX idx_dokumentreferanse ON dokument(ekstern_dokumentreferanse);
 CREATE INDEX idx_dokument_kilde ON dokument(arkivsystem);
+CREATE INDEX idx_dokument_status ON dokument(dokument_status);
 
 CREATE TRIGGER update_dokument_endret BEFORE UPDATE ON dokument FOR EACH ROW EXECUTE PROCEDURE oppdater_endret_tidspunkt();
+
+create rule beskytt_rad_som_ikke_har_ekstern_referanse as
+    on delete to dokument
+    where ekstern_dokumentreferanse is null and journalpost_id is null
+    do instead nothing;

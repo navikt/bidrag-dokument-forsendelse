@@ -52,4 +52,4 @@ Deretter kjør følgende kommando for å importere secrets. Viktig at filen som 
 kubectl exec --tty deployment/bidrag-dokument-forsendelse-feature printenv | grep -E 'AZURE_APP_CLIENT_ID|AZURE_APP_CLIENT_SECRET|TOKEN_X|AZURE_OPENID_CONFIG_TOKEN_ENDPOINT|AZURE_APP_TENANT_ID|AZURE_APP_WELL_KNOWN_URL|KODEVERK_URL|PDL_URL|KRR_URL|KODEVERK_URL|SCOPE' > src/main/resources/application-lokal-nais-secrets.properties
 ```
 
-Deretter kan tokenet brukes til å logge inn på swagger-ui http://local
+Deretter kan tokenet brukes til å logge inn på swagger-ui http://localhost:8080/swagger-ui.html

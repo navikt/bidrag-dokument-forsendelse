@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.slf4j.LoggerFactory
@@ -39,9 +40,11 @@ class DefaultRestControllerAdvice {
 
     private fun createMissingKotlinParameterViolation(ex: MissingKotlinParameterException): String {
         val errorFieldRegex = Regex("\\.([^.]*)\\[\\\"(.*)\"\\]\$")
-        val errorMatch = errorFieldRegex.find(ex.path[0].description)!!
-        val (objectName, field) = errorMatch.destructured
-        return "$objectName.$field kan ikke være null"
+        val paths = ex.path.map { errorFieldRegex.find(it.description)!! }.map {
+            val (objectName, field) = it.destructured
+            "${objectName}.$field"
+        }
+        return "${paths.joinToString("->")} kan ikke være null"
     }
 
     @ResponseBody
@@ -51,6 +54,16 @@ class DefaultRestControllerAdvice {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig data: ${exception.message}")
+            .build<Any>()
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UgyldigEndringAvForsendelse::class)
+    fun ugyldigEndringAvForsendelse(exception: UgyldigEndringAvForsendelse): ResponseEntity<*> {
+        LOGGER.warn("Forespørselen kan ikke endres", exception)
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .header(HttpHeaders.WARNING, "Forespørselen kan ikke endres: ${exception.message}")
             .build<Any>()
     }
 

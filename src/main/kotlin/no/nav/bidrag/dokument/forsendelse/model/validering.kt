@@ -7,21 +7,17 @@ fun MutableList<String>.validerErSann(verdi: Boolean, melding: String){
         this.add(melding)
     }
 }
-fun validerKanOppretteForsendelse(forespørsel: OpprettForsendelseForespørsel){
-    val feilmeldinger = mutableListOf<String>()
 
-    forespørsel.dokumenter.forEachIndexed {i, it->
-        feilmeldinger.validerErSann(it.tittel.isNotEmpty(), "Tittel på dokument $i kan ikke være tom")
-        if (!it.dokumentreferanse.isNullOrEmpty() || !it.journalpostId.isNullOrEmpty()){
-            feilmeldinger.validerErSann(!it.dokumentreferanse.isNullOrEmpty() && !it.journalpostId.isNullOrEmpty(), "Både journalpostid og dokumentreferanse må settes hvis en av dem er satt journalpostid=${it.journalpostId} og dokumentreferanse=${it.dokumentreferanse}.")
-        }
-    }
-
-    if (feilmeldinger.isNotEmpty()){
-        throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
+fun MutableList<String>.validerIkkeNullEllerTom(verdi: String?, melding: String){
+    if (verdi.isNullOrEmpty()){
+        this.add(melding)
     }
 }
 
-fun validerKanOppdatereForespørsel(forespørsel: OppdaterForsendelseForespørsel){
-
+fun MutableList<String>.validerIkkeNull(verdi: Any?, melding: String){
+    if (verdi == null){
+        this.add(melding)
+    }
 }
+
+fun String?.isNotNullOrEmpty() = !this.isNullOrEmpty()

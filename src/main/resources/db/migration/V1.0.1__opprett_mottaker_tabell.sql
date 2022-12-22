@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS mottaker
     ident                   text,
     ident_type              text,
     navn                    text,
+    språk                   text,
     opprettet_tidspunkt     timestamp without time zone DEFAULT now() NOT NULL,
     adresse_id              integer,
     CONSTRAINT fk_mottaker_adresse FOREIGN KEY (adresse_id)

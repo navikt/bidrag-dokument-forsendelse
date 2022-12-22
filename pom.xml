@@ -133,11 +133,11 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-data-rest</artifactId>
-			<version>${springdoc.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springdoc</groupId>-->
+<!--			<artifactId>springdoc-openapi-data-rest</artifactId>-->
+<!--			<version>${springdoc.version}</version>-->
+<!--		</dependency>-->
 
 		<!--Sikkerhet-->
 		<dependency>

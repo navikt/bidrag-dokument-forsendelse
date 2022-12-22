@@ -4,9 +4,10 @@ management:
       exposure:
         include: "prometheus,health"
 
-springdoc:
-  packages-to-scan: no.nav.bidrag.dokument.forsendelse.controller
+springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
+
 spring.main.banner-mode: off
+#springfox.documentation.swagger-ui.base-url: /
 ---
 spring.config.activate.on-profile: nais,lokal-nais
 
