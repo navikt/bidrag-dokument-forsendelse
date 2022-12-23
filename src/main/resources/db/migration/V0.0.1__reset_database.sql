@@ -4,3 +4,5 @@ drop table if exists forsendelse cascade;
 drop table if exists dokument cascade;
 drop sequence if exists dokumentreferanse_seq cascade;
 drop function if exists oppdater_endret_tidspunkt();
+
+GRANT ALL PRIVILEGES ON TABLE public.flyway_schema_history TO cloudsqliamuser;
