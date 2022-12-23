@@ -19,7 +19,7 @@ spec:
     inbound:
       rules:
       {{#each azure_access_inbound}}
-          - application: {{this.application } }
+          - application: {{this.application}}
             namespace: {{this.namespace}}
             cluster: {{this.cluster}}
       {{/each}}
