@@ -29,7 +29,7 @@ class BidragDokumentBestillingKonsumer(
     fun bestill(forespørsel: DokumentBestillingForespørsel, dokumentmalId: String): DokumentBestillingResponse? {
         val respons = restTemplate.exchange("/bestill/$dokumentmalId", HttpMethod.POST, HttpEntity(forespørsel), DokumentBestillingResponse::class.java).body
         LOGGER.info("Bestilte dokument med dokumentmalId $dokumentmalId")
-        SIKKER_LOGG.info("Bestilte dokument med dokumentmalId $dokumentmalId", forespørsel)
+        SIKKER_LOGG.info("Bestilte dokument med dokumentmalId $dokumentmalId og forespørsel $forespørsel")
         return respons
     }
 

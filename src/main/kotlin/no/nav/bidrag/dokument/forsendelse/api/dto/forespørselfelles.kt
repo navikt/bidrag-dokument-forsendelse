@@ -70,7 +70,9 @@ enum class MottakerIdentTypeTo {
 enum class DokumentStatusTo {
     IKKE_BESTILT,
     BESTILT,
+    AVBRUTT,
     UNDER_PRODUKSJON,
+    UNDER_REDIGERING,
     FERDIGSTILT
 }
 

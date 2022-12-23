@@ -16,7 +16,6 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
-import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEnHoveddokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.skalDokumentSlettes
@@ -35,10 +34,10 @@ fun Forsendelse.validerKanEndreForsendelse(){
 }
 @Component
 @Transactional
-class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepository, val dokumentTjeneste: DokumentTjeneste) {
+class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, val dokumentTjeneste: DokumentTjeneste) {
 
     fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse? {
-        val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId) ?: return null
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanEndreForsendelse()
         val oppdatertForsendelse = forsendelse.copy(
             gjelderIdent = forespørsel.gjelderIdent ?: forsendelse.gjelderIdent,
@@ -49,7 +48,7 @@ class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepositor
             dokumenter = oppdaterDokumenter(forsendelse, forespørsel)
         )
 
-        forsendelseRepository.save(oppdatertForsendelse)
+        forsendelseTjeneste.lagre(oppdatertForsendelse)
         return OppdaterForsendelseResponse(
             forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
             dokumenter = oppdatertForsendelse.dokumenter.hoveddokumentFørst.map {
@@ -62,15 +61,15 @@ class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepositor
     }
 
     fun avbrytForsendelse(forsendelseId: Long): Boolean {
-        val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId) ?: return false
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
         forsendelse.validerKanEndreForsendelse()
 
-        forsendelseRepository.save(forsendelse.copy(status = ForsendelseStatus.AVBRUTT))
+        forsendelseTjeneste.lagre(forsendelse.copy(status = ForsendelseStatus.AVBRUTT))
 
         return true
     }
     fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse?{
-        val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId) ?: return null
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanEndreForsendelse()
 
 
@@ -86,7 +85,7 @@ class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepositor
             throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
         }
 
-        forsendelseRepository.save(forsendelse.copy(dokumenter = oppdaterteDokumenter.alleMedMinstEnHoveddokument))
+        forsendelseTjeneste.lagre(forsendelse.copy(dokumenter = oppdaterteDokumenter.alleMedMinstEnHoveddokument))
 
         return OppdaterForsendelseResponse(
             forsendelseId = forsendelse.forsendelseId.toString(),
@@ -99,7 +98,7 @@ class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepositor
         )
     }
     fun knyttDokumentTilForsendelse(forsendelseId: Long, forespørsel: OpprettDokumentForespørsel): DokumentRespons? {
-        val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId) ?: return null
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanEndreForsendelse()
 
         if (forsendelse.dokumenter.hent(forespørsel.dokumentreferanse) != null){
@@ -107,7 +106,7 @@ class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepositor
         }
 
         if (forespørsel.tilknyttetSom == DokumentTilknyttetSomTo.HOVEDDOKUMENT){
-            forsendelseRepository.save(forsendelse.copy(dokumenter = forsendelse.dokumenter.map { it.copy(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG) }))
+            forsendelseTjeneste.lagre(forsendelse.copy(dokumenter = forsendelse.dokumenter.map { it.copy(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG) }))
         }
 
         val nyDokument = dokumentTjeneste.opprettNyDokument(forsendelse, forespørsel)

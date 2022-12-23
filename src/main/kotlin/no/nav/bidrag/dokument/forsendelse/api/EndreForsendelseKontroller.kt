@@ -11,7 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseService
+import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.OpprettForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.valider
 import org.springframework.http.ResponseEntity
@@ -24,7 +24,7 @@ import javax.validation.Valid
 
 @ForsendelseApiKontroller
 class EndreForsendelseKontroller(
-    val oppdaterForsendelseService: OppdaterForsendelseService,
+    val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste,
     val opprettForsendelseService: OpprettForsendelseTjeneste,
 ) {
 
@@ -56,7 +56,7 @@ class EndreForsendelseKontroller(
     )
     fun oppdaterForsendelse(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: OppdaterForsendelseForespørsel): ResponseEntity<OppdaterForsendelseResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request) ?: return ResponseEntity.badRequest().build()
+        val respons = oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
     }
 
@@ -74,7 +74,7 @@ class EndreForsendelseKontroller(
     fun knyttTilDokument(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: OpprettDokumentForespørsel): ResponseEntity<DokumentRespons> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         request.valider()
-        val respons = oppdaterForsendelseService.knyttDokumentTilForsendelse(forsendelseId, request) ?: return ResponseEntity.badRequest().build()
+        val respons = oppdaterForsendelseTjeneste.knyttDokumentTilForsendelse(forsendelseId, request) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
     }
 
@@ -91,7 +91,7 @@ class EndreForsendelseKontroller(
     )
     fun fjernDokumentFraForsendelse(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ResponseEntity<OppdaterForsendelseResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = oppdaterForsendelseService.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse) ?: return ResponseEntity.badRequest().build()
+        val respons = oppdaterForsendelseTjeneste.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
     }
 
@@ -108,7 +108,7 @@ class EndreForsendelseKontroller(
     )
     fun avbrytForsendelse(@PathVariable forsendelseIdMedPrefix: String): ResponseEntity<OppdaterForsendelseResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val result = oppdaterForsendelseService.avbrytForsendelse(forsendelseId)
+        val result = oppdaterForsendelseTjeneste.avbrytForsendelse(forsendelseId)
         return if (result) ResponseEntity.ok().build() else ResponseEntity.noContent().build()
     }
 

@@ -106,10 +106,11 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             metadata = it.metadata,
             status = when (it.dokumentStatus) {
                 DokumentStatus.BESTILT -> DokumentStatusTo.BESTILT
+                DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
                 DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT
                 DokumentStatus.IKKE_BESTILT -> DokumentStatusTo.IKKE_BESTILT
-                DokumentStatus.AVBRUTT -> null
+                DokumentStatus.AVBRUTT -> DokumentStatusTo.AVBRUTT
             }
         )
     })

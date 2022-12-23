@@ -5,26 +5,26 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentBestillingKonsumer
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
-import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
+import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 import javax.transaction.Transactional
+
 private val LOGGER = KotlinLogging.logger {}
 
 @Component
 class DokumentBestillingLytter(
     val dokumentBestillingKonsumer: BidragDokumentBestillingKonsumer,
     val forsendelseRepository: ForsendelseRepository,
-    val dokumentRepository: DokumentRepository
+    val dokumentTjeneste: DokumentTjeneste
 ) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -41,7 +41,7 @@ class DokumentBestillingLytter(
         try {
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
 
-            dokumentRepository.save(
+            dokumentTjeneste.lagreDokument(
                 dokument.copy(
                     arkivsystem = when (respons?.arkivSystem) {
                         DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.BREVSERVER

@@ -7,7 +7,7 @@ import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.tjeneste.ForsendelseInfoService
+import no.nav.bidrag.dokument.forsendelse.tjeneste.ForsendelseInnsynTjeneste
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @ForsendelseApiKontroller
 @RequestMapping("/legacy")
-class ForsendelseLegacyInnsynKontroller(val forsendelseInfoService: ForsendelseInfoService) {
+class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste) {
 
     @GetMapping("/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
@@ -26,7 +26,7 @@ class ForsendelseLegacyInnsynKontroller(val forsendelseInfoService: ForsendelseI
     )
     fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: String): ResponseEntity<JournalpostResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = forsendelseInfoService.hentForsendelseLegacy(forsendelseId) ?: return ResponseEntity.noContent().build()
+        val respons = forsendelseInnsynTjeneste.hentForsendelseLegacy(forsendelseId) ?: return ResponseEntity.noContent().build()
         return ResponseEntity.ok(respons)
     }
 
@@ -40,6 +40,6 @@ class ForsendelseLegacyInnsynKontroller(val forsendelseInfoService: ForsendelseI
         ]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<JournalpostDto> {
-        return forsendelseInfoService.hentForsendelseForSakLegacy(saksnummer)
+        return forsendelseInnsynTjeneste.hentForsendelseForSakLegacy(saksnummer)
     }
 }

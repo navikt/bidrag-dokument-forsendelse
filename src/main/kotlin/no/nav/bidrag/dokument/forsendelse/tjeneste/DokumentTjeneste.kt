@@ -49,13 +49,6 @@ class DokumentTjeneste(val dokumentRepository: DokumentRepository, val dokumentB
     private fun bestillDokumentHvisNødvendig(dokument: Dokument){
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT){
             dokumentBestillingTjeneste.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
-//            dokumentRepository.save(dokument.copy(
-//                arkivsystem = when(result?.arkivSystem){
-//                    DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.BREVSERVER
-//                    else -> DokumentArkivSystem.UKJENT
-//                },
-//                dokumentStatus = DokumentStatus.BESTILT
-//            ))
         }
     }
 }

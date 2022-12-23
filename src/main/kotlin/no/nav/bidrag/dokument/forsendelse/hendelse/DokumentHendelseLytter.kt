@@ -3,8 +3,10 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentStatus
+import no.nav.bidrag.dokument.dto.DokumentHendelseType
+import no.nav.bidrag.dokument.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentTjeneste
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
@@ -15,10 +17,12 @@ private val log = KotlinLogging.logger {}
 @Component
 class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste) {
 
-
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>){
         val hendelse = tilDokumentHendelseObjekt(melding)
+
+        if (hendelse.hendelseType == DokumentHendelseType.BESTILLING) return
+
         val dokumenter = dokumentTjeneste.hentDokumenterMedReferanse(hendelse.dokumentreferanse)
 
         dokumenter.forEach {
@@ -26,9 +30,9 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
                 it.copy(
                     arkivsystem = DokumentArkivSystem.BREVSERVER,
                     dokumentStatus = when(hendelse.status){
-                        DokumentStatus.UNDER_PRODUKSJON -> no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus.UNDER_PRODUKSJON
-                        DokumentStatus.FERDIGSTILT -> no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus.FERDIGSTILT
-                        DokumentStatus.SLETTET -> no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus.AVBRUTT
+                        DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
+                        DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
+                        DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT
                         else -> it.dokumentStatus
                     }
 

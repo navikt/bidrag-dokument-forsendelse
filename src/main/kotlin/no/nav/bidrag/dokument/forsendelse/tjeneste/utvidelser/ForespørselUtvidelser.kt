@@ -66,10 +66,12 @@ fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when(this.ark
     else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
 }
 
-fun DokumentForespørsel.erBestillingAvNyDokument() = this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
-fun DokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyDokument())
+fun DokumentForespørsel.erBestillingAvNyttDokument() = this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
+fun DokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
     DokumentStatus.IKKE_BESTILT else when(this.status){
     DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
+    DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT
+    DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
     DokumentStatusTo.BESTILT -> DokumentStatus.BESTILT
     DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
     DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
