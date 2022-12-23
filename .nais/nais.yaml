@@ -15,6 +15,14 @@ spec:
           - "azp_name"
   secureLogs:
     enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+      {{#each azure_access_inbound}}
+          - application: {{this.application } }
+            namespace: {{this.namespace}}
+            cluster: {{this.cluster}}
+      {{/each}}
   kafka:
     pool: {{ kafka.pool }}
   image: {{ image }}

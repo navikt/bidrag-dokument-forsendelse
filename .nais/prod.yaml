@@ -10,3 +10,10 @@ database:
   tier: db-custom-1-3840
 kafka:
   pool: nav-prod
+azure_access_inbound:
+  - application: bisys
+    namespace: bidrag
+    cluster: prod-fss
+  - application: bidrag-dokument
+    namespace: bidrag
+    cluster: prod-fss

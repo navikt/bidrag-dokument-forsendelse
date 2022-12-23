@@ -1,5 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
 
+import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+
 data class DokumentBestillingForespørsel(
     val mottakerId: String? = null,
     val mottaker: MottakerTo? = null,
@@ -12,10 +14,6 @@ data class DokumentBestillingForespørsel(
     val tittel: String? = null,
     val enhet: String? = null,
     val språk: String? = null,
-)
-data class Saksbehandler(
-    val ident: String? = null,
-    val navn: String? = null
 )
 data class MottakerTo(
     val ident: String? = null,

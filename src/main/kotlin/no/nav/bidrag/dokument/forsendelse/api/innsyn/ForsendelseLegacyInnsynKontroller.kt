@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 
 @ForsendelseApiKontroller
-@RequestMapping("/legacy")
+@RequestMapping("/api/forsendelse/legacy")
 class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste) {
 
     @GetMapping("/{forsendelseIdMedPrefix}")

@@ -20,3 +20,13 @@ database:
   tier: db-f1-micro
 kafka:
   pool: nav-dev
+azure_access_inbound:
+  - application: bisys
+    namespace: bidrag
+    cluster: dev-fss
+  - application: bidrag-dokument-feature
+    namespace: bidrag
+    cluster: dev-fss
+  - application: bidrag-ui-feature
+    namespace: bidrag
+    cluster: dev-fss
