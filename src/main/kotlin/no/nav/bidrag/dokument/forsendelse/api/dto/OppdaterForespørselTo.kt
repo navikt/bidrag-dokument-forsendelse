@@ -12,7 +12,8 @@ data class OppdaterForsendelseForespørsel(
     @Schema(description = "Liste over dokumentene på journalposten der metadata skal oppdateres")
     val dokumenter: List<OppdaterDokumentForespørsel> = emptyList(),
     @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String? = null,
-    @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null
+    @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
+    @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null
 )
 
 @Schema(description = "Metadata til en respons etter journalpost ble oppdatert")

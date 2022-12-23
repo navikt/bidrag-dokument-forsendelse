@@ -49,7 +49,30 @@ kubectl config use dev-fss
 Deretter kjør følgende kommando for å importere secrets. Viktig at filen som opprettes ikke committes til git
 
 ```bash
-kubectl exec --tty deployment/bidrag-dokument-forsendelse-feature printenv | grep -E 'AZURE_APP_CLIENT_ID|AZURE_APP_CLIENT_SECRET|TOKEN_X|AZURE_OPENID_CONFIG_TOKEN_ENDPOINT|AZURE_APP_TENANT_ID|AZURE_APP_WELL_KNOWN_URL|KODEVERK_URL|PDL_URL|KRR_URL|KODEVERK_URL|SCOPE' > src/main/resources/application-lokal-nais-secrets.properties
+kubectl exec --tty deployment/bidrag-dokument-forsendelse-feature printenv | grep -E 'AZURE_|_URL|SCOPE' > src/main/resources/application-lokal-nais-secrets.properties
 ```
 
 Deretter kan tokenet brukes til å logge inn på swagger-ui http://localhost:8999/swagger-ui.html
+
+
+### Kafka
+
+Bruk `kcat` til å sende meldinger til kafka topic. Feks
+
+````bash
+kcat -b 0.0.0.0:9092 -t bidrag-dokument -P -K:
+````
+og lim inn eks:
+```bash
+BIF_2121212121:{"dokumentreferanse":"BIF_1000000007","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_PRODUKSJON","hendelseType":"ENDRING"}
+```
+og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-journalpost
+
+For oppgave
+````bash
+kcat -b 0.0.0.0:9092 -t bidrag-opprettet -P
+````
+og lim inn eks:
+```bash
+{"id": 351382364, "tildeltEnhetsnr": "4806", "opprettetAvEnhetsnr": "4806",  "journalpostId": "573782796", "aktoerId": "2578652659686", "beskrivelse": "Test kopier dokumenter til Bidrag", "tema": "BID", "oppgavetype": "VUR", "versjon": 1, "opprettetAv": "srvbisys", "prioritet": "HOY", "status": "OPPRETTET"}
+```

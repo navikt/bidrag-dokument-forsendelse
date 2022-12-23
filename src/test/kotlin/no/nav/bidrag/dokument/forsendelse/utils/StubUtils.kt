@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.springframework.http.HttpHeaders
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import no.nav.bidrag.dokument.forsendelse.model.HentPersonResponse
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.HentPersonResponse
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

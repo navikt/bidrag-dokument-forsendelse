@@ -1,6 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -18,13 +20,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import java.util.Locale
 import javax.servlet.http.HttpServletRequest
-@Order(Ordered.HIGHEST_PRECEDENCE)
+
+private val LOGGER = KotlinLogging.logger {}
 
 @RestControllerAdvice
 class DefaultRestControllerAdvice {
-    companion object {
-        private val LOGGER = LoggerFactory.getLogger(DefaultRestControllerAdvice::class.java)
-    }
     @ResponseBody
     @ExceptionHandler(value = [IllegalArgumentException::class, MethodArgumentTypeMismatchException::class, ConversionFailedException::class, HttpMessageNotReadableException::class])
     fun handleInvalidValueExceptions(exception: Exception): ResponseEntity<*> {
@@ -45,6 +45,16 @@ class DefaultRestControllerAdvice {
             "${objectName}.$field"
         }
         return "${paths.joinToString("->")} kan ikke være null"
+    }
+
+    @ResponseBody
+    @ExceptionHandler(KunneIkkBestilleDokument::class)
+    fun kunneIkkBestilleDokument(exception: KunneIkkBestilleDokument): ResponseEntity<*> {
+        LOGGER.warn(exception){"Kunne ikke bestille dokument ${exception.message}"}
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .header(HttpHeaders.WARNING, "Kunne ikke bestille dokument: ${exception.message}")
+            .build<Any>()
     }
 
     @ResponseBody

@@ -1,7 +1,6 @@
-package no.nav.bidrag.dokument.forsendelse.model
+package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import io.swagger.v3.oas.annotations.media.Schema
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class EnhetInfo(var enhetIdent: String, var enhetNavn: String)

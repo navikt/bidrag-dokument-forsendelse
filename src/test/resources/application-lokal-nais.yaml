@@ -1,3 +1,7 @@
+KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+KAFKA_GROUP_ID: bidrag-dokument-forsendelse
+KAFKA_BROKERS: localhost:9092
+TOPIC_DOKUMENT: bidrag.dokument
 spring:
   flyway:
     enabled: true
@@ -5,11 +9,21 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/default_database?user=cloudsqliamuser&password=admin
     type: com.zaxxer.hikari.HikariDataSource
-springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    properties:
+      security.protocol: PLAINTEXT
+    consumer:
+      enableAutoCommit: false
+    listener:
+      ackMode: RECORD
 
+springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
 
 PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
 BIDRAG_ORGANISASJON_URL: https://bidrag-person-feature.dev.adeo.no
+BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling-feature.dev.intern.nav.no
+BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling-feature
 BIDRAG_PERSON_URL: https://bidrag-person-feature.dev.adeo.no
 AZURE_APP_TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851
 AZURE_APP_CLIENT_ID: <app_client_id>

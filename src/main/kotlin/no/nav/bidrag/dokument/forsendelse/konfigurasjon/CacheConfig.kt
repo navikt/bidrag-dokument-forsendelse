@@ -14,18 +14,14 @@ import java.util.concurrent.TimeUnit
 @Profile(value = ["!test"]) // Ignore cache on tests
 class CacheConfig {
     companion object {
-        const val LANDKODER_CACHE = "LANDKODER_CACHE"
-        const val PERSON_CACHE = "PERSON_CACHE"
-        const val PERSON_ADRESSE_CACHE = "PERSON_ADRESSE_CACHE"
-        const val PERSON_SPRAAK_CACHE = "PERSON_SPRAAK_CACHE"
+        const val DOKUMENTMALER_CACHE = "DOKUMENTMALER_CACHE"
         const val SAKSBEHANDLERINFO_CACHE = "SAKSBEHANDLERINFO_CACHE"
-        const val ENHETINFO_CACHE = "ENHETINFO_CACHE"
-        const val ENHETKONTAKTINFO_CACHE = "ENHETKONTAKTINFO_CACHE"
+        const val PERSON_CACHE = "PERSON_CACHE"
     }
     @Bean
     fun cacheManager(): CacheManager {
         val caffeineCacheManager = CaffeineCacheManager()
-        caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         return caffeineCacheManager;
     }
 

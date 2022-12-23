@@ -70,7 +70,7 @@ fun DokumentForespørsel.erBestillingAvNyDokument() = this.journalpostId.isNullO
 fun DokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyDokument())
     DokumentStatus.IKKE_BESTILT else when(this.status){
     DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
-    DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
+    DokumentStatusTo.BESTILT -> DokumentStatus.BESTILT
     DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
     DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
 }
@@ -83,7 +83,8 @@ fun DokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, tilknyttetSom: 
     dokumentStatus = this.tilDokumentStatusDo(),
     eksternDokumentreferanse = this.dokumentreferanse,
     journalpostId = this.journalpostId?.utenPrefiks,
-    dokumentmalId = this.dokumentmalId
+    dokumentmalId = this.dokumentmalId,
+    metadata = this.metadata
 )
 
 fun OppdaterForsendelseForespørsel.skalDokumentSlettes(dokumentreferanse: String?) = dokumenter.any { it.fjernTilknytning && it.dokumentreferanse == dokumentreferanse}

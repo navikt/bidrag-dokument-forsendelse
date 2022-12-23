@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.model
+package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
 
 data class HentPersonResponse(
     val ident: String,

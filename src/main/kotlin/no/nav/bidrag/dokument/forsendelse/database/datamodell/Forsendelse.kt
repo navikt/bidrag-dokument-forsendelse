@@ -34,6 +34,7 @@ data class Forsendelse (
     val forsendelseType: ForsendelseType,
     val status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON,
     val enhet: String,
+    val språk: String,
     val saksnummer: String,
     val gjelderIdent: String,
     val opprettetAvIdent: String,

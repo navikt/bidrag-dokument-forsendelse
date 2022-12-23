@@ -18,6 +18,7 @@ data class DokumentRespons(
     val tittel: String,
     val journalpostId: String? = null,
     val dokumentmalId: String? = null,
+    val metadata: Map<String, String> = emptyMap(),
     val status: DokumentStatusTo? = null,
     val arkivsystem: DokumentArkivSystemTo? = null
 )
@@ -33,7 +34,9 @@ sealed class DokumentForespørsel(
     @Schema(description = "Selve PDF dokumentet formatert som Base64. Dette skal bare settes hvis dokumentet er redigert.") val fysiskDokument: ByteArray? = null,
     @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
     @Schema(description = "Arkivsystem hvor dokument er lagret") val arkivsystem: DokumentArkivSystemTo? = null,
-) {
+    @Schema(description = "Dokument metadata") val metadata: Map<String, String> = emptyMap(),
+
+    ) {
     override fun toString(): String {
         return "tittel=${tittel}, dokumentmalId=${dokumentmalId}, dokumentreferanse=${dokumentreferanse},journalpostId=${journalpostId} " +
                 "fysiskDokument(lengde)=${fysiskDokument?.size ?: 0} status=${status}, arkivsystem=${arkivsystem}"
@@ -66,8 +69,8 @@ enum class MottakerIdentTypeTo {
 
 enum class DokumentStatusTo {
     IKKE_BESTILT,
+    BESTILT,
     UNDER_PRODUKSJON,
-    UNDER_REDIGERING,
     FERDIGSTILT
 }
 

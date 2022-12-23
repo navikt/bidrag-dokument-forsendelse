@@ -46,6 +46,7 @@ class OpprettForsendelseTjeneste(val forsendelseRepository: ForsendelseRepositor
             },
             gjelderIdent = forespørsel.gjelderIdent,
             enhet = forespørsel.enhet,
+            språk = forespørsel.språk ?: "NB",
             opprettetAvIdent = "",
             mottaker = forespørsel.mottaker?.tilMottaker()
         )

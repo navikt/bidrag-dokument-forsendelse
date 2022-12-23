@@ -4,7 +4,7 @@ import StubUtils
 import io.kotest.matchers.shouldBe
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.forsendelse.BidragTemplateLocal
-import no.nav.bidrag.dokument.forsendelse.model.HentPersonResponse
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.HentPersonResponse
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

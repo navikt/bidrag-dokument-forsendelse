@@ -45,6 +45,7 @@ class OppdaterForsendelseService(val forsendelseRepository: ForsendelseRepositor
             mottaker = oppdaterMottaker(forsendelse.mottaker, forespørsel.mottaker),
             saksnummer = forespørsel.saksnummer ?: forsendelse.saksnummer,
             enhet = forespørsel.enhet ?: forsendelse.enhet,
+            språk = forespørsel.språk ?: forsendelse.språk,
             dokumenter = oppdaterDokumenter(forsendelse, forespørsel)
         )
 

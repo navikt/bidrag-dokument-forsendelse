@@ -1,9 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.konsumenter
 
 import no.nav.bidrag.commons.security.service.SecurityTokenService
-import no.nav.bidrag.dokument.forsendelse.SECURE_LOGGER
+import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.PERSON_CACHE
-import no.nav.bidrag.dokument.forsendelse.model.HentPersonResponse
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.HentPersonResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -24,7 +24,7 @@ class BidragPersonKonsumer(
 
     @Cacheable(PERSON_CACHE)
     fun hentPerson(personId: String): HentPersonResponse? {
-        SECURE_LOGGER.info("Henter person med id $personId")
+        SIKKER_LOGG.info("Henter person med id $personId")
         LOGGER.info("Henter person")
         val hentPersonResponse =
             restTemplate.exchange("/informasjon/$personId", HttpMethod.GET, null, HentPersonResponse::class.java)

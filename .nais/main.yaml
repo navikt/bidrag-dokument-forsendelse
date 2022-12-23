@@ -8,3 +8,5 @@ database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false
   tier: db-f1-micro
+kafka:
+  pool: nav-dev

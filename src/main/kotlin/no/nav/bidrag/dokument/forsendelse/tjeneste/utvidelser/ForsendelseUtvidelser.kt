@@ -103,8 +103,9 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
                 DokumentArkivSystem.JOARK -> DokumentArkivSystemTo.JOARK
                 else -> null
             },
+            metadata = it.metadata,
             status = when (it.dokumentStatus) {
-                DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
+                DokumentStatus.BESTILT -> DokumentStatusTo.BESTILT
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
                 DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT
                 DokumentStatus.IKKE_BESTILT -> DokumentStatusTo.IKKE_BESTILT

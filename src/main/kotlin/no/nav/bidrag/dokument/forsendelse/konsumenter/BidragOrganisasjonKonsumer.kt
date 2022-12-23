@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.konsumenter
 
 import no.nav.bidrag.commons.security.service.SecurityTokenService
 import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.SAKSBEHANDLERINFO_CACHE
-import no.nav.bidrag.dokument.forsendelse.model.SaksbehandlerInfoResponse
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.SaksbehandlerInfoResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpMethod

@@ -1,9 +1,13 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -14,6 +18,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
 @Entity(name = "dokument")
+@TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType::class)
 data class Dokument (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +39,10 @@ data class Dokument (
 
     @Enumerated(EnumType.STRING)
     val tilknyttetSom: DokumentTilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT,
+
+    @Type(type = "hstore")
+    @Column(columnDefinition = "hstore")
+    val metadata: Map<String, String> = mapOf(),
 
     @ManyToOne
     @JoinColumn(name = "forsendelse_id")
