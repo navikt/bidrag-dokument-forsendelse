@@ -7,6 +7,10 @@ env:
 
   BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon-feature.dev-fss-pub.nais.io/bidrag-organisasjon
   BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon-feature
+
+  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling-feature.dev.intern.nav.no
+  BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling-feature
+
   TOPIC_DOKUMENT: bidrag.dokument-feature
 
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
