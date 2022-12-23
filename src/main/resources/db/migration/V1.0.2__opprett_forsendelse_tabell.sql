@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS forsendelse
     forsendelse_type                text not null,
     arkiv_journalpost_id            text,
     enhet                           text,
-    språk                           text,
     saksnummer                      text,
     status                          text,
     gjelder_ident                   text not null,
