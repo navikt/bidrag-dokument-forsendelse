@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser
 
 import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentDto
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
@@ -103,6 +104,12 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
                DokumentArkivSystem.MIDL_BREVLAGER -> "BID-${jpId.utenPrefiks}"
                else -> null
             }},
+            arkivSystem = when (dokument.arkivsystem) {
+                DokumentArkivSystem.MIDL_BREVLAGER -> DokumentArkivSystemDto.MIDL_BREVLAGER
+                DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
+                else -> null
+            },
+            metadata = dokument.metadata,
             tittel = dokument.tittel,
             status = when (dokument.dokumentStatus) {
                 DokumentStatus.BESTILT -> DokumentStatusDto.BESTILT
