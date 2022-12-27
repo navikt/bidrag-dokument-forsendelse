@@ -2,7 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser
 
 import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.DokumentDto
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
@@ -14,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
@@ -95,12 +95,16 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),
     journalfortDato = this.ferdigstiltTidspunkt?.toLocalDate(),
     journalforendeEnhet = this.enhet,
-    dokumenter = this.dokumenter.hoveddokumentFørst.map {
+    dokumenter = this.dokumenter.hoveddokumentFørst.map {dokument->
         DokumentDto(
-            dokumentreferanse = it.dokumentreferanse,
-            journalpostId = it.journalpostId,
-            tittel = it.tittel,
-            status = when (it.dokumentStatus) {
+            dokumentreferanse = dokument.dokumentreferanse,
+            journalpostId = dokument.journalpostId?.let { jpId -> when(dokument.arkivsystem){
+               DokumentArkivSystem.JOARK -> "JOARK-${jpId.utenPrefiks}"
+               DokumentArkivSystem.MIDL_BREVLAGER -> "BID-${jpId.utenPrefiks}"
+               else -> null
+            }},
+            tittel = dokument.tittel,
+            status = when (dokument.dokumentStatus) {
                 DokumentStatus.BESTILT -> DokumentStatusDto.BESTILT
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
@@ -153,7 +157,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,
             arkivsystem = when (it.arkivsystem) {
-                DokumentArkivSystem.BREVSERVER -> DokumentArkivSystemTo.BREVSERVER
+                DokumentArkivSystem.MIDL_BREVLAGER -> DokumentArkivSystemTo.BREVSERVER
                 DokumentArkivSystem.JOARK -> DokumentArkivSystemTo.JOARK
                 else -> null
             },

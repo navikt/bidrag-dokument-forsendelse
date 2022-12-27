@@ -44,7 +44,7 @@ class DokumentBestillingLytter(
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
                     arkivsystem = when (respons?.arkivSystem) {
-                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.BREVSERVER
+                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
                         else -> DokumentArkivSystem.UKJENT
                     },
                     dokumentStatus = DokumentStatus.BESTILT

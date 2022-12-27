@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
@@ -60,7 +61,7 @@ class DefaultRestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(UgyldigForespørsel::class)
     fun ugyldigForespørsel(exception: UgyldigForespørsel): ResponseEntity<*> {
-        LOGGER.warn("Forespørselen inneholder ugyldig data", exception)
+        LOGGER.warn("Forsendelsen inneholder ugyldig data", exception)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig data: ${exception.message}")
@@ -70,10 +71,20 @@ class DefaultRestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(UgyldigEndringAvForsendelse::class)
     fun ugyldigEndringAvForsendelse(exception: UgyldigEndringAvForsendelse): ResponseEntity<*> {
-        LOGGER.warn("Forespørselen kan ikke endres", exception)
+        LOGGER.warn("Forsendelsen kan ikke endres", exception)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .header(HttpHeaders.WARNING, "Forespørselen kan ikke endres: ${exception.message}")
+            .build<Any>()
+    }
+
+    @ResponseBody
+    @ExceptionHandler(KanIkkeFerdigstilleForsendelse::class)
+    fun kanIkkeFerdigstilleForsendelse(exception: KanIkkeFerdigstilleForsendelse): ResponseEntity<*> {
+        LOGGER.warn("Forsendelsen kan ikke ferdigstilles", exception)
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .header(HttpHeaders.WARNING, "Forsendelsen kan ikke ferdigstilles: ${exception.message}")
             .build<Any>()
     }
 

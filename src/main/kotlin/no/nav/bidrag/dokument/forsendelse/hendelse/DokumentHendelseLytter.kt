@@ -28,7 +28,7 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
         dokumenter.forEach {
             dokumentTjeneste.lagreDokument(
                 it.copy(
-                    arkivsystem = DokumentArkivSystem.BREVSERVER,
+                    arkivsystem = DokumentArkivSystem.MIDL_BREVLAGER,
                     dokumentStatus = when(hendelse.status){
                         DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
                         DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT

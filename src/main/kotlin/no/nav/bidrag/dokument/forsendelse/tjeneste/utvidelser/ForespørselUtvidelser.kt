@@ -56,12 +56,12 @@ fun MottakerAdresseTo.tilAdresse() =  Adresse(
 )
 
 fun JournalpostId.tilArkivSystemDo() = when(this.arkivsystem){
-    DokumentArkivSystemTo.BREVSERVER -> DokumentArkivSystem.BREVSERVER
+    DokumentArkivSystemTo.BREVSERVER -> DokumentArkivSystem.MIDL_BREVLAGER
     DokumentArkivSystemTo.JOARK -> DokumentArkivSystem.JOARK
     else -> null
 }
 fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when(this.arkivsystem){
-    DokumentArkivSystemTo.BREVSERVER -> DokumentArkivSystem.BREVSERVER
+    DokumentArkivSystemTo.BREVSERVER -> DokumentArkivSystem.MIDL_BREVLAGER
     DokumentArkivSystemTo.JOARK -> DokumentArkivSystem.JOARK
     else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
 }

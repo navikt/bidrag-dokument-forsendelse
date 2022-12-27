@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.database.model
 
 enum class DokumentArkivSystem {
     JOARK,
-    BREVSERVER,
+    MIDL_BREVLAGER,
     UKJENT,
-    BIDOK,
+    BIDRAG,
 }
