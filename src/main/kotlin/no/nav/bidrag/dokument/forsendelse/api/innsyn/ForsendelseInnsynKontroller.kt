@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 
 @ForsendelseApiKontroller
+@RequestMapping("/api/forsendelse/v2")
 class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste, val bidragDokumentBestillingKonsumer: BidragDokumentBestillingKonsumer) {
 
     @GetMapping("/{forsendelseIdMedPrefix}")
