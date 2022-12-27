@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/api/forsendelse/legacy")
 class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste) {
 
-    @GetMapping("/{forsendelseIdMedPrefix}")
+    @GetMapping("/journal/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
         value = [
