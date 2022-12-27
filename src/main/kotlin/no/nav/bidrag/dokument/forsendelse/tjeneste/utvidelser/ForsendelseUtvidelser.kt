@@ -1,6 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser
 
+import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.DokumentDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentArkivSystemTo
@@ -39,6 +41,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {
         AvsenderMottakerDto(it.navn, it.ident)
     },
+    gjelderAktor = AktorDto(this.gjelderIdent),
     innhold = this.dokumenter.hoveddokument?.tittel,
     fagomrade = "BID",
     dokumentType = when (this.forsendelseType) {
@@ -48,7 +51,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     journalstatus = if (this.dokumenter.erAlleFerdigstilt) "J" else "D",
     journalpostId = "BIF-${this.forsendelseId}",
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),
-    journalfortDato = this.opprettetTidspunkt.toLocalDate(),
+    journalfortDato = this.ferdigstiltTidspunkt?.toLocalDate(),
     journalforendeEnhet = this.enhet,
     dokumenter = this.dokumenter.hoveddokumentFørst.map {
         DokumentDto(
