@@ -4,6 +4,7 @@ import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.DokumentDto
+import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
@@ -20,6 +21,8 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 
 fun List<Dokument>.hent(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }
@@ -37,10 +40,49 @@ val List<Dokument>.alleMedMinstEnHoveddokument
         )
     }
 
+fun Forsendelse.validerKanEndreForsendelse(){
+    if (this.status != ForsendelseStatus.UNDER_PRODUKSJON){
+        throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres")
+    }
+}
+
+fun Forsendelse.validerKanFerdigstilleForsendelse(){
+    if (this.status == ForsendelseStatus.FERDIGSTILT){
+        throw KanIkkeFerdigstilleForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} er allerede ferdigstillt")
+    }
+
+    val feilmeldinger = mutableListOf<String>()
+
+    if (this.forsendelseType == ForsendelseType.UTGÅENDE && this.mottaker == null){
+        feilmeldinger.add("Forsendelse med type ${this.forsendelseType} mangler mottaker")
+    }
+
+    if (this.dokumenter.isEmpty()){
+        feilmeldinger.add("Forsendelse mangler dokument")
+    }
+
+    if (!this.dokumenter.erAlleFerdigstilt){
+        feilmeldinger.add("En eller flere dokumenter i forsendelsen er ikke ferdigstilt.")
+    }
+
+    if (feilmeldinger.isNotEmpty()){
+        throw KanIkkeFerdigstilleForsendelse(feilmeldinger.joinToString(","))
+    }
+}
+
 fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {
-        AvsenderMottakerDto(it.navn, it.ident)
+        AvsenderMottakerDto(it.navn, it.ident, adresse = it.adresse?.let { adresse -> no.nav.bidrag.dokument.dto.MottakerAdresseTo(
+            adresselinje1 = adresse.adresselinje1,
+            adresselinje2 = adresse.adresselinje2,
+            adresselinje3 = adresse.adresselinje3,
+            bruksenhetsnummer = adresse.bruksenhetsnummer,
+            poststed = adresse.poststed,
+            postnummer = adresse.postnummer,
+            landkode = adresse.landkode
+        )})
     },
+    gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
     innhold = this.dokumenter.hoveddokument?.tittel,
     fagomrade = "BID",
@@ -56,7 +98,16 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     dokumenter = this.dokumenter.hoveddokumentFørst.map {
         DokumentDto(
             dokumentreferanse = it.dokumentreferanse,
-            tittel = it.tittel
+            journalpostId = it.journalpostId,
+            tittel = it.tittel,
+            status = when (it.dokumentStatus) {
+                DokumentStatus.BESTILT -> DokumentStatusDto.BESTILT
+                DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
+                DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
+                DokumentStatus.FERDIGSTILT -> DokumentStatusDto.FERDIGSTILT
+                DokumentStatus.IKKE_BESTILT -> DokumentStatusDto.IKKE_BESTILT
+                DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
+            }
         )
     })
 
