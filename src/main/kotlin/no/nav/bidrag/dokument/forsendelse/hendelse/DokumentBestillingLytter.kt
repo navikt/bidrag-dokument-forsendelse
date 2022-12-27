@@ -11,7 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
-import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase

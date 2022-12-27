@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser
 
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
@@ -56,13 +57,13 @@ fun MottakerAdresseTo.tilAdresse() =  Adresse(
 )
 
 fun JournalpostId.tilArkivSystemDo() = when(this.arkivsystem){
-    DokumentArkivSystemTo.BREVSERVER -> DokumentArkivSystem.MIDL_BREVLAGER
-    DokumentArkivSystemTo.JOARK -> DokumentArkivSystem.JOARK
+    DokumentArkivSystemDto.MIDL_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
+    DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
     else -> null
 }
 fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when(this.arkivsystem){
-    DokumentArkivSystemTo.BREVSERVER -> DokumentArkivSystem.MIDL_BREVLAGER
-    DokumentArkivSystemTo.JOARK -> DokumentArkivSystem.JOARK
+    DokumentArkivSystemDto.MIDL_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
+    DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
     else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
 }
 

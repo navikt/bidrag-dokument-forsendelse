@@ -2,6 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
+import no.nav.bidrag.dokument.forsendelse.model.FantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
@@ -88,6 +90,15 @@ class DefaultRestControllerAdvice {
             .build<Any>()
     }
 
+    @ResponseBody
+    @ExceptionHandler(FantIkkeDokument::class)
+    fun fantIkkeDokument(exception: FantIkkeDokument): ResponseEntity<*> {
+        LOGGER.warn("Fant ikke dokument", exception)
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .header(HttpHeaders.WARNING, "Fant ikke dokument: ${exception.message}")
+            .build<Any>()
+    }
 
     @ResponseBody
     @ExceptionHandler(Exception::class)

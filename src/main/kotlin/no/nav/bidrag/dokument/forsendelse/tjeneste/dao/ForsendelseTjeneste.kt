@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste
+package no.nav.bidrag.dokument.forsendelse.tjeneste.dao
 
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository

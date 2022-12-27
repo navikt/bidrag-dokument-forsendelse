@@ -7,7 +7,7 @@ import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component

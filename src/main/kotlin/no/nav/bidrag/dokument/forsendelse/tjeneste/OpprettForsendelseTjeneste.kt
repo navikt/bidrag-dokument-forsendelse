@@ -6,6 +6,8 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilMottaker
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.valider
 import org.springframework.stereotype.Component

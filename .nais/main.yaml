@@ -2,8 +2,14 @@ name: bidrag-dokument-forsendelse
 ingresses:
   - https://bidrag-dokument-forsendelse.dev.intern.nav.no
 env:
-  BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
-  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
+  BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon.dev-fss-pub.nais.io/bidrag-organisasjon
+  BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon
+
+  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.dev.intern.nav.no
+  BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling
+
+  BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io/bidrag-dokument
+  BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false

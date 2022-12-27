@@ -25,6 +25,11 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 
+val Dokument.journalpostIdMedPrefix get() = when(arkivsystem){
+    DokumentArkivSystem.MIDL_BREVLAGER -> "BID-$journalpostId"
+    DokumentArkivSystem.JOARK -> "JOARK-$journalpostId"
+    else -> null
+}
 fun List<Dokument>.hent(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }
 val List<Dokument>.hoveddokumentFørst get() = dokumenterIkkeSlettet.sortedByDescending { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }
@@ -164,8 +169,8 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,
             arkivsystem = when (it.arkivsystem) {
-                DokumentArkivSystem.MIDL_BREVLAGER -> DokumentArkivSystemTo.BREVSERVER
-                DokumentArkivSystem.JOARK -> DokumentArkivSystemTo.JOARK
+                DokumentArkivSystem.MIDL_BREVLAGER -> DokumentArkivSystemDto.MIDL_BREVLAGER
+                DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
                 else -> null
             },
             metadata = it.metadata,

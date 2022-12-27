@@ -1,5 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste
 
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.JournalpostType
+import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
+import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentTilknyttetSomTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
@@ -7,34 +12,37 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentKonsumer
+import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEnHoveddokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.skalDokumentSlettes
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilAdresse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilIdentType
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilMottaker
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.validerKanEndreForsendelse
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.validerKanFerdigstilleForsendelse
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import javax.transaction.Transactional
 
 
-fun Forsendelse.validerKanEndreForsendelse(){
-    if (this.status != ForsendelseStatus.UNDER_PRODUKSJON){
-        throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres")
-    }
-}
+
 @Component
 @Transactional
-class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, val dokumentTjeneste: DokumentTjeneste) {
+class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, val dokumentTjeneste: DokumentTjeneste, val bidragDokumentKonsumer: BidragDokumentKonsumer, val hentDokumentTjeneste: HentDokumentTjeneste) {
 
     fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
@@ -67,6 +75,45 @@ class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, 
         forsendelseTjeneste.lagre(forsendelse.copy(status = ForsendelseStatus.AVBRUTT))
 
         return true
+    }
+
+    fun ferdigstillForsendelse(forsendelseId: Long): OpprettJournalpostResponse? {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
+        forsendelse.validerKanFerdigstilleForsendelse()
+
+        forsendelseTjeneste.lagre(forsendelse.copy(status = ForsendelseStatus.FERDIGSTILT))
+
+        val opprettJournalpostRequest = OpprettJournalpostRequest(
+            avsenderMottaker = AvsenderMottakerDto(
+                ident = forsendelse.mottaker!!.ident,
+                navn = forsendelse.mottaker.navn
+            ),
+            referanseId = "BIF_${forsendelse.forsendelseId}",
+            gjelderIdent = forsendelse.gjelderIdent,
+            journalførendeEnhet = forsendelse.enhet,
+            journalposttype = when (forsendelse.forsendelseType) {
+                ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
+                ForsendelseType.NOTAT -> JournalpostType.NOTAT
+            },
+            dokumenter = forsendelse.dokumenter.hoveddokumentFørst.map {
+                OpprettDokumentDto(
+                    brevkode = it.dokumentmalId,
+                    dokumentreferanse = it.eksternDokumentreferanse,
+                    tittel = it.tittel,
+                    fysiskDokument = hentFysiskDokument(it)
+
+                )
+            },
+            tilknyttSaker = listOf(forsendelse.saksnummer),
+            skalFerdigstilles = true
+        )
+
+        return bidragDokumentKonsumer.opprettJournalpost(opprettJournalpostRequest)
+    }
+
+    fun hentFysiskDokument(dokument: Dokument): ByteArray {
+       return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) hentDokumentTjeneste.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
+       else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix!!, dokument.eksternDokumentreferanse)!!
     }
     fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse?{
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
