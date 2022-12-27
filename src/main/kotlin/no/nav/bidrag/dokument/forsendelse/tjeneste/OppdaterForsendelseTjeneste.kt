@@ -81,8 +81,6 @@ class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, 
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
 
-        forsendelseTjeneste.lagre(forsendelse.copy(status = ForsendelseStatus.FERDIGSTILT))
-
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = AvsenderMottakerDto(
                 ident = forsendelse.mottaker!!.ident,
@@ -108,7 +106,12 @@ class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, 
             skalFerdigstilles = true
         )
 
-        return bidragDokumentKonsumer.opprettJournalpost(opprettJournalpostRequest)
+        val respons = bidragDokumentKonsumer.opprettJournalpost(opprettJournalpostRequest)
+
+        forsendelseTjeneste.lagre(forsendelse.copy(arkivJournalpostId = respons!!.journalpostId, status = ForsendelseStatus.FERDIGSTILT))
+
+        return respons
+
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
