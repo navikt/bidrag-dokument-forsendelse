@@ -127,7 +127,9 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
                 DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
             }
         )
-    })
+    },
+    opprettetAvIdent = this.opprettetAvIdent
+    )
 
 fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     mottaker = this.mottaker?.let {
