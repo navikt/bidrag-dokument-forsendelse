@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS adresse
     adresselinje3           text,
     bruksenhetsnummer       text,
     landkode                text,
+    landkode3               text,
     postnummer              text,
     poststed                text,
     opprettet_tidspunkt     timestamp without time zone DEFAULT now() NOT NULL

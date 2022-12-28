@@ -6,15 +6,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
+import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentBestillingKonsumer
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.tjeneste.ForsendelseInnsynTjeneste
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 
 @ForsendelseApiKontroller
-class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste) {
+class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste, val bidragDokumentBestillingKonsumer: BidragDokumentBestillingKonsumer) {
 
     @GetMapping("/journal/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
@@ -40,5 +42,13 @@ class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: Forsendel
     )
     fun hentJournal(@PathVariable saksnummer: String): List<JournalpostDto> {
         return forsendelseInnsynTjeneste.hentForsendelseForSakLegacy(saksnummer)
+    }
+
+    @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
+    @Operation(
+        description = "Henter dokumentmaler som er støttet av applikasjonen",
+    )
+    fun støttedeDokumentmaler(): List<String> {
+        return bidragDokumentBestillingKonsumer.støttedeDokumentmaler()
     }
 }

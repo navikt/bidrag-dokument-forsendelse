@@ -52,6 +52,7 @@ fun MottakerAdresseTo.tilAdresse() =  Adresse(
     adresselinje3 = this.adresselinje3,
     bruksenhetsnummer = this.bruksenhetsnummer,
     landkode = this.landkode,
+    landkode3 = this.landkode3,
     postnummer = this.postnummer,
     poststed = this.poststed
 )

@@ -85,9 +85,11 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             bruksenhetsnummer = adresse.bruksenhetsnummer,
             poststed = adresse.poststed,
             postnummer = adresse.postnummer,
-            landkode = adresse.landkode
+            landkode = adresse.landkode,
+            landkode3 = adresse.landkode3
         )})
     },
+    språk = this.språk,
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
     innhold = this.dokumenter.hoveddokument?.tittel,
