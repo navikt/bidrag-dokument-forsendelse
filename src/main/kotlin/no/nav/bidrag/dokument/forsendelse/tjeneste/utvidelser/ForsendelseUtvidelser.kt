@@ -119,6 +119,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             },
             metadata = dokument.metadata,
             tittel = dokument.tittel,
+            dokumentmalId = dokument.dokumentmalId,
             status = when (dokument.dokumentStatus) {
                 DokumentStatus.BESTILT -> DokumentStatusDto.BESTILT
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
