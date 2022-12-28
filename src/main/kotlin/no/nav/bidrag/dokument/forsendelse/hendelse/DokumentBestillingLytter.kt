@@ -78,7 +78,7 @@ class DokumentBestillingLytter(
         DokumentHendelse(
             dokumentreferanse = dokument.dokumentreferanse,
             forsendelseId = "BIF-${forsendelse.forsendelseId}",
-            sporingId = CorrelationId.fetchCorrelationIdForThread(),
+            sporingId = CorrelationId.fetchCorrelationIdForThread() ?: CorrelationId.existing("bestilling-${dokument.dokumentreferanse}").get(),
             hendelseType = DokumentHendelseType.BESTILLING,
         )
 }
