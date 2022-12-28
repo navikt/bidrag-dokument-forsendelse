@@ -98,10 +98,11 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         ForsendelseType.NOTAT -> "X"
         ForsendelseType.UTGÅENDE -> "U"
     },
+    journalfortAv = opprettetAvIdent,
     journalstatus = if (this.dokumenter.erAlleFerdigstilt) "J" else "D",
     journalpostId = "BIF-${this.forsendelseId}",
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),
-    journalfortDato = this.ferdigstiltTidspunkt?.toLocalDate(),
+    journalfortDato = this.opprettetTidspunkt.toLocalDate(),
     journalforendeEnhet = this.enhet,
     dokumenter = this.dokumenter.hoveddokumentFørst.map {dokument->
         DokumentDto(
@@ -128,6 +129,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             }
         )
     },
+    sakstilknytninger = listOf(saksnummer),
     opprettetAvIdent = this.opprettetAvIdent
     )
 
