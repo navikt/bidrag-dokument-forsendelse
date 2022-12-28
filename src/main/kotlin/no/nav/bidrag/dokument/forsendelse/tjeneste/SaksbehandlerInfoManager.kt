@@ -13,12 +13,12 @@ class SaksbehandlerInfoManager(
     fun hentSaksbehandlerBrukerId(): String? = oidcTokenManager.hentSaksbehandlerIdentFraToken()
 
     fun hentSaksbehandler(): Saksbehandler? {
+        val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null
         return try {
-            val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null
             val saksbehandlerNavn = bidragOrganisasjonKonsumer.hentSaksbehandlerInfo(saksbehandlerIdent)?.navn
             Saksbehandler(saksbehandlerIdent, saksbehandlerNavn)
         } catch (e: Exception) {
-            null
+            Saksbehandler(saksbehandlerIdent, saksbehandlerIdent)
         }
     }
 
