@@ -8,7 +8,7 @@ env:
   BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.intern.nav.no
   BIDRAG_DOKUMENT_BESTILLING_SCOPE: prod-gcp.bidrag.bidrag-dokument-bestilling
 
-  BIDRAG_DOKUMENT_URL: https://bidrag-dokument-feature.prod-fss-pub.nais.io/bidrag-dokument
+  BIDRAG_DOKUMENT_URL: https://bidrag-dokument.prod-fss-pub.nais.io/bidrag-dokument
   BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
 database:
   dbname: bidrag-dokument-forsendelse
@@ -21,5 +21,8 @@ azure_access_inbound:
     namespace: bidrag
     cluster: prod-fss
   - application: bidrag-dokument
+    namespace: bidrag
+    cluster: prod-fss
+  - application: bidrag-ui
     namespace: bidrag
     cluster: prod-fss

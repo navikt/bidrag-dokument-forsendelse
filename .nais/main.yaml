@@ -23,3 +23,6 @@ azure_access_inbound:
   - application: bidrag-dokument
     namespace: bidrag
     cluster: dev-fss
+  - application: bidrag-ui
+    namespace: bidrag
+    cluster: dev-fss

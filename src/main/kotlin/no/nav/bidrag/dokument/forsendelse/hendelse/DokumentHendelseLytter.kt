@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusTo
@@ -28,7 +29,10 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
         dokumenter.forEach {
             dokumentTjeneste.lagreDokument(
                 it.copy(
-                    arkivsystem = DokumentArkivSystem.MIDL_BREVLAGER,
+                    arkivsystem = when(hendelse.arkivSystem){
+                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER ->  DokumentArkivSystem.MIDL_BREVLAGER
+                        else -> it.arkivsystem
+                    },
                     dokumentStatus = when(hendelse.status){
                         DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
                         DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT

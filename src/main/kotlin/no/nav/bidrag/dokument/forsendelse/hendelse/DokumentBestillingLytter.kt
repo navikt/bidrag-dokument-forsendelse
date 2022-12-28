@@ -1,6 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import mu.KotlinLogging
+import no.nav.bidrag.commons.CorrelationId
+import no.nav.bidrag.dokument.dto.DokumentHendelse
+import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
@@ -24,7 +27,8 @@ private val LOGGER = KotlinLogging.logger {}
 class DokumentBestillingLytter(
     val dokumentBestillingKonsumer: BidragDokumentBestillingKonsumer,
     val forsendelseRepository: ForsendelseRepository,
-    val dokumentTjeneste: DokumentTjeneste
+    val dokumentTjeneste: DokumentTjeneste,
+    val dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent
 ) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -36,20 +40,23 @@ class DokumentBestillingLytter(
             ?: throw KunneIkkBestilleDokument("Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}")
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 
-        val bestilling = tilForespørsel(forsendelse, dokument)
+
+//        val bestilling = tilForespørsel(forsendelse, dokument)
 
         try {
-            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
+            dokumentKafkaHendelseProdusent.publiser(tilBestillingHendelse(forsendelse, dokument))
 
-            dokumentTjeneste.lagreDokument(
-                dokument.copy(
-                    arkivsystem = when (respons?.arkivSystem) {
-                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
-                        else -> DokumentArkivSystem.UKJENT
-                    },
-                    dokumentStatus = DokumentStatus.BESTILT
-                )
-            )
+//            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
+//
+//            dokumentTjeneste.lagreDokument(
+//                dokument.copy(
+//                    arkivsystem = when (respons?.arkivSystem) {
+//                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
+//                        else -> DokumentArkivSystem.UKJENT
+//                    },
+//                    dokumentStatus = DokumentStatus.BESTILT
+//                )
+//            )
         } catch (e: Exception){
             LOGGER.error(e){ "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId" }
         }
@@ -65,5 +72,13 @@ class DokumentBestillingLytter(
             mottakerId = forsendelse.mottaker?.ident,
             enhet = forsendelse.enhet,
             språk = forsendelse.språk
+        )
+
+    private fun tilBestillingHendelse(forsendelse: Forsendelse, dokument: Dokument): DokumentHendelse =
+        DokumentHendelse(
+            dokumentreferanse = dokument.dokumentreferanse,
+            forsendelseId = "BIF-${forsendelse.forsendelseId}",
+            sporingId = CorrelationId.fetchCorrelationIdForThread(),
+            hendelseType = DokumentHendelseType.BESTILLING,
         )
 }
