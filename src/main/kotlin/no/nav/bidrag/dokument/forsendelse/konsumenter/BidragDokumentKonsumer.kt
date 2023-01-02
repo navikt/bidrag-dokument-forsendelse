@@ -33,7 +33,15 @@ class BidragDokumentKonsumer(
         ).body
     }
 
-    fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
+    fun hentDokument(journalpostId: String?, dokumentId: String?): ByteArray? {
+        if (journalpostId.isNullOrEmpty()){
+            return restTemplate.exchange(
+                "/dokumentreferanse/$dokumentId?optimizeForPrint=false",
+                HttpMethod.GET,
+                null,
+                ByteArray::class.java
+            ).body
+        }
         return restTemplate.exchange(
             "/dokument/$journalpostId/$dokumentId?optimizeForPrint=false",
             HttpMethod.GET,
