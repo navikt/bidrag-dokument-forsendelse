@@ -4,11 +4,13 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import no.nav.bidrag.dokument.dto.EndreJournalpostCommand
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.utvidelser.tilOppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.valider
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody
 @ForsendelseApiKontroller
 class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste) {
 
-    @PutMapping("/{forsendelseIdMedPrefix}")
+    @PatchMapping("/{forsendelseIdMedPrefix}")
     @Operation(
         summary = "Endre forsendelse",
         security = [SecurityRequirement(name = "bearer-key")],
@@ -37,6 +39,23 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     fun oppdaterForsendelse(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: OppdaterForsendelseForespørsel): ResponseEntity<OppdaterForsendelseResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         val respons = oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request) ?: return ResponseEntity.badRequest().build()
+        return ResponseEntity.ok(respons)
+    }
+
+    @PatchMapping("/journal/{forsendelseIdMedPrefix}")
+    @Operation(
+        summary = "Endre forsendelse",
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Forsendelse endret"),
+            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for forsendelseId"),
+        ]
+    )
+    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: EndreJournalpostCommand): ResponseEntity<OppdaterForsendelseResponse> {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        val respons = oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel()) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
     }
 

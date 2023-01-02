@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentDto
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
+import no.nav.bidrag.dokument.dto.KodeDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
@@ -92,6 +93,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     språk = this.språk,
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
+    brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
     innhold = this.dokumenter.hoveddokument?.tittel,
     fagomrade = "BID",
     dokumentType = when (this.forsendelseType) {
@@ -99,7 +101,15 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         ForsendelseType.UTGÅENDE -> "U"
     },
     journalfortAv = opprettetAvIdent,
-    journalstatus = if (this.dokumenter.erAlleFerdigstilt) "J" else "D",
+    journalstatus = when(this.status){
+        ForsendelseStatus.DISTRIBUERT -> "E"
+        ForsendelseStatus.AVBRUTT -> "F"
+        ForsendelseStatus.FERDIGSTILT -> "FS"
+        ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt)
+                    if (this.forsendelseType == ForsendelseType.UTGÅENDE) "KP"
+                    else "FS"
+                else "D"
+    },
     journalpostId = "BIF-${this.forsendelseId}",
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),
     journalfortDato = this.opprettetTidspunkt.toLocalDate(),

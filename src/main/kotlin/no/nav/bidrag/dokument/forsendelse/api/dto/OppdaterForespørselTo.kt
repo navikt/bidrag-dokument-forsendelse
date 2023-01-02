@@ -26,8 +26,11 @@ data class OppdaterForsendelseResponse(
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OppdaterDokumentForespørsel(
-    @Schema(description = "Om tilknytning til forsendelse skal fjernes") val fjernTilknytning: Boolean = false):
-    DokumentForespørsel() {
+    override val dokumentmalId: String? = null,
+    override val dokumentreferanse: String? = null,
+    override val tittel: String? = null,
+    @Schema(description = "Om tilknytning til forsendelse skal fjernes") val fjernTilknytning: Boolean = false
+): DokumentForespørsel() {
         override fun toString(): String {
             return super.toString() + " fjernTilknytning=${fjernTilknytning}"
         }

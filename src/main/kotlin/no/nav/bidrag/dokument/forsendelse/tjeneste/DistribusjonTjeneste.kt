@@ -10,18 +10,28 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erAlleFerdigstilt
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import javax.transaction.Transactional
 
 @Component
-class DistribusjonTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val bidragDokumentKonsumer: BidragDokumentKonsumer, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
+class DistribusjonTjeneste(
+    private val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste,
+    private val forsendelseTjeneste: ForsendelseTjeneste, private val bidragDokumentKonsumer: BidragDokumentKonsumer, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
 
     fun kanDistribuere(forsendelseId: Long): Boolean {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
 
-        return forsendelse.dokumenter.erAlleFerdigstilt && forsendelse.status == ForsendelseStatus.FERDIGSTILT
+        return forsendelse.status == ForsendelseStatus.FERDIGSTILT
+                || forsendelse.dokumenter.erAlleFerdigstilt && forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON
     }
 
+    @Transactional
     fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse? {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
+        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
+
+        if (forsendelse.arkivJournalpostId.isNullOrEmpty()){
+            oppdaterForsendelseTjeneste.ferdigstillForsendelse(forsendelseId)
+            forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)!!
+        }
 
         if (forsendelse.arkivJournalpostId.isNullOrEmpty()){
             throw KanIkkeDistribuereForsendelse(forsendelseId)
@@ -38,12 +48,13 @@ class DistribusjonTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste,
             )
         }
 
-        val resultat = bidragDokumentKonsumer.distribuer(forsendelse.arkivJournalpostId, adresse) ?: return null
+        val resultat = bidragDokumentKonsumer.distribuer(forsendelse.arkivJournalpostId!!, adresse) ?: return null
 
         forsendelseTjeneste.lagre(forsendelse.copy(
             distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
             distribuertTidspunkt = LocalDateTime.now(),
             distribusjonBestillingsId = resultat.bestillingsId,
+            status = ForsendelseStatus.DISTRIBUERT
         ))
 
         return resultat
