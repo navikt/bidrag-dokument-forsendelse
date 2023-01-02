@@ -32,6 +32,7 @@ data class Forsendelse (
     val forsendelseId: Long? = null,
     @Enumerated(EnumType.STRING)
     val forsendelseType: ForsendelseType,
+    @Enumerated(EnumType.STRING)
     val status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON,
     val enhet: String,
     val språk: String,
@@ -39,9 +40,12 @@ data class Forsendelse (
     val gjelderIdent: String,
     val opprettetAvIdent: String,
     val opprettetAvNavn: String? = null,
+    val avbruttAvIdent: String? = null,
+    val distribuertAvIdent: String? = null,
     val distribusjonBestillingsId: String? = null,
     val distribuertTidspunkt: LocalDateTime? = null,
     val ferdigstiltTidspunkt: LocalDateTime? = null,
+    val avbruttTidspunkt: LocalDateTime? = null,
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
     val arkivJournalpostId: String? = null,

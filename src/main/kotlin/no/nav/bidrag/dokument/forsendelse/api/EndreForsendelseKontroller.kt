@@ -75,23 +75,6 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
         return ResponseEntity.ok(respons)
     }
 
-    @DeleteMapping("/{forsendelseIdMedPrefix}")
-    @Operation(
-        summary = "Avbryt forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")],
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Forsendelse avbrutt"),
-            ApiResponse(responseCode = "400", description = "Fant ingen forsendelse for id"),
-        ]
-    )
-    fun avbrytForsendelse(@PathVariable forsendelseIdMedPrefix: String): ResponseEntity<OppdaterForsendelseResponse> {
-        val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val result = oppdaterForsendelseTjeneste.avbrytForsendelse(forsendelseId)
-        return if (result) ResponseEntity.ok().build() else ResponseEntity.badRequest().build()
-    }
-
     @PatchMapping("/{forsendelseIdMedPrefix}/ferdigstill")
     @Operation(
         summary = "Ferdigstiller forsendelse ved å arkivere forsendelsen i Joark og dermed klargjør for eventuell distribuering",

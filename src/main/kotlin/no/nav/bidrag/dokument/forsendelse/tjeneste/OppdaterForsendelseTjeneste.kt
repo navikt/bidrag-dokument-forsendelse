@@ -47,16 +47,16 @@ class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, 
     fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanEndreForsendelse()
-        val oppdatertForsendelse = forsendelse.copy(
+        val oppdatertForsendelse = forsendelseTjeneste.lagre(forsendelse.copy(
             gjelderIdent = forespørsel.gjelderIdent ?: forsendelse.gjelderIdent,
             mottaker = oppdaterMottaker(forsendelse.mottaker, forespørsel.mottaker),
             saksnummer = forespørsel.saksnummer ?: forsendelse.saksnummer,
             enhet = forespørsel.enhet ?: forsendelse.enhet,
             språk = forespørsel.språk ?: forsendelse.språk,
             dokumenter = oppdaterDokumenter(forsendelse, forespørsel)
-        )
+        ))
 
-        forsendelseTjeneste.lagre(oppdatertForsendelse)
+
         return OppdaterForsendelseResponse(
             forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
             dokumenter = oppdatertForsendelse.dokumenter.hoveddokumentFørst.map {
@@ -66,15 +66,6 @@ class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, 
                 )
             }
         )
-    }
-
-    fun avbrytForsendelse(forsendelseId: Long): Boolean {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
-        forsendelse.validerKanEndreForsendelse()
-
-        forsendelseTjeneste.lagre(forsendelse.copy(status = ForsendelseStatus.AVBRUTT))
-
-        return true
     }
 
     fun ferdigstillForsendelse(forsendelseId: Long): OpprettJournalpostResponse? {

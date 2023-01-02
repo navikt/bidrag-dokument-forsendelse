@@ -101,6 +101,16 @@ class DefaultRestControllerAdvice {
     }
 
     @ResponseBody
+    @ExceptionHandler(FantIkkeForsendelse::class)
+    fun fantIkkeForsendelse(exception: FantIkkeForsendelse): ResponseEntity<*> {
+        LOGGER.warn(exception.message, exception)
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .header(HttpHeaders.WARNING, exception.message)
+            .build<Any>()
+    }
+
+    @ResponseBody
     @ExceptionHandler(Exception::class)
     fun handleOtherExceptions(exception: Exception): ResponseEntity<*> {
         LOGGER.warn("Det skjedde en ukjent feil", exception)

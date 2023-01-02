@@ -9,9 +9,10 @@ import no.nav.bidrag.dokument.forsendelse.model.KanIkkeDistribuereForsendelse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erAlleFerdigstilt
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
-class DistribusjonTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val bidragDokumentKonsumer: BidragDokumentKonsumer) {
+class DistribusjonTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val bidragDokumentKonsumer: BidragDokumentKonsumer, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
 
     fun kanDistribuere(forsendelseId: Long): Boolean {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
@@ -37,6 +38,15 @@ class DistribusjonTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste,
             )
         }
 
-        return bidragDokumentKonsumer.distribuer(forsendelse.arkivJournalpostId, adresse)
+        val resultat = bidragDokumentKonsumer.distribuer(forsendelse.arkivJournalpostId, adresse) ?: return null
+
+        forsendelseTjeneste.lagre(forsendelse.copy(
+            distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
+            distribuertTidspunkt = LocalDateTime.now(),
+            distribusjonBestillingsId = resultat.bestillingsId,
+        ))
+
+        return resultat
+
     }
 }
