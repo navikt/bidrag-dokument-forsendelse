@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilJournalpostDto
 import org.springframework.stereotype.Component
@@ -41,6 +42,8 @@ class HentDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
 
         if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER){
             return ÅpneDokumentMetadata(
+                journalpostId = dokument.journalpostIdMedPrefix,
+                dokumentreferanse = dokument.dokumentreferanse,
                 format = when (dokument.dokumentStatus) {
                     DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
                     else -> DokumentFormatDto.PDF
@@ -57,6 +60,8 @@ class HentDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
         }
 
         return ÅpneDokumentMetadata(
+            journalpostId = dokument.journalpostIdMedPrefix,
+            dokumentreferanse = dokument.dokumentreferanse,
             format = DokumentFormatDto.PDF,
             status = when (dokument.dokumentStatus) {
                 DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
