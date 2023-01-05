@@ -28,7 +28,7 @@ import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 val Dokument.journalpostIdMedPrefix get() = when(arkivsystem){
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostId"
     DokumentArkivSystem.JOARK -> "JOARK-$journalpostId"
-    else -> null
+    else -> "BIF-${this.forsendelse.forsendelseId}"
 }
 fun List<Dokument>.hent(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }

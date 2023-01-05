@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import no.nav.bidrag.dokument.dto.ÅpneDokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.tjeneste.DistribusjonTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.ForsendelseInnsynTjeneste
@@ -29,10 +30,10 @@ class DokumentKontroller(val hentDokumentTjeneste: HentDokumentTjeneste) {
 
     @RequestMapping("/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}", method = [RequestMethod.OPTIONS])
     @Operation(
-        summary = "Hent fysisk dokument som byte",
+        summary = "Hent metadata om dokument",
         security = [SecurityRequirement(name = "bearer-key")],
     )
-    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ByteArray {
-        return hentDokumentTjeneste.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
+    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ÅpneDokumentMetadata {
+        return hentDokumentTjeneste.hentDokumentMetadata(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
     }
 }
