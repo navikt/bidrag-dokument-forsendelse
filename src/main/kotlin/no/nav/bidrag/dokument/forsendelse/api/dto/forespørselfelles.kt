@@ -11,7 +11,7 @@ typealias JournalpostId = String
 
 val JournalpostId.utenPrefiks get() = this.replace("\\D".toRegex(), "")
 val JournalpostId.harArkivPrefiks get() = this.contains("-")
-val JournalpostId.arkivsystem get(): DokumentArkivSystemDto? = if (!harArkivPrefiks) null else if(this.startsWith("JOARK")) DokumentArkivSystemDto.JOARK else DokumentArkivSystemDto.MIDL_BREVLAGER
+val JournalpostId.arkivsystem get(): DokumentArkivSystemDto? = if (!harArkivPrefiks) null else if(this.startsWith("JOARK")) DokumentArkivSystemDto.JOARK else DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
 
 @Schema(description = "Metadata til en respons etter dokumenter i forsendelse ble opprettet")
 data class DokumentRespons(
@@ -71,7 +71,7 @@ enum class MottakerIdentTypeTo {
 
 enum class DokumentStatusTo {
     IKKE_BESTILT,
-    BESTILT,
+    BESTILLING_FEILET,
     AVBRUTT,
     UNDER_PRODUKSJON,
     UNDER_REDIGERING,

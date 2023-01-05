@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 
 @ForsendelseApiKontroller
 class DokumentKontroller(val hentDokumentTjeneste: HentDokumentTjeneste) {
@@ -22,6 +24,15 @@ class DokumentKontroller(val hentDokumentTjeneste: HentDokumentTjeneste) {
         security = [SecurityRequirement(name = "bearer-key")],
     )
     fun hentDokument(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ByteArray {
+        return hentDokumentTjeneste.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
+    }
+
+    @RequestMapping("/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}", method = [RequestMethod.OPTIONS])
+    @Operation(
+        summary = "Hent fysisk dokument som byte",
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ByteArray {
         return hentDokumentTjeneste.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
@@ -26,6 +28,7 @@ class BidragDokumentBestillingKonsumer(
         private val LOGGER = LoggerFactory.getLogger(BidragDokumentBestillingKonsumer::class.java)
     }
 
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun bestill(forespørsel: DokumentBestillingForespørsel, dokumentmalId: String): DokumentBestillingResponse? {
         val respons = restTemplate.exchange("/bestill/$dokumentmalId", HttpMethod.POST, HttpEntity(forespørsel), DokumentBestillingResponse::class.java).body
         LOGGER.info("Bestilte dokument med dokumentmalId $dokumentmalId")

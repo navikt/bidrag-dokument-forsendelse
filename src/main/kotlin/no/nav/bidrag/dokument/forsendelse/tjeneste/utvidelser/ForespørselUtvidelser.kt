@@ -1,7 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser
 
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentTilknyttetSomTo
@@ -58,12 +57,12 @@ fun MottakerAdresseTo.tilAdresse() =  Adresse(
 )
 
 fun JournalpostId.tilArkivSystemDo() = when(this.arkivsystem){
-    DokumentArkivSystemDto.MIDL_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
+    DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
     DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
     else -> null
 }
 fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when(this.arkivsystem){
-    DokumentArkivSystemDto.MIDL_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
+    DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
     DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
     else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
 }
@@ -71,10 +70,10 @@ fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when(this.ark
 fun DokumentForespørsel.erBestillingAvNyttDokument() = this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
 fun DokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
     DokumentStatus.IKKE_BESTILT else when(this.status){
+    DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
     DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
     DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT
     DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
-    DokumentStatusTo.BESTILT -> DokumentStatus.BESTILT
     DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
     DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
 }

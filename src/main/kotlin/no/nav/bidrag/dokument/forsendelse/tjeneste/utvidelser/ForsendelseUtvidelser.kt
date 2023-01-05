@@ -7,7 +7,6 @@ import no.nav.bidrag.dokument.dto.DokumentDto
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.KodeDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -27,7 +26,7 @@ import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 
 val Dokument.journalpostIdMedPrefix get() = when(arkivsystem){
-    DokumentArkivSystem.MIDL_BREVLAGER -> "BID-$journalpostId"
+    DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostId"
     DokumentArkivSystem.JOARK -> "JOARK-$journalpostId"
     else -> null
 }
@@ -119,11 +118,11 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             dokumentreferanse = dokument.dokumentreferanse,
             journalpostId = dokument.journalpostId?.let { jpId -> when(dokument.arkivsystem){
                DokumentArkivSystem.JOARK -> "JOARK-${jpId.utenPrefiks}"
-               DokumentArkivSystem.MIDL_BREVLAGER -> "BID-${jpId.utenPrefiks}"
+               DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-${jpId.utenPrefiks}"
                else -> null
             }},
             arkivSystem = when (dokument.arkivsystem) {
-                DokumentArkivSystem.MIDL_BREVLAGER -> DokumentArkivSystemDto.MIDL_BREVLAGER
+                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
                 DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
                 else -> null
             },
@@ -131,7 +130,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             tittel = dokument.tittel,
             dokumentmalId = dokument.dokumentmalId,
             status = when (dokument.dokumentStatus) {
-                DokumentStatus.BESTILT -> DokumentStatusDto.BESTILT
+                DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
                 DokumentStatus.FERDIGSTILT -> DokumentStatusDto.FERDIGSTILT
@@ -186,17 +185,17 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,
             arkivsystem = when (it.arkivsystem) {
-                DokumentArkivSystem.MIDL_BREVLAGER -> DokumentArkivSystemDto.MIDL_BREVLAGER
+                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
                 DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
                 else -> null
             },
             metadata = it.metadata,
             status = when (it.dokumentStatus) {
-                DokumentStatus.BESTILT -> DokumentStatusTo.BESTILT
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
                 DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT
                 DokumentStatus.IKKE_BESTILT -> DokumentStatusTo.IKKE_BESTILT
+                DokumentStatus.BESTILLING_FEILET -> DokumentStatusTo.BESTILLING_FEILET
                 DokumentStatus.AVBRUTT -> DokumentStatusTo.AVBRUTT
             }
         )

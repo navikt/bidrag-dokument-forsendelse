@@ -41,23 +41,26 @@ class DokumentBestillingLytter(
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 
 
-//        val bestilling = tilForespørsel(forsendelse, dokument)
+        val bestilling = tilForespørsel(forsendelse, dokument)
 
         try {
-            dokumentKafkaHendelseProdusent.publiser(tilBestillingHendelse(forsendelse, dokument))
+//            dokumentKafkaHendelseProdusent.publiser(tilBestillingHendelse(forsendelse, dokument))
 
-//            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
-//
-//            dokumentTjeneste.lagreDokument(
-//                dokument.copy(
-//                    arkivsystem = when (respons?.arkivSystem) {
-//                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDL_BREVLAGER
-//                        else -> DokumentArkivSystem.UKJENT
-//                    },
-//                    dokumentStatus = DokumentStatus.BESTILT
-//                )
-//            )
+            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
+
+            dokumentTjeneste.lagreDokument(
+                dokument.copy(
+                    arkivsystem = when (respons?.arkivSystem) {
+                        DokumentArkivSystemTo.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                        else -> DokumentArkivSystem.UKJENT
+                    },
+                    dokumentStatus = DokumentStatus.UNDER_PRODUKSJON
+                )
+            )
         } catch (e: Exception){
+            dokumentTjeneste.lagreDokument(
+                dokument.copy(dokumentStatus = DokumentStatus.BESTILLING_FEILET)
+            )
             LOGGER.error(e){ "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId" }
         }
 

@@ -39,6 +39,7 @@ data class Forsendelse (
     val saksnummer: String,
     val gjelderIdent: String,
     val opprettetAvIdent: String,
+    val endretAvIdent: String,
     val opprettetAvNavn: String? = null,
     val avbruttAvIdent: String? = null,
     val distribuertAvIdent: String? = null,

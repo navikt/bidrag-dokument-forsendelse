@@ -42,18 +42,20 @@ import javax.transaction.Transactional
 
 @Component
 @Transactional
-class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, val dokumentTjeneste: DokumentTjeneste, val bidragDokumentKonsumer: BidragDokumentKonsumer, val hentDokumentTjeneste: HentDokumentTjeneste) {
+class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInfoManager, val forsendelseTjeneste: ForsendelseTjeneste, val dokumentTjeneste: DokumentTjeneste, val bidragDokumentKonsumer: BidragDokumentKonsumer, val hentDokumentTjeneste: HentDokumentTjeneste) {
 
     fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanEndreForsendelse()
+        val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         val oppdatertForsendelse = forsendelseTjeneste.lagre(forsendelse.copy(
             gjelderIdent = forespørsel.gjelderIdent ?: forsendelse.gjelderIdent,
             mottaker = oppdaterMottaker(forsendelse.mottaker, forespørsel.mottaker),
             saksnummer = forespørsel.saksnummer ?: forsendelse.saksnummer,
             enhet = forespørsel.enhet ?: forsendelse.enhet,
             språk = forespørsel.språk ?: forsendelse.språk,
-            dokumenter = oppdaterDokumenter(forsendelse, forespørsel)
+            dokumenter = oppdaterDokumenter(forsendelse, forespørsel),
+            endretAvIdent = bruker?.ident ?: "Ukjent"
         ))
 
 
@@ -126,8 +128,8 @@ class OppdaterForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, 
         if (oppdaterteDokumenter.isEmpty()){
             throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
         }
-
-        forsendelseTjeneste.lagre(forsendelse.copy(dokumenter = oppdaterteDokumenter.alleMedMinstEnHoveddokument))
+        val bruker = saksbehandlerInfoManager.hentSaksbehandler()
+        forsendelseTjeneste.lagre(forsendelse.copy(dokumenter = oppdaterteDokumenter.alleMedMinstEnHoveddokument, endretAvIdent = bruker?.ident ?: "UKJENT"))
 
         return OppdaterForsendelseResponse(
             forsendelseId = forsendelse.forsendelseId.toString(),

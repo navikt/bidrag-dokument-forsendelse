@@ -50,6 +50,7 @@ class OpprettForsendelseTjeneste(val forsendelseTjeneste: ForsendelseTjeneste, v
             enhet = forespørsel.enhet,
             språk = forespørsel.språk ?: "NB",
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
+            endretAvIdent = bruker?.ident ?: "UKJENT",
             opprettetAvNavn = bruker?.navn,
             mottaker = forespørsel.mottaker?.tilMottaker()
         )

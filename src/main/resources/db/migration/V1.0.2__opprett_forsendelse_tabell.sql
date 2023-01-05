@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS forsendelse
     status                          text,
     gjelder_ident                   text not null,
     opprettet_av_ident              text,
+    endret_av_ident                 text,
     avbrutt_av_ident                text,
     distribuert_av_ident            text,
     opprettet_av_navn               text,
@@ -26,5 +27,3 @@ CREATE TABLE IF NOT EXISTS forsendelse
 CREATE INDEX idx_fors_saksnummer ON forsendelse(saksnummer);
 CREATE INDEX idx_fors_jpid ON forsendelse(arkiv_journalpost_id);
 CREATE INDEX idx_fors_status ON forsendelse(status);
-
-CREATE TRIGGER update_forsendelse_endret BEFORE UPDATE ON forsendelse FOR EACH ROW EXECUTE PROCEDURE oppdater_endret_tidspunkt();
