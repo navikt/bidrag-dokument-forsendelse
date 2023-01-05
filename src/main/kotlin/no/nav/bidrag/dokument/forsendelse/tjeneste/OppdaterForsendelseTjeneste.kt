@@ -110,7 +110,7 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) hentDokumentTjeneste.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
-       else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix, dokument.eksternDokumentreferanse)!!
+       else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix, dokument.dokumentreferanse)!!
     }
     fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse?{
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
