@@ -48,7 +48,7 @@ class DistribusjonTjeneste(
             )
         }
 
-        val resultat = bidragDokumentKonsumer.distribuer(forsendelse.arkivJournalpostId!!, adresse) ?: return null
+        val resultat = bidragDokumentKonsumer.distribuer("JOARK-${forsendelse.arkivJournalpostId}", adresse) ?: return null
 
         forsendelseTjeneste.lagre(forsendelse.copy(
             distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),

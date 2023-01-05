@@ -18,7 +18,7 @@ class ForsendelseInnsynTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
     fun hentForsendelseForSakLegacy(saksnummer: String): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
 
-        return forsendelser.map { forsendelse -> forsendelse.tilJournalpostDto() }
+        return forsendelser.filter { it.arkivJournalpostId == null }.map { forsendelse -> forsendelse.tilJournalpostDto() }
     }
 
     fun hentForsendelseLegacy(forsendelseId: Long): JournalpostResponse? {

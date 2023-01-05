@@ -36,6 +36,7 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.validerKanEndreFor
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.validerKanFerdigstilleForsendelse
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 
@@ -102,7 +103,11 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
 
         val respons = bidragDokumentKonsumer.opprettJournalpost(opprettJournalpostRequest)
 
-        forsendelseTjeneste.lagre(forsendelse.copy(arkivJournalpostId = respons!!.journalpostId, status = ForsendelseStatus.FERDIGSTILT))
+        forsendelseTjeneste.lagre(forsendelse.copy(
+            arkivJournalpostId = respons!!.journalpostId,
+            status = ForsendelseStatus.FERDIGSTILT,
+            ferdigstiltTidspunkt = LocalDateTime.now())
+        )
 
         return respons
 

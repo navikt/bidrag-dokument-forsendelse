@@ -6,14 +6,11 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
 import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.SAKSBEHANDLERINFO_CACHE
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.SaksbehandlerInfoResponse
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
@@ -24,6 +21,7 @@ class BidragDokumentKonsumer(
     securityTokenService: SecurityTokenService
 ): DefaultConsumer("bidrag-dokument", bidragDokument, baseRestTemplate, securityTokenService) {
 
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
         return restTemplate.exchange(
             "/journalpost/JOARK",
@@ -33,6 +31,7 @@ class BidragDokumentKonsumer(
         ).body
     }
 
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
         return restTemplate.exchange(
             "/dokument/$journalpostId/$dokumentId?optimizeForPrint=false",
@@ -41,6 +40,8 @@ class BidragDokumentKonsumer(
             ByteArray::class.java
         ).body
     }
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun distribuer(journalpostId: String, adresse: DistribuerTilAdresse? = null): DistribuerJournalpostResponse? {
         return restTemplate.exchange(
             "/journal/distribuer/$journalpostId",
