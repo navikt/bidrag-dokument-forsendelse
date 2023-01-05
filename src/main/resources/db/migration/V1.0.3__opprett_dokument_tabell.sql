@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS dokument
     metadata                        hstore,
     slettet_tidspunkt               timestamp without time zone,
     opprettet_tidspunkt             timestamp without time zone DEFAULT now() NOT NULL,
-    endret_tidspunkt                timestamp without time zone DEFAULT now() NOT NULL,
     forsendelse_id                  bigint not null,
     UNIQUE (ekstern_dokumentreferanse, forsendelse_id),
     CONSTRAINT fk_forsendelse_id FOREIGN KEY (forsendelse_id) REFERENCES forsendelse(forsendelse_id)
@@ -22,8 +21,6 @@ CREATE TABLE IF NOT EXISTS dokument
 CREATE INDEX idx_dokumentreferanse ON dokument(ekstern_dokumentreferanse);
 CREATE INDEX idx_dokument_kilde ON dokument(arkivsystem);
 CREATE INDEX idx_dokument_status ON dokument(dokument_status);
-
-CREATE TRIGGER update_dokument_endret BEFORE UPDATE ON dokument FOR EACH ROW EXECUTE PROCEDURE oppdater_endret_tidspunkt();
 
 create rule beskytt_rad_som_ikke_har_ekstern_referanse as
     on delete to dokument
