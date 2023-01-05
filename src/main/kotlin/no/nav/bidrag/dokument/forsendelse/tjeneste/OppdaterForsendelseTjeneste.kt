@@ -72,6 +72,12 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
+    fun ferdigstillOgHentForsendelse(forsendelseId: Long): Forsendelse? {
+        ferdigstillForsendelse(forsendelseId)
+        return forsendelseTjeneste.medForsendelseId(forsendelseId)
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun ferdigstillForsendelse(forsendelseId: Long): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()

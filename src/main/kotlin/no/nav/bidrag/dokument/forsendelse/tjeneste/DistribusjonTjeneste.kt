@@ -29,8 +29,7 @@ class DistribusjonTjeneste(
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
 
         if (forsendelse.arkivJournalpostId.isNullOrEmpty()){
-            oppdaterForsendelseTjeneste.ferdigstillForsendelse(forsendelseId)
-            forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)!!
+            forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId)!!
         }
 
         if (forsendelse.arkivJournalpostId.isNullOrEmpty()){
