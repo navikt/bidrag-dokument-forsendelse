@@ -25,11 +25,13 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 
-val Dokument.journalpostIdMedPrefix get() = when(arkivsystem){
+val Dokument.journalpostIdMedPrefix get() = if (journalpostId.isNullOrEmpty())
+    "BIF-${this.forsendelse.forsendelseId}" else when(arkivsystem){
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostId"
     DokumentArkivSystem.JOARK -> "JOARK-$journalpostId"
     else -> "BIF-${this.forsendelse.forsendelseId}"
 }
+
 fun List<Dokument>.hent(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }
 val List<Dokument>.hoveddokumentFørst get() = dokumenterIkkeSlettet.sortedByDescending { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }
