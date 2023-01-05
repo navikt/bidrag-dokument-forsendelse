@@ -25,6 +25,14 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 
+fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
+    DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
+    DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
+    DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
+    DokumentStatus.FERDIGSTILT -> DokumentStatusDto.FERDIGSTILT
+    DokumentStatus.IKKE_BESTILT -> DokumentStatusDto.IKKE_BESTILT
+    DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
+}
 val Dokument.journalpostIdMedPrefix get() = if (journalpostId.isNullOrEmpty())
     "BIF-${this.forsendelse.forsendelseId}" else when(arkivsystem){
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostId"

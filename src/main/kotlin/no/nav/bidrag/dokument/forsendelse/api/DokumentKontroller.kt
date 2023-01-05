@@ -28,12 +28,12 @@ class DokumentKontroller(val hentDokumentTjeneste: HentDokumentTjeneste) {
         return hentDokumentTjeneste.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
     }
 
-    @RequestMapping("/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}", method = [RequestMethod.OPTIONS])
+    @RequestMapping(*["/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}" ,"/dokument/{forsendelseIdMedPrefix}"], method = [RequestMethod.OPTIONS])
     @Operation(
         summary = "Hent metadata om dokument",
         security = [SecurityRequirement(name = "bearer-key")],
     )
-    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ÅpneDokumentMetadata {
+    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable(required = false) dokumentreferanse: String?): List<ÅpneDokumentMetadata> {
         return hentDokumentTjeneste.hentDokumentMetadata(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
     }
 }
