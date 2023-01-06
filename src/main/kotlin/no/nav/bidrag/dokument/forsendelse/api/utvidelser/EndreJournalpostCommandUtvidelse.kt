@@ -15,7 +15,7 @@ fun EndreJournalpostCommand.tilOppdaterForsendelseForespørsel(): OppdaterForsen
         mottaker = MottakerTo(this.avsenderMottakerId, this.avsenderMottakerNavn).takeIf { this.harMottaker },
         dokumenter = this.endreDokumenter.map {
             OppdaterDokumentForespørsel(
-                dokumentreferanse = it.dokId.toString(),
+                dokumentreferanse = it.dokumentreferanse ?: it.dokId,
                 tittel = it.tittel,
                 dokumentmalId = it.brevkode
             )
