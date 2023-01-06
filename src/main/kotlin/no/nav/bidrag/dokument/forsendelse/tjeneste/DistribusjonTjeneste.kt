@@ -4,8 +4,10 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentKonsumer
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeDistribuereForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erAlleFerdigstilt
 import org.springframework.stereotype.Component
@@ -20,12 +22,16 @@ class DistribusjonTjeneste(
     fun kanDistribuere(forsendelseId: Long): Boolean {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
 
+        if (forsendelse.forsendelseType != ForsendelseType.UTGÅENDE) return false
+
         return forsendelse.status == ForsendelseStatus.FERDIGSTILT
                 || forsendelse.dokumenter.erAlleFerdigstilt && forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON
     }
 
     @Transactional
     fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse? {
+        if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
+
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
 
         if (forsendelse.arkivJournalpostId.isNullOrEmpty()){

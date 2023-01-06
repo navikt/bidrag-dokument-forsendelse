@@ -6,9 +6,13 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erAlleFerdigstilt
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
@@ -16,7 +20,7 @@ import org.springframework.stereotype.Component
 private val log = KotlinLogging.logger {}
 
 @Component
-class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste) {
+class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste, val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste) {
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>){
@@ -26,7 +30,7 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
 
         val dokumenter = dokumentTjeneste.hentDokumenterMedReferanse(hendelse.dokumentreferanse)
 
-        dokumenter.forEach {
+        val oppdaterteDokumenter = dokumenter.map {
             dokumentTjeneste.lagreDokument(
                 it.copy(
                     arkivsystem = when(hendelse.arkivSystem){
@@ -42,6 +46,19 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
 
                 )
             )
+        }
+
+        ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+
+    }
+
+    private fun ferdigstillHvisForsendelseErNotat(dokumenter: List<Dokument>){
+        dokumenter.forEach {
+            val forsendelse = it.forsendelse
+
+            if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt){
+                oppdaterForsendelseTjeneste.ferdigstillForsendelse(forsendelse.forsendelseId!!)
+            }
         }
 
     }
