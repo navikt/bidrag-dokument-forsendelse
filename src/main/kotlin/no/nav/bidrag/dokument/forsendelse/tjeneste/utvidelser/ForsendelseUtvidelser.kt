@@ -33,6 +33,12 @@ fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
     DokumentStatus.IKKE_BESTILT -> DokumentStatusDto.IKKE_BESTILT
     DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
 }
+
+fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
+    DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
+    DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
+    else -> DokumentArkivSystemDto.UKJENT
+}
 val Dokument.journalpostIdMedPrefix get() = if (journalpostId.isNullOrEmpty())
     "BIF-${this.forsendelse.forsendelseId}" else when(arkivsystem){
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostId"
@@ -131,22 +137,11 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-${jpId.utenPrefiks}"
                else -> null
             }},
-            arkivSystem = when (dokument.arkivsystem) {
-                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
-                DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
-                else -> null
-            },
+            arkivSystem = dokument.tilArkivSystemDto(),
             metadata = dokument.metadata,
             tittel = dokument.tittel,
             dokumentmalId = dokument.dokumentmalId,
-            status = when (dokument.dokumentStatus) {
-                DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
-                DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
-                DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
-                DokumentStatus.FERDIGSTILT -> DokumentStatusDto.FERDIGSTILT
-                DokumentStatus.IKKE_BESTILT -> DokumentStatusDto.IKKE_BESTILT
-                DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
-            }
+            status = dokument.tilDokumentStatusDto()
         )
     },
     sakstilknytninger = listOf(saksnummer),
@@ -194,11 +189,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             tittel = it.tittel,
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,
-            arkivsystem = when (it.arkivsystem) {
-                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
-                DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
-                else -> null
-            },
+            arkivsystem = it.tilArkivSystemDto(),
             metadata = it.metadata,
             status = when (it.dokumentStatus) {
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING

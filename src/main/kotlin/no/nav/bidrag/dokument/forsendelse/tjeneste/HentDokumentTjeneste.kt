@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilDokumentStatusDto
 import org.springframework.stereotype.Component
 
@@ -54,7 +55,8 @@ class HentDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
                     DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
                     else -> DokumentFormatDto.PDF
                 },
-                status = dokument.tilDokumentStatusDto()
+                status = dokument.tilDokumentStatusDto(),
+                arkivsystem = dokument.tilArkivSystemDto()
             )
         }
 
@@ -62,7 +64,8 @@ class HentDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
             journalpostId = dokument.journalpostIdMedPrefix,
             dokumentreferanse = dokument.dokumentreferanse,
             format = DokumentFormatDto.PDF,
-            status = dokument.tilDokumentStatusDto()
+            status = dokument.tilDokumentStatusDto(),
+            arkivsystem = dokument.tilArkivSystemDto()
         )
     }
 }

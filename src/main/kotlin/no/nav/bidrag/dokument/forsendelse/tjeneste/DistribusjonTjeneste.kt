@@ -32,10 +32,6 @@ class DistribusjonTjeneste(
             forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId)!!
         }
 
-        if (forsendelse.arkivJournalpostId.isNullOrEmpty()){
-            throw KanIkkeDistribuereForsendelse(forsendelseId)
-        }
-
         val adresse = distribuerJournalpostRequest?.adresse ?: forsendelse.mottaker?.adresse?.let {
             DistribuerTilAdresse(
                 adresselinje1 = it.adresselinje1,

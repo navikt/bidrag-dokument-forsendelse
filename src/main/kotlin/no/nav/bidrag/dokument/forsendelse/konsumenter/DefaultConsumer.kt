@@ -8,6 +8,6 @@ open class DefaultConsumer(var restTemplate: RestTemplate) {
 
     constructor(clientId: String, baseUrl: String, restTemplate: RestTemplate, securityTokenService: SecurityTokenService) : this(restTemplate) {
         restTemplate.uriTemplateHandler = RootUriTemplateHandler(baseUrl)
-        restTemplate.interceptors.add(securityTokenService.serviceUserAuthTokenInterceptor(clientId))
+        restTemplate.interceptors.add(securityTokenService.authTokenInterceptor(clientId))
     }
 }
