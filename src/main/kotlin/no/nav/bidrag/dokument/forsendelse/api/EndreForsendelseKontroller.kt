@@ -53,10 +53,10 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
             ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for forsendelseId"),
         ]
     )
-    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: EndreJournalpostCommand): ResponseEntity<OppdaterForsendelseResponse> {
+    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: EndreJournalpostCommand): ResponseEntity<Void> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel()) ?: return ResponseEntity.badRequest().build()
-        return ResponseEntity.ok(respons)
+        oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel()) ?: return ResponseEntity.badRequest().build()
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/{forsendelseIdMedPrefix}/dokument")

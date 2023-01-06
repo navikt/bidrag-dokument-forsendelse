@@ -27,10 +27,12 @@ class HentDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
             throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
         }
 
-        val dokument = forsendelse.dokumenter.hent(dokumentreferanse)
+        throw NotImplementedError("")
+
+//        val dokument = forsendelse.dokumenter.hent(dokumentreferanse)
         // TODO: Hent dokument fra ny løsning
         // TODO: Hent redigert dokument fra bytearray
-        return "DOK".toByteArray()
+//        return "DOK".toByteArray()
     }
 
     fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: Dokumentreferanse?): List<ÅpneDokumentMetadata> {
