@@ -1,9 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
 
+import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 
 data class DokumentBestillingForespørsel(
-    val mottakerId: String? = null,
     val mottaker: MottakerTo? = null,
     val samhandlerInformasjon: SamhandlerInformasjon? = null,
     val saksbehandler: Saksbehandler? = null,
@@ -23,11 +23,14 @@ data class MottakerTo(
 )
 
 data class MottakerAdresseTo(
-    val adresselinje1: String? = null,
+    val adresselinje1: String,
     val adresselinje2: String? = null,
     val adresselinje3: String? = null,
-    val postnummer: String? = null,
+    val bruksenhetsnummer: String? = null,
     val landkode: String? = null,
+    val landkode3: String? = null,
+    val postnummer: String? = null,
+    val poststed: String? = null,
 )
 
 data class DokumentBestillingResponse(

@@ -12,6 +12,8 @@ import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseReposit
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentBestillingKonsumer
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentArkivSystemTo
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingForespørsel
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.MottakerAdresseTo
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
@@ -44,8 +46,6 @@ class DokumentBestillingLytter(
         val bestilling = tilForespørsel(forsendelse, dokument)
 
         try {
-//            dokumentKafkaHendelseProdusent.publiser(tilBestillingHendelse(forsendelse, dokument))
-
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
 
             dokumentTjeneste.lagreDokument(
@@ -72,9 +72,22 @@ class DokumentBestillingLytter(
             saksnummer = forsendelse.saksnummer,
             tittel = dokument.tittel,
             gjelderId = forsendelse.gjelderIdent,
-            mottakerId = forsendelse.mottaker?.ident,
             enhet = forsendelse.enhet,
-            språk = forsendelse.språk
+            språk = forsendelse.språk,
+            mottaker = forsendelse.mottaker?.let { mottaker ->
+                MottakerTo(mottaker.ident, mottaker.navn, mottaker.språk, adresse =mottaker.adresse?.let {
+                    MottakerAdresseTo(
+                        adresselinje1 = it.adresselinje1,
+                        adresselinje2 = it.adresselinje2,
+                        adresselinje3 = it.adresselinje3,
+                        bruksenhetsnummer = it.bruksenhetsnummer,
+                        postnummer = it.postnummer,
+                        landkode = it.landkode,
+                        landkode3 = it.landkode3,
+                        poststed = it.poststed
+                    )
+                })
+            }
         )
 
     private fun tilBestillingHendelse(forsendelse: Forsendelse, dokument: Dokument): DokumentHendelse =
