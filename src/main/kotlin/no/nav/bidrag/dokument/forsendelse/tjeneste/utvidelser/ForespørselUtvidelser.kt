@@ -68,7 +68,7 @@ fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when(this.ark
 }
 
 fun DokumentForespørsel.erBestillingAvNyttDokument() = this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
-fun DokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
+fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
     DokumentStatus.IKKE_BESTILT else when(this.status){
     DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
     DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
@@ -78,7 +78,7 @@ fun DokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDoku
     DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
 }
 
-fun DokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, tilknyttetSom: DokumentTilknyttetSom? = null) = Dokument(
+fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, tilknyttetSom: DokumentTilknyttetSom? = null) = Dokument(
     forsendelse = forsendelse,
     tilknyttetSom = tilknyttetSom ?: when(this.tilknyttetSom) { DokumentTilknyttetSomTo.HOVEDDOKUMENT -> DokumentTilknyttetSom.HOVEDDOKUMENT else -> DokumentTilknyttetSom.VEDLEGG},
     tittel = this.tittel!!,

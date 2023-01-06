@@ -175,13 +175,13 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
 
     private fun oppdaterDokumenter(forsendelse: Forsendelse, forespørsel: OppdaterForsendelseForespørsel): List<Dokument> {
         val oppdaterteDokumenterFraForespørsel = forespørsel.dokumenter
-        val eksisterendeDokumenter = forsendelse.dokumenter
-        val nyeDokumenterFraForespørsel = oppdaterteDokumenterFraForespørsel.filter{!it.fjernTilknytning }.filter { dokumentFraForespørsel -> !eksisterendeDokumenter.any {  dokumentFraForespørsel.dokumentreferanse == it.dokumentreferanse} }
-        val nyeDokumenter = dokumentTjeneste.opprettNyDokument(forsendelse, nyeDokumenterFraForespørsel)
+//        val eksisterendeDokumenter = forsendelse.dokumenter
+//        val nyeDokumenterFraForespørsel = oppdaterteDokumenterFraForespørsel.filter{!it.fjernTilknytning }.filter { dokumentFraForespørsel -> !eksisterendeDokumenter.any {  dokumentFraForespørsel.dokumentreferanse == it.dokumentreferanse} }
+//        val nyeDokumenter = dokumentTjeneste.opprettNyDokument(forsendelse, nyeDokumenterFraForespørsel)
 
         val oppdatertHoveddokumentReferanse = oppdaterteDokumenterFraForespørsel.find { it.tilknyttetSom == DokumentTilknyttetSomTo.HOVEDDOKUMENT }?.dokumentreferanse
 
-        val oppdaterteDokumenter = forsendelse.dokumenter.filter{!forespørsel.skalDokumentSlettes(it.dokumentreferanse) || it.eksternDokumentreferanse == null}
+        val oppdaterteDokumenter = forsendelse.dokumenter//.filter{!forespørsel.skalDokumentSlettes(it.dokumentreferanse) || it.eksternDokumentreferanse == null}
             .map {
                 val oppdaterDokument = forespørsel.hent(it.dokumentreferanse)
                 it.copy(
@@ -192,9 +192,9 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
                         it.dokumentreferanse -> DokumentTilknyttetSom.HOVEDDOKUMENT
                         else -> DokumentTilknyttetSom.VEDLEGG
                     },
-                    slettetTidspunkt = if (forespørsel.skalDokumentSlettes(it.dokumentreferanse)) LocalDate.now() else null
+                    //slettetTidspunkt = if (forespørsel.skalDokumentSlettes(it.dokumentreferanse)) LocalDate.now() else null
                 )
-            } + nyeDokumenter
+            } //+ nyeDokumenter
 
         return oppdaterteDokumenter.alleMedMinstEnHoveddokument
     }

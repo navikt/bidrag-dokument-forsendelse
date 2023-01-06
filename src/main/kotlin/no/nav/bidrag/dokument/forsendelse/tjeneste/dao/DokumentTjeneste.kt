@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste.dao
 
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
@@ -15,13 +16,13 @@ import javax.transaction.Transactional
 
 @Component
 class DokumentTjeneste(val dokumentRepository: DokumentRepository, val dokumentBestillingTjeneste: DokumentBestillingTjeneste) {
-    fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: DokumentForespørsel): Dokument {
+    fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel): Dokument {
         val nyDokument = forespørsel.tilDokumentDo(forsendelse)
 
         return lagreDokument(nyDokument)
     }
 
-    fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: List<DokumentForespørsel>): List<Dokument> {
+    fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
         val nyeDokumenter = forespørsel.map { it.tilDokumentDo(forsendelse) }
         return lagreDokumenter(nyeDokumenter.alleMedMinstEnHoveddokument)
     }

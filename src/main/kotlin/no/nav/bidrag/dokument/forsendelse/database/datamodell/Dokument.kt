@@ -48,5 +48,5 @@ data class Dokument (
     @JoinColumn(name = "forsendelse_id")
     val forsendelse: Forsendelse
 ){
-    val dokumentreferanse get() = eksternDokumentreferanse ?: "BIF_$dokumentId"
+    val dokumentreferanse get() = eksternDokumentreferanse ?: "BIF$dokumentId"
 }

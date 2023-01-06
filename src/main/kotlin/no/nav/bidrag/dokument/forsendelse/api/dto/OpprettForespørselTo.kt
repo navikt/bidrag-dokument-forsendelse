@@ -30,4 +30,5 @@ data class OpprettForsendelseRespons(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettDokumentForespørsel(
     @Schema(description = "Dokumentets tittel") override val tittel: String = "",
+    @Schema(description = "Om dokumentet med oppgitt dokumentmalId skal bestilles der dokumentreferanse/journalpostid ikke er oppgitt.") val bestillDokument: Boolean = true,
 ): DokumentForespørsel()
