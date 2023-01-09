@@ -30,5 +30,7 @@ data class OpprettForsendelseRespons(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettDokumentForespørsel(
     @Schema(description = "Dokumentets tittel") override val tittel: String = "",
+    @Schema(description = "Om dokumentet skal være tilknyttet som hoveddokument eller vedlegg til forsendelsen") override val tilknyttetSom: DokumentTilknyttetSomTo? = null,
+    @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") override val dokumentmalId: String? = null,
     @Schema(description = "Om dokumentet med oppgitt dokumentmalId skal bestilles der dokumentreferanse/journalpostid ikke er oppgitt.") val bestillDokument: Boolean = true,
 ): DokumentForespørsel()

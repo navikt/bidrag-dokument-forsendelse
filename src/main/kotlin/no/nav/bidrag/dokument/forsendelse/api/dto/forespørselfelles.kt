@@ -28,7 +28,7 @@ data class DokumentRespons(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 sealed class DokumentForespørsel(
     @Schema(description = "Dokumentets tittel") open val tittel: String? = "",
-    @Schema(description = "Om dokumentet skal være tilknyttet som hoveddokument eller vedlegg til forsendelsen") val tilknyttetSom: DokumentTilknyttetSomTo? = null,
+    @Schema(description = "Om dokumentet skal være tilknyttet som hoveddokument eller vedlegg til forsendelsen") open val tilknyttetSom: DokumentTilknyttetSomTo? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") open val dokumentmalId: String? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") val journalpostId: JournalpostId? = null,
