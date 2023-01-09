@@ -26,6 +26,7 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEnHoveddokument
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.skalDokumentSlettes
@@ -83,10 +84,10 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
         forsendelse.validerKanFerdigstilleForsendelse()
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
-            avsenderMottaker = AvsenderMottakerDto(
+            avsenderMottaker = if (!forsendelse.erNotat) AvsenderMottakerDto(
                 ident = forsendelse.mottaker!!.ident,
                 navn = forsendelse.mottaker.navn
-            ),
+            ) else null,
             referanseId = "BIF_${forsendelse.forsendelseId}",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
@@ -104,6 +105,7 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
                 )
             },
             tilknyttSaker = listOf(forsendelse.saksnummer),
+            saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null,
             skalFerdigstilles = true
         )
 

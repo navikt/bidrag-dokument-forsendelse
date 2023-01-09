@@ -92,6 +92,8 @@ fun Forsendelse.validerKanFerdigstilleForsendelse(){
     }
 }
 
+val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
+
 fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {
         AvsenderMottakerDto(it.navn, it.ident, adresse = it.adresse?.let { adresse -> no.nav.bidrag.dokument.dto.MottakerAdresseTo(
