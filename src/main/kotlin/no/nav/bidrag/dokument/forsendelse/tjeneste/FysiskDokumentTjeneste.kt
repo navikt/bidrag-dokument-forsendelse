@@ -16,7 +16,7 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilDokumentStatusD
 import org.springframework.stereotype.Component
 
 @Component
-class HentDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
+class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
 
 
     fun hentDokument(forsendelseId: Long, dokumentreferanse: Dokumentreferanse): ByteArray {

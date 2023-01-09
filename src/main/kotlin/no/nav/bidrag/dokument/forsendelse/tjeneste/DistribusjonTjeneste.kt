@@ -17,7 +17,10 @@ import javax.transaction.Transactional
 @Component
 class DistribusjonTjeneste(
     private val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste,
-    private val forsendelseTjeneste: ForsendelseTjeneste, private val bidragDokumentKonsumer: BidragDokumentKonsumer, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val bidragDokumentKonsumer: BidragDokumentKonsumer,
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+) {
 
     fun kanDistribuere(forsendelseId: Long): Boolean {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false

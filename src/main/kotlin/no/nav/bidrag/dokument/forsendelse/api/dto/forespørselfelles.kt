@@ -31,9 +31,9 @@ sealed class DokumentForespørsel(
     @Schema(description = "Om dokumentet skal være tilknyttet som hoveddokument eller vedlegg til forsendelsen") open val tilknyttetSom: DokumentTilknyttetSomTo? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") open val dokumentmalId: String? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
-    @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") val journalpostId: JournalpostId? = null,
+    @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
     @Schema(description = "Selve PDF dokumentet formatert som Base64. Dette skal bare settes hvis dokumentet er redigert.") val fysiskDokument: ByteArray? = null,
-    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
+    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") open val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
     @Schema(description = "Arkivsystem hvor dokument er lagret") val arkivsystem: DokumentArkivSystemDto? = null,
     @Schema(description = "Dokument metadata") val metadata: Map<String, String> = emptyMap(),
 

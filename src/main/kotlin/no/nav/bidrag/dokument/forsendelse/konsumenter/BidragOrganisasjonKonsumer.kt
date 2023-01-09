@@ -19,14 +19,10 @@ class BidragOrganisasjonKonsumer(
     @Cacheable(SAKSBEHANDLERINFO_CACHE)
     fun hentSaksbehandlerInfo(saksbehandlerIdent: String): SaksbehandlerInfoResponse? {
         return restTemplate.exchange(
-            String.format(SAKSBEHANDLER_INFO, saksbehandlerIdent),
+            "/saksbehandler/info/$saksbehandlerIdent",
             HttpMethod.GET,
             null,
             SaksbehandlerInfoResponse::class.java
         ).body
-    }
-
-    companion object {
-        const val SAKSBEHANDLER_INFO = "/saksbehandler/info/%s"
     }
 }

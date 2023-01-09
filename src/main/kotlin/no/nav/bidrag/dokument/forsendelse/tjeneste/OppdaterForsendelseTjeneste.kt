@@ -29,7 +29,6 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEnHove
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.skalDokumentSlettes
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilAdresse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilIdentType
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilMottaker
@@ -44,7 +43,13 @@ import javax.transaction.Transactional
 
 @Component
 @Transactional
-class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInfoManager, val forsendelseTjeneste: ForsendelseTjeneste, val dokumentTjeneste: DokumentTjeneste, val bidragDokumentKonsumer: BidragDokumentKonsumer, val hentDokumentTjeneste: HentDokumentTjeneste) {
+class OppdaterForsendelseTjeneste(
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val dokumentTjeneste: DokumentTjeneste,
+    private val bidragDokumentKonsumer: BidragDokumentKonsumer,
+    private val fysiskDokumentTjeneste: FysiskDokumentTjeneste
+) {
 
     fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
@@ -122,7 +127,7 @@ class OppdaterForsendelseTjeneste(val saksbehandlerInfoManager: SaksbehandlerInf
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
-       return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) hentDokumentTjeneste.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
+       return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentTjeneste.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
        else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix, dokument.dokumentreferanse)!!
     }
     fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse?{

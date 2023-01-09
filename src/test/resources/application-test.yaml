@@ -1,9 +1,14 @@
-BIDRAG_PERSON_URL: http://localhost:${wiremock.server.port}/person
 AZURE_OPENID_CONFIG_ISSUER: http://localhost:${mock-oauth2-server.port}/aad
 AZURE_APP_TENANT_ID: 12321321-123213-3213123
 AZURE_APP_CLIENT_ID: asdasd-sadas-ddas-qwe
 AZURE_APP_CLIENT_SECRET: asdasdsad214123sadas
 NAIS_APP_NAME: bidrag-dokument-forsendelse
+TOPIC_DOKUMENT: bidrag.dokument
+BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestilling
+BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
+BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
+KAFKA_BROKERS: localhost:9092
+
 no.nav.security.jwt:
   client:
     registration:
@@ -34,3 +39,23 @@ no.nav.security.jwt:
   issuer.aad:
     discovery_url: http://localhost:${mock-oauth2-server.port:0}/aad/.well-known/openid-configuration
     accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
+
+
+spring:
+  flyway.enabled: false
+  datasource.type: com.zaxxer.hikari.HikariDataSource
+  datasource.url: jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:db/init.sql'
+  jpa.hibernate.hbmddl-auto: create-drop
+  jpa:
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    properties:
+      security.protocol: PLAINTEXT
+    consumer:
+      auto-offset-reset: earliest
+      enableAutoCommit: false
+    listener:
+      ackMode: RECORD

@@ -107,6 +107,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             landkode3 = adresse.landkode3
         )})
     },
+    joarkJournalpostId = this.arkivJournalpostId,
     språk = this.språk,
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),

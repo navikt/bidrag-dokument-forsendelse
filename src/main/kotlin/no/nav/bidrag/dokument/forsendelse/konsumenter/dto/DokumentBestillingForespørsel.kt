@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
 
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 
 data class DokumentBestillingForespørsel(
@@ -34,12 +35,8 @@ data class MottakerAdresseTo(
 data class DokumentBestillingResponse(
     val dokumentId: String,
     val journalpostId: String,
-    val arkivSystem: DokumentArkivSystemTo? = null,
+    val arkivSystem: DokumentArkivSystemDto? = null,
 )
-
-enum class DokumentArkivSystemTo {
-    MIDLERTIDLIG_BREVLAGER
-}
 
 data class DokumentMalDetaljer(
     val beskrivelse: String,

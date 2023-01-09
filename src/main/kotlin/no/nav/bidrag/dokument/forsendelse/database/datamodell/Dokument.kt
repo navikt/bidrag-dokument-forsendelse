@@ -7,6 +7,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
@@ -44,9 +45,9 @@ data class Dokument (
     @Column(columnDefinition = "hstore")
     val metadata: Map<String, String> = mapOf(),
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "forsendelse_id")
-    val forsendelse: Forsendelse
+    var forsendelse: Forsendelse
 ){
     val dokumentreferanse get() = eksternDokumentreferanse ?: "BIF$dokumentId"
 }

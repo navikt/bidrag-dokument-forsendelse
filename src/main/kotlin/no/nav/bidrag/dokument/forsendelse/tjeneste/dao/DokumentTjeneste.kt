@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste.dao
 
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
 @Component
-class DokumentTjeneste(val dokumentRepository: DokumentRepository, val dokumentBestillingTjeneste: DokumentBestillingTjeneste) {
+class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingTjeneste: DokumentBestillingTjeneste) {
     fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel): Dokument {
         val nyDokument = forespørsel.tilDokumentDo(forsendelse)
 

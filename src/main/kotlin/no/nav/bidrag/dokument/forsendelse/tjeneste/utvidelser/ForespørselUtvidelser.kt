@@ -81,7 +81,7 @@ fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvN
 fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, tilknyttetSom: DokumentTilknyttetSom? = null) = Dokument(
     forsendelse = forsendelse,
     tilknyttetSom = tilknyttetSom ?: when(this.tilknyttetSom) { DokumentTilknyttetSomTo.HOVEDDOKUMENT -> DokumentTilknyttetSom.HOVEDDOKUMENT else -> DokumentTilknyttetSom.VEDLEGG},
-    tittel = this.tittel!!,
+    tittel = this.tittel,
     arkivsystem = this.tilArkivsystemDo(),
     dokumentStatus = this.tilDokumentStatusDo(),
     eksternDokumentreferanse = this.dokumentreferanse,
