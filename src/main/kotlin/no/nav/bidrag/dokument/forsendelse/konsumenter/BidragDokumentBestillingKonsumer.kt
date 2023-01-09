@@ -2,9 +2,11 @@ package no.nav.bidrag.dokument.forsendelse.konsumenter
 
 import no.nav.bidrag.commons.security.service.SecurityTokenService
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.DOKUMENTMADETALJER_CACHE
 import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.DOKUMENTMALER_CACHE
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingResponse
+import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentMalDetaljer
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -39,5 +41,10 @@ class BidragDokumentBestillingKonsumer(
     @Cacheable(DOKUMENTMALER_CACHE)
     fun støttedeDokumentmaler(): List<String> {
         return restTemplate.exchange("/brevkoder", HttpMethod.OPTIONS, null, typeReference<List<String>>()).body ?: emptyList()
+    }
+
+    @Cacheable(DOKUMENTMADETALJER_CACHE)
+    fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
+        return restTemplate.exchange("/dokumentmal/detaljer", HttpMethod.OPTIONS, null, typeReference<Map<String, DokumentMalDetaljer>>()).body ?: emptyMap()
     }
 }

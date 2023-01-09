@@ -1,11 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
 
-import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 
 data class DokumentBestillingForespørsel(
     val mottaker: MottakerTo? = null,
-    val samhandlerInformasjon: SamhandlerInformasjon? = null,
     val saksbehandler: Saksbehandler? = null,
     val gjelderId: String? = null,
     val saksnummer: String,
@@ -43,16 +41,12 @@ enum class DokumentArkivSystemTo {
     MIDLERTIDLIG_BREVLAGER
 }
 
-data class SamhandlerAdresse(
-    val adresselinje1: String? = null,
-    val adresselinje2: String? = null,
-    val adresselinje3: String? = null,
-    val postnummer: String? = null,
-    val landkode: String? = null,
+data class DokumentMalDetaljer(
+    val beskrivelse: String,
+    val type: DokumentMalType
 )
 
-data class SamhandlerInformasjon(
-    val navn: String? = null,
-    val spraak: String? = null,
-    val adresse: SamhandlerAdresse? = null
-)
+enum class DokumentMalType {
+    UTGÅENDE,
+    NOTAT
+}

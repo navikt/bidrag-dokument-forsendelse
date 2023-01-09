@@ -14,7 +14,7 @@ data class OpprettForsendelseForespørsel(
     Det første dokument i meldingen blir tilknyttet som hoveddokument på journalposten.""", required = true)
     val dokumenter: List<OpprettDokumentForespørsel> = emptyList(),
     @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String,
-    @Schema(description = "Forsendelsetype, dette kan enten være Utgående eller Notat", required = true) val forsendelseTypeTo: ForsendelseTypeTo = ForsendelseTypeTo.UTGÅENDE,
+    @Schema(description = "Forsendelsetype, dette kan enten være Utgående eller Notat", required = true) val forsendelseType: ForsendelseTypeTo? = null,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
     @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null,

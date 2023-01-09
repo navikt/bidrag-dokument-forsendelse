@@ -121,6 +121,7 @@ fun OpprettForsendelseForespørsel.valider() {
     }
 }
 
+fun List<OpprettDokumentForespørsel>.hentHoveddokument() = this.find { it.tilknyttetSom == DokumentTilknyttetSomTo.HOVEDDOKUMENT } ?: this[0]
 fun OppdaterForsendelseForespørsel.valider(eksisterendeForsendelse: Forsendelse) {
 
 }
