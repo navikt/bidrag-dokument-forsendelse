@@ -45,6 +45,6 @@ class BidragDokumentBestillingKonsumer(
 
     @Cacheable(DOKUMENTMADETALJER_CACHE)
     fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
-        return restTemplate.exchange("/dokumentmal/detaljer", HttpMethod.OPTIONS, null, typeReference<Map<String, DokumentMalDetaljer>>()).body ?: emptyMap()
+        return restTemplate.exchange("/dokumentmal/detaljer", HttpMethod.GET, null, typeReference<Map<String, DokumentMalDetaljer>>()).body ?: emptyMap()
     }
 }
