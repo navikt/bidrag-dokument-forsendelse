@@ -8,7 +8,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentBestillingTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEnHoveddokument
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEtHoveddokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilDokumentDo
 import org.springframework.stereotype.Component
 import javax.transaction.Transactional
@@ -23,7 +23,7 @@ class DokumentTjeneste(private val dokumentRepository: DokumentRepository, priva
 
     fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
         val nyeDokumenter = forespørsel.map { it.tilDokumentDo(forsendelse) }
-        return lagreDokumenter(nyeDokumenter.alleMedMinstEnHoveddokument)
+        return lagreDokumenter(nyeDokumenter.alleMedMinstEtHoveddokument)
     }
 
     @Transactional

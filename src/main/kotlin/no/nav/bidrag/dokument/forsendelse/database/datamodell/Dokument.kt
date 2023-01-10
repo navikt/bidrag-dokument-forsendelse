@@ -4,6 +4,7 @@ import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
@@ -12,6 +13,7 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -45,9 +47,14 @@ data class Dokument (
     @Column(columnDefinition = "hstore")
     val metadata: Map<String, String> = mapOf(),
 
-    @ManyToOne(cascade = [CascadeType.PERSIST])
+    @ManyToOne(cascade = [CascadeType.PERSIST], fetch = FetchType.LAZY)
     @JoinColumn(name = "forsendelse_id")
     var forsendelse: Forsendelse
 ){
+
+
+    override fun toString(): String {
+        return this.toStringByReflection(listOf("forsendelse"))
+    }
     val dokumentreferanse get() = eksternDokumentreferanse ?: "BIF$dokumentId"
 }

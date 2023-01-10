@@ -50,17 +50,25 @@ fun List<Dokument>.hent(dokumentreferanse: String?) = dokumenterIkkeSlettet.find
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }
 val List<Dokument>.hoveddokumentFørst get() = dokumenterIkkeSlettet.sortedByDescending { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }
 val List<Dokument>.hoveddokument get() = dokumenterIkkeSlettet.find { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }
+val List<Dokument>.vedlegger get() = dokumenterIkkeSlettet.filter { it.tilknyttetSom == DokumentTilknyttetSom.VEDLEGG }
 val List<Dokument>.dokumenterIkkeSlettet get() = this.filter { it.slettetTidspunkt == null }
 val List<Dokument>.harHoveddokument get() = dokumenterIkkeSlettet.any { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }
-val List<Dokument>.alleMedMinstEnHoveddokument
-    get() = this.mapIndexed { i, it ->
-        it.copy(
-            tilknyttetSom = when (this.harHoveddokument) {
-                true -> it.tilknyttetSom
-                false -> if (it.slettetTidspunkt != null) DokumentTilknyttetSom.VEDLEGG else if (i == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
-            }
-        )
+val List<Dokument>.alleMedMinstEtHoveddokument get(): List<Dokument> {
+      var harHoveddokument = this.harHoveddokument
+      return this.mapIndexed { i, it ->
+            it.copy(
+                    tilknyttetSom = when (harHoveddokument) {
+                        true -> it.tilknyttetSom
+                        false -> if (it.slettetTidspunkt != null) DokumentTilknyttetSom.VEDLEGG
+                        else {
+                            harHoveddokument = true
+                            DokumentTilknyttetSom.HOVEDDOKUMENT
+                        }
+                    }
+                )
+        }
     }
+
 
 fun Forsendelse.validerKanEndreForsendelse(){
     if (this.status != ForsendelseStatus.UNDER_PRODUKSJON){

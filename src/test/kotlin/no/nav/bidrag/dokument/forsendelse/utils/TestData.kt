@@ -108,17 +108,18 @@ fun opprettForsendelse(setup: ForsendelseBuilder.() -> Unit): Forsendelse {
     return forsendelseBuilder.build()
 }
 
-fun opprettDokument(
+fun nyDokument(
     tittel: String = TITTEL_HOVEDDOKUMENT,
     journalpostId: String? = "123123",
     dokumentMalId: String? = HOVEDDOKUMENT_DOKUMENTMAL,
     eksternDokumentreferanse: String? = "123213213",
     tilknyttetSom: DokumentTilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT,
-    dokumentStatus: DokumentStatus = DokumentStatus.UNDER_REDIGERING
+    dokumentStatus: DokumentStatus = DokumentStatus.FERDIGSTILT,
+    arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
 ): Dokument {
     val forsendelse = opprettForsendelse {  }
     return Dokument(
-        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+        arkivsystem = arkivsystem,
         tittel = tittel,
         journalpostId = journalpostId,
         eksternDokumentreferanse = eksternDokumentreferanse,

@@ -23,7 +23,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.SAKSNUMMER
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
 import no.nav.bidrag.dokument.forsendelse.utils.med
-import no.nav.bidrag.dokument.forsendelse.utils.opprettDokument
+import no.nav.bidrag.dokument.forsendelse.utils.nyDokument
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
@@ -37,7 +37,7 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
     @Test
     fun `Skal hente forsendelse`(){
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + opprettDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
         val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/${forsendelse.forsendelseId}", HttpMethod.GET, null, JournalpostResponse::class.java)
 
@@ -76,8 +76,8 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
     @Test
     fun `Utgående forsendelse skal ha status KP hvis alle dokumenter er ferdigstilt`(){
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + opprettDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
-            + opprettDokument(
+            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
+            + nyDokument(
                 journalpostId = null,
                 eksternDokumentreferanse = null,
                 dokumentStatus = DokumentStatus.FERDIGSTILT,
@@ -107,16 +107,16 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
     @Test
     fun `Skal hente forsendelser basert på saksnummer`(){
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            + opprettDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
+            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
         }
 
         val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
-            + opprettDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
+            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
         }
 
         testDataManager.opprettOgLagreForsendelse {
             med tilknyttetSak "5435435"
-            + opprettDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
         val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/sak/${forsendelse1.saksnummer}/journal", HttpMethod.GET, null, object : ParameterizedTypeReference<List<JournalpostDto>>() {})
 
@@ -138,16 +138,16 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
     @Test
     fun `Skal ikke hente forsendelser som er arkivert i fagarkivet (JOARK)`(){
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            + opprettDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
+            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
         }
 
         val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
-            + opprettDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
+            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
         }
 
         testDataManager.opprettOgLagreForsendelse {
             med arkivJournalpostId "123123213"
-            + opprettDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 3")
+            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 3")
         }
         val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/sak/${forsendelse1.saksnummer}/journal", HttpMethod.GET, null, object : ParameterizedTypeReference<List<JournalpostDto>>() {})
 

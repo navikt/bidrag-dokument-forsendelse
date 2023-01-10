@@ -18,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
@@ -25,7 +26,7 @@ import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentKonsumer
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEnHoveddokument
+import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEtHoveddokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
 import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
@@ -147,7 +148,7 @@ class OppdaterForsendelseTjeneste(
             throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
         }
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
-        forsendelseTjeneste.lagre(forsendelse.copy(dokumenter = oppdaterteDokumenter.alleMedMinstEnHoveddokument, endretAvIdent = bruker?.ident ?: "UKJENT"))
+        forsendelseTjeneste.lagre(forsendelse.copy(dokumenter = oppdaterteDokumenter.alleMedMinstEtHoveddokument, endretAvIdent = bruker?.ident ?: "UKJENT", endretTidspunkt = LocalDateTime.now()))
 
         return OppdaterForsendelseResponse(
             forsendelseId = forsendelse.forsendelseId.toString(),
@@ -203,7 +204,7 @@ class OppdaterForsendelseTjeneste(
                 )
             } //+ nyeDokumenter
 
-        return oppdaterteDokumenter.alleMedMinstEnHoveddokument
+        return oppdaterteDokumenter.alleMedMinstEtHoveddokument
     }
     private fun oppdaterMottaker(eksisterendeMottaker: Mottaker?, oppdatertMottaker: MottakerTo?): Mottaker?{
         if (oppdatertMottaker == null) return eksisterendeMottaker
