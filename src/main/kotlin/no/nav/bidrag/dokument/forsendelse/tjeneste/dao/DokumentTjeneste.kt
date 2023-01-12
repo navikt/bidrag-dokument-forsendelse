@@ -6,24 +6,24 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
+import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentDo
 import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentBestillingTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.alleMedMinstEtHoveddokument
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilDokumentDo
+import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
 @Component
 class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingTjeneste: DokumentBestillingTjeneste) {
-    fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel): Dokument {
-        val nyDokument = forespørsel.tilDokumentDo(forsendelse)
+    fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel): Dokument {
+        val nyDokument = forespørsel.tilDokumentDo(forsendelse, forsendelse.dokumenter.size)
 
         return lagreDokument(nyDokument)
     }
 
-    fun opprettNyDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
-        val nyeDokumenter = forespørsel.map { it.tilDokumentDo(forsendelse) }
-        return lagreDokumenter(nyeDokumenter.alleMedMinstEtHoveddokument)
+    fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
+        val nyeDokumenter = forespørsel.mapIndexed{ i, it -> it.tilDokumentDo(forsendelse, i) }
+        return lagreDokumenter(nyeDokumenter.sortertEtterRekkefølge)
     }
 
     @Transactional

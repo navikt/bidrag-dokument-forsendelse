@@ -9,10 +9,10 @@ import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
-import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.JOURNALFØRENDE_ENHET
@@ -23,7 +23,8 @@ import no.nav.bidrag.dokument.forsendelse.utils.SAKSNUMMER
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
 import no.nav.bidrag.dokument.forsendelse.utils.med
-import no.nav.bidrag.dokument.forsendelse.utils.nyDokument
+import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
@@ -31,15 +32,15 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 
-class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
+class ForsendelseInnsynKontrollerTestRunner: KontrollerTestRunner() {
 
 
     @Test
     fun `Skal hente forsendelse`(){
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            + nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
-        val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/${forsendelse.forsendelseId}", HttpMethod.GET, null, JournalpostResponse::class.java)
+        val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
 
@@ -74,10 +75,49 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
     }
 
     @Test
+    fun `Skal returnere 404 for forsendelse som er avbrutt`(){
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            med status ForsendelseStatus.AVBRUTT
+            + nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+        }
+        val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        response.body!!.journalpost!!.journalstatus shouldBe "F"
+    }
+
+
+    @Test
+    fun `Skal hente forsendelse med dokumenter i riktig rekkefølge`(){
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
+            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 2, tittel = "VEDLEGG2", eksternDokumentreferanse = "4543434")
+            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 4, slettet = true, tittel = "VEDLEGG4", eksternDokumentreferanse = "3231312313")
+            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
+        }
+        val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelseResponse = response.body!!.journalpost!!
+
+        assertSoftly {
+            val dokumenter = forsendelseResponse.dokumenter
+            dokumenter shouldHaveSize 4
+            dokumenter[0].tittel shouldBe "HOVEDDOK"
+            dokumenter[1].tittel shouldBe "VEDLEGG1"
+            dokumenter[2].tittel shouldBe "VEDLEGG2"
+            dokumenter[3].tittel shouldBe "VEDLEGG3"
+        }
+    }
+
+    @Test
     fun `Utgående forsendelse skal ha status KP hvis alle dokumenter er ferdigstilt`(){
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
-            + nyDokument(
+            + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
+            + nyttDokument(
                 journalpostId = null,
                 eksternDokumentreferanse = null,
                 dokumentStatus = DokumentStatus.FERDIGSTILT,
@@ -85,7 +125,7 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
                 tittel = TITTEL_VEDLEGG_1
             )
         }
-        val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/${forsendelse.forsendelseId}", HttpMethod.GET, null, JournalpostResponse::class.java)
+        val response =  utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
 
@@ -100,24 +140,25 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
 
             hoveddokumentForsendelse2.tittel shouldBe TITTEL_HOVEDDOKUMENT
             vedleggForsendelse2.tittel shouldBe TITTEL_VEDLEGG_1
-            vedleggForsendelse2.dokumentreferanse shouldBe forsendelse.dokumenter.hoveddokumentFørst[1].dokumentreferanse
+            vedleggForsendelse2.dokumentreferanse shouldBe forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge[1].dokumentreferanse
         }
     }
 
     @Test
     fun `Skal hente forsendelser basert på saksnummer`(){
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
+            + nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
         }
 
         val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
-            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
+            + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
         }
 
         testDataManager.opprettOgLagreForsendelse {
-            med tilknyttetSak "5435435"
-            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            med saksnummer "5435435"
+            + nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
+
         val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/sak/${forsendelse1.saksnummer}/journal", HttpMethod.GET, null, object : ParameterizedTypeReference<List<JournalpostDto>>() {})
 
         response.statusCode shouldBe HttpStatus.OK
@@ -127,8 +168,8 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
         assertSoftly {
             journalResponse shouldHaveSize 2
 
-            val forsendelseResponse1 = journalResponse.find { it.journalpostId == "BIF-${forsendelse1.forsendelseId}" }!!
-            val forsendelseResponse2 = journalResponse.find { it.journalpostId == "BIF-${forsendelse2.forsendelseId}" }!!
+            val forsendelseResponse1 = journalResponse.find { it.journalpostId == forsendelse1.forsendelseIdMedPrefix }!!
+            val forsendelseResponse2 = journalResponse.find { it.journalpostId == forsendelse2.forsendelseIdMedPrefix }!!
 
             forsendelseResponse1.innhold shouldBe "FORSENDELSE 1"
             forsendelseResponse2.innhold shouldBe "FORSENDELSE 2"
@@ -136,20 +177,31 @@ class ForsendelseInnsynKontrollerTest: AbstractKontrollerTest() {
     }
 
     @Test
-    fun `Skal ikke hente forsendelser som er arkivert i fagarkivet (JOARK)`(){
+    fun `Skal ikke hente forsendelser som er arkivert i fagarkivet (JOARK) eller har status AVBRUTT`(){
+        val saksnummer = "3123213123213"
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            + nyDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
+            med saksnummer saksnummer
+            + nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
         }
 
         val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
-            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
+            med saksnummer saksnummer
+            + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
         }
 
         testDataManager.opprettOgLagreForsendelse {
             med arkivJournalpostId "123123213"
-            + nyDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 3")
+            med saksnummer saksnummer
+            + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 3")
         }
-        val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/sak/${forsendelse1.saksnummer}/journal", HttpMethod.GET, null, object : ParameterizedTypeReference<List<JournalpostDto>>() {})
+
+        testDataManager.opprettOgLagreForsendelse {
+            med status ForsendelseStatus.AVBRUTT
+            med saksnummer saksnummer
+            + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 4")
+        }
+
+        val response = utførHentJournalForSaksnummer(forsendelse1.saksnummer)
 
         response.statusCode shouldBe HttpStatus.OK
 

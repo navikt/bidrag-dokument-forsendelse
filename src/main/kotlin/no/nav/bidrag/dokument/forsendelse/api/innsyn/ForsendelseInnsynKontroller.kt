@@ -22,9 +22,7 @@ class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInns
     @GetMapping("/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for forsendelseid"),
-        ]
+        value = [ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")]
     )
     fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: FORSENDELSE_ID): ResponseEntity<ForsendelseResponsTo> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
@@ -33,22 +31,16 @@ class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInns
     }
 
     @GetMapping("/sak/{saksnummer}/journal")
-    @Operation(
-        description = "Hent alle forsendelse med saksnummer",
-    )
+    @Operation(description = "Hent alle forsendelse med saksnummer",)
     @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet."),
-        ]
+        value = [ApiResponse(responseCode = "200", description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet.")]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
         return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)
     }
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
-    @Operation(
-        description = "Henter dokumentmaler som er støttet av applikasjonen",
-    )
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun støttedeDokumentmaler(): List<String> {
         return bidragDokumentBestillingKonsumer.støttedeDokumentmaler()
     }

@@ -1,0 +1,73 @@
+package no.nav.bidrag.dokument.forsendelse.api
+
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
+import no.nav.bidrag.dokument.dto.AvvikType
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.utils.med
+import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import org.springframework.http.HttpStatus
+
+
+class AvvikKontrollerTestRunner: KontrollerTestRunner() {
+
+    @Test
+    fun `Skal hente avvik for forsendelse`(){
+
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+        }
+
+        val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
+        respons.statusCode shouldBe HttpStatus.OK
+
+        respons.body!! shouldHaveSize 1
+        respons.body!![0] shouldBe AvvikType.FEILFORE_SAK
+    }
+
+    @Test
+    fun `Skal utføre avvik for forsendelse`(){
+
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+        }
+
+        val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
+        respons.statusCode shouldBe HttpStatus.OK
+
+        respons.body!! shouldHaveSize 1
+        respons.body!![0] shouldBe AvvikType.FEILFORE_SAK
+
+        val responsUtfør = utførAvbrytForsendelseAvvik(forsendelse.forsendelseId.toString())
+        responsUtfør.statusCode shouldBe HttpStatus.OK
+
+        val responsEtter = utførHentAvvik(forsendelse.forsendelseId.toString())
+        responsEtter.statusCode shouldBe HttpStatus.OK
+
+        responsEtter.body!! shouldHaveSize 0
+
+        val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
+
+        forsendelseEtter!!.status shouldBe ForsendelseStatus.AVBRUTT
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON", "AVBRUTT"], mode = EnumSource.Mode.EXCLUDE)
+    fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus){
+
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            med status status
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+        }
+
+        val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
+        respons.statusCode shouldBe HttpStatus.OK
+
+        respons.body!! shouldHaveSize 0
+    }
+
+}

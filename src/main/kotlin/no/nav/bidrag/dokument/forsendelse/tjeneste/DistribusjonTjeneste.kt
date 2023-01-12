@@ -1,18 +1,22 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste
 
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
+import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentKonsumer
-import no.nav.bidrag.dokument.forsendelse.model.KanIkkeDistribuereForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
+import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erAlleFerdigstilt
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import javax.transaction.Transactional
+private val log = KotlinLogging.logger {}
 
 @Component
 class DistribusjonTjeneste(
@@ -32,12 +36,13 @@ class DistribusjonTjeneste(
     }
 
     @Transactional
-    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse? {
+    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse {
         if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
 
-        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
+        log.info { "Bestiller distribusjon for forsendelse $forsendelseId" }
+        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
-        if (forsendelse.arkivJournalpostId.isNullOrEmpty()){
+        if (forsendelse.fagarkivJournalpostId.isNullOrEmpty()){
             forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId)!!
         }
 
@@ -52,13 +57,18 @@ class DistribusjonTjeneste(
             )
         }
 
-        val resultat = bidragDokumentKonsumer.distribuer("JOARK-${forsendelse.arkivJournalpostId}", adresse) ?: return null
+        val resultat = bidragDokumentKonsumer.distribuer("JOARK-${forsendelse.fagarkivJournalpostId}", adresse) ?: distribusjonFeilet(forsendelseId)
+
+        log.info("Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.fagarkivJournalpostId} og bestillingId=${resultat.bestillingsId}")
+        SIKKER_LOGG.info("Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, journalpostId=${forsendelse.fagarkivJournalpostId} og bestillingId=${resultat.bestillingsId}")
 
         forsendelseTjeneste.lagre(forsendelse.copy(
             distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
             distribuertTidspunkt = LocalDateTime.now(),
             distribusjonBestillingsId = resultat.bestillingsId,
-            status = ForsendelseStatus.DISTRIBUERT
+            status = ForsendelseStatus.DISTRIBUERT,
+            endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
+            endretTidspunkt = LocalDateTime.now()
         ))
 
         return resultat

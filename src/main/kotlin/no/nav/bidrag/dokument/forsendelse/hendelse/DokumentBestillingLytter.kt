@@ -17,7 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
@@ -37,7 +37,7 @@ class DokumentBestillingLytter(
     fun bestill(dokumentBestilling: DokumentBestilling) {
         val (forsendelseId, dokumentreferanse) = dokumentBestilling
         val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId) ?: throw KunneIkkBestilleDokument("Fant ikke forsendelse $forsendelseId")
-        val dokument = forsendelse.dokumenter.hent(dokumentreferanse)
+        val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)
             ?: throw KunneIkkBestilleDokument("Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}")
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 

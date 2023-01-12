@@ -49,7 +49,7 @@ data class Forsendelse (
     val avbruttTidspunkt: LocalDateTime? = null,
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
-    val arkivJournalpostId: String? = null,
+    val fagarkivJournalpostId: String? = null,
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val mottaker: Mottaker? = null,

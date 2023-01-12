@@ -34,7 +34,7 @@ services:
     environment:
       POSTGRES_USER: cloudsqliamuser
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: default_database
+      POSTGRES_DB: bidrag-dokument-forsendelse
     volumes:
       - db:/var/lib/postgresql/data
 

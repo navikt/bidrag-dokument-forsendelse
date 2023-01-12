@@ -1,28 +1,34 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste
 
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
-import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
+import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
+import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
+import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilForsendelseRespons
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilJournalpostDto
 import org.springframework.stereotype.Component
+
+private val log = KotlinLogging.logger {}
+
+val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.status != ForsendelseStatus.AVBRUTT }.filter { it.fagarkivJournalpostId == null }
 
 @Component
 class ForsendelseInnsynTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
 
     fun hentForsendelseForSakLegacy(saksnummer: String): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
-
-        return forsendelser.filter { it.arkivJournalpostId == null }.map { forsendelse -> forsendelse.tilJournalpostDto() }
+        log.info { "Hentet forsendelser for sak $saksnummer" }
+        return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
+            .map(Forsendelse::tilJournalpostDto)
     }
 
-    fun hentForsendelseLegacy(forsendelseId: Long): JournalpostResponse? {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
+    fun hentForsendelseLegacy(forsendelseId: Long): JournalpostResponse {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        log.info { "Hentet forsendelse for forsendelseId $forsendelseId" }
 
         return JournalpostResponse(
             journalpost = forsendelse.tilJournalpostDto(),
@@ -33,7 +39,8 @@ class ForsendelseInnsynTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
     fun hentForsendelseForSak(saksnummer: String): List<ForsendelseResponsTo> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
 
-        return forsendelser.map { forsendelse -> forsendelse.tilForsendelseRespons() }
+        return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
+            .map(Forsendelse::tilForsendelseRespons)
     }
 
     fun hentForsendelse(forsendelseId: Long): ForsendelseResponsTo? {

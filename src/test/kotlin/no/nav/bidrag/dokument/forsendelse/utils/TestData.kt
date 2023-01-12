@@ -1,7 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.utils
 
+import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
@@ -11,8 +14,12 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import java.time.LocalDate
+
+val DOKUMENT_FIL = "JVBERi0xLjcgQmFzZTY0IGVuY29kZXQgZnlzaXNrIGRva3VtZW50"
 
 val DOKUMENTMAL_NOTAT = "BI090"
 val DOKUMENTMAL_UTGÅENDE = "BI091"
@@ -28,6 +35,18 @@ val TITTEL_HOVEDDOKUMENT = "Tittel på hoveddokument"
 val HOVEDDOKUMENT_DOKUMENTMAL = DOKUMENTMAL_UTGÅENDE
 val TITTEL_VEDLEGG_1 = "Tittel på vedlegg 1"
 val TITTEL_VEDLEGG_2 = "Tittel på vedlegg 2"
+
+val ADRESSE_ADRESSELINJE1 = "Adresselinje1"
+val ADRESSE_ADRESSELINJE2 = "Adresselinje2"
+val ADRESSE_ADRESSELINJE3 = "Adresselinje3"
+val ADRESSE_POSTNUMMER = "3040"
+val ADRESSE_POSTSTED = "Drammen"
+val ADRESSE_BRUKSENHETSNUMMER = "H0305"
+val ADRESSE_LANDKODE3 = "NOR"
+val ADRESSE_LANDKODE = "NO"
+val SPRÅK_NORSK_BOKMÅL = "NB"
+
+val NY_JOURNALPOSTID = "12312312312"
 @DslMarker
 annotation class OpprettForsendelseTestdataDsl
 
@@ -40,8 +59,9 @@ class ForsendelseBuilder {
     private var erNotat: Boolean = false
     private var journalførendeenhet: String = JOURNALFØRENDE_ENHET
     private var tittel: String? = null
+    private var status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON
     private var arkivJournalpostId: String? = null
-    private var tilknyttSak: String = SAKSNUMMER
+    private var saksnummer: String = SAKSNUMMER
     private var gjelderIdent: String = GJELDER_IDENT
     private var mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN)
     private var opprettDokumenter: MutableList<Dokument> = mutableListOf()
@@ -49,6 +69,11 @@ class ForsendelseBuilder {
     @OpprettForsendelseTestdataDsl
     infix fun med.arkivJournalpostId(_arkivJournalpostId: String) {
         arkivJournalpostId = _arkivJournalpostId
+    }
+
+    @OpprettForsendelseTestdataDsl
+    infix fun med.status(_status: ForsendelseStatus) {
+        status = _status
     }
 
     @OpprettForsendelseTestdataDsl
@@ -62,8 +87,8 @@ class ForsendelseBuilder {
     }
 
     @OpprettForsendelseTestdataDsl
-    infix fun med.tilknyttetSak(_tilknyttSak: String) {
-        tilknyttSak = _tilknyttSak
+    infix fun med.saksnummer(_saksnummer: String) {
+        saksnummer = _saksnummer
     }
 
     @OpprettForsendelseTestdataDsl
@@ -85,15 +110,16 @@ class ForsendelseBuilder {
         val forsendelse = Forsendelse(
             forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
             enhet = journalførendeenhet,
+            status = status,
             språk = "NB",
-            saksnummer = tilknyttSak,
+            saksnummer = saksnummer,
             gjelderIdent = gjelderIdent,
             mottaker = mottaker,
             opprettetAvIdent = SAKSBEHANDLER_IDENT,
             opprettetAvNavn = SAKSBEHANDLER_NAVN,
             endretAvIdent = SAKSBEHANDLER_IDENT,
             dokumenter = opprettDokumenter,
-            arkivJournalpostId = arkivJournalpostId
+            fagarkivJournalpostId = arkivJournalpostId
         )
 
         opprettDokumenter.forEach { it.forsendelse = forsendelse }
@@ -108,14 +134,16 @@ fun opprettForsendelse(setup: ForsendelseBuilder.() -> Unit): Forsendelse {
     return forsendelseBuilder.build()
 }
 
-fun nyDokument(
+fun nyttDokument(
     tittel: String = TITTEL_HOVEDDOKUMENT,
     journalpostId: String? = "123123",
     dokumentMalId: String? = HOVEDDOKUMENT_DOKUMENTMAL,
     eksternDokumentreferanse: String? = "123213213",
     tilknyttetSom: DokumentTilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT,
     dokumentStatus: DokumentStatus = DokumentStatus.FERDIGSTILT,
-    arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+    arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+    rekkefølgeIndeks: Int? = null,
+    slettet: Boolean = false
 ): Dokument {
     val forsendelse = opprettForsendelse {  }
     return Dokument(
@@ -126,7 +154,9 @@ fun nyDokument(
         dokumentStatus = dokumentStatus,
         tilknyttetSom = tilknyttetSom,
         dokumentmalId = dokumentMalId,
-        forsendelse = forsendelse
+        forsendelse = forsendelse,
+        rekkefølgeIndeks = rekkefølgeIndeks ?: if (tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT) 0 else 1,
+        slettetTidspunkt = if (slettet) LocalDate.now() else null
 
     )
 }
@@ -138,19 +168,21 @@ fun nyOpprettForsendelseForespørsel() = OpprettForsendelseForespørsel(
     mottaker = MottakerTo(
         ident = MOTTAKER_IDENT,
         navn = MOTTAKER_NAVN,
+        språk = SPRÅK_NORSK_BOKMÅL,
+        identType = MottakerIdentTypeTo.FNR,
         adresse = MottakerAdresseTo(
-            adresselinje1 = "Adresselinje1",
-            adresselinje2 = "Adresselinje2",
-            adresselinje3 = "Adresselinje3",
-            poststed = "Drammen",
-            postnummer = "3040",
-            bruksenhetsnummer = "H0305",
-            landkode3 = "NOR",
-            landkode = "NO"
+            adresselinje1 = ADRESSE_ADRESSELINJE1,
+            adresselinje2 = ADRESSE_ADRESSELINJE2,
+            adresselinje3 = ADRESSE_ADRESSELINJE3,
+            poststed = ADRESSE_POSTSTED,
+            postnummer = ADRESSE_POSTNUMMER,
+            bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
+            landkode3 = ADRESSE_LANDKODE3,
+            landkode = ADRESSE_LANDKODE
         )
     ),
     forsendelseType = ForsendelseTypeTo.UTGÅENDE,
-    språk = "NB",
+    språk = SPRÅK_NORSK_BOKMÅL,
     dokumenter = listOf(
         OpprettDokumentForespørsel(
             tittel = TITTEL_HOVEDDOKUMENT,
@@ -164,3 +196,11 @@ fun nyOpprettForsendelseForespørsel() = OpprettForsendelseForespørsel(
         )
     )
 )
+
+fun nyOpprettJournalpostResponse(journalpostId: String = NY_JOURNALPOSTID, dokumenter: List<OpprettDokumentDto> =
+                                     listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1"))): OpprettJournalpostResponse {
+    return OpprettJournalpostResponse(
+        dokumenter = dokumenter,
+        journalpostId = journalpostId
+    )
+}

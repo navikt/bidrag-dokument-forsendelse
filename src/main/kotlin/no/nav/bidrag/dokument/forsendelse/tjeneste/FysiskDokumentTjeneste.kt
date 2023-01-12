@@ -1,19 +1,21 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste
 
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
 import no.nav.bidrag.dokument.dto.ÅpneDokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
+import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hent
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.hoveddokumentFørst
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.journalpostIdMedPrefix
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.tilDokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.journalpostIdMedPrefix
 import org.springframework.stereotype.Component
+private val log = KotlinLogging.logger {}
 
 @Component
 class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
@@ -22,7 +24,7 @@ class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
     fun hentDokument(forsendelseId: Long, dokumentreferanse: Dokumentreferanse): ByteArray {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
-        val arkivSystem = forsendelse.dokumenter.hent(dokumentreferanse)?.arkivsystem
+        val arkivSystem = forsendelse.dokumenter.hentDokument(dokumentreferanse)?.arkivsystem
         if (arkivSystem == null || arkivSystem != DokumentArkivSystem.BIDRAG){
             throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
         }
@@ -39,10 +41,10 @@ class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
         if (dokumentreferanse.isNullOrEmpty()){
-            return forsendelse.dokumenter.hoveddokumentFørst.map { mapTilÅpneDokumentMetadata(it) }
+            return forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { mapTilÅpneDokumentMetadata(it) }
         }
 
-        val dokument = forsendelse.dokumenter.hent(dokumentreferanse) ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
+        val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse) ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
 
         return listOf(mapTilÅpneDokumentMetadata(dokument))
     }

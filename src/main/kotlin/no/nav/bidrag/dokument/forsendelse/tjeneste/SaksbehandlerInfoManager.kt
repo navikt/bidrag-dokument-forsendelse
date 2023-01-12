@@ -10,7 +10,7 @@ class SaksbehandlerInfoManager(
     private val bidragOrganisasjonKonsumer: BidragOrganisasjonKonsumer,
     private val oidcTokenManager: OidcTokenManager
 ) {
-    fun hentSaksbehandlerBrukerId(): String? = oidcTokenManager.hentSaksbehandlerIdentFraToken()
+    fun hentSaksbehandlerBrukerId(): String? = if (oidcTokenManager.erApplikasjonBruker()) "SYSTEM" else oidcTokenManager.hentSaksbehandlerIdentFraToken()
 
     fun hentSaksbehandler(): Saksbehandler? {
         val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null

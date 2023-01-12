@@ -20,6 +20,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import java.util.Locale
 import javax.servlet.http.HttpServletRequest
@@ -38,6 +39,16 @@ class DefaultRestControllerAdvice {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig verdi: ${valideringsFeil?:exception.message}")
+            .build<Any>()
+    }
+
+    @ResponseBody
+    @ExceptionHandler(HttpClientErrorException::class)
+    fun handleHttpClientErrorException(exception: HttpClientErrorException): ResponseEntity<*> {
+        LOGGER.warn(exception.statusText, exception)
+        return ResponseEntity
+            .status(exception.statusCode)
+            .header(HttpHeaders.WARNING, exception.statusText)
             .build<Any>()
     }
 

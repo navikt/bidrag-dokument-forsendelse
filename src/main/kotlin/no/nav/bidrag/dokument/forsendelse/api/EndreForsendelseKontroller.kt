@@ -13,13 +13,12 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.utvidelser.tilOppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.valider
+import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.valider
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 @ForsendelseApiKontroller
@@ -33,13 +32,12 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse endret"),
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for forsendelseId"),
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId"),
         ]
     )
-    fun oppdaterForsendelse(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: OppdaterForsendelseForespørsel): ResponseEntity<OppdaterForsendelseResponse> {
+    fun oppdaterForsendelse(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request) ?: return ResponseEntity.badRequest().build()
-        return ResponseEntity.ok(respons)
+        return oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request)
     }
 
     @PatchMapping("/journal/{forsendelseIdMedPrefix}")
@@ -50,13 +48,12 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse endret"),
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for forsendelseId"),
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId"),
         ]
     )
-    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: EndreJournalpostCommand): ResponseEntity<Void> {
+    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: EndreJournalpostCommand) {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel()) ?: return ResponseEntity.badRequest().build()
-        return ResponseEntity.ok().build()
+        oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel())
     }
 
     @PostMapping("/{forsendelseIdMedPrefix}/dokument")
@@ -70,11 +67,9 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
             ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
         ]
     )
-    fun knyttTilDokument(@PathVariable forsendelseIdMedPrefix: String, @RequestBody forespørsel: OpprettDokumentForespørsel): ResponseEntity<DokumentRespons> {
+    fun knyttTilDokument(@PathVariable forsendelseIdMedPrefix: String, @RequestBody forespørsel: OpprettDokumentForespørsel): DokumentRespons {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        forespørsel.valider()
-        val respons = oppdaterForsendelseTjeneste.knyttDokumentTilForsendelse(forsendelseId, forespørsel) ?: return ResponseEntity.badRequest().build()
-        return ResponseEntity.ok(respons)
+        return oppdaterForsendelseTjeneste.knyttDokumentTilForsendelse(forsendelseId, forespørsel)
     }
 
     @DeleteMapping("/{forsendelseIdMedPrefix}/{dokumentreferanse}")

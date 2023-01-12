@@ -22,13 +22,12 @@ class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: Forsendel
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for forsendelseid"),
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid"),
         ]
     )
-    fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: String): ResponseEntity<JournalpostResponse> {
+    fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: String): JournalpostResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = forsendelseInnsynTjeneste.hentForsendelseLegacy(forsendelseId) ?: return ResponseEntity.noContent().build()
-        return ResponseEntity.ok(respons)
+        return forsendelseInnsynTjeneste.hentForsendelseLegacy(forsendelseId)
     }
 
     @GetMapping("/sak/{saksnummer}/journal")

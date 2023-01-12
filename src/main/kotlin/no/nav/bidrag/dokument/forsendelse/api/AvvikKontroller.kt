@@ -30,7 +30,7 @@ class AvvikKontroller(val avvikTjeneste: AvvikTjeneste) {
         security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
-    fun utførAvvik(@RequestHeader(EnhetFilter.X_ENHET_HEADER) enhet: String,
+    fun utførAvvik(@RequestHeader(EnhetFilter.X_ENHET_HEADER, required = false) enhet: String?,
                    @PathVariable forsendelseIdMedPrefix: String,
                    @RequestBody avvikshendelse: Avvikshendelse
     ) {

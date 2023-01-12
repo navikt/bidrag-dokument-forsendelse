@@ -7,13 +7,8 @@ import org.apache.commons.lang3.Range
 @Schema(description = "Metadata for oppdatering av forsendelse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OppdaterForsendelseForespørsel(
-    @Schema(description = "Ident til brukeren som journalposten gjelder") val gjelderIdent: String? = null,
-    val mottaker: MottakerTo? = null,
     @Schema(description = "Liste over dokumentene på journalposten der metadata skal oppdateres")
-    val dokumenter: List<OppdaterDokumentForespørsel> = emptyList(),
-    @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String? = null,
-    @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
-    @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null
+    val dokumenter: List<OppdaterDokumentForespørsel> = emptyList()
 )
 
 @Schema(description = "Metadata til en respons etter journalpost ble oppdatert")

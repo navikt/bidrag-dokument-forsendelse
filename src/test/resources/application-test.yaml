@@ -7,8 +7,8 @@ TOPIC_DOKUMENT: bidrag.dokument
 BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestilling
 BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
 BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
-KAFKA_BROKERS: localhost:9092
-
+KAFKA_BROKERS: localhost:9093
+KAFKA_MAX_RETRY: 0
 no.nav.security.jwt:
   client:
     registration:

@@ -14,3 +14,6 @@ class KanIkkeDistribuereForsendelse(forsendelseId: Long): RuntimeException("Kunn
 
 
 fun kanIkkeDistribuereForsendelse(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Kan ikke distribuere forsendelse $forsendelseId")
+fun distribusjonFeilet(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved bestilling av distribusjon av forsendelse $forsendelseId")
+fun fantIkkeForsendelse(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke forsendelse med id $forsendelseId")
+fun fantIkkeForsendelseNoContent(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.NO_CONTENT, "Fant ikke forsendelse med id $forsendelseId")

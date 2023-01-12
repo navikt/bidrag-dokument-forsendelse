@@ -46,10 +46,7 @@ class DistribusjonKontroller(val distribusjonTjeneste: DistribusjonTjeneste) {
     )
     fun distribuerForsendelse(@RequestBody(required = false) distribuerJournalpostRequest: DistribuerJournalpostRequest?,
                               @PathVariable forsendelseIdMedPrefix: String,
-                              @RequestParam(required = false) batchId: String?): ResponseEntity<DistribuerJournalpostResponse>{
-
-
-        val response = distribusjonTjeneste.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest)
-        return if (response != null) ResponseEntity.ok(response) else ResponseEntity.badRequest().build()
+                              @RequestParam(required = false) batchId: String?): DistribuerJournalpostResponse {
+        return distribusjonTjeneste.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest)
     }
 }

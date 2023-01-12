@@ -2,6 +2,11 @@ KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 KAFKA_GROUP_ID: bidrag-dokument-forsendelse
 KAFKA_BROKERS: localhost:9092
 TOPIC_DOKUMENT: bidrag.dokument
+
+#DB_DATABASE=bidrag-dokument-forsendelse
+#DB_USERNAME=ugur.alpay.cenar@nav.no
+#DB_PASSWORD=asdsadsadasd
+
 spring:
   flyway:
     enabled: true

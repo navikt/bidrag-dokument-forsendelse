@@ -13,7 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.utvidelser.erAlleFerdigstilt
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
@@ -29,9 +29,12 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
 
         if (hendelse.hendelseType == DokumentHendelseType.BESTILLING) return
 
+        log.info { "Mottok hendelse for dokumentreferanse ${hendelse.dokumentreferanse} med status ${hendelse.status} og hendelsetype ${hendelse.hendelseType}" }
+
         val dokumenter = dokumentTjeneste.hentDokumenterMedReferanse(hendelse.dokumentreferanse)
 
         val oppdaterteDokumenter = dokumenter.map {
+            log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
             dokumentTjeneste.lagreDokument(
                 it.copy(
                     arkivsystem = when(hendelse.arkivSystem){
@@ -59,6 +62,7 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
 
             if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt){
                 medApplikasjonKontekst {
+                    log.info { "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} med type NOTAT er ferdigstilt. Ferdigstiller forsendelse." }
                     oppdaterForsendelseTjeneste.ferdigstillForsendelse(forsendelse.forsendelseId!!)
                 }
             }
