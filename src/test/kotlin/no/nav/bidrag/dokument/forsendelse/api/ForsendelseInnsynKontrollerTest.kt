@@ -32,7 +32,7 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 
-class ForsendelseInnsynKontrollerTestRunner: KontrollerTestRunner() {
+class ForsendelseInnsynKontrollerTest: KontrollerTestRunner() {
 
 
     @Test

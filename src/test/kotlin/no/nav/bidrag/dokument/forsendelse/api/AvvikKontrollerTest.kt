@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.HttpStatus
 
 
-class AvvikKontrollerTestRunner: KontrollerTestRunner() {
+class AvvikKontrollerTest: KontrollerTestRunner() {
 
     @Test
     fun `Skal hente avvik for forsendelse`(){

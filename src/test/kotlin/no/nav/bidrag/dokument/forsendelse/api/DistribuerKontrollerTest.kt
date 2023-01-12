@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
-class DistribuerKontrollerTestRunner: KontrollerTestRunner()  {
+class DistribuerKontrollerTest: KontrollerTestRunner()  {
     protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Void> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId/enabled", HttpMethod.GET, null, Void::class.java)
     }

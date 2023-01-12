@@ -45,7 +45,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-class OpprettForsendelseKontrollerTestRunner: KontrollerTestRunner() {
+class OpprettForsendelseKontrollerTest: KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse`(){

@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 
-class OppdaterForsendelseKontrollerTestRunner: KontrollerTestRunner() {
+class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
 
     @Test
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`(){
