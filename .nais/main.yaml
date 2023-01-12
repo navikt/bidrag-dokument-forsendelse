@@ -10,6 +10,9 @@ env:
 
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io/bidrag-dokument
   BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument
+
+  SAK_URL: https://bidrag-sak.dev-fss-pub.nais.io/bidrag-sak
+  SAK_SCOPE: dev-fss.bidrag.bidrag-sak
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false

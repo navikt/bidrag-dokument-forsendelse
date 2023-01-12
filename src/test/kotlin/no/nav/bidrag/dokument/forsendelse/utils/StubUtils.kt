@@ -37,6 +37,25 @@ class StubUtils {
             }
     }
 
+    fun stubHentSak(status: HttpStatus = HttpStatus.OK){
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/sak/sak/(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(status.value())
+            )
+        )
+    }
+
+    fun stubHentSakForPerson(status: HttpStatus = HttpStatus.OK){
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/sak/person/sak/(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(status.value())
+            )
+        )
+    }
+
+
     fun stubHentDokument(){
         WireMock.stubFor(
             WireMock.get(WireMock.urlMatching("/dokument/dokument/(.*)")).willReturn(

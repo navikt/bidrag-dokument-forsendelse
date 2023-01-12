@@ -20,11 +20,18 @@ import javax.transaction.Transactional
 private val log = KotlinLogging.logger {}
 
 @Component
-class OpprettForsendelseTjeneste(val dokumentBestillingTjeneste: DokumentBestillingTjeneste, val forsendelseTjeneste: ForsendelseTjeneste, val dokumenttjeneste: DokumentTjeneste, val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
+class OpprettForsendelseTjeneste(
+    private val tilgangskontrollTjeneste: TilgangskontrollTjeneste,
+    private val dokumentBestillingTjeneste: DokumentBestillingTjeneste,
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val dokumenttjeneste: DokumentTjeneste,
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+) {
 
     @Transactional
     fun opprettForsendelse(forespørsel: OpprettForsendelseForespørsel): OpprettForsendelseRespons {
-
+        tilgangskontrollTjeneste.sjekkTilgangPerson(forespørsel.gjelderIdent)
+        tilgangskontrollTjeneste.sjekkTilgangSak(forespørsel.saksnummer)
         val forsendelseType = hentForsendelseType(forespørsel)
         forespørsel.valider(hentForsendelseType(forespørsel))
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)

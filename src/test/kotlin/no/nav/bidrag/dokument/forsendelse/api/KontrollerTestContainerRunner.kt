@@ -39,36 +39,19 @@ abstract class KontrollerTestContainerRunner: TestContainerRunner() {
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
+        stubUtils.stubHentSak()
+        stubUtils.stubHentSakForPerson()
     }
 
     protected fun utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel: OpprettForsendelseForespørsel): ResponseEntity<OpprettForsendelseRespons> {
         return httpHeaderTestRestTemplate.exchange(rootUri(), HttpMethod.POST, HttpEntity(opprettForsendelseForespørsel), OpprettForsendelseRespons::class.java)
     }
 
-    protected fun utførSlettDokumentForespørsel(forsendelseId: Long, dokumentreferanse: String): ResponseEntity<OppdaterForsendelseResponse> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/$forsendelseId/${dokumentreferanse}", HttpMethod.DELETE, null, OppdaterForsendelseResponse::class.java)
-    }
-    protected fun utførLeggTilDokumentForespørsel(forsendelseId: Long, opprettDokumentForespørsel: OpprettDokumentForespørsel): ResponseEntity<DokumentRespons> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/$forsendelseId/dokument", HttpMethod.POST, HttpEntity(opprettDokumentForespørsel), DokumentRespons::class.java)
-    }
-    protected fun utførHentJournalForSaksnummer(saksnummer: String): ResponseEntity<List<JournalpostDto>> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/sak/${saksnummer}/journal", HttpMethod.GET, null, object : ParameterizedTypeReference<List<JournalpostDto>>() {})
-    }
     protected fun utførOppdaterForsendelseForespørsel(forsendelseId: String, oppdaterForespørsel: OppdaterForsendelseForespørsel): ResponseEntity<OppdaterForsendelseResponse> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/$forsendelseId", HttpMethod.PATCH, HttpEntity(oppdaterForespørsel), OppdaterForsendelseResponse::class.java)
     }
     protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId", HttpMethod.GET, null, JournalpostResponse::class.java)
-    }
-
-    protected fun utførHentAvvik(forsendelseId: String): ResponseEntity<List<AvvikType>> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId/avvik", HttpMethod.GET, null, object : ParameterizedTypeReference<List<AvvikType>>() {})
-    }
-
-    protected fun utførAvbrytForsendelseAvvik(forsendelseId: String): ResponseEntity<Void> {
-        val headers = HttpHeaders()
-        headers.set(EnhetFilter.X_ENHET_HEADER, "4806")
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId/avvik", HttpMethod.POST, HttpEntity(Avvikshendelse(AvvikType.FEILFORE_SAK.name, "4806"), headers), Void::class.java)
     }
 
 }

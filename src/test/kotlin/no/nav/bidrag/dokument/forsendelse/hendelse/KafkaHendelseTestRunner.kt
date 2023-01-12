@@ -31,6 +31,8 @@ abstract class KafkaHendelseTestRunner: CommonTestRunner() {
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
+        stubUtils.stubHentSak()
+        stubUtils.stubHentSakForPerson()
     }
 
     @AfterEach

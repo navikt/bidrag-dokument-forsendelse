@@ -17,13 +17,16 @@ class CacheConfig {
         const val DOKUMENTMALER_CACHE = "DOKUMENTMALER_CACHE"
         const val DOKUMENTMADETALJER_CACHE = "DOKUMENTMADETALJER_CACHE"
         const val SAKSBEHANDLERINFO_CACHE = "SAKSBEHANDLERINFO_CACHE"
-        const val PERSON_CACHE = "PERSON_CACHE"
+        const val SAK_CACHE = "SAK_CACHE"
+        const val SAK_PERSON_CACHE = "SAK_PERSON_CACHE"
     }
     @Bean
     fun cacheManager(): CacheManager {
         val caffeineCacheManager = CaffeineCacheManager()
         caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMADETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(SAK_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         return caffeineCacheManager;
     }
 

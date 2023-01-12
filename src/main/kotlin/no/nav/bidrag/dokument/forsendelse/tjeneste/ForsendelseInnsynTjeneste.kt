@@ -17,7 +17,7 @@ private val log = KotlinLogging.logger {}
 val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.status != ForsendelseStatus.AVBRUTT }.filter { it.fagarkivJournalpostId == null }
 
 @Component
-class ForsendelseInnsynTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
+class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste) {
 
     fun hentForsendelseForSakLegacy(saksnummer: String): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)

@@ -17,3 +17,5 @@ fun kanIkkeDistribuereForsendelse(forsendelseId: Long): Nothing = throw HttpClie
 fun distribusjonFeilet(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved bestilling av distribusjon av forsendelse $forsendelseId")
 fun fantIkkeForsendelse(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke forsendelse med id $forsendelseId")
 fun fantIkkeForsendelseNoContent(forsendelseId: Long): Nothing = throw HttpClientErrorException(HttpStatus.NO_CONTENT, "Fant ikke forsendelse med id $forsendelseId")
+fun fantIkkeSak(saksnummer: String): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Sak med saksnummer $saksnummer finnes ikke")
+fun ingenTilgang(message: String): Nothing = throw HttpClientErrorException(HttpStatus.FORBIDDEN, message)

@@ -35,10 +35,10 @@ For at dette skal fungere må det gjøres noe endringer i Intellij instillingene
 For å kunne kjøre lokalt mot sky må du gjøre følgende
 
 Åpne terminal på root mappen til `bidrag-dokument-forsendelse`
-Konfigurer kubectl til å gå mot kluster `dev-fss`
+Konfigurer kubectl til å gå mot kluster `dev-gcp`
 ```bash
 # Sett cluster til dev-fss
-kubectx dev-fss
+kubectx dev-gcp
 # Sett namespace til bidrag
 kubens bidrag 
 
@@ -76,3 +76,12 @@ og lim inn eks:
 ```bash
 {"id": 351382364, "tildeltEnhetsnr": "4806", "opprettetAvEnhetsnr": "4806",  "journalpostId": "573782796", "aktoerId": "2578652659686", "beskrivelse": "Test kopier dokumenter til Bidrag", "tema": "BID", "oppgavetype": "VUR", "versjon": 1, "opprettetAv": "srvbisys", "prioritet": "HOY", "status": "OPPRETTET"}
 ```
+
+
+#### Legg til srvbdforsendelse brukernavn/passord på kubernetes
+Bidrag-dokument-forsendelse bruker servicebruker for å kunne utføre tilgangskontroll. For å kjøre bidrag-ui på NAIS må en redis secret bli opprettet. Redis secret brukes for sikker kommunikasjon med redis instansen.
+Kjør følgende kommando for å opprette secret på namespace bidrag
+
+``
+kubectl create secret generic bidrag-dokument-forsendelse-secrets --from-literal=SRV_USERNAME=srvbdforsendelse -n=bidrag
+``
