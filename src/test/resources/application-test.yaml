@@ -42,10 +42,6 @@ no.nav.security.jwt:
 
 
 spring:
-  flyway.enabled: false
-  datasource.type: com.zaxxer.hikari.HikariDataSource
-  datasource.url: jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:db/init.sql'
-  jpa.hibernate.hbmddl-auto: create-drop
   jpa:
     properties:
       hibernate:
@@ -59,3 +55,12 @@ spring:
       enableAutoCommit: false
     listener:
       ackMode: RECORD
+
+#---
+#spring.config.activate.on-profile: "!testcontainer"
+#
+#spring:
+#  flyway.enabled: false
+#  datasource.type: com.zaxxer.hikari.HikariDataSource
+#  datasource.url: jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:db/init.sql'
+#  jpa.hibernate.hbmddl-auto: create-drop

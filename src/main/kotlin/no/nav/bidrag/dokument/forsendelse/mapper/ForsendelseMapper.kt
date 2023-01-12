@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentDto
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
+import no.nav.bidrag.dokument.dto.Kanal
 import no.nav.bidrag.dokument.dto.KodeDto
 import no.nav.bidrag.dokument.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
@@ -69,7 +70,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     },
     journalfortAv = opprettetAvIdent,
     journalstatus = when (this.status) {
-        ForsendelseStatus.DISTRIBUERT -> "E"
+        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> "E"
         ForsendelseStatus.AVBRUTT -> "F"
         ForsendelseStatus.FERDIGSTILT -> "FS"
         ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt)
@@ -129,6 +130,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     status = when (this.status) {
         ForsendelseStatus.UNDER_PRODUKSJON -> ForsendelseStatusTo.UNDER_PRODUKSJON
         ForsendelseStatus.DISTRIBUERT -> ForsendelseStatusTo.DISTRIBUERT
+        ForsendelseStatus.DISTRIBUERT_LOKALT -> ForsendelseStatusTo.DISTRIBUERT_LOKALT
         ForsendelseStatus.AVBRUTT -> ForsendelseStatusTo.SLETTET
         ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
     },

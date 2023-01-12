@@ -5,6 +5,7 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentKonsumer
@@ -36,16 +37,33 @@ class DistribusjonTjeneste(
     }
 
     @Transactional
-    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse {
+    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?, lokalUtskrift: Boolean): DistribuerJournalpostResponse {
         if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
 
-        log.info { "Bestiller distribusjon for forsendelse $forsendelseId" }
+        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtksrift=$lokalUtskrift" }
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
         if (forsendelse.fagarkivJournalpostId.isNullOrEmpty()){
-            forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId)!!
+            forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId, lokalUtskrift)!!
         }
 
+        if (lokalUtskrift){
+            forsendelseTjeneste.lagre(forsendelse.copy(
+                distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
+                distribuertTidspunkt = LocalDateTime.now(),
+                status = ForsendelseStatus.DISTRIBUERT_LOKALT,
+                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
+                endretTidspunkt = LocalDateTime.now()
+            ))
+            log.info { "Forsendelsen ble distribuert lokalt. Bestiller ingen distribusjon av forsendelse" }
+            return DistribuerJournalpostResponse(bestillingsId = null, journalpostId = forsendelse.fagarkivJournalpostId ?: "")
+        }
+
+
+        return bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse)
+    }
+
+    private fun bestillDistribusjon(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?, forsendelse: Forsendelse): DistribuerJournalpostResponse {
         val adresse = distribuerJournalpostRequest?.adresse ?: forsendelse.mottaker?.adresse?.let {
             DistribuerTilAdresse(
                 adresselinje1 = it.adresselinje1,
@@ -56,7 +74,6 @@ class DistribusjonTjeneste(
                 poststed = it.poststed
             )
         }
-
         val resultat = bidragDokumentKonsumer.distribuer("JOARK-${forsendelse.fagarkivJournalpostId}", adresse) ?: distribusjonFeilet(forsendelseId)
 
         log.info("Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.fagarkivJournalpostId} og bestillingId=${resultat.bestillingsId}")
@@ -72,6 +89,5 @@ class DistribusjonTjeneste(
         ))
 
         return resultat
-
     }
 }

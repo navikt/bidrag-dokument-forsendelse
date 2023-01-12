@@ -96,5 +96,6 @@ enum class ForsendelseStatusTo {
     UNDER_PRODUKSJON,
     FERDIGSTILT,
     SLETTET,
-    DISTRIBUERT
+    DISTRIBUERT,
+    DISTRIBUERT_LOKALT
 }

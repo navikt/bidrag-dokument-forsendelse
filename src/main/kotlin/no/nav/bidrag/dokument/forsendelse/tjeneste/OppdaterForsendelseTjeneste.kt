@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.tjeneste
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.JournalpostType
+import no.nav.bidrag.dokument.dto.MottakUtsendingKanal
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
@@ -78,13 +79,13 @@ class OppdaterForsendelseTjeneste(
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    fun ferdigstillOgHentForsendelse(forsendelseId: Long): Forsendelse? {
-        ferdigstillForsendelse(forsendelseId)
+    fun ferdigstillOgHentForsendelse(forsendelseId: Long, lokalUtskrift: Boolean = false): Forsendelse? {
+        ferdigstillForsendelse(forsendelseId, lokalUtskrift)
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    fun ferdigstillForsendelse(forsendelseId: Long): OpprettJournalpostResponse? {
+    fun ferdigstillForsendelse(forsendelseId: Long, lokalUtskrift: Boolean = false): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType}." }
@@ -101,6 +102,7 @@ class OppdaterForsendelseTjeneste(
                 ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
                 ForsendelseType.NOTAT -> JournalpostType.NOTAT
             },
+            kanal = if (lokalUtskrift) MottakUtsendingKanal.LOKAL_UTSKRIFT else null,
             dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,

@@ -46,7 +46,8 @@ class DistribusjonKontroller(val distribusjonTjeneste: DistribusjonTjeneste) {
     )
     fun distribuerForsendelse(@RequestBody(required = false) distribuerJournalpostRequest: DistribuerJournalpostRequest?,
                               @PathVariable forsendelseIdMedPrefix: String,
+                              @RequestParam(required = false) lokalUtskrift: Boolean?,
                               @RequestParam(required = false) batchId: String?): DistribuerJournalpostResponse {
-        return distribusjonTjeneste.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest)
+        return distribusjonTjeneste.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest, lokalUtskrift ?: false)
     }
 }
