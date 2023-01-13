@@ -32,7 +32,15 @@ class AvvikKontrollerTest: KontrollerTestRunner() {
     @Test
     fun `Skal utføre avvik for forsendelse`(){
 
+        val saksnummer = "13213213213"
+
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            med saksnummer saksnummer
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+        }
+
+        testDataManager.opprettOgLagreForsendelse {
+            med saksnummer saksnummer
             + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
@@ -41,6 +49,10 @@ class AvvikKontrollerTest: KontrollerTestRunner() {
 
         respons.body!! shouldHaveSize 1
         respons.body!![0] shouldBe AvvikType.FEILFORE_SAK
+
+        val forsendelseListe = utførHentJournalForSaksnummer(saksnummer)
+        forsendelseListe.statusCode shouldBe HttpStatus.OK
+        forsendelseListe.body!! shouldHaveSize 2
 
         val responsUtfør = utførAvbrytForsendelseAvvik(forsendelse.forsendelseId.toString())
         responsUtfør.statusCode shouldBe HttpStatus.OK
@@ -53,6 +65,13 @@ class AvvikKontrollerTest: KontrollerTestRunner() {
         val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
 
         forsendelseEtter!!.status shouldBe ForsendelseStatus.AVBRUTT
+
+
+        val forsendelseListeEtter = utførHentJournalForSaksnummer(saksnummer)
+        forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
+        forsendelseListeEtter.body!! shouldHaveSize 1
+
+
     }
 
     @ParameterizedTest

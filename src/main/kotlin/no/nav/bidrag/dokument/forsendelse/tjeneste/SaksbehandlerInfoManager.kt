@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste
 
+import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.erIApplikasjonKontekst
 import no.nav.bidrag.commons.security.service.OidcTokenManager
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragOrganisasjonKonsumer
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
@@ -10,7 +11,7 @@ class SaksbehandlerInfoManager(
     private val bidragOrganisasjonKonsumer: BidragOrganisasjonKonsumer,
     private val oidcTokenManager: OidcTokenManager
 ) {
-    fun hentSaksbehandlerBrukerId(): String? = if (oidcTokenManager.erApplikasjonBruker()) "SYSTEM" else oidcTokenManager.hentSaksbehandlerIdentFraToken()
+    fun hentSaksbehandlerBrukerId(): String? = if (erIApplikasjonKontekst()) "bidrag-dokument-forsendelse" else oidcTokenManager.hentSaksbehandlerIdentFraToken()
 
     fun hentSaksbehandler(): Saksbehandler? {
         val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null
