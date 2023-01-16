@@ -14,6 +14,6 @@ class BidragDokumentForsendelseLokalNais
 
 fun main(args: Array<String>) {
     val app = SpringApplication(BidragDokumentForsendelseLokalNais::class.java)
-    app.setAdditionalProfiles("lokal-nais","lokal-nais-secrets", "lokal", "nais")
+    app.setAdditionalProfiles("lokal-nais","lokal-nais-secrets", "lokal", "nais", "lokal-db-nais-secrets")
     app.run(*args)
 }

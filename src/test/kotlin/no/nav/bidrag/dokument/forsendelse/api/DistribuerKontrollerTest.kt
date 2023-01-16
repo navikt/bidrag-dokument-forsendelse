@@ -26,8 +26,8 @@ class DistribuerKontrollerTest: KontrollerTestRunner()  {
     protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Void> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId/enabled", HttpMethod.GET, null, Void::class.java)
     }
-    protected fun utførDistribuerForsendelse(forsendelseId: String, forespørsel: DistribuerJournalpostRequest? = null, lokalUtskrift: Boolean? = false): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId${lokalUtskrift.let { "?lokalUtskrift=$it" }}", HttpMethod.POST, forespørsel?.let { HttpEntity(it) }, DistribuerJournalpostResponse::class.java)
+    protected fun utførDistribuerForsendelse(forsendelseId: String, forespørsel: DistribuerJournalpostRequest? = null): ResponseEntity<DistribuerJournalpostResponse> {
+        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId", HttpMethod.POST, forespørsel?.let { HttpEntity(it) }, DistribuerJournalpostResponse::class.java)
     }
     @Test
     fun `skal returnere at forsendelse kan distribueres hvis forsendelse er ferdigstilt`(){
@@ -113,7 +113,7 @@ class DistribuerKontrollerTest: KontrollerTestRunner()  {
 
         stubUtils.stubOpprettJournalpost(nyJournalpostId, forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
 
-        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, null, true)
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, DistribuerJournalpostRequest(lokalUtskrift = true))
 
         response.statusCode shouldBe HttpStatus.OK
 

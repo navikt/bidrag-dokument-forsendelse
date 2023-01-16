@@ -37,17 +37,18 @@ class DistribusjonTjeneste(
     }
 
     @Transactional
-    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?, lokalUtskrift: Boolean): DistribuerJournalpostResponse {
+    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse {
         if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
 
-        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtksrift=$lokalUtskrift" }
+        val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
+        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtksrift=$distribuerLokalt" }
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
         if (forsendelse.fagarkivJournalpostId.isNullOrEmpty()){
-            forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId, lokalUtskrift)!!
+            forsendelse = oppdaterForsendelseTjeneste.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
         }
 
-        if (lokalUtskrift){
+        if (distribuerLokalt){
             forsendelseTjeneste.lagre(forsendelse.copy(
                 distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
                 distribuertTidspunkt = LocalDateTime.now(),
