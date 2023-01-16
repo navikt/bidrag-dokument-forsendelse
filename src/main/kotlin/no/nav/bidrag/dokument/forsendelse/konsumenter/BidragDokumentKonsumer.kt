@@ -42,11 +42,11 @@ class BidragDokumentKonsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun distribuer(journalpostId: String, adresse: DistribuerTilAdresse? = null): DistribuerJournalpostResponse? {
+    fun distribuer(journalpostId: String, adresse: DistribuerTilAdresse? = null, lokalUtskrift: Boolean = false): DistribuerJournalpostResponse? {
         return restTemplate.exchange(
             "/journal/distribuer/$journalpostId",
             HttpMethod.POST,
-            adresse?.let { HttpEntity(DistribuerJournalpostRequest(adresse = it))},
+            HttpEntity(DistribuerJournalpostRequest(adresse = adresse, lokalUtskrift = lokalUtskrift)),
             DistribuerJournalpostResponse::class.java
         ).body
     }
