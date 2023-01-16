@@ -9,6 +9,7 @@ import no.nav.bidrag.commons.web.CorrelationIdFilter
 import no.nav.bidrag.commons.web.DefaultCorsFilter
 import no.nav.bidrag.commons.web.UserMdcFilter
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.retry.annotation.EnableRetry
 
@@ -17,6 +18,7 @@ import org.springframework.retry.annotation.EnableRetry
 @OpenAPIDefinition(info = Info(title = "bidrag-dokument-forsendelse", version = "v1"), security = [SecurityRequirement(name = "bearer-key")])
 @SecurityScheme(bearerFormat = "JWT", name = "bearer-key", scheme = "bearer", type = SecuritySchemeType.HTTP)
 @EnableRetry
+@Configuration
 class DefaultConfiguration {
 
     @Bean
