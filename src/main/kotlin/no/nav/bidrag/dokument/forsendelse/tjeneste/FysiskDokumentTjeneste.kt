@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.tjeneste
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
-import no.nav.bidrag.dokument.dto.ÅpneDokumentMetadata
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
@@ -15,6 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.journalpostIdMedPrefix
 import org.springframework.stereotype.Component
+
 private val log = KotlinLogging.logger {}
 
 @Component
@@ -37,7 +38,7 @@ class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
 //        return "DOK".toByteArray()
     }
 
-    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: Dokumentreferanse?): List<ÅpneDokumentMetadata> {
+    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: Dokumentreferanse?): List<DokumentMetadata> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
         if (dokumentreferanse.isNullOrEmpty()){
@@ -50,9 +51,9 @@ class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
     }
 
 
-    private fun mapTilÅpneDokumentMetadata(dokument: Dokument): ÅpneDokumentMetadata{
+    private fun mapTilÅpneDokumentMetadata(dokument: Dokument): DokumentMetadata{
         if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER){
-            return ÅpneDokumentMetadata(
+            return DokumentMetadata(
                 journalpostId = dokument.journalpostIdMedPrefix,
                 dokumentreferanse = dokument.dokumentreferanse,
                 format = when (dokument.dokumentStatus) {
@@ -64,7 +65,7 @@ class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
             )
         }
 
-        return ÅpneDokumentMetadata(
+        return DokumentMetadata(
             journalpostId = dokument.journalpostIdMedPrefix,
             dokumentreferanse = dokument.dokumentreferanse,
             format = DokumentFormatDto.PDF,

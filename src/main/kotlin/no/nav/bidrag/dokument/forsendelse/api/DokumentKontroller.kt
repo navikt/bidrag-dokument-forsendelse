@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
-import no.nav.bidrag.dokument.dto.ÅpneDokumentMetadata
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.tjeneste.FysiskDokumentTjeneste
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +27,7 @@ class DokumentKontroller(val fysiskDokumentTjeneste: FysiskDokumentTjeneste) {
         summary = "Hent metadata om dokument",
         security = [SecurityRequirement(name = "bearer-key")],
     )
-    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable(required = false) dokumentreferanse: String?): List<ÅpneDokumentMetadata> {
+    fun hentDokumentMetadata(@PathVariable forsendelseIdMedPrefix: String, @PathVariable(required = false) dokumentreferanse: String?): List<DokumentMetadata> {
         return fysiskDokumentTjeneste.hentDokumentMetadata(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
     }
 }
