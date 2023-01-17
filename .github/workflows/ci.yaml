@@ -82,6 +82,7 @@ jobs:
           echo "INGRESS_CUCUMBER=https://bidrag-cucumber-cloud-feature.ekstern.dev.nav.no" >> $GITHUB_ENV
       - run: |
           curl -H "Content-Type: application/json" -i \
+                -H "Authorization: Basic ${{ secrets.BIDRAG_CUCUMBER_CLOUD_AUTH }}" \
                --request POST \
                --data '{"noContextPathForApps":["bidrag-dokument-forsendelse"],"ingressesForApps":[
                    "${{ env.INGRESS_DOKUMENT_FORSENDELSE }}@tag:bidrag-dokument-forsendelse"
