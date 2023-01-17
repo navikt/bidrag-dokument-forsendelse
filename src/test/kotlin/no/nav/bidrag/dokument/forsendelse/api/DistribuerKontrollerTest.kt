@@ -142,7 +142,7 @@ class DistribuerKontrollerTest: KontrollerTestRunner()  {
                     "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
                     "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                     "}")
-            stubUtils.Valider().bestillDistribusjonIkkeKalt("JOARK-$nyJournalpostId")
+            stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider().hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostIdMedPrefix!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
         }
