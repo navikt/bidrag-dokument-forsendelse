@@ -37,9 +37,10 @@ val List<Dokument>.sortertEtterRekkefølge get(): List<Dokument> {
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
 val Forsendelse.forsendelseIdMedPrefix get() = "BIF-$forsendelseId"
 val Dokument.journalpostIdMedPrefix
-    get() = if (journalpostId.isNullOrEmpty())
-        this.forsendelse.forsendelseIdMedPrefix else when (arkivsystem) {
-        DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostId"
-        DokumentArkivSystem.JOARK -> "JOARK-$journalpostId"
+    get() = when (arkivsystem) {
+        DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> journalpostId?.let { "BID-$journalpostId" }
+        DokumentArkivSystem.JOARK -> journalpostId?.let {"JOARK-$journalpostId" }
         else -> this.forsendelse.forsendelseIdMedPrefix
     }
+
+val Dokument.forsendelseIdMedPrefix get() = this.forsendelse.forsendelseIdMedPrefix

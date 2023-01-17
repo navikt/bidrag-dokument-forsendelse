@@ -33,6 +33,7 @@ import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValide
 import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanLeggeTilDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.journalpostIdMedPrefix
@@ -136,7 +137,7 @@ class OppdaterForsendelseTjeneste(
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentTjeneste.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
-       else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix, dokument.dokumentreferanse)!!
+       else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse)!!
     }
     fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse?{
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
