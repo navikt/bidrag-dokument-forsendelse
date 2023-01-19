@@ -181,7 +181,6 @@ fun nyOpprettForsendelseForespørsel() = OpprettForsendelseForespørsel(
             landkode = ADRESSE_LANDKODE
         )
     ),
-    forsendelseType = ForsendelseTypeTo.UTGÅENDE,
     språk = SPRÅK_NORSK_BOKMÅL,
     dokumenter = listOf(
         OpprettDokumentForespørsel(

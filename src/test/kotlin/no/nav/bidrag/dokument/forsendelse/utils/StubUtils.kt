@@ -37,20 +37,22 @@ class StubUtils {
             }
     }
 
-    fun stubHentSak(status: HttpStatus = HttpStatus.OK){
+    fun stubTilgangskontrollSak(result: Boolean = true, status: HttpStatus = HttpStatus.OK){
         WireMock.stubFor(
-            WireMock.get(WireMock.urlMatching("/sak/sak/(.*)")).willReturn(
+            WireMock.post(WireMock.urlMatching("/tilgangskontroll/api/tilgang/sak")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
+                    .withBody(result.toString())
             )
         )
     }
 
-    fun stubHentSakForPerson(status: HttpStatus = HttpStatus.OK){
+    fun stubTilgangskontrollPerson(result: Boolean = true, status: HttpStatus = HttpStatus.OK){
         WireMock.stubFor(
-            WireMock.get(WireMock.urlMatching("/sak/person/sak/(.*)")).willReturn(
+            WireMock.post(WireMock.urlMatching("/tilgangskontroll/api/tilgang/person")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
+                    .withBody(result.toString())
             )
         )
     }

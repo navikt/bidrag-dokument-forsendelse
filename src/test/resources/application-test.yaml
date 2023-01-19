@@ -8,6 +8,7 @@ BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestill
 BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
 BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
 BIDRAG_SAK_URL: http://localhost:${wiremock.server.port}/sak
+BIDRAG_TILGANGSKONTROLL_URL: http://localhost:${wiremock.server.port}/tilgangskontroll
 KAFKA_BROKERS: localhost:9093
 KAFKA_MAX_RETRY: 0
 no.nav.security.jwt:
@@ -30,6 +31,14 @@ no.nav.security.jwt:
           client-secret: 123
           client-auth-method: client_secret_basic
       bidrag-sak:
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port:1234}/aad/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://123/.default
+        authentication:
+          client-id: 123
+          client-secret: 123
+          client-auth-method: client_secret_basic
+      bidrag-tilgangskontroll:
         token-endpoint-url: http://localhost:${mock-oauth2-server.port:1234}/aad/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: api://123/.default
@@ -73,3 +82,6 @@ spring:
   datasource.type: com.zaxxer.hikari.HikariDataSource
   datasource.url: jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:db/init.sql'
   jpa.hibernate.hbmddl-auto: create-drop
+    
+    
+    docker run -it --rm -v $(pwd):/nais navikt/deployment:v1 /app/deploy --dry-run --print-payload --resource /nais/nais.yaml --vars /nais/feature.yaml

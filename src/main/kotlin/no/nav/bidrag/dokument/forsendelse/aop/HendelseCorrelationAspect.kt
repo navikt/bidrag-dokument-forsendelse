@@ -3,7 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.aop
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
-import no.nav.bidrag.commons.web.interceptor.MdcValuesPropagatingClientInterceptor.Companion.CORRELATION_ID
+import no.nav.bidrag.commons.CorrelationId.Companion.CORRELATION_ID_HEADER
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.After
@@ -23,11 +23,11 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
     fun leggSporingFraDokumentHendelseTilMDC(joinPoint: JoinPoint, hendelse: ConsumerRecord<String, String>) {
         hentSporingFraHendelse(hendelse)?.let {
             val correlationId = CorrelationId.existing(it)
-            MDC.put(CORRELATION_ID, correlationId.get())
+            MDC.put(CORRELATION_ID_HEADER, correlationId.get())
         } ?: run {
             val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
             val korrelasjonsId = "${tilfeldigVerdi}_prossesserDokumentHendelse"
-            MDC.put(CORRELATION_ID, CorrelationId.existing(korrelasjonsId).get())
+            MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
         }
 
     }

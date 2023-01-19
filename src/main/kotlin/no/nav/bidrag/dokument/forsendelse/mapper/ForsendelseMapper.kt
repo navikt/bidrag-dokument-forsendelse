@@ -82,6 +82,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),
     journalfortDato = this.opprettetTidspunkt.toLocalDate(),
     journalforendeEnhet = this.enhet,
+    feilfort = status == ForsendelseStatus.AVBRUTT,
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { dokument ->
         DokumentDto(
             dokumentreferanse = dokument.dokumentreferanse,

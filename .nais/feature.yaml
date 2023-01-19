@@ -16,6 +16,10 @@ env:
   BIDRAG_SAK_URL: https://bidrag-sak-feature.dev-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak-feature
 
+  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.dev.intern.nav.no
+  BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll-feature
+
+
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 database:
   dbname: bidrag-dokument-forsendelse-feature

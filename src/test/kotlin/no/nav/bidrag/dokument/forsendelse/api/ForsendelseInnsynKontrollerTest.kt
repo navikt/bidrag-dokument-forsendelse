@@ -75,7 +75,7 @@ class ForsendelseInnsynKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal returnere 404 for forsendelse som er avbrutt`(){
+    fun `Skal returnere forsendelse med status F hvis forsendels er avbrutt`(){
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status ForsendelseStatus.AVBRUTT
             + nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
@@ -85,6 +85,7 @@ class ForsendelseInnsynKontrollerTest: KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         response.body!!.journalpost!!.journalstatus shouldBe "F"
+        response.body!!.journalpost!!.feilfort shouldBe true
     }
 
 

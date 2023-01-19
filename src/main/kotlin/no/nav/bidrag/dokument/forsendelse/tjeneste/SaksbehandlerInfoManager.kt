@@ -2,16 +2,14 @@ package no.nav.bidrag.dokument.forsendelse.tjeneste
 
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.erIApplikasjonKontekst
 import no.nav.bidrag.commons.security.service.OidcTokenManager
+import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragOrganisasjonKonsumer
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import org.springframework.stereotype.Service
 
 @Service
-class SaksbehandlerInfoManager(
-    private val bidragOrganisasjonKonsumer: BidragOrganisasjonKonsumer,
-    private val oidcTokenManager: OidcTokenManager
-) {
-    fun hentSaksbehandlerBrukerId(): String? = if (erIApplikasjonKontekst()) "bidrag-dokument-forsendelse" else oidcTokenManager.hentSaksbehandlerIdentFraToken()
+class SaksbehandlerInfoManager(private val bidragOrganisasjonKonsumer: BidragOrganisasjonKonsumer) {
+    fun hentSaksbehandlerBrukerId(): String? = if (erIApplikasjonKontekst()) "bidrag-dokument-forsendelse" else TokenUtils.hentBruker()
 
     fun hentSaksbehandler(): Saksbehandler? {
         val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null
@@ -23,5 +21,5 @@ class SaksbehandlerInfoManager(
         }
     }
 
-    fun erApplikasjonBruker(): Boolean = oidcTokenManager.erApplikasjonBruker()
+    fun erApplikasjonBruker(): Boolean = TokenUtils.erApplikasjonBruker()
 }

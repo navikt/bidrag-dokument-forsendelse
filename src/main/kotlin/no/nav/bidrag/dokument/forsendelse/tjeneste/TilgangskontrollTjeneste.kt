@@ -1,16 +1,19 @@
 package no.nav.bidrag.dokument.forsendelse.tjeneste
 
+import no.nav.bidrag.commons.security.SikkerhetsKontekst
+import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragSakKonsumer
+import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragTIlgangskontrollKonsumer
 import no.nav.bidrag.dokument.forsendelse.model.ingenTilgang
 import org.springframework.stereotype.Service
 
 @Service
-class TilgangskontrollTjeneste(private val bidragSakKonsumer: BidragSakKonsumer) {
+class TilgangskontrollTjeneste(private val bidragTIlgangskontrollKonsumer: BidragTIlgangskontrollKonsumer) {
 
 
     fun sjekkTilgangSak(saksnummer: String){
-        if (!bidragSakKonsumer.sjekkTilgangSak(saksnummer)) ingenTilgang("Ingen tilgang til saksnummer $saksnummer")
+        if (SikkerhetsKontekst.erIApplikasjonKontekst()) return
+        if (!bidragTIlgangskontrollKonsumer.sjekkTilgangSak(saksnummer)) ingenTilgang("Ingen tilgang til saksnummer $saksnummer")
     }
 
     fun sjekkTilgangForsendelse(forsendelse: Forsendelse){
@@ -19,6 +22,7 @@ class TilgangskontrollTjeneste(private val bidragSakKonsumer: BidragSakKonsumer)
     }
 
     fun sjekkTilgangPerson(personnummer: String){
-        bidragSakKonsumer.sjekkTilgangPerson(personnummer)
+        if (SikkerhetsKontekst.erIApplikasjonKontekst()) return
+        bidragTIlgangskontrollKonsumer.sjekkTilgangPerson(personnummer)
     }
 }

@@ -13,6 +13,9 @@ env:
 
   BIDRAG_SAK_URL: https://bidrag-sak.prod-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: prod-fss.bidrag.bidrag-sak
+
+  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll.intern.nav.no
+  BIDRAG_TILGANGSKONTROLL_SCOPE: prod-gcp.bidrag.bidrag-tilgangskontroll
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false

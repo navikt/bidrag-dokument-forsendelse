@@ -9,12 +9,10 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.utils.*
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
-import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
-import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
-import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -232,6 +230,53 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
             forsendelseFraRespons.dokumenter[0].tittel shouldBe vedlegg1.tittel
             forsendelseFraRespons.dokumenter[1].tittel shouldBe vedlegg2.tittel
         }
+    }
+    @Test
+    fun `Skal legge til dokument på forsendelse`(){
+
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
+        }
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+                tittel = TITTEL_VEDLEGG_1,
+                dokumentmalId = "AAA"
+        )
+
+        val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+            stubUtils.Valider().bestillDokumentKaltMed("AAA")
+        }
+    }
+
+
+    @Test
+    fun `Skal ikke kunne legge til dokument på forsendelse med type notat`(){
+
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            er notat true
+            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
+        }
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+                tittel = TITTEL_HOVEDDOKUMENT,
+                dokumentmalId = DOKUMENTMAL_UTGÅENDE
+        )
+
+        val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST
+        responseNyDokument.headers["Warning"]!![0] shouldBe "Forespørselen inneholder ugyldig data: Kan ikke legge til flere dokumenter til et notat"
     }
 
     @Test

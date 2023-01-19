@@ -2,18 +2,17 @@ package no.nav.bidrag.dokument.forsendelse.tjeneste
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
+import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.valider
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanEndreForsendelse
-import no.nav.bidrag.dokument.forsendelse.utvidelser.hentHoveddokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
 import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
@@ -33,7 +32,7 @@ class OpprettForsendelseTjeneste(
         tilgangskontrollTjeneste.sjekkTilgangPerson(forespørsel.gjelderIdent)
         tilgangskontrollTjeneste.sjekkTilgangSak(forespørsel.saksnummer)
         val forsendelseType = hentForsendelseType(forespørsel)
-        forespørsel.valider(hentForsendelseType(forespørsel))
+        forespørsel.valider(forsendelseType)
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)
 
         val dokumenter = dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
@@ -50,18 +49,10 @@ class OpprettForsendelseTjeneste(
     }
 
     private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType{
+        if (forespørsel.dokumenter.isEmpty()) return ForsendelseType.UTGÅENDE
         val dokumentmalDetaljer = dokumentBestillingTjeneste.hentDokumentmalDetaljer()
-        return when(forespørsel.forsendelseType){
-            ForsendelseTypeTo.UTGÅENDE -> ForsendelseType.UTGÅENDE
-            ForsendelseTypeTo.NOTAT -> ForsendelseType.NOTAT
-            else -> {
-                val dokumentmalId = forespørsel.dokumenter.hentHoveddokument().dokumentmalId
-                return when(dokumentmalDetaljer[dokumentmalId]?.type){
-                    DokumentMalType.NOTAT -> ForsendelseType.NOTAT
-                    else -> ForsendelseType.UTGÅENDE
-                }
-            }
-        }
+        return forespørsel.dokumenter.harNotat(dokumentmalDetaljer).ifTrue { ForsendelseType.NOTAT } ?: ForsendelseType.UTGÅENDE
+
     }
 
     private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse{

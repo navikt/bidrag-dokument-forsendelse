@@ -2,11 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.model
 
 import kotlin.reflect.full.memberProperties
 
-inline fun Boolean?.ifTrue(block: Boolean.() -> Unit): Boolean? {
-    if (this == true) {
-        block()
-    }
-    return this
+inline fun <T> Boolean?.ifTrue(block: Boolean.() -> T): T? {
+    return if (this == true)  block() else null
 }
 
 fun Any.toStringByReflection(exclude: List<String> = listOf(), mask: List<String> = listOf()): String {

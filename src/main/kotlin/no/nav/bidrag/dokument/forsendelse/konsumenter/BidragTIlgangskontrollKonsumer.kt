@@ -2,13 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.konsumenter
 
 import no.nav.bidrag.commons.cache.BrukerCacheable
 import no.nav.bidrag.commons.security.service.SecurityTokenService
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
-import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
-import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.SAK_CACHE
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.SAK_PERSON_CACHE
+import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.TILGANG_SAK_CACHE
+import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.TILGANG_PERSON_CACHE
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeSak
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
@@ -21,23 +16,22 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
 @Service
-class BidragSakKonsumer(
-    @Value("\${BIDRAG_SAK_URL}") bidragDokument: String,
+class BidragTIlgangskontrollKonsumer(
+    @Value("\${BIDRAG_TILGANGSKONTROLL_URL}") bidragTilgangskontroll: String,
     baseRestTemplate: RestTemplate,
     securityTokenService: SecurityTokenService
-): DefaultConsumer("bidrag-sak", bidragDokument, baseRestTemplate, securityTokenService) {
+): DefaultConsumer("bidrag-tilgangskontroll", bidragTilgangskontroll, baseRestTemplate, securityTokenService) {
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    @BrukerCacheable(SAK_CACHE)
+    @BrukerCacheable(TILGANG_SAK_CACHE)
     fun sjekkTilgangSak(saksnummer: String): Boolean {
         return try {
             restTemplate.exchange(
-                "/sak/$saksnummer",
-                HttpMethod.GET,
-                null,
-                Void::class.java
-            ).body
-            true
+                "/api/tilgang/sak",
+                HttpMethod.POST,
+                HttpEntity(saksnummer),
+                Boolean::class.java
+            ).body ?: false
         } catch (e: HttpStatusCodeException){
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             if (e.statusCode == HttpStatus.NOT_FOUND) fantIkkeSak(saksnummer)
@@ -46,16 +40,15 @@ class BidragSakKonsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    @BrukerCacheable(SAK_PERSON_CACHE)
+    @BrukerCacheable(TILGANG_PERSON_CACHE)
     fun sjekkTilgangPerson(personnummer: String): Boolean {
         return try {
             restTemplate.exchange(
-                "/person/sak/$personnummer",
-                HttpMethod.GET,
-                null,
-                Void::class.java
-            ).body
-            true
+                "/api/tilgang/person",
+                HttpMethod.POST,
+                HttpEntity(personnummer),
+                Boolean::class.java
+            ).body ?: false
         } catch (e: HttpStatusCodeException){
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             throw e

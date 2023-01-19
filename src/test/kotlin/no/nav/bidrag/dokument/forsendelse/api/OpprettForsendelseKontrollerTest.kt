@@ -5,6 +5,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
@@ -13,30 +14,10 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.utils.*
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_BRUKSENHETSNUMMER
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_LANDKODE
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_LANDKODE3
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTNUMMER
-import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTSTED
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
-import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
-import no.nav.bidrag.dokument.forsendelse.utils.JOURNALFØRENDE_ENHET
-import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
-import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
-import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
-import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
-import no.nav.bidrag.dokument.forsendelse.utils.SAKSNUMMER
-import no.nav.bidrag.dokument.forsendelse.utils.SPRÅK_NORSK_BOKMÅL
-import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
-import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
-import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_2
-import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -136,10 +117,10 @@ class OpprettForsendelseKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal opprette forsendelse som notat hvis forsendelsetype ikke er sendt med i forespørsel`(){
+    fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`(){
 
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
-            .copy(forsendelseType = null, dokumenter = listOf(
+            .copy(dokumenter = listOf(
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = DOKUMENTMAL_NOTAT
@@ -159,6 +140,27 @@ class OpprettForsendelseKontrollerTest: KontrollerTestRunner() {
             hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
         }
     }
+
+    @Test
+    fun `Skal ikke kunne opprette notat med flere dokumeenter`(){
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
+                .copy(dokumenter = listOf(
+                        OpprettDokumentForespørsel(
+                                tittel = TITTEL_HOVEDDOKUMENT,
+                                dokumentmalId = DOKUMENTMAL_NOTAT
+                        ),
+                        OpprettDokumentForespørsel(
+                                tittel = TITTEL_VEDLEGG_1,
+                                dokumentmalId = DOKUMENTMAL_UTGÅENDE
+                        )
+                ))
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.BAD_REQUEST
+        response.headers["Warning"]?.get(0) shouldContain "Kan ikke opprette ny forsendelse med flere dokumenter hvis forsendelsetype er Notat"
+    }
+
 
     @Test
     fun `Skal opprette forsendelse og sette dokument status BESTILLING_FEILET når bestilling feiler`(){
@@ -220,6 +222,40 @@ class OpprettForsendelseKontrollerTest: KontrollerTestRunner() {
             nyDokument.rekkefølgeIndeks shouldBe forsendelse.dokumenter.size - 1
             nyDokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
             nyDokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse uten dokument og legge til nytt dokument på opprettet forsendelse`(){
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(dokumenter = emptyList())
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelseId = response.body!!.forsendelseId!!
+
+        val forsendelseMedEnDokument = testDataManager.hentForsendelse(forsendelseId)!!
+
+        forsendelseMedEnDokument.dokumenter shouldHaveSize 0
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+                tittel = "Tittel ny dokument",
+                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+        )
+        val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+            forsendelse.dokumenter shouldHaveSize 1
+            val nyDokument = forsendelse.dokumenter[0]
+            nyDokument.tilknyttetSom shouldBe DokumentTilknyttetSom.HOVEDDOKUMENT
+            nyDokument.rekkefølgeIndeks shouldBe 0
+            nyDokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            nyDokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+            stubUtils.Valider().bestillDokumentKaltMed(HOVEDDOKUMENT_DOKUMENTMAL)
         }
     }
 

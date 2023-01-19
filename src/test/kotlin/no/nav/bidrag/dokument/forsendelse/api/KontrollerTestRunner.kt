@@ -38,8 +38,8 @@ abstract class KontrollerTestRunner: CommonTestRunner() {
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
-        stubUtils.stubHentSak()
-        stubUtils.stubHentSakForPerson()
+        stubUtils.stubTilgangskontrollSak()
+        stubUtils.stubTilgangskontrollPerson()
     }
 
     @AfterEach
