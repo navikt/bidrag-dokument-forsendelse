@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
 
-val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.status != ForsendelseStatus.AVBRUTT }.filter { it.fagarkivJournalpostId == null }
+val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.fagarkivJournalpostId == null }
 
 @Component
 class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste) {

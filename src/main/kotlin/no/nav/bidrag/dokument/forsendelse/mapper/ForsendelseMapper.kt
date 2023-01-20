@@ -1,14 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
-import no.nav.bidrag.dokument.dto.AktorDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentDto
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.dto.JournalpostDto
-import no.nav.bidrag.dokument.dto.Kanal
-import no.nav.bidrag.dokument.dto.KodeDto
-import no.nav.bidrag.dokument.dto.MottakerAdresseTo
+import no.nav.bidrag.dokument.dto.*
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -60,19 +52,19 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     gjelderAktor = AktorDto(this.gjelderIdent),
     brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
     innhold = this.dokumenter.hoveddokument?.tittel,
-    fagomrade = "BID",
+    fagomrade = Fagomrade.BIDRAG,
     dokumentType = when (this.forsendelseType) {
-        ForsendelseType.NOTAT -> "X"
-        ForsendelseType.UTGÅENDE -> "U"
+        ForsendelseType.NOTAT -> DokumentType.NOTAT
+        ForsendelseType.UTGÅENDE -> DokumentType.UTGÅENDE
     },
     journalfortAv = opprettetAvIdent,
     journalstatus = when (this.status) {
-        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> "E"
-        ForsendelseStatus.AVBRUTT -> "F"
-        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) "KP" else "FS"
+        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> Journalstatus.EKSPEDERT
+        ForsendelseStatus.AVBRUTT -> Journalstatus.FEILREGISTRERT
+        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) Journalstatus.KLAR_TIL_PRINT else Journalstatus.FERDIGSTILT
         ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt)
-            if (erUtgående) "KP" else "FS"
-        else "D"
+            if (erUtgående) Journalstatus.KLAR_TIL_PRINT else Journalstatus.FERDIGSTILT
+        else Journalstatus.UNDER_PRODUKSJON
     },
     journalpostId = forsendelseIdMedPrefix,
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),

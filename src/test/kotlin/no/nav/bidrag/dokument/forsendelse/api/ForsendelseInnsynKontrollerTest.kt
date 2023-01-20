@@ -196,7 +196,7 @@ class ForsendelseInnsynKontrollerTest: KontrollerTestRunner() {
             + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 3")
         }
 
-        testDataManager.opprettOgLagreForsendelse {
+        val forsendelse3Avbrutt = testDataManager.opprettOgLagreForsendelse {
             med status ForsendelseStatus.AVBRUTT
             med saksnummer saksnummer
             + nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 4")
@@ -209,13 +209,15 @@ class ForsendelseInnsynKontrollerTest: KontrollerTestRunner() {
         val journalResponse = response.body!!
 
         assertSoftly {
-            journalResponse shouldHaveSize 2
+            journalResponse shouldHaveSize 3
 
             val forsendelseResponse1 = journalResponse.find { it.journalpostId == "BIF-${forsendelse1.forsendelseId}" }!!
             val forsendelseResponse2 = journalResponse.find { it.journalpostId == "BIF-${forsendelse2.forsendelseId}" }!!
+            val forsendelseResponse3 = journalResponse.find { it.journalpostId == "BIF-${forsendelse3Avbrutt.forsendelseId}" }!!
 
             forsendelseResponse1.innhold shouldBe "FORSENDELSE 1"
             forsendelseResponse2.innhold shouldBe "FORSENDELSE 2"
+            forsendelseResponse3.innhold shouldBe "FORSENDELSE 4"
         }
     }
 

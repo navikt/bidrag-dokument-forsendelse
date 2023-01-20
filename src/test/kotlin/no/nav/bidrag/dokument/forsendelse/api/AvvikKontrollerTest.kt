@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.api
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import no.nav.bidrag.dokument.dto.AvvikType
+import no.nav.bidrag.dokument.dto.Journalstatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.med
@@ -69,7 +70,9 @@ class AvvikKontrollerTest: KontrollerTestRunner() {
 
         val forsendelseListeEtter = utførHentJournalForSaksnummer(saksnummer)
         forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
-        forsendelseListeEtter.body!! shouldHaveSize 1
+        forsendelseListeEtter.body!! shouldHaveSize 2
+
+        forsendelseListeEtter.body!!.filter { it.journalstatus == Journalstatus.FEILREGISTRERT  } shouldHaveSize 1
 
 
     }
