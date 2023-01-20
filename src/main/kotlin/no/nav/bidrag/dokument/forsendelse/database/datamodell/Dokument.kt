@@ -38,8 +38,8 @@ data class Dokument (
         strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = [
             Parameter(name = "sequence_name", value = "dokument_dokument_id_seq"),
-            Parameter(name = "initial_value", value = "1000000000"),
-            Parameter(name = "min_value", value = "1000000000"),
+            Parameter(name = "initial_value", value = "100000000"),
+            Parameter(name = "min_value", value = "100000000"),
             Parameter(name = "increment_size", value = "1")
         ]
     )
