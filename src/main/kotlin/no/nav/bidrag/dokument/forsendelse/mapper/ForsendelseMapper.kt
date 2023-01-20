@@ -22,10 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
-import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
-import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
-import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.*
 
 fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
     DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
@@ -72,10 +69,9 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     journalstatus = when (this.status) {
         ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> "E"
         ForsendelseStatus.AVBRUTT -> "F"
-        ForsendelseStatus.FERDIGSTILT -> "FS"
+        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) "KP" else "FS"
         ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt)
-            if (this.forsendelseType == ForsendelseType.UTGÅENDE) "KP"
-            else "FS"
+            if (erUtgående) "KP" else "FS"
         else "D"
     },
     journalpostId = forsendelseIdMedPrefix,

@@ -35,6 +35,7 @@ val List<Dokument>.sortertEtterRekkefølge get(): List<Dokument> {
 }
 
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
+val Forsendelse.erUtgående get() = forsendelseType == ForsendelseType.UTGÅENDE
 val Forsendelse.forsendelseIdMedPrefix get() = "BIF-$forsendelseId"
 val Dokument.journalpostIdMedPrefix
     get() = when (arkivsystem) {

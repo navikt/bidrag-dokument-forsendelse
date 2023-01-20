@@ -85,7 +85,7 @@ class OppdaterForsendelseService(
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional
     fun ferdigstillForsendelse(forsendelseId: Long, lokalUtskrift: Boolean = false): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
