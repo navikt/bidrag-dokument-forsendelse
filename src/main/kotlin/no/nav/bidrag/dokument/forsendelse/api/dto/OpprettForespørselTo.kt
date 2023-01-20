@@ -34,6 +34,6 @@ data class OpprettDokumentForespørsel(
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") override val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") override val journalpostId: JournalpostId? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") override val dokumentmalId: String? = null,
-    @Schema(description = "Om dokumentet med oppgitt dokumentmalId skal bestilles der dokumentreferanse/journalpostid ikke er oppgitt.") val bestillDokument: Boolean = true,
     @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") override val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
+    @Schema(description = "Om dokumentet med dokumentmalId skal bestilles. Hvis dette er satt til false så antas det at kallende system bestiller dokumentet selv.") val bestillDokument: Boolean = true,
     ): DokumentForespørsel()

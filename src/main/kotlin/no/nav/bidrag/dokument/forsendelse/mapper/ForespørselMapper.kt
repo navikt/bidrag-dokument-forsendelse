@@ -1,15 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.JournalpostId
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
-import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
+import no.nav.bidrag.dokument.forsendelse.api.dto.*
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
@@ -62,9 +54,9 @@ object ForespørselMapper {
         else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
     }
 
-    fun DokumentForespørsel.erBestillingAvNyttDokument() = this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
+    fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() = this.bestillDokument && this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
     fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
-        DokumentStatus.IKKE_BESTILT else when(this.status){
+        DokumentStatus.IKKE_BESTILT else if (!this.bestillDokument) DokumentStatus.UNDER_PRODUKSJON else when(this.status){
         DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
         DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
         DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT

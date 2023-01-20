@@ -183,6 +183,32 @@ class OpprettForsendelseKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
+    fun `Skal opprette forsendelse og ikke bestille dokument hvis bestillDokument er false`(){
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy( dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                        tittel = TITTEL_HOVEDDOKUMENT,
+                        dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                        bestillDokument = false
+                ),
+        ))
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        await.pollDelay(Duration.ofMillis(500)).atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+            forsendelse.dokumenter shouldHaveSize 1
+            val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+            hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            hoveddokument.arkivsystem shouldBe DokumentArkivSystem.UKJENT
+
+            stubUtils.Valider().bestillDokumentIkkeKalt(HOVEDDOKUMENT_DOKUMENTMAL)
+        }
+    }
+
+    @Test
     fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse`(){
 
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(dokumenter = listOf(

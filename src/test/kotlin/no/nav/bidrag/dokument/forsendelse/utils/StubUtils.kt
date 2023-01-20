@@ -175,6 +175,13 @@ class StubUtils {
             verifyContains(verify, *contains)
         }
 
+        fun bestillDokumentIkkeKalt(dokumentmal: String) {
+            val verify = WireMock.postRequestedFor(
+                    WireMock.urlMatching("/bestilling/bestill/$dokumentmal")
+            )
+            WireMock.verify(0, verify)
+        }
+
         fun opprettJournalpostKaltMed(vararg contains: String) {
             val verify = WireMock.postRequestedFor(
                 WireMock.urlMatching("/dokument/journalpost/JOARK")
