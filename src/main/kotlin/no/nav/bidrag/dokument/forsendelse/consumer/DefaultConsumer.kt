@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.konsumenter
+package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.security.service.SecurityTokenService
 import org.springframework.boot.web.client.RootUriTemplateHandler

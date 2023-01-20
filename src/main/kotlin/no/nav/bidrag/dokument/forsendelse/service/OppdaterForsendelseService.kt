@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste
+package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
@@ -21,17 +21,17 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragDokumentKonsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilAdresseDo
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilIdentType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanEndreForsendelse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanFerdigstilleForsendelse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanLeggeTilDokument
+import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
+import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanFerdigstilleForsendelse
+import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanLeggeTilDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
@@ -48,12 +48,12 @@ private val log = KotlinLogging.logger {}
 
 @Component
 @Transactional
-class OppdaterForsendelseTjeneste(
-    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-    private val forsendelseTjeneste: ForsendelseTjeneste,
-    private val dokumentTjeneste: DokumentTjeneste,
-    private val bidragDokumentKonsumer: BidragDokumentKonsumer,
-    private val fysiskDokumentTjeneste: FysiskDokumentTjeneste
+class OppdaterForsendelseService(
+        private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+        private val forsendelseTjeneste: ForsendelseTjeneste,
+        private val dokumentTjeneste: DokumentTjeneste,
+        private val bidragDokumentConsumer: BidragDokumentConsumer,
+        private val fysiskDokumentService: FysiskDokumentService
 ) {
 
     fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse {
@@ -116,7 +116,7 @@ class OppdaterForsendelseTjeneste(
             skalFerdigstilles = true
         )
 
-        val respons = bidragDokumentKonsumer.opprettJournalpost(opprettJournalpostRequest)
+        val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
 
         forsendelseTjeneste.lagre(forsendelse.copy(
             fagarkivJournalpostId = respons!!.journalpostId,
@@ -136,8 +136,8 @@ class OppdaterForsendelseTjeneste(
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
-       return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentTjeneste.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
-       else bidragDokumentKonsumer.hentDokument(dokument.journalpostIdMedPrefix ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse)!!
+       return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
+       else bidragDokumentConsumer.hentDokument(dokument.journalpostIdMedPrefix ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse)!!
     }
     fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse?{
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null

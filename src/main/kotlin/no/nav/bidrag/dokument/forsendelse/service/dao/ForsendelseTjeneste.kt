@@ -1,23 +1,23 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste.dao
+package no.nav.bidrag.dokument.forsendelse.service.dao
 
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
-import no.nav.bidrag.dokument.forsendelse.tjeneste.SaksbehandlerInfoManager
-import no.nav.bidrag.dokument.forsendelse.tjeneste.TilgangskontrollTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
+import no.nav.bidrag.dokument.forsendelse.service.TilgangskontrollService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class ForsendelseTjeneste(private val forsendelseRepository: ForsendelseRepository, private val saksbehandlerInfoManager: SaksbehandlerInfoManager, private val tilgangskontrollTjeneste: TilgangskontrollTjeneste) {
+class ForsendelseTjeneste(private val forsendelseRepository: ForsendelseRepository, private val saksbehandlerInfoManager: SaksbehandlerInfoManager, private val tilgangskontrollService: TilgangskontrollService) {
 
     fun hentAlleMedSaksnummer(saksnummer: String): List<Forsendelse> {
-        tilgangskontrollTjeneste.sjekkTilgangSak(saksnummer)
+        tilgangskontrollService.sjekkTilgangSak(saksnummer)
         return forsendelseRepository.hentAlleMedSaksnummer(saksnummer)
     }
 
     fun medForsendelseId(forsendelseId: Long): Forsendelse? {
         val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId)
-        forsendelse?.let { tilgangskontrollTjeneste.sjekkTilgangForsendelse(it)  }
+        forsendelse?.let { tilgangskontrollService.sjekkTilgangForsendelse(it)  }
         return forsendelse
     }
 

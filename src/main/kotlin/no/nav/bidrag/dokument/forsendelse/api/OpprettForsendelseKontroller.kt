@@ -7,14 +7,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
-import no.nav.bidrag.dokument.forsendelse.tjeneste.OpprettForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.OpprettForsendelseService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
 @ForsendelseApiKontroller
 class OpprettForsendelseKontroller(
-    val opprettForsendelseService: OpprettForsendelseTjeneste,
+        val opprettForsendelseService: OpprettForsendelseService,
 ) {
 
     @PostMapping

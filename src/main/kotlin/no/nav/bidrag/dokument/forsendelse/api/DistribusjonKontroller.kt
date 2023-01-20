@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.tjeneste.DistribusjonTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.DistribusjonService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
-class DistribusjonKontroller(val distribusjonTjeneste: DistribusjonTjeneste) {
+class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
 
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/enabled")
     @Operation(
@@ -31,7 +31,7 @@ class DistribusjonKontroller(val distribusjonTjeneste: DistribusjonTjeneste) {
         ]
     )
     fun kanDistribuere(@PathVariable forsendelseIdMedPrefix: String): ResponseEntity<Void> {
-        return if (distribusjonTjeneste.kanDistribuere(forsendelseIdMedPrefix.numerisk)) ResponseEntity.ok().build()
+        return if (distribusjonService.kanDistribuere(forsendelseIdMedPrefix.numerisk)) ResponseEntity.ok().build()
         else ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build()
     }
 
@@ -47,6 +47,6 @@ class DistribusjonKontroller(val distribusjonTjeneste: DistribusjonTjeneste) {
     fun distribuerForsendelse(@RequestBody(required = false) distribuerJournalpostRequest: DistribuerJournalpostRequest?,
                               @PathVariable forsendelseIdMedPrefix: String,
                               @RequestParam(required = false) batchId: String?): DistribuerJournalpostResponse {
-        return distribusjonTjeneste.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest)
+        return distribusjonService.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest)
     }
 }

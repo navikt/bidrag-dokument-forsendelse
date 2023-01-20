@@ -1,12 +1,12 @@
-package no.nav.bidrag.dokument.forsendelse.konsumenter
+package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.security.service.SecurityTokenService
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.DOKUMENTMADETALJER_CACHE
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.DOKUMENTMALER_CACHE
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingForespørsel
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingResponse
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.DOKUMENTMADETALJER_CACHE
+import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.DOKUMENTMALER_CACHE
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable

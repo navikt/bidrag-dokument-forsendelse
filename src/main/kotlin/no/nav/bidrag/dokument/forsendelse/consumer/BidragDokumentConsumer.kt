@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.konsumenter
+package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.security.service.SecurityTokenService
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
 @Service
-class BidragDokumentKonsumer(
+class BidragDokumentConsumer(
     @Value("\${BIDRAG_DOKUMENT_URL}") bidragDokument: String,
     baseRestTemplate: RestTemplate,
     securityTokenService: SecurityTokenService

@@ -9,10 +9,10 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentBestillingResponse
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentMalDetaljer
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.DokumentMalType
-import no.nav.bidrag.dokument.forsendelse.konsumenter.dto.SaksbehandlerInfoResponse
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENT_FIL

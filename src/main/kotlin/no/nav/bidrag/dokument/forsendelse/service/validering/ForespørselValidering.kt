@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste.validering
+package no.nav.bidrag.dokument.forsendelse.service.validering
 
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
@@ -14,7 +14,6 @@ import no.nav.bidrag.dokument.forsendelse.model.validerErSann
 import no.nav.bidrag.dokument.forsendelse.model.validerIkkeNullEllerTom
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 

@@ -1,20 +1,19 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste
+package no.nav.bidrag.dokument.forsendelse.service
 
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.erIApplikasjonKontekst
-import no.nav.bidrag.commons.security.service.OidcTokenManager
 import no.nav.bidrag.commons.security.utils.TokenUtils
-import no.nav.bidrag.dokument.forsendelse.konsumenter.BidragOrganisasjonKonsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragOrganisasjonConsumer
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import org.springframework.stereotype.Service
 
 @Service
-class SaksbehandlerInfoManager(private val bidragOrganisasjonKonsumer: BidragOrganisasjonKonsumer) {
+class SaksbehandlerInfoManager(private val bidragOrganisasjonConsumer: BidragOrganisasjonConsumer) {
     fun hentSaksbehandlerBrukerId(): String? = if (erIApplikasjonKontekst()) "bidrag-dokument-forsendelse" else TokenUtils.hentBruker()
 
     fun hentSaksbehandler(): Saksbehandler? {
         val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null
         return try {
-            val saksbehandlerNavn = bidragOrganisasjonKonsumer.hentSaksbehandlerInfo(saksbehandlerIdent)?.navn
+            val saksbehandlerNavn = bidragOrganisasjonConsumer.hentSaksbehandlerInfo(saksbehandlerIdent)?.navn
             Saksbehandler(saksbehandlerIdent, saksbehandlerNavn)
         } catch (e: Exception) {
             Saksbehandler(saksbehandlerIdent, saksbehandlerIdent)

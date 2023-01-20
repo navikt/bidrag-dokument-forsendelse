@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.konfigurasjon
+package no.nav.bidrag.dokument.forsendelse.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.util.StdDateFormat

@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
+package no.nav.bidrag.dokument.forsendelse.consumer.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

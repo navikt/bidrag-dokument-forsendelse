@@ -12,8 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.utvidelser.tilOppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.valider
+import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 @ForsendelseApiKontroller
-class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste) {
+class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsendelseService) {
 
     @PatchMapping("/{forsendelseIdMedPrefix}")
     @Operation(
@@ -37,7 +36,7 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     )
     fun oppdaterForsendelse(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request)
+        return oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request)
     }
 
     @PatchMapping("/journal/{forsendelseIdMedPrefix}")
@@ -53,7 +52,7 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     )
     fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: String, @RequestBody request: EndreJournalpostCommand) {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        oppdaterForsendelseTjeneste.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel())
+        oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel())
     }
 
     @PostMapping("/{forsendelseIdMedPrefix}/dokument")
@@ -69,7 +68,7 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     )
     fun knyttTilDokument(@PathVariable forsendelseIdMedPrefix: String, @RequestBody forespørsel: OpprettDokumentForespørsel): DokumentRespons {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return oppdaterForsendelseTjeneste.knyttDokumentTilForsendelse(forsendelseId, forespørsel)
+        return oppdaterForsendelseService.knyttDokumentTilForsendelse(forsendelseId, forespørsel)
     }
 
     @DeleteMapping("/{forsendelseIdMedPrefix}/{dokumentreferanse}")
@@ -85,7 +84,7 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     )
     fun fjernDokumentFraForsendelse(@PathVariable forsendelseIdMedPrefix: String, @PathVariable dokumentreferanse: String): ResponseEntity<OppdaterForsendelseResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = oppdaterForsendelseTjeneste.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse) ?: return ResponseEntity.badRequest().build()
+        val respons = oppdaterForsendelseService.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
     }
 
@@ -102,7 +101,7 @@ class EndreForsendelseKontroller(val oppdaterForsendelseTjeneste: OppdaterForsen
     )
     fun ferdigstillForsendelse(@PathVariable forsendelseIdMedPrefix: String): ResponseEntity<OpprettJournalpostResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val result = oppdaterForsendelseTjeneste.ferdigstillForsendelse(forsendelseId)
+        val result = oppdaterForsendelseService.ferdigstillForsendelse(forsendelseId)
         return if (result != null) ResponseEntity.ok(result) else ResponseEntity.badRequest().build()
     }
 

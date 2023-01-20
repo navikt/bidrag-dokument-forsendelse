@@ -1,14 +1,13 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste
+package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.Avvikshendelse
-import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigAvvikForForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.validering.ForespørselValidering.validerKanEndreForsendelse
+import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -16,7 +15,7 @@ private val log = KotlinLogging.logger {}
 
 @Component
 @Transactional
-class AvvikTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
+class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
 
     fun hentAvvik(forsendelseId: Long): List<AvvikType> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)

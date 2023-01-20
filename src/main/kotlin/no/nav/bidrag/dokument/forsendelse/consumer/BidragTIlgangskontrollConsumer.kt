@@ -1,9 +1,9 @@
-package no.nav.bidrag.dokument.forsendelse.konsumenter
+package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.cache.BrukerCacheable
 import no.nav.bidrag.commons.security.service.SecurityTokenService
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.TILGANG_SAK_CACHE
-import no.nav.bidrag.dokument.forsendelse.konfigurasjon.CacheConfig.Companion.TILGANG_PERSON_CACHE
+import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.TILGANG_SAK_CACHE
+import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.TILGANG_PERSON_CACHE
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeSak
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
@@ -16,7 +16,7 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
 @Service
-class BidragTIlgangskontrollKonsumer(
+class BidragTIlgangskontrollConsumer(
     @Value("\${BIDRAG_TILGANGSKONTROLL_URL}") bidragTilgangskontroll: String,
     baseRestTemplate: RestTemplate,
     securityTokenService: SecurityTokenService

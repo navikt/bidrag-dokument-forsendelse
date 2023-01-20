@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.konfigurasjon
+package no.nav.bidrag.dokument.forsendelse.config
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG

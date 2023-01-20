@@ -11,8 +11,8 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.tjeneste.OppdaterForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
+import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 private val log = KotlinLogging.logger {}
 
 @Component
-class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste, val oppdaterForsendelseTjeneste: OppdaterForsendelseTjeneste) {
+class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste, val oppdaterForsendelseService: OppdaterForsendelseService) {
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     @Transactional
@@ -65,7 +65,7 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
             if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt){
                 medApplikasjonKontekst {
                     log.info { "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} med type NOTAT er ferdigstilt. Ferdigstiller forsendelse." }
-                    oppdaterForsendelseTjeneste.ferdigstillForsendelse(forsendelse.forsendelseId!!)
+                    oppdaterForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
                 }
             }
         }

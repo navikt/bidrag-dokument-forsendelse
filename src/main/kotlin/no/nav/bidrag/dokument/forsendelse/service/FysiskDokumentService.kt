@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste
+package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
@@ -10,7 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
-import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.journalpostIdMedPrefix
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 private val log = KotlinLogging.logger {}
 
 @Component
-class FysiskDokumentTjeneste(val forsendelseTjeneste: ForsendelseTjeneste) {
+class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
 
     fun hentDokument(forsendelseId: Long, dokumentreferanse: Dokumentreferanse): ByteArray {

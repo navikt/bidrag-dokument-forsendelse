@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.konsumenter.dto
+package no.nav.bidrag.dokument.forsendelse.consumer.dto
 
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler

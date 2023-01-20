@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste.dao
+package no.nav.bidrag.dokument.forsendelse.service.dao
 
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
@@ -8,13 +8,13 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentDo
 import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.DokumentBestillingTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
 @Component
-class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingTjeneste: DokumentBestillingTjeneste) {
+class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingService: DokumentBestillingService) {
     fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel): Dokument {
         val nyDokument = forespørsel.tilDokumentDo(forsendelse, forsendelse.dokumenter.size)
 
@@ -47,7 +47,7 @@ class DokumentTjeneste(private val dokumentRepository: DokumentRepository, priva
 
     private fun bestillDokumentHvisNødvendig(dokument: Dokument){
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT){
-            dokumentBestillingTjeneste.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
+            dokumentBestillingService.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
         }
     }
 }

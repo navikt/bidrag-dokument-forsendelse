@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.tjeneste
+package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.JournalpostDto
@@ -9,7 +9,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
-import no.nav.bidrag.dokument.forsendelse.tjeneste.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
