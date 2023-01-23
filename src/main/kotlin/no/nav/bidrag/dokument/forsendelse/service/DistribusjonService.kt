@@ -5,10 +5,10 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
@@ -17,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import javax.transaction.Transactional
+
 private val log = KotlinLogging.logger {}
 
 @Component
