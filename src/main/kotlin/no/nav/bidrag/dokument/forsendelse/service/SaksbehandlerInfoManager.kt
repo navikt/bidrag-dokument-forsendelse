@@ -20,5 +20,5 @@ class SaksbehandlerInfoManager(private val bidragOrganisasjonConsumer: BidragOrg
         }
     }
 
-    fun erApplikasjonBruker(): Boolean = TokenUtils.erApplikasjonBruker()
+    fun erApplikasjonBruker(): Boolean = TokenUtils.erApplikasjonsbruker()
 }

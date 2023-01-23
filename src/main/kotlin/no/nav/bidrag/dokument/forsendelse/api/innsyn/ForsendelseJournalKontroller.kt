@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 
 @ForsendelseApiKontroller
-class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste, val bidragDokumentBestillingKonsumer: BidragDokumentBestillingKonsumer) {
+class ForsendelseJournalKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste, val bidragDokumentBestillingKonsumer: BidragDokumentBestillingKonsumer) {
 
     @GetMapping("/journal/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
@@ -26,7 +26,7 @@ class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: Forsendel
     )
     fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: String): JournalpostResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return forsendelseInnsynTjeneste.hentForsendelseLegacy(forsendelseId)
+        return forsendelseInnsynTjeneste.hentForsendelseJournal(forsendelseId)
     }
 
     @GetMapping("/sak/{saksnummer}/journal")
@@ -39,7 +39,7 @@ class ForsendelseLegacyInnsynKontroller(val forsendelseInnsynTjeneste: Forsendel
         ]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<JournalpostDto> {
-        return forsendelseInnsynTjeneste.hentForsendelseForSakLegacy(saksnummer)
+        return forsendelseInnsynTjeneste.hentForsendelseForSakJournal(saksnummer)
     }
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])

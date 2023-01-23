@@ -24,7 +24,7 @@ class RestConfig {
         val restTemplate = HttpHeaderRestTemplate()
         restTemplate.requestFactory = HttpComponentsClientHttpRequestFactory()
         restTemplate.withDefaultHeaders()
-        restTemplate.addHeaderGenerator("Nav-Callid") { CorrelationId.fetchCorrelationIdForThread() }
+        restTemplate.addHeaderGenerator("Nav-Callid") { CorrelationId.fetchCorrelationIdForThread() ?: "Ukjent" }
         restTemplate.addHeaderGenerator("Nav-Consumer-Id") { naisAppName }
         metricsRestTemplateCustomizer.customize(restTemplate)
         return restTemplate
