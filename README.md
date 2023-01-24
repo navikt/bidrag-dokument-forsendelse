@@ -49,7 +49,7 @@ kubectl config use dev-fss
 Deretter kjør følgende kommando for å importere secrets. Viktig at filen som opprettes ikke committes til git
 
 ```bash
-kubectl exec --tty deployment/bidrag-dokument-forsendelse-feature printenv | grep -E 'AZURE_|_URL|SCOPE' > src/main/resources/application-lokal-nais-secrets.properties
+kubectl exec --tty deployment/bidrag-dokument-forsendelse-feature printenv | grep -E 'AZURE_|_URL|SCOPE' > src/test/resources/application-lokal-nais-secrets.properties
 ```
 
 Deretter kan tokenet brukes til å logge inn på swagger-ui http://localhost:8999/swagger-ui.html

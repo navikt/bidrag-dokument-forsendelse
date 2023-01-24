@@ -223,21 +223,21 @@ class OppdaterForsendelseService(
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
-    private fun oppdaterMottaker(eksisterendeMottaker: Mottaker?, oppdatertMottaker: MottakerTo?): Mottaker?{
-        if (oppdatertMottaker == null) return eksisterendeMottaker
-        if (eksisterendeMottaker == null) return oppdatertMottaker.tilMottakerDo()
+//    private fun oppdaterMottaker(eksisterendeMottaker: Mottaker?, oppdatertMottaker: MottakerTo?): Mottaker?{
+//        if (oppdatertMottaker == null) return eksisterendeMottaker
+//        if (eksisterendeMottaker == null) return oppdatertMottaker.tilMottakerDo()
+//
+//        return eksisterendeMottaker.copy(
+//            navn = oppdatertMottaker.navn ?: eksisterendeMottaker.navn,
+//            ident = oppdatertMottaker.ident ?: eksisterendeMottaker.ident,
+//            identType = oppdatertMottaker.tilIdentType(eksisterendeMottaker.identType),
+//            adresse = oppdaterAdresse(eksisterendeMottaker.adresse, oppdatertMottaker.adresse)
+//        )
+//    }
 
-        return eksisterendeMottaker.copy(
-            navn = oppdatertMottaker.navn ?: eksisterendeMottaker.navn,
-            ident = oppdatertMottaker.ident ?: eksisterendeMottaker.ident,
-            identType = oppdatertMottaker.tilIdentType(eksisterendeMottaker.identType),
-            adresse = oppdaterAdresse(eksisterendeMottaker.adresse, oppdatertMottaker.adresse)
-        )
-    }
-
-    private fun oppdaterAdresse(eksisterendeAdresse: Adresse? = null, oppdatertAdresse: MottakerAdresseTo?): Adresse?{
-        if (oppdatertAdresse == null) return eksisterendeAdresse
-        if (eksisterendeAdresse == null) return oppdatertAdresse.tilAdresseDo()
-        return oppdatertAdresse.tilAdresseDo().copy(id = eksisterendeAdresse.id)
-    }
+//    private fun oppdaterAdresse(eksisterendeAdresse: Adresse? = null, oppdatertAdresse: MottakerAdresseTo?): Adresse?{
+//        if (oppdatertAdresse == null) return eksisterendeAdresse
+//        if (eksisterendeAdresse == null) return oppdatertAdresse.tilAdresseDo()
+//        return oppdatertAdresse.tilAdresseDo().copy(id = eksisterendeAdresse.id)
+//    }
 }

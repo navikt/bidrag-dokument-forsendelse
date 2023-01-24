@@ -35,6 +35,8 @@ abstract class KontrollerTestRunner: CommonTestRunner() {
 
     @BeforeEach
     fun setupMocks(){
+        stubUtils.stubHentPersonSpraak()
+        stubUtils.stubHentPerson()
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()

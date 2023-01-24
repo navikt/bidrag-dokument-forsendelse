@@ -2,6 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.mapper
 
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.*
+import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
@@ -10,27 +12,24 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
-import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.dokument.forsendelse.model.*
 
 object ForespørselMapper {
-    fun MottakerTo.tilMottakerDo() = Mottaker(
-        navn = this.navn,
+    fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String?) = Mottaker(
+        navn = this.navn ?: person?.navn,
         ident = this.ident,
-        språk = this.språk,
+        språk = this.språk?.uppercase() ?: språk?.uppercase(),
         identType = when(this.identType){
             MottakerIdentTypeTo.ORGANISASJON -> MottakerIdentType.ORGANISASJON
             MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
             MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
-            else -> null
+            else -> this.ident?.tilIdentType()
         },
         adresse = this.adresse?.tilAdresseDo()
     )
-    fun MottakerTo.tilIdentType(defaultVerdi: MottakerIdentType? = null) = when(this.identType){
-        MottakerIdentTypeTo.ORGANISASJON -> MottakerIdentType.ORGANISASJON
-        MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
-        MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
-        else -> defaultVerdi
-    }
+    fun PersonIdent.tilIdentType() = if(this.erOrganisasjon()) MottakerIdentType.ORGANISASJON
+        else if (this.erSamhandler()) MottakerIdentType.SAMHANDLER
+        else MottakerIdentType.FNR
 
     fun MottakerAdresseTo.tilAdresseDo() = Adresse(
         adresselinje1 = this.adresselinje1,

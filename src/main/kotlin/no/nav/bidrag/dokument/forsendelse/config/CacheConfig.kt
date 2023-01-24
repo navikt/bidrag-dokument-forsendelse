@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import no.nav.bidrag.commons.cache.EnableUserCache
+import no.nav.bidrag.commons.cache.InvaliderCacheFørStartenAvArbeidsdag
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.cache.caffeine.CaffeineCacheManager
@@ -16,6 +17,8 @@ import java.util.concurrent.TimeUnit
 @EnableUserCache
 class CacheConfig {
     companion object {
+        const val PERSON_CACHE = "PERSON_CACHE"
+        const val PERSON_SPRAAK_CACHE = "PERSON_SPRAAK_CACHE"
         const val DOKUMENTMALER_CACHE = "DOKUMENTMALER_CACHE"
         const val DOKUMENTMADETALJER_CACHE = "DOKUMENTMADETALJER_CACHE"
         const val SAKSBEHANDLERINFO_CACHE = "SAKSBEHANDLERINFO_CACHE"
@@ -25,7 +28,8 @@ class CacheConfig {
     @Bean
     fun cacheManager(): CacheManager {
         val caffeineCacheManager = CaffeineCacheManager()
-        caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(PERSON_SPRAAK_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
+        caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMADETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())

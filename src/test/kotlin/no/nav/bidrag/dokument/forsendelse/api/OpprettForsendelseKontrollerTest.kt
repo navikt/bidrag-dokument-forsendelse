@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
@@ -107,6 +108,38 @@ class OpprettForsendelseKontrollerTest: KontrollerTestRunner() {
                 )
             }
 
+        }
+
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+    }
+
+    @Test
+    fun `Skal opprette forsendelse uten mottakernavn`(){
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(mottaker = MottakerTo(ident = MOTTAKER_IDENT))
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+        assertSoftly {
+            forsendelse.mottaker shouldNotBe null
+
+            val mottaker = forsendelse.mottaker!!
+            mottaker.ident shouldBe MOTTAKER_IDENT
+            mottaker.navn shouldBe MOTTAKER_NAVN
+            mottaker.språk shouldBe SPRÅK_NORSK_BOKMÅL
+            mottaker.identType shouldBe MottakerIdentType.FNR
+
+            mottaker.adresse shouldBe null
+
+            stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
+            stubUtils.Valider().hentPersonSpråkKaltMed(MOTTAKER_IDENT)
         }
 
 

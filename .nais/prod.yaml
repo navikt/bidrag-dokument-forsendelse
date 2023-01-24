@@ -16,6 +16,9 @@ env:
 
   BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll.intern.nav.no
   BIDRAG_TILGANGSKONTROLL_SCOPE: prod-gcp.bidrag.bidrag-tilgangskontroll
+
+  BIDRAG_PERSON_URL: https://bidrag-person-feature.prod-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false

@@ -32,6 +32,14 @@ object ForespørselValidering {
             feilmeldinger.add("Kan ikke lagre flere dokumenter med samme journalpostid/arkivsystem og dokumentreferanse")
         }
 
+        if (gjelderIdent.isEmpty()){
+            feilmeldinger.add("Kan ikke opprette forsendelse uten gjelder")
+        }
+
+        if (mottaker?.ident.isNullOrEmpty()){
+            feilmeldinger.add("Kan ikke opprette forsendelse uten mottaker")
+        }
+
         this.dokumenter.forEachIndexed {i, it->
             feilmeldinger.addAll(it.valider(i, false))
         }

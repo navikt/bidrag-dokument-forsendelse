@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
@@ -22,6 +23,7 @@ class OpprettForsendelseService(
         private val tilgangskontrollService: TilgangskontrollService,
         private val dokumentBestillingService: DokumentBestillingService,
         private val forsendelseTjeneste: ForsendelseTjeneste,
+        private val personConsumer: BidragPersonConsumer,
         private val dokumenttjeneste: DokumentTjeneste,
         private val saksbehandlerInfoManager: SaksbehandlerInfoManager
 ) {
@@ -57,16 +59,19 @@ class OpprettForsendelseService(
     private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse{
 
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
+        val mottakerIdent = forespørsel.mottaker!!.ident!!
+        val mottakerInfo = personConsumer.hentPerson(mottakerIdent)
+        val mottakerSpråk = personConsumer.hentPersonSpråk(mottakerIdent)
         val forsendelse = Forsendelse(
             saksnummer = forespørsel.saksnummer,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
             enhet = forespørsel.enhet,
-            språk = forespørsel.språk ?: "NB",
+            språk = forespørsel.språk?.uppercase() ?: "NB",
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
             endretAvIdent = bruker?.ident ?: "UKJENT",
             opprettetAvNavn = bruker?.navn,
-            mottaker = forespørsel.mottaker?.tilMottakerDo()
+            mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk)
         )
 
         return forsendelseTjeneste.lagre(forsendelse)

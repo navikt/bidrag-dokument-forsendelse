@@ -74,7 +74,7 @@ class DefaultRestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(UgyldigForespørsel::class)
     fun ugyldigForespørsel(exception: UgyldigForespørsel): ResponseEntity<*> {
-        LOGGER.warn("Forsendelsen inneholder ugyldig data", exception)
+        LOGGER.warn("Forsendelsen inneholder ugyldig data: ${exception.message}", exception)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig data: ${exception.message}")
@@ -112,19 +112,9 @@ class DefaultRestControllerAdvice {
     }
 
     @ResponseBody
-    @ExceptionHandler(FantIkkeForsendelse::class)
-    fun fantIkkeForsendelse(exception: FantIkkeForsendelse): ResponseEntity<*> {
-        LOGGER.warn(exception.message, exception)
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, exception.message)
-            .build<Any>()
-    }
-
-    @ResponseBody
     @ExceptionHandler(Exception::class)
     fun handleOtherExceptions(exception: Exception): ResponseEntity<*> {
-        LOGGER.warn("Det skjedde en ukjent feil", exception)
+        LOGGER.warn("Det skjedde en ukjent feil: ${exception.message}", exception)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .header(HttpHeaders.WARNING, "Det skjedde en ukjent feil: ${exception.message}")

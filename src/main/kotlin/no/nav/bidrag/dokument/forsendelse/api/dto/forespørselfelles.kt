@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import org.apache.commons.lang3.Range
 
 val BID_JP_RANGE: Range<Long> = Range.between(18900000L, 40000000L)
@@ -44,7 +45,7 @@ sealed class DokumentForespørsel(
 }
 
 data class MottakerTo(
-    val ident: String? = null,
+    val ident: PersonIdent? = null,
     val språk: String? = null,
     val navn: String? = null,
     val identType: MottakerIdentTypeTo? = null,
