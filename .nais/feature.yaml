@@ -19,6 +19,8 @@ env:
   BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.dev.intern.nav.no
   BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll-feature
 
+  BIDRAG_PERSON_URL: https://bidrag-person-feature.dev-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
 
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 database:

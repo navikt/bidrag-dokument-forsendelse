@@ -16,6 +16,9 @@ env:
 
   BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll.dev.intern.nav.no
   BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll
+
+  BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false
