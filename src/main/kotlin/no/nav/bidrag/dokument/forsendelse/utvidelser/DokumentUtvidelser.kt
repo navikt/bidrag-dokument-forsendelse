@@ -6,7 +6,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 
 val Dokument.forsendelseIdMedPrefix get() = this.forsendelse.forsendelseIdMedPrefix
 fun List<Dokument>.hentDokument(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }
-val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }
+val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.isNotEmpty() && dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT }
 val List<Dokument>.ikkeSlettetSortertEtterRekkefølge get() = dokumenterIkkeSlettet.sortedBy { it.rekkefølgeIndeks }
 val List<Dokument>.hoveddokument get() = dokumenterIkkeSlettet.find { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }
 val List<Dokument>.vedlegger get() = dokumenterIkkeSlettet.filter { it.tilknyttetSom == DokumentTilknyttetSom.VEDLEGG }.sortedBy { it.rekkefølgeIndeks }
