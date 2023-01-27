@@ -10,24 +10,24 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.utils.*
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
-import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 
-class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
+class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
-    fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`(){
+    fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -37,18 +37,18 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
                 dokumenter = listOf(
-                    OppdaterDokumentForespørsel(
-                        tittel = vedlegg1.tittel,
-                        dokumentreferanse = vedlegg1.dokumentreferanse
-                    ),
-                    OppdaterDokumentForespørsel(
-                        tittel = "Ny tittel hoveddok",
-                        dokumentreferanse = hoveddokument.dokumentreferanse
-                    ),
-                    OppdaterDokumentForespørsel(
-                        tittel = vedlegg2.tittel,
-                        dokumentreferanse = vedlegg2.dokumentreferanse
-                    )
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg1.tittel,
+                                dokumentreferanse = vedlegg1.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel hoveddok",
+                                dokumentreferanse = hoveddokument.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg2.tittel,
+                                dokumentreferanse = vedlegg2.dokumentreferanse
+                        )
                 )
         )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
@@ -73,12 +73,12 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
-    fun `Oppdater skal feile hvis ikke alle dokumenter er inkludert i forespørselen`(){
+    fun `Oppdater skal feile hvis ikke alle dokumenter er inkludert i forespørselen`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -87,32 +87,32 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
         val vedlegg2 = forsendelse.dokumenter.vedlegger[1]
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
-            dokumenter = listOf(
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg1.tittel,
-                    dokumentreferanse = "123133313123123123"
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = "Ny tittel hoveddok",
-                    dokumentreferanse = hoveddokument.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg2.tittel,
-                    dokumentreferanse = vedlegg2.dokumentreferanse
+                dokumenter = listOf(
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg1.tittel,
+                                dokumentreferanse = "123133313123123123"
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel hoveddok",
+                                dokumentreferanse = hoveddokument.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg2.tittel,
+                                dokumentreferanse = vedlegg2.dokumentreferanse
+                        )
                 )
-            )
         )
         val respons = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.BAD_REQUEST
     }
 
     @Test
-    fun `Oppdater skal feile hvis samme dokumentent er inkludert flere ganger i forespørselen`(){
+    fun `Oppdater skal feile hvis samme dokumentent er inkludert flere ganger i forespørselen`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -121,32 +121,32 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
         val vedlegg2 = forsendelse.dokumenter.vedlegger[1]
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
-            dokumenter = listOf(
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg1.tittel,
-                    dokumentreferanse = hoveddokument.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = "Ny tittel hoveddok",
-                    dokumentreferanse = hoveddokument.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg2.tittel,
-                    dokumentreferanse = vedlegg2.dokumentreferanse
+                dokumenter = listOf(
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg1.tittel,
+                                dokumentreferanse = hoveddokument.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel hoveddok",
+                                dokumentreferanse = hoveddokument.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg2.tittel,
+                                dokumentreferanse = vedlegg2.dokumentreferanse
+                        )
                 )
-            )
         )
         val respons = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.BAD_REQUEST
     }
 
     @Test
-    fun `Skal slette dokument med ekstern referanse fra forsendelse`(){
+    fun `Skal slette dokument med ekstern referanse fra forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -185,12 +185,12 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal slette hoveddokument uten ekstern referanse fra forsendelse`(){
+    fun `Skal slette hoveddokument uten ekstern referanse fra forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -231,11 +231,12 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
             forsendelseFraRespons.dokumenter[1].tittel shouldBe vedlegg2.tittel
         }
     }
+
     @Test
-    fun `Skal legge til dokument på forsendelse`(){
+    fun `Skal legge til dokument på forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -260,11 +261,11 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
 
 
     @Test
-    fun `Skal ikke kunne legge til dokument på forsendelse med type notat`(){
+    fun `Skal ikke kunne legge til dokument på forsendelse med type notat`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             er notat true
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -280,20 +281,20 @@ class OppdaterForsendelseKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal feile hvis eksisterende dokumentreferanse blir forsøkt lagt til på forsendelse`(){
+    fun `Skal feile hvis eksisterende dokumentreferanse blir forsøkt lagt til på forsendelse`() {
 
         val dokument = nyttDokument()
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + dokument
+            +dokument
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
-            tittel = TITTEL_HOVEDDOKUMENT,
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-            dokumentreferanse = dokument.dokumentreferanse,
-            journalpostId = "JOARK-${dokument.journalpostId}"
+                tittel = TITTEL_HOVEDDOKUMENT,
+                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                dokumentreferanse = dokument.dokumentreferanse,
+                journalpostId = dokument.journalpostId
         )
         val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST

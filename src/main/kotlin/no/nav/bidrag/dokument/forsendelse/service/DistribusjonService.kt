@@ -43,9 +43,10 @@ class DistribusjonService(
 
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
         log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtksrift=$distribuerLokalt" }
-        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
 
-        if (forsendelse.fagarkivJournalpostId.isNullOrEmpty()){
+        if (forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
             forsendelse = oppdaterForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
         }
 
@@ -53,42 +54,48 @@ class DistribusjonService(
         else bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse)
     }
 
-    private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse): DistribuerJournalpostResponse{
-        bidragDokumentConsumer.distribuer("JOARK-${forsendelse.fagarkivJournalpostId}", lokalUtskrift = true) ?: distribusjonFeilet(forsendelseId)
+    private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse): DistribuerJournalpostResponse {
+        bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", lokalUtskrift = true)
+                ?: distribusjonFeilet(forsendelseId)
         forsendelseTjeneste.lagre(forsendelse.copy(
-            distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
-            distribuertTidspunkt = LocalDateTime.now(),
-            status = ForsendelseStatus.DISTRIBUERT_LOKALT,
-            endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
-            endretTidspunkt = LocalDateTime.now()
+                distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
+                distribuertTidspunkt = LocalDateTime.now(),
+                status = ForsendelseStatus.DISTRIBUERT_LOKALT,
+                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
+                        ?: forsendelse.endretAvIdent,
+                endretTidspunkt = LocalDateTime.now()
         ))
         log.info { "Forsendelsen ble bestilt som distribuert lokalt. Forsendelse og Journalpost markert som distribuert lokalt. Ingen distribusjon er bestilt." }
-        return DistribuerJournalpostResponse(bestillingsId = null, journalpostId = forsendelse.fagarkivJournalpostId ?: "")
+        return DistribuerJournalpostResponse(bestillingsId = null, journalpostId = forsendelse.journalpostIdFagarkiv
+                ?: "")
 
     }
+
     private fun bestillDistribusjon(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?, forsendelse: Forsendelse): DistribuerJournalpostResponse {
         val adresse = distribuerJournalpostRequest?.adresse ?: forsendelse.mottaker?.adresse?.let {
             DistribuerTilAdresse(
-                adresselinje1 = it.adresselinje1,
-                adresselinje2 = it.adresselinje2,
-                adresselinje3 = it.adresselinje3,
-                land = it.landkode,
-                postnummer = it.postnummer,
-                poststed = it.poststed
+                    adresselinje1 = it.adresselinje1,
+                    adresselinje2 = it.adresselinje2,
+                    adresselinje3 = it.adresselinje3,
+                    land = it.landkode,
+                    postnummer = it.postnummer,
+                    poststed = it.poststed
             )
         }
-        val resultat = bidragDokumentConsumer.distribuer("JOARK-${forsendelse.fagarkivJournalpostId}", adresse) ?: distribusjonFeilet(forsendelseId)
+        val resultat = bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", adresse)
+                ?: distribusjonFeilet(forsendelseId)
 
-        log.info("Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.fagarkivJournalpostId} og bestillingId=${resultat.bestillingsId}")
-        SIKKER_LOGG.info("Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, journalpostId=${forsendelse.fagarkivJournalpostId} og bestillingId=${resultat.bestillingsId}")
+        log.info("Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv} og bestillingId=${resultat.bestillingsId}")
+        SIKKER_LOGG.info("Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, journalpostId=${forsendelse.journalpostIdFagarkiv} og bestillingId=${resultat.bestillingsId}")
 
         forsendelseTjeneste.lagre(forsendelse.copy(
-            distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
-            distribuertTidspunkt = LocalDateTime.now(),
-            distribusjonBestillingsId = resultat.bestillingsId,
-            status = ForsendelseStatus.DISTRIBUERT,
-            endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
-            endretTidspunkt = LocalDateTime.now()
+                distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
+                distribuertTidspunkt = LocalDateTime.now(),
+                distribusjonBestillingsId = resultat.bestillingsId,
+                status = ForsendelseStatus.DISTRIBUERT,
+                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
+                        ?: forsendelse.endretAvIdent,
+                endretTidspunkt = LocalDateTime.now()
         ))
 
         return resultat

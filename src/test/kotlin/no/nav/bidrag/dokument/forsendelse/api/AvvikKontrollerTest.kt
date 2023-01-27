@@ -4,7 +4,6 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.Journalstatus
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
@@ -14,13 +13,13 @@ import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.HttpStatus
 
 
-class AvvikKontrollerTest: KontrollerTestRunner() {
+class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
-    fun `Skal hente avvik for forsendelse`(){
+    fun `Skal hente avvik for forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
@@ -31,18 +30,18 @@ class AvvikKontrollerTest: KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal utføre avvik for forsendelse`(){
+    fun `Skal utføre avvik for forsendelse`() {
 
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
@@ -72,18 +71,18 @@ class AvvikKontrollerTest: KontrollerTestRunner() {
         forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
         forsendelseListeEtter.body!! shouldHaveSize 2
 
-        forsendelseListeEtter.body!!.filter { it.journalstatus == Journalstatus.FEILREGISTRERT  } shouldHaveSize 1
+        forsendelseListeEtter.body!!.filter { it.journalstatus == Journalstatus.FEILREGISTRERT } shouldHaveSize 1
 
 
     }
 
     @ParameterizedTest
     @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON", "AVBRUTT"], mode = EnumSource.Mode.EXCLUDE)
-    fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus){
+    fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus) {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status status
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())

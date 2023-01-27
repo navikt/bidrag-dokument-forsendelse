@@ -1,8 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
-import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import org.junit.jupiter.api.Test
 
@@ -10,11 +8,11 @@ class ForsendelseUtvidelserTest {
 
 
     @Test
-    fun `Skal returnere dokumenter med hoveddokument først og vedleggene sortert rekkefølge`(){
-        val hoveddokument = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, tittel = "HOVEDDOK")
-        val vedlegg1 = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
-        val vedlegg2 = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 2, slettet = true, tittel = "VEDLEGG2")
-        val vedlegg3 = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
+    fun `Skal returnere dokumenter med hoveddokument først og vedleggene sortert rekkefølge`() {
+        val hoveddokument = nyttDokument(tittel = "HOVEDDOK")
+        val vedlegg1 = nyttDokument(rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
+        val vedlegg2 = nyttDokument(rekkefølgeIndeks = 2, slettet = true, tittel = "VEDLEGG2")
+        val vedlegg3 = nyttDokument(rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
         val dokumenter = listOf(hoveddokument, vedlegg1, vedlegg2, vedlegg3)
 
         val sortertDokumenter = dokumenter.sortertEtterRekkefølge
@@ -31,13 +29,13 @@ class ForsendelseUtvidelserTest {
     }
 
     @Test
-    fun `Skal returnere dokumenter med hoveddokument først og vedleggene sortert rekkefølge hvis hoveddokument slettet`(){
-        val hoveddokument = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, tittel = "HOVEDDOK", slettet = true)
-        val vedlegg1 = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
-        val vedlegg2 = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 2, tittel = "VEDLEGG2")
-        val vedlegg3 = nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
+    fun `Skal returnere dokumenter med hoveddokument først og vedleggene sortert rekkefølge hvis hoveddokument slettet`() {
+        val hoveddokument = nyttDokument(tittel = "HOVEDDOK", slettet = true)
+        val vedlegg1 = nyttDokument(rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
+        val vedlegg2 = nyttDokument(rekkefølgeIndeks = 2, tittel = "VEDLEGG2")
+        val vedlegg3 = nyttDokument(rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
 
-        val dokumenter = listOf(hoveddokument,vedlegg2, vedlegg1, vedlegg3)
+        val dokumenter = listOf(hoveddokument, vedlegg2, vedlegg1, vedlegg3)
 
         val sortertDokumenter = dokumenter.sortertEtterRekkefølge
 

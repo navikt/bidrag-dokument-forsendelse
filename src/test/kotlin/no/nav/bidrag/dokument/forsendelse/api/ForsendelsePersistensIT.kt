@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.Duration
 
-class ForsendelsePersistensIT: KontrollerTestContainerRunner() {
+class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
-    fun `Skal opprette forsendelse`(){
+    fun `Skal opprette forsendelse`() {
 
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
 
@@ -40,12 +40,12 @@ class ForsendelsePersistensIT: KontrollerTestContainerRunner() {
     }
 
     @Test
-    fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`(){
+    fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            + nyttDokument(journalpostId = null, eksternDokumentreferanse = null, tilknyttetSom = DokumentTilknyttetSom.HOVEDDOKUMENT, rekkefølgeIndeks = 0)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, rekkefølgeIndeks = 1)
-            + nyttDokument(tilknyttetSom = DokumentTilknyttetSom.VEDLEGG, journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -54,20 +54,20 @@ class ForsendelsePersistensIT: KontrollerTestContainerRunner() {
         val vedlegg2 = forsendelse.dokumenter.vedlegger[1]
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
-            dokumenter = listOf(
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg1.tittel,
-                    dokumentreferanse = vedlegg1.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = "Ny tittel hoveddok",
-                    dokumentreferanse = hoveddokument.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg2.tittel,
-                    dokumentreferanse = vedlegg2.dokumentreferanse
+                dokumenter = listOf(
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg1.tittel,
+                                dokumentreferanse = vedlegg1.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel hoveddok",
+                                dokumentreferanse = hoveddokument.dokumentreferanse
+                        ),
+                        OppdaterDokumentForespørsel(
+                                tittel = vedlegg2.tittel,
+                                dokumentreferanse = vedlegg2.dokumentreferanse
+                        )
                 )
-            )
         )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.OK

@@ -26,7 +26,7 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     @Transactional
-    fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>){
+    fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {
         val hendelse = tilDokumentHendelseObjekt(melding)
 
         if (hendelse.hendelseType == DokumentHendelseType.BESTILLING) return
@@ -38,19 +38,19 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
         val oppdaterteDokumenter = dokumenter.map {
             log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
             dokumentTjeneste.lagreDokument(
-                it.copy(
-                    arkivsystem = when(hendelse.arkivSystem){
-                        DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER ->  DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                        else -> it.arkivsystem
-                    },
-                    dokumentStatus = when(hendelse.status){
-                        DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
-                        DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
-                        DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
-                        else -> it.dokumentStatus
-                    }
+                    it.copy(
+                            arkivsystem = when (hendelse.arkivSystem) {
+                                DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                                else -> it.arkivsystem
+                            },
+                            dokumentStatus = when (hendelse.status) {
+                                DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
+                                DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
+                                DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
+                                else -> it.dokumentStatus
+                            }
 
-                )
+                    )
             )
         }
 
@@ -58,11 +58,11 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
 
     }
 
-    private fun ferdigstillHvisForsendelseErNotat(dokumenter: List<Dokument>){
+    private fun ferdigstillHvisForsendelseErNotat(dokumenter: List<Dokument>) {
         dokumenter.forEach {
             val forsendelse = it.forsendelse
 
-            if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt){
+            if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt) {
                 medApplikasjonKontekst {
                     log.info { "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} med type NOTAT er ferdigstilt. Ferdigstiller forsendelse." }
                     oppdaterForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
@@ -73,10 +73,10 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
     }
 
 
-    private fun tilDokumentHendelseObjekt(melding: ConsumerRecord<String, String>): DokumentHendelse{
+    private fun tilDokumentHendelseObjekt(melding: ConsumerRecord<String, String>): DokumentHendelse {
         try {
             return objectMapper.readValue(melding.value(), DokumentHendelse::class.java)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             log.error("Det skjedde en feil ved konverting av melding fra hendelse", e)
             throw e
         }

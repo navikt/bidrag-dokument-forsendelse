@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
 
-val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.fagarkivJournalpostId == null }
+val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.journalpostIdFagarkiv == null }
 
 @Component
 class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste) {
@@ -22,16 +22,17 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
         log.info { "Hentet forsendelser for sak $saksnummer" }
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map(Forsendelse::tilJournalpostDto)
+                .map(Forsendelse::tilJournalpostDto)
     }
 
     fun hentForsendelseJournal(forsendelseId: Long): JournalpostResponse {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
         log.info { "Hentet forsendelse for forsendelseId $forsendelseId" }
 
         return JournalpostResponse(
-            journalpost = forsendelse.tilJournalpostDto(),
-            sakstilknytninger = listOf(forsendelse.saksnummer)
+                journalpost = forsendelse.tilJournalpostDto(),
+                sakstilknytninger = listOf(forsendelse.saksnummer)
         )
     }
 
@@ -39,7 +40,7 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
 
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map(Forsendelse::tilForsendelseRespons)
+                .map(Forsendelse::tilForsendelseRespons)
     }
 
     fun hentForsendelse(forsendelseId: Long): ForsendelseResponsTo? {
