@@ -19,14 +19,14 @@ class OpprettForsendelseKontroller(
 
     @PostMapping
     @Operation(
-        summary = "Oppretter ny forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")],
+            summary = "Oppretter ny forsendelse",
+            security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Forsendelse opprettet"),
-            ApiResponse(responseCode = "400", description = "Forespørselen inneholder ugyldig verdi"),
-        ]
+            value = [
+                ApiResponse(responseCode = "200", description = "Forsendelse opprettet"),
+                ApiResponse(responseCode = "400", description = "Forespørselen inneholder ugyldig verdi"),
+            ]
     )
     fun opprettForsendelse(@Valid @RequestBody request: OpprettForsendelseForespørsel): OpprettForsendelseRespons {
         SIKKER_LOGG.info("Oppretter ny forsendelse $request")

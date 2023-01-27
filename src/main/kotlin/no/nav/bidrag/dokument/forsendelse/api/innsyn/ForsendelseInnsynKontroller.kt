@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingKonsumer
-import no.nav.bidrag.dokument.forsendelse.model.FORSENDELSE_ID
+import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
 import org.springframework.http.ResponseEntity
@@ -22,18 +22,19 @@ class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInns
     @GetMapping("/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
-        value = [ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")]
+            value = [ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")]
     )
-    fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: FORSENDELSE_ID): ResponseEntity<ForsendelseResponsTo> {
+    fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<ForsendelseResponsTo> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = forsendelseInnsynTjeneste.hentForsendelse(forsendelseId) ?: return ResponseEntity.noContent().build()
+        val respons = forsendelseInnsynTjeneste.hentForsendelse(forsendelseId)
+                ?: return ResponseEntity.noContent().build()
         return ResponseEntity.ok(respons)
     }
 
     @GetMapping("/sak/{saksnummer}/journal")
-    @Operation(description = "Hent alle forsendelse med saksnummer",)
+    @Operation(description = "Hent alle forsendelse med saksnummer")
     @ApiResponses(
-        value = [ApiResponse(responseCode = "200", description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet.")]
+            value = [ApiResponse(responseCode = "200", description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet.")]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
         return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)

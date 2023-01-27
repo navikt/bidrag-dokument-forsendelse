@@ -8,7 +8,6 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
-import no.nav.bidrag.dokument.forsendelse.model.Dokumentreferanse
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
@@ -21,7 +20,7 @@ private val log = KotlinLogging.logger {}
 class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
 
-    fun hentDokument(forsendelseId: Long, dokumentreferanse: Dokumentreferanse): ByteArray {
+    fun hentDokument(forsendelseId: Long, dokumentreferanse: String): ByteArray {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
@@ -38,22 +37,22 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 //        return "DOK".toByteArray()
     }
 
-    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: Dokumentreferanse?): List<DokumentMetadata> {
+    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String?): List<DokumentMetadata> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
         if (dokumentreferanse.isNullOrEmpty()) {
-            return forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { mapTilÅpneDokumentMetadata(it) }
+            return forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { mapTilDokumentMetadata(it) }
         }
 
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)
                 ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
 
-        return listOf(mapTilÅpneDokumentMetadata(dokument))
+        return listOf(mapTilDokumentMetadata(dokument))
     }
 
 
-    private fun mapTilÅpneDokumentMetadata(dokument: Dokument): DokumentMetadata {
+    private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {
             return DokumentMetadata(
                     journalpostId = dokument.journalpostId,

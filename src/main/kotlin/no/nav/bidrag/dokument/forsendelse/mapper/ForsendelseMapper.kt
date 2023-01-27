@@ -46,7 +46,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         gjelderIdent = this.gjelderIdent,
         gjelderAktor = AktorDto(this.gjelderIdent),
         brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
-        innhold = this.dokumenter.hoveddokument?.tittel,
+        innhold = this.dokumenter.hoveddokument?.tittel ?: "Forsendelse $forsendelseId",
         fagomrade = Fagomrade.BIDRAG,
         dokumentType = when (this.forsendelseType) {
             ForsendelseType.NOTAT -> DokumentType.NOTAT
