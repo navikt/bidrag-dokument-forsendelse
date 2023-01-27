@@ -43,9 +43,9 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!

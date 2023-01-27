@@ -33,7 +33,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
     fun `skal returnere at forsendelse kan distribueres hvis forsendelse er ferdigstilt`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, dokumentStatus = DokumentStatus.FERDIGSTILT)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, dokumentStatus = DokumentStatus.FERDIGSTILT)
         }
 
         val response = utførHentKanDistribuere(forsendelse.forsendelseIdMedPrefix)
@@ -45,7 +45,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
     fun `skal returnere at forsendelse ikke kan distribueres hvis forsendelse er inneholder dokumenter som ikke er ferdigstilt`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
 
         val response = utførHentKanDistribuere(forsendelse.forsendelseIdMedPrefix)
@@ -61,7 +61,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         stubUtils.stubBestillDistribusjon(bestillingId)
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0)
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "Tittel vedlegg", dokumentMalId = "BI100", rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "Tittel vedlegg", dokumentMalId = "BI100", rekkefølgeIndeks = 1)
         }
 
         stubUtils.stubOpprettJournalpost(nyJournalpostId, forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
@@ -108,7 +108,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         stubUtils.stubBestillDistribusjon(bestillingId)
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0)
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "Tittel vedlegg", dokumentMalId = "BI100", rekkefølgeIndeks = 1)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "Tittel vedlegg", dokumentMalId = "BI100", rekkefølgeIndeks = 1)
         }
 
         stubUtils.stubOpprettJournalpost(nyJournalpostId, forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })

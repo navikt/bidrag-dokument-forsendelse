@@ -10,10 +10,10 @@ class ForsendelseMapperTest {
     @Test
     fun `skal mappe til journalpostDto`() {
         val forsendelse = opprettForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
             +nyttDokument(rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
             +nyttDokument(rekkefølgeIndeks = 3, slettet = true, tittel = "VEDLEGG3")
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2, tittel = "VEDLEGG2")
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2, tittel = "VEDLEGG2")
         }
 
         val journalpostDto = forsendelse.tilJournalpostDto()

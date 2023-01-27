@@ -44,6 +44,10 @@ class DokumentTjeneste(private val dokumentRepository: DokumentRepository, priva
         return dokumentRepository.hentDokumenterMedDokumentreferanse(dokumentreferanse, dokumentreferanse.utenPrefiks.toLong())
     }
 
+    fun hentDokumenterSomHarStatusBestillingFeilet(): List<Dokument> {
+        return dokumentRepository.hentDokumenterSomHarStatusBestillingFeilet()
+    }
+
     private fun bestillDokumentHvisNødvendig(dokument: Dokument) {
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT) {
             dokumentBestillingService.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)

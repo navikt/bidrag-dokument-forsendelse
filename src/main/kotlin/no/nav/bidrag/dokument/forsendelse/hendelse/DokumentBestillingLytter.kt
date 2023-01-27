@@ -1,10 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import mu.KotlinLogging
-import no.nav.bidrag.commons.CorrelationId
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.medApplikasjonKontekst
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingKonsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
@@ -16,11 +15,15 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
+import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
+import java.util.concurrent.TimeUnit
 import javax.transaction.Transactional
 
 private val LOGGER = KotlinLogging.logger {}
@@ -29,7 +32,8 @@ private val LOGGER = KotlinLogging.logger {}
 class DokumentBestillingLytter(
         val dokumentBestillingKonsumer: BidragDokumentBestillingKonsumer,
         val forsendelseRepository: ForsendelseRepository,
-        val dokumentTjeneste: DokumentTjeneste
+        val dokumentTjeneste: DokumentTjeneste,
+        val saksbehandlerInfoManager: SaksbehandlerInfoManager
 ) {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -42,11 +46,12 @@ class DokumentBestillingLytter(
                 ?: throw KunneIkkBestilleDokument("Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}")
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 
-
         val bestilling = tilForespørsel(forsendelse, dokument)
 
         try {
+
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
+            LOGGER.info { "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}" }
 
             dokumentTjeneste.lagreDokument(
                     dokument.copy(
@@ -66,36 +71,43 @@ class DokumentBestillingLytter(
 
     }
 
-    private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel =
-            DokumentBestillingForespørsel(
-                    dokumentreferanse = dokument.dokumentreferanse,
-                    saksnummer = forsendelse.saksnummer,
-                    tittel = dokument.tittel,
-                    gjelderId = forsendelse.gjelderIdent,
-                    enhet = forsendelse.enhet,
-                    språk = dokument.språk ?: forsendelse.språk,
-                    mottaker = forsendelse.mottaker?.let { mottaker ->
-                        MottakerTo(mottaker.ident, mottaker.navn, mottaker.språk, adresse = mottaker.adresse?.let {
-                            MottakerAdresseTo(
-                                    adresselinje1 = it.adresselinje1,
-                                    adresselinje2 = it.adresselinje2,
-                                    adresselinje3 = it.adresselinje3,
-                                    bruksenhetsnummer = it.bruksenhetsnummer,
-                                    postnummer = it.postnummer,
-                                    landkode = it.landkode,
-                                    landkode3 = it.landkode3,
-                                    poststed = it.poststed
-                            )
-                        })
-                    }
-            )
+    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.MINUTES, initialDelay = 10)
+    @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
+    fun bestillFeiledeDokumenterPåNytt() {
 
-    private fun tilBestillingHendelse(forsendelse: Forsendelse, dokument: Dokument): DokumentHendelse =
-            DokumentHendelse(
-                    dokumentreferanse = dokument.dokumentreferanse,
-                    forsendelseId = "BIF-${forsendelse.forsendelseId}",
-                    sporingId = CorrelationId.fetchCorrelationIdForThread()
-                            ?: CorrelationId.existing("bestilling-${dokument.dokumentreferanse}").get(),
-                    hendelseType = DokumentHendelseType.BESTILLING,
-            )
+        val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
+        LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. Prøver å bestille dokumentene på nytt." }
+
+        medApplikasjonKontekst {
+            dokumenter.forEach {
+                bestill(DokumentBestilling(it.forsendelse.forsendelseId!!, it.dokumentreferanse))
+            }
+        }
+    }
+
+    private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel {
+        val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
+        return DokumentBestillingForespørsel(
+                dokumentreferanse = dokument.dokumentreferanse,
+                saksnummer = forsendelse.saksnummer,
+                tittel = dokument.tittel,
+                gjelderId = forsendelse.gjelderIdent,
+                enhet = forsendelse.enhet,
+                språk = dokument.språk ?: forsendelse.språk,
+                saksbehandler = saksbehandlerIdent?.let { Saksbehandler(it) },
+                mottaker = forsendelse.mottaker?.let { mottaker ->
+                    MottakerTo(mottaker.ident, mottaker.navn, mottaker.språk, adresse = mottaker.adresse?.let {
+                        MottakerAdresseTo(
+                                adresselinje1 = it.adresselinje1,
+                                adresselinje2 = it.adresselinje2,
+                                adresselinje3 = it.adresselinje3,
+                                bruksenhetsnummer = it.bruksenhetsnummer,
+                                postnummer = it.postnummer,
+                                landkode = it.landkode,
+                                landkode3 = it.landkode3,
+                                poststed = it.poststed
+                        )
+                    })
+                })
+    }
 }

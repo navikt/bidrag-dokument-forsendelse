@@ -19,7 +19,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal hente avvik for forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
@@ -36,12 +36,12 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
@@ -82,7 +82,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status status
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())

@@ -81,11 +81,11 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal hente forsendelse med dokumenter i riktig rekkefølge`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
-            +nyttDokument(rekkefølgeIndeks = 2, tittel = "VEDLEGG2", eksternDokumentreferanse = "4543434")
-            +nyttDokument(rekkefølgeIndeks = 4, slettet = true, tittel = "VEDLEGG4", eksternDokumentreferanse = "3231312313")
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
+            +nyttDokument(rekkefølgeIndeks = 2, tittel = "VEDLEGG2", dokumentreferanseOriginal = "4543434")
+            +nyttDokument(rekkefølgeIndeks = 4, slettet = true, tittel = "VEDLEGG4", dokumentreferanseOriginal = "3231312313")
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
         }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
@@ -109,7 +109,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
             +nyttDokument(
                     journalpostId = null,
-                    eksternDokumentreferanse = null,
+                    dokumentreferanseOriginal = null,
                     dokumentStatus = DokumentStatus.FERDIGSTILT,
                     tittel = TITTEL_VEDLEGG_1
             )

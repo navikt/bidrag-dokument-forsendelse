@@ -25,9 +25,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -76,9 +76,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Oppdater skal feile hvis ikke alle dokumenter er inkludert i forespørselen`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -110,9 +110,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Oppdater skal feile hvis samme dokumentent er inkludert flere ganger i forespørselen`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -144,9 +144,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Skal slette dokument med ekstern referanse fra forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -188,9 +188,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Skal slette hoveddokument uten ekstern referanse fra forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", eksternDokumentreferanse = "12312321333", rekkefølgeIndeks = 2)
+            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -236,7 +236,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Skal legge til dokument på forsendelse`() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
@@ -265,7 +265,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             er notat true
-            +nyttDokument(journalpostId = null, eksternDokumentreferanse = null, rekkefølgeIndeks = 0)
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
         }
 
         val forsendelseId = forsendelse.forsendelseId!!
