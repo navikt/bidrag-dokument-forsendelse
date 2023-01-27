@@ -157,7 +157,7 @@ class OppdaterForsendelseService(
 
         val nyDokument = dokumentTjeneste.opprettNyttDokument(forsendelse, forespørsel)
 
-        log.info { "Knyttet nytt dokument til $forsendelseId med tittel=${forespørsel.tittel}, dokumentmalId=${forespørsel.dokumentmalId}, dokumentreferanse=${nyDokument.dokumentreferanse} og journalpostId=${nyDokument.journalpostId}" }
+        log.info { "Knyttet nytt dokument til $forsendelseId med tittel=${forespørsel.tittel}, språk=${forespørsel.språk} dokumentmalId=${forespørsel.dokumentmalId}, dokumentreferanse=${nyDokument.dokumentreferanse} og journalpostId=${nyDokument.journalpostId}" }
 
         return DokumentRespons(
                 dokumentreferanse = nyDokument.dokumentreferanse,

@@ -2,16 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
-import no.nav.bidrag.dokument.forsendelse.model.FantIkkeForsendelse
-import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
-import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
-import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
-import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
+import no.nav.bidrag.dokument.forsendelse.model.*
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
-import org.slf4j.LoggerFactory
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -22,8 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import java.util.Locale
-import javax.servlet.http.HttpServletRequest
 
 private val LOGGER = KotlinLogging.logger {}
 
@@ -37,9 +27,9 @@ class DefaultRestControllerAdvice {
         LOGGER.warn("Forespørselen inneholder ugyldig verdi: ${valideringsFeil ?: "ukjent feil"}", exception)
 
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig verdi: ${valideringsFeil?:exception.message}")
-            .build<Any>()
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig verdi: ${valideringsFeil ?: exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
@@ -47,9 +37,9 @@ class DefaultRestControllerAdvice {
     fun handleHttpClientErrorException(exception: HttpClientErrorException): ResponseEntity<*> {
         LOGGER.warn(exception.statusText, exception)
         return ResponseEntity
-            .status(exception.statusCode)
-            .header(HttpHeaders.WARNING, exception.statusText)
-            .build<Any>()
+                .status(exception.statusCode)
+                .header(HttpHeaders.WARNING, exception.statusText)
+                .build<Any>()
     }
 
     private fun createMissingKotlinParameterViolation(ex: MissingKotlinParameterException): String {
@@ -64,11 +54,11 @@ class DefaultRestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(KunneIkkBestilleDokument::class)
     fun kunneIkkBestilleDokument(exception: KunneIkkBestilleDokument): ResponseEntity<*> {
-        LOGGER.warn(exception){"Kunne ikke bestille dokument ${exception.message}"}
+        LOGGER.warn(exception) { "Kunne ikke bestille dokument ${exception.message}" }
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Kunne ikke bestille dokument: ${exception.message}")
-            .build<Any>()
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.WARNING, "Kunne ikke bestille dokument: ${exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
@@ -76,39 +66,39 @@ class DefaultRestControllerAdvice {
     fun ugyldigForespørsel(exception: UgyldigForespørsel): ResponseEntity<*> {
         LOGGER.warn("Forsendelsen inneholder ugyldig data: ${exception.message}", exception)
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig data: ${exception.message}")
-            .build<Any>()
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.WARNING, "Forespørselen inneholder ugyldig data: ${exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
     @ExceptionHandler(UgyldigEndringAvForsendelse::class)
     fun ugyldigEndringAvForsendelse(exception: UgyldigEndringAvForsendelse): ResponseEntity<*> {
-        LOGGER.warn("Forsendelsen kan ikke endres", exception)
+        LOGGER.warn("Forsendelsen kan ikke endres: ${exception.message}", exception)
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Forespørselen kan ikke endres: ${exception.message}")
-            .build<Any>()
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.WARNING, "Forespørselen kan ikke endres: ${exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
     @ExceptionHandler(KanIkkeFerdigstilleForsendelse::class)
     fun kanIkkeFerdigstilleForsendelse(exception: KanIkkeFerdigstilleForsendelse): ResponseEntity<*> {
-        LOGGER.warn("Forsendelsen kan ikke ferdigstilles", exception)
+        LOGGER.warn("Forsendelsen kan ikke ferdigstilles: ${exception.message}", exception)
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Forsendelsen kan ikke ferdigstilles: ${exception.message}")
-            .build<Any>()
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.WARNING, "Forsendelsen kan ikke ferdigstilles: ${exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
     @ExceptionHandler(FantIkkeDokument::class)
     fun fantIkkeDokument(exception: FantIkkeDokument): ResponseEntity<*> {
-        LOGGER.warn("Fant ikke dokument", exception)
+        LOGGER.warn("Fant ikke dokument: ${exception.message}", exception)
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Fant ikke dokument: ${exception.message}")
-            .build<Any>()
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.WARNING, "Fant ikke dokument: ${exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
@@ -116,9 +106,9 @@ class DefaultRestControllerAdvice {
     fun handleOtherExceptions(exception: Exception): ResponseEntity<*> {
         LOGGER.warn("Det skjedde en ukjent feil: ${exception.message}", exception)
         return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .header(HttpHeaders.WARNING, "Det skjedde en ukjent feil: ${exception.message}")
-            .build<Any>()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .header(HttpHeaders.WARNING, "Det skjedde en ukjent feil: ${exception.message}")
+                .build<Any>()
     }
 
     @ResponseBody
@@ -126,9 +116,9 @@ class DefaultRestControllerAdvice {
     fun handleUnauthorizedException(exception: JwtTokenUnauthorizedException): ResponseEntity<*> {
         LOGGER.warn("Ugyldig eller manglende sikkerhetstoken", exception)
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .header(HttpHeaders.WARNING, "Ugyldig eller manglende sikkerhetstoken")
-            .build<Any>()
+                .status(HttpStatus.UNAUTHORIZED)
+                .header(HttpHeaders.WARNING, "Ugyldig eller manglende sikkerhetstoken")
+                .build<Any>()
     }
 
 

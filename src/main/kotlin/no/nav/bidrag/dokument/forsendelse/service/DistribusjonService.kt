@@ -42,7 +42,7 @@ class DistribusjonService(
         if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
 
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
-        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtksrift=$distribuerLokalt" }
+        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt" }
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeForsendelse(forsendelseId)
 
@@ -66,9 +66,10 @@ class DistribusjonService(
                 endretTidspunkt = LocalDateTime.now()
         ))
         log.info { "Forsendelsen ble bestilt som distribuert lokalt. Forsendelse og Journalpost markert som distribuert lokalt. Ingen distribusjon er bestilt." }
-        return DistribuerJournalpostResponse(bestillingsId = null, journalpostId = forsendelse.journalpostIdFagarkiv
-                ?: "")
-
+        return DistribuerJournalpostResponse(
+                bestillingsId = null,
+                journalpostId = forsendelse.journalpostIdFagarkiv ?: ""
+        )
     }
 
     private fun bestillDistribusjon(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?, forsendelse: Forsendelse): DistribuerJournalpostResponse {

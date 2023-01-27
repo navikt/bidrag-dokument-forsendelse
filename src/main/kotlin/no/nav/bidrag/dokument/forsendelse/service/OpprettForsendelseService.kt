@@ -38,40 +38,42 @@ class OpprettForsendelseService(
 
         val dokumenter = dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
 
+        log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
-            forsendelseId = forsendelse.forsendelseId,
-            dokumenter = dokumenter.map {
-                DokumentRespons(
-                    dokumentreferanse = it.dokumentreferanse,
-                    tittel = it.tittel
-                )
-            }
+                forsendelseId = forsendelse.forsendelseId,
+                dokumenter = dokumenter.map {
+                    DokumentRespons(
+                            dokumentreferanse = it.dokumentreferanse,
+                            tittel = it.tittel
+                    )
+                }
         )
     }
 
-    private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType{
+    private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType {
         if (forespørsel.dokumenter.isEmpty()) return ForsendelseType.UTGÅENDE
         val dokumentmalDetaljer = dokumentBestillingService.hentDokumentmalDetaljer()
-        return forespørsel.dokumenter.harNotat(dokumentmalDetaljer).ifTrue { ForsendelseType.NOTAT } ?: ForsendelseType.UTGÅENDE
+        return forespørsel.dokumenter.harNotat(dokumentmalDetaljer).ifTrue { ForsendelseType.NOTAT }
+                ?: ForsendelseType.UTGÅENDE
 
     }
 
-    private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse{
+    private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse {
 
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         val mottakerIdent = forespørsel.mottaker!!.ident!!
         val mottakerInfo = personConsumer.hentPerson(mottakerIdent)
         val mottakerSpråk = personConsumer.hentPersonSpråk(mottakerIdent)
         val forsendelse = Forsendelse(
-            saksnummer = forespørsel.saksnummer,
-            forsendelseType = forsendelseType,
-            gjelderIdent = forespørsel.gjelderIdent,
-            enhet = forespørsel.enhet,
-            språk = forespørsel.språk?.uppercase() ?: "NB",
-            opprettetAvIdent = bruker?.ident ?: "UKJENT",
-            endretAvIdent = bruker?.ident ?: "UKJENT",
-            opprettetAvNavn = bruker?.navn,
-            mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk)
+                saksnummer = forespørsel.saksnummer,
+                forsendelseType = forsendelseType,
+                gjelderIdent = forespørsel.gjelderIdent,
+                enhet = forespørsel.enhet,
+                språk = forespørsel.språk?.uppercase() ?: "NB",
+                opprettetAvIdent = bruker?.ident ?: "UKJENT",
+                endretAvIdent = bruker?.ident ?: "UKJENT",
+                opprettetAvNavn = bruker?.navn,
+                mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk)
         )
 
         return forsendelseTjeneste.lagre(forsendelse)

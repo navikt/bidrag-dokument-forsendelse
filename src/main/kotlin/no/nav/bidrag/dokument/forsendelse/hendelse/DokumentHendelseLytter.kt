@@ -17,7 +17,6 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 private val log = KotlinLogging.logger {}
 
@@ -25,13 +24,12 @@ private val log = KotlinLogging.logger {}
 class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste, val oppdaterForsendelseService: OppdaterForsendelseService) {
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
-    @Transactional
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {
         val hendelse = tilDokumentHendelseObjekt(melding)
 
         if (hendelse.hendelseType == DokumentHendelseType.BESTILLING) return
 
-        log.info { "Mottok hendelse for dokumentreferanse ${hendelse.dokumentreferanse} med status ${hendelse.status} og hendelsetype ${hendelse.hendelseType}" }
+        log.info { "Mottok hendelse for dokumentreferanse ${hendelse.dokumentreferanse} med status ${hendelse.status}, arkivsystem ${hendelse.arkivSystem} og hendelsetype ${hendelse.hendelseType}" }
 
         val dokumenter = dokumentTjeneste.hentDokumenterMedReferanse(hendelse.dokumentreferanse)
 

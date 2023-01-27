@@ -20,15 +20,17 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
 
     fun hentForsendelseForSakJournal(saksnummer: String): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
-        log.info { "Hentet forsendelser for sak $saksnummer" }
-        return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
+        val forsendelserFiltrert = forsendelser.filtrerIkkeFerdigstiltEllerArkivert
                 .map(Forsendelse::tilJournalpostDto)
+
+        log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer" }
+        return forsendelserFiltrert
     }
 
     fun hentForsendelseJournal(forsendelseId: Long): JournalpostResponse {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeForsendelse(forsendelseId)
-        log.info { "Hentet forsendelse for forsendelseId $forsendelseId" }
+        log.info { "Hentet forsendelse $forsendelseId med saksnummer ${forsendelse.saksnummer}" }
 
         return JournalpostResponse(
                 journalpost = forsendelse.tilJournalpostDto(),
