@@ -10,10 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
-import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
-import no.nav.bidrag.dokument.forsendelse.model.erOrganisasjon
-import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
-import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.dokument.forsendelse.model.*
 
 object ForespørselMapper {
     fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String?) = Mottaker(
@@ -38,7 +35,7 @@ object ForespørselMapper {
             adresselinje2 = this.adresselinje2,
             adresselinje3 = this.adresselinje3,
             bruksenhetsnummer = this.bruksenhetsnummer,
-            landkode = this.landkode,
+            landkode = this.landkode ?: alpha3LandkodeTilAlpha2(this.landkode3),
             landkode3 = this.landkode3,
             postnummer = this.postnummer,
             poststed = this.poststed
