@@ -35,11 +35,23 @@ class DefaultRestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(HttpClientErrorException::class)
     fun handleHttpClientErrorException(exception: HttpClientErrorException): ResponseEntity<*> {
-        LOGGER.warn(exception.statusText, exception)
+        val errorMessage = getErrorMessage(exception)
+        LOGGER.warn(errorMessage, exception)
         return ResponseEntity
                 .status(exception.statusCode)
-                .header(HttpHeaders.WARNING, exception.statusText)
+                .header(HttpHeaders.WARNING, errorMessage)
                 .build<Any>()
+    }
+
+    private fun getErrorMessage(exception: HttpClientErrorException): String {
+        val errorMessage = StringBuilder()
+        errorMessage.append("Det skjedde en feil ved kall mot ekstern tjeneste: ")
+        exception.responseHeaders?.get("Warning")?.let { if (it.size > 0) errorMessage.append(it[0]) }
+        if (exception.statusText.isNotNullOrEmpty()) {
+            errorMessage.append(" - ")
+            errorMessage.append(exception.statusText)
+        }
+        return errorMessage.toString()
     }
 
     private fun createMissingKotlinParameterViolation(ex: MissingKotlinParameterException): String {

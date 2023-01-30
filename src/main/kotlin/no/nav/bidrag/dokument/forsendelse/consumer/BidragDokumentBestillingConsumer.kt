@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.consumer
 
-import no.nav.bidrag.commons.security.service.SecurityTokenService
+import no.nav.bidrag.commons.web.client.AbstractRestClient
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.DOKUMENTMADETALJER_CACHE
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.DOKUMENTMALER_CACHE
@@ -8,31 +8,34 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForesp�
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.RestOperations
+import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
 
 inline fun <reified T> typeReference() = object : ParameterizedTypeReference<T>() {}
+
 @Service
-class BidragDokumentBestillingKonsumer(
-    @Value("\${BIDRAG_DOKUMENT_BESTILLING_URL}") bidragDokumentBestillingUrl: String, baseRestTemplate: RestTemplate,
-    securityTokenService: SecurityTokenService
-) :
-    DefaultConsumer("bidrag-dokument-bestilling", bidragDokumentBestillingUrl, baseRestTemplate, securityTokenService) {
+class BidragDokumentBestillingConsumer(
+        @Value("\${BIDRAG_DOKUMENT_BESTILLING_URL}") val url: URI,
+        @Qualifier("azure") private val restTemplate: RestOperations) : AbstractRestClient(restTemplate, "bidrag-dokument-bestilling") {
 
     companion object {
-        private val LOGGER = LoggerFactory.getLogger(BidragDokumentBestillingKonsumer::class.java)
+        private val LOGGER = LoggerFactory.getLogger(BidragDokumentBestillingConsumer::class.java)
     }
+
+    private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
+            .path(path ?: "").build().toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun bestill(forespørsel: DokumentBestillingForespørsel, dokumentmalId: String): DokumentBestillingResponse? {
-        val respons = restTemplate.exchange("/bestill/$dokumentmalId", HttpMethod.POST, HttpEntity(forespørsel), DokumentBestillingResponse::class.java).body
+        val respons: DokumentBestillingResponse? = postForEntity(createUri("/bestill/$dokumentmalId"), forespørsel)
         LOGGER.info("Bestilte dokument med dokumentmalId $dokumentmalId")
         SIKKER_LOGG.info("Bestilte dokument med dokumentmalId $dokumentmalId og forespørsel $forespørsel")
         return respons
@@ -40,11 +43,13 @@ class BidragDokumentBestillingKonsumer(
 
     @Cacheable(DOKUMENTMALER_CACHE)
     fun støttedeDokumentmaler(): List<String> {
-        return restTemplate.exchange("/brevkoder", HttpMethod.OPTIONS, null, typeReference<List<String>>()).body ?: emptyList()
+        return optionsForEntity(createUri("/brevkoder"), null)
+                ?: emptyList()
     }
 
     @Cacheable(DOKUMENTMADETALJER_CACHE)
     fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
-        return restTemplate.exchange("/dokumentmal/detaljer", HttpMethod.GET, null, typeReference<Map<String, DokumentMalDetaljer>>()).body ?: emptyMap()
+        return getForEntity(createUri("/dokumentmal/detaljer"))
+                ?: emptyMap()
     }
 }

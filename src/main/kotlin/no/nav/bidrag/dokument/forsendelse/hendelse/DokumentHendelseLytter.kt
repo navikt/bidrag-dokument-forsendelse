@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
-import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.medApplikasjonKontekst
+import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.DokumentHendelseType

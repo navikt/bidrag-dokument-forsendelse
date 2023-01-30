@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
-import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingKonsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 
 @ForsendelseApiKontroller
 @RequestMapping("/api/forsendelse/v2")
-class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste, val bidragDokumentBestillingKonsumer: BidragDokumentBestillingKonsumer) {
+class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste, val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer) {
 
     @GetMapping("/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
@@ -43,6 +43,6 @@ class ForsendelseInnsynKontroller(val forsendelseInnsynTjeneste: ForsendelseInns
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun støttedeDokumentmaler(): List<String> {
-        return bidragDokumentBestillingKonsumer.støttedeDokumentmaler()
+        return bidragDokumentBestillingConsumer.støttedeDokumentmaler()
     }
 }

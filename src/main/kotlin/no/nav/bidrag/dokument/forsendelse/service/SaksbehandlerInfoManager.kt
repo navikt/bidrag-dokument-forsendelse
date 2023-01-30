@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.erIApplikasjonKontekst
+import no.nav.bidrag.commons.security.SikkerhetsKontekst.erIApplikasjonKontekst
 import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragOrganisasjonConsumer
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler

@@ -2,9 +2,9 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import no.nav.bidrag.commons.security.SikkerhetsKontekst.Companion.medApplikasjonKontekst
+import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingKonsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
@@ -30,7 +30,7 @@ private val LOGGER = KotlinLogging.logger {}
 
 @Component
 class DokumentBestillingLytter(
-        val dokumentBestillingKonsumer: BidragDokumentBestillingKonsumer,
+        val dokumentBestillingKonsumer: BidragDokumentBestillingConsumer,
         val forsendelseRepository: ForsendelseRepository,
         val dokumentTjeneste: DokumentTjeneste,
         val saksbehandlerInfoManager: SaksbehandlerInfoManager
