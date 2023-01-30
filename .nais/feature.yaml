@@ -1,6 +1,44 @@
-name: bidrag-template-spring-feature
+name: bidrag-dokument-forsendelse-feature
 ingresses:
-  - https://bidrag-template-spring-feature.dev.intern.nav.no
-azure:
-  person: bidrag-person-feature.dev-fss-pub.nais.io
-  person_clientid: dev-fss.bidrag.bidrag-person-feature
+  - https://bidrag-dokument-forsendelse-feature.dev.intern.nav.no
+env:
+  BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon-feature.dev-fss-pub.nais.io/bidrag-organisasjon
+  BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon-feature
+
+  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling-feature.dev.intern.nav.no
+  BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling-feature
+
+  BIDRAG_DOKUMENT_URL: https://bidrag-dokument-feature.dev-fss-pub.nais.io/bidrag-dokument
+  BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument-feature
+
+  TOPIC_DOKUMENT: bidrag.dokument-feature
+
+  BIDRAG_SAK_URL: https://bidrag-sak-feature.dev-fss-pub.nais.io/bidrag-sak
+  BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak-feature
+
+  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.dev.intern.nav.no
+  BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll-feature
+
+  BIDRAG_PERSON_URL: https://bidrag-person-feature.dev-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
+
+  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+database:
+  dbname: bidrag-dokument-forsendelse-feature
+  autoResize: false
+  tier: db-f1-micro
+kafka:
+  pool: nav-dev
+azure_access_inbound:
+  - application: bisys
+    namespace: bidrag
+    cluster: dev-fss
+  - application: bidrag-dokument-feature
+    namespace: bidrag
+    cluster: dev-fss
+  - application: bidrag-ui-feature
+    namespace: bidrag
+    cluster: dev-fss
+  - application: bidrag-cucumber-cloud-feature
+    namespace: bidrag
+    cluster: dev-gcp

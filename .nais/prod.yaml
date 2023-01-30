@@ -1,6 +1,37 @@
-name: bidrag-template-spring
+name: bidrag-dokument-forsendelse
 ingresses:
-  - https://bidrag-template-spring.intern.nav.no
-azure:
-  person: bidrag-person.prod-fss-pub.nais.io
-  person_clientid: prod-fss.bidrag.bidrag-person
+  - https://bidrag-dokument-forsendelse.intern.nav.no
+env:
+  BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon.prod-fss-pub.nais.io/bidrag-organisasjon
+  BIDRAG_ORGANISASJON_SCOPE: prod-fss.bidrag.bidrag-organisasjon
+
+  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.intern.nav.no
+  BIDRAG_DOKUMENT_BESTILLING_SCOPE: prod-gcp.bidrag.bidrag-dokument-bestilling
+
+  BIDRAG_DOKUMENT_URL: https://bidrag-dokument.prod-fss-pub.nais.io/bidrag-dokument
+  BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
+
+  BIDRAG_SAK_URL: https://bidrag-sak.prod-fss-pub.nais.io/bidrag-sak
+  BIDRAG_SAK_SCOPE: prod-fss.bidrag.bidrag-sak
+
+  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll.intern.nav.no
+  BIDRAG_TILGANGSKONTROLL_SCOPE: prod-gcp.bidrag.bidrag-tilgangskontroll
+
+  BIDRAG_PERSON_URL: https://bidrag-person-feature.prod-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
+database:
+  dbname: bidrag-dokument-forsendelse
+  autoResize: false
+  tier: db-custom-1-3840
+kafka:
+  pool: nav-prod
+azure_access_inbound:
+  - application: bisys
+    namespace: bidrag
+    cluster: prod-fss
+  - application: bidrag-dokument
+    namespace: bidrag
+    cluster: prod-fss
+  - application: bidrag-ui
+    namespace: bidrag
+    cluster: prod-fss

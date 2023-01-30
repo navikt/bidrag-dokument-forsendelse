@@ -30,3 +30,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+application-lokal-nais-secrets*
+application-lokal-db-nais-secrets*

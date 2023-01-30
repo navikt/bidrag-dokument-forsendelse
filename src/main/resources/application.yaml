@@ -4,16 +4,37 @@ management:
       exposure:
         include: "prometheus,health"
 
-springdoc:
-  packages-to-scan: no.nav.bidrag.template.controller
+springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
+
 spring.main.banner-mode: off
+#springfox.documentation.swagger-ui.base-url: /
+spring.application.name: ${NAIS_APP_NAME:bidrag-dokument-forsendelse}
 ---
-spring.config.activate.on-profile: nais,local
+spring.config.activate.on-profile: nais,lokal-nais
 
 no.nav.security.jwt:
   client:
     registration:
+      bidrag-organisasjon:
+        resource-url: ${BIDRAG_ORGANISASJON_URL}
+        token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://${BIDRAG_ORGANISASJON_SCOPE}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_post
+      bidrag-dokument:
+        resource-url: ${BIDRAG_DOKUMENT_URL}
+        token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://${BIDRAG_DOKUMENT_SCOPE}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_post
       bidrag-person:
+        resource-url: ${BIDRAG_PERSON_URL}
         token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: api://${BIDRAG_PERSON_SCOPE}/.default
@@ -21,6 +42,69 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_post
+      bidrag-sak:
+        resource-url: ${BIDRAG_SAK_URL}
+        token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://${BIDRAG_SAK_SCOPE}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_post
+      bidrag-dokument-bestilling:
+        resource-url: ${BIDRAG_DOKUMENT_BESTILLING_URL}
+        token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://${BIDRAG_DOKUMENT_BESTILLING_SCOPE}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_post
+      bidrag-tilgangskontroll:
+        resource-url: ${BIDRAG_TILGANGSKONTROLL_URL}
+        token-endpoint-url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://${BIDRAG_TILGANGSKONTROLL_SCOPE}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_post
   issuer.aad:
     discovery_url: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/v2.0/.well-known/openid-configuration
     accepted_audience: ${AZURE_APP_CLIENT_ID}, api://${AZURE_APP_CLIENT_ID}
+
+spring.kafka:
+  bootstrap-servers: ${KAFKA_BROKERS}
+  properties:
+    security.protocol: SSL
+    ssl:
+      keystore:
+        type: PKCS12
+        location: ${KAFKA_KEYSTORE_PATH}
+        password: ${KAFKA_CREDSTORE_PASSWORD}
+      truststore:
+        location: ${KAFKA_TRUSTSTORE_PATH}
+        password: ${KAFKA_CREDSTORE_PASSWORD}
+  consumer:
+    enableAutoCommit: false
+  listener:
+    ackMode: RECORD
+
+---
+spring.config.activate.on-profile: nais
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?user=${DB_USERNAME}&password=${DB_PASSWORD}
+    hikari:
+      idle-timeout: 10001
+      max-lifetime: 30001
+      connectionTimeout: 1000
+      maximum-pool-size: 10
+      minimum-idle: 1
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+  jpa:
+    database: postgresql

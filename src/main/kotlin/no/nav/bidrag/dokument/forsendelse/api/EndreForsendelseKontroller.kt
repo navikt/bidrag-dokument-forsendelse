@@ -1,0 +1,106 @@
+package no.nav.bidrag.dokument.forsendelse.api
+
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import no.nav.bidrag.dokument.dto.EndreJournalpostCommand
+import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
+import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.utvidelser.tilOppdaterForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
+import no.nav.bidrag.dokument.forsendelse.model.numerisk
+import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+@ForsendelseApiKontroller
+class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsendelseService) {
+
+    @PatchMapping("/{forsendelseIdMedPrefix}")
+    @Operation(
+            summary = "Endre forsendelse",
+            security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(responseCode = "200", description = "Forsendelse endret"),
+                ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId"),
+            ]
+    )
+    fun oppdaterForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @RequestBody request: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        return oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request)
+    }
+
+    @PatchMapping("/journal/{forsendelseIdMedPrefix}")
+    @Operation(
+            summary = "Endre forsendelse",
+            security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(responseCode = "200", description = "Forsendelse endret"),
+                ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId"),
+            ]
+    )
+    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @RequestBody request: EndreJournalpostCommand) {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel())
+    }
+
+    @PostMapping("/{forsendelseIdMedPrefix}/dokument")
+    @Operation(
+            summary = "Knytt eller opprett ny dokument til forsendelse",
+            security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(responseCode = "200", description = "Forsendelse hentet"),
+                ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
+            ]
+    )
+    fun knyttTilDokument(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @RequestBody forespørsel: OpprettDokumentForespørsel): DokumentRespons {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        return oppdaterForsendelseService.knyttDokumentTilForsendelse(forsendelseId, forespørsel)
+    }
+
+    @DeleteMapping("/{forsendelseIdMedPrefix}/{dokumentreferanse}")
+    @Operation(
+            summary = "Slett dokument fra forsendelse",
+            security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(responseCode = "200", description = "Forsendelse hentet"),
+                ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
+            ]
+    )
+    fun fjernDokumentFraForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @PathVariable dokumentreferanse: String): ResponseEntity<OppdaterForsendelseResponse> {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        val respons = oppdaterForsendelseService.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse)
+                ?: return ResponseEntity.badRequest().build()
+        return ResponseEntity.ok(respons)
+    }
+
+    @PatchMapping("/{forsendelseIdMedPrefix}/ferdigstill")
+    @Operation(
+            summary = "Ferdigstiller forsendelse ved å arkivere forsendelsen i Joark og dermed klargjør for eventuell distribuering",
+            security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(responseCode = "200", description = "Forsendelse er ferdigstilt"),
+                ApiResponse(responseCode = "400", description = "Fant ingen forsendelse for id"),
+            ]
+    )
+    fun ferdigstillForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<OpprettJournalpostResponse> {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        val result = oppdaterForsendelseService.ferdigstillForsendelse(forsendelseId)
+        return if (result != null) ResponseEntity.ok(result) else ResponseEntity.badRequest().build()
+    }
+
+}
