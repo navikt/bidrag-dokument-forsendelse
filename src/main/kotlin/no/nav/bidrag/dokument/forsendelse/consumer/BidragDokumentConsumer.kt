@@ -27,7 +27,9 @@ class BidragDokumentConsumer(
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
         return getForEntity(
-                createUri("/dokument/$journalpostId/$dokumentId?optimizeForPrint=false")
+                UriComponentsBuilder.fromUri(url)
+                        .path("/dokument/$journalpostId/$dokumentId").queryParam("optimizeForPrint", "false")
+                        .build().toUri()
         )
     }
 
