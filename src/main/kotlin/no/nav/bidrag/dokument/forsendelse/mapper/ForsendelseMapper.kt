@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
+import com.neovisionaries.i18n.CountryCode.getByAlpha3Code
 import no.nav.bidrag.dokument.dto.*
 import no.nav.bidrag.dokument.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.*
@@ -36,7 +37,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
                         bruksenhetsnummer = adresse.bruksenhetsnummer,
                         poststed = adresse.poststed,
                         postnummer = adresse.postnummer,
-                        landkode = adresse.landkode,
+                        landkode = adresse.landkode ?: convertLandkode(adresse.landkode3),
                         landkode3 = adresse.landkode3
                 )
             })
@@ -136,3 +137,5 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             )
         })
 
+private fun getLandFromLandkode(landkode: String?): String? = if (landkode == null) null else if ("XXK" == landkode) "Kosovo" else getByAlpha3Code(landkode).getName()
+private fun convertLandkode(landkode: String?): String? = if (landkode == null) null else if ("XXK" == landkode) "XK" else getByAlpha3Code(landkode)?.alpha2
