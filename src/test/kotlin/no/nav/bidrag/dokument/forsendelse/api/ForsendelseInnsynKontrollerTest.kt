@@ -5,10 +5,7 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.dto.AktorDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.JournalpostDto
+import no.nav.bidrag.dokument.dto.*
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.*
@@ -39,7 +36,11 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             forsendelseResponse.innhold shouldBe TITTEL_HOVEDDOKUMENT
             forsendelseResponse.gjelderIdent shouldBe GJELDER_IDENT
             forsendelseResponse.gjelderAktor shouldBe AktorDto(GJELDER_IDENT)
-            forsendelseResponse.avsenderMottaker shouldBe AvsenderMottakerDto(MOTTAKER_NAVN, MOTTAKER_IDENT)
+            forsendelseResponse.avsenderMottaker shouldBe AvsenderMottakerDto(
+                MOTTAKER_NAVN,
+                MOTTAKER_IDENT,
+                AvsenderMottakerDtoIdType.FNR
+            )
             forsendelseResponse.brevkode?.kode shouldBe HOVEDDOKUMENT_DOKUMENTMAL
             forsendelseResponse.journalpostId shouldBe "BIF-${forsendelse.forsendelseId}"
             forsendelseResponse.journalstatus shouldBe "D"
@@ -81,11 +82,35 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal hente forsendelse med dokumenter i riktig rekkefølge`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 1, tittel = "VEDLEGG1")
-            +nyttDokument(rekkefølgeIndeks = 2, tittel = "VEDLEGG2", dokumentreferanseOriginal = "4543434")
-            +nyttDokument(rekkefølgeIndeks = 4, slettet = true, tittel = "VEDLEGG4", dokumentreferanseOriginal = "3231312313")
-            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 3, tittel = "VEDLEGG3")
+            +nyttDokument(
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                rekkefølgeIndeks = 0,
+                tittel = "HOVEDDOK"
+            )
+            +nyttDokument(
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                rekkefølgeIndeks = 1,
+                tittel = "VEDLEGG1"
+            )
+            +nyttDokument(
+                rekkefølgeIndeks = 2,
+                tittel = "VEDLEGG2",
+                dokumentreferanseOriginal = "4543434"
+            )
+            +nyttDokument(
+                rekkefølgeIndeks = 4,
+                slettet = true,
+                tittel = "VEDLEGG4",
+                dokumentreferanseOriginal = "3231312313"
+            )
+            +nyttDokument(
+                journalpostId = "BID-123123213",
+                dokumentreferanseOriginal = "12312321333",
+                rekkefølgeIndeks = 3,
+                tittel = "VEDLEGG3"
+            )
         }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
@@ -108,10 +133,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
             +nyttDokument(
-                    journalpostId = null,
-                    dokumentreferanseOriginal = null,
-                    dokumentStatus = DokumentStatus.FERDIGSTILT,
-                    tittel = TITTEL_VEDLEGG_1
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                tittel = TITTEL_VEDLEGG_1
             )
         }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
@@ -136,7 +161,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal hente forsendelser basert på saksnummer`() {
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
+            +nyttDokument(
+                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                tittel = "FORSENDELSE 1"
+            )
         }
 
         val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
@@ -148,7 +176,11 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
 
-        val response = httpHeaderTestRestTemplate.exchange("${rootUri()}/sak/${forsendelse1.saksnummer}/journal", HttpMethod.GET, null, object : ParameterizedTypeReference<List<JournalpostDto>>() {})
+        val response = httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/sak/${forsendelse1.saksnummer}/journal",
+            HttpMethod.GET,
+            null,
+            object : ParameterizedTypeReference<List<JournalpostDto>>() {})
 
         response.statusCode shouldBe HttpStatus.OK
 
@@ -157,8 +189,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         assertSoftly {
             journalResponse shouldHaveSize 2
 
-            val forsendelseResponse1 = journalResponse.find { it.journalpostId == forsendelse1.forsendelseIdMedPrefix }!!
-            val forsendelseResponse2 = journalResponse.find { it.journalpostId == forsendelse2.forsendelseIdMedPrefix }!!
+            val forsendelseResponse1 =
+                journalResponse.find { it.journalpostId == forsendelse1.forsendelseIdMedPrefix }!!
+            val forsendelseResponse2 =
+                journalResponse.find { it.journalpostId == forsendelse2.forsendelseIdMedPrefix }!!
 
             forsendelseResponse1.innhold shouldBe "FORSENDELSE 1"
             forsendelseResponse2.innhold shouldBe "FORSENDELSE 2"
@@ -170,7 +204,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         val saksnummer = "3123213123213"
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
-            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING, tittel = "FORSENDELSE 1")
+            +nyttDokument(
+                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                tittel = "FORSENDELSE 1"
+            )
         }
 
         val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
@@ -199,9 +236,12 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         assertSoftly {
             journalResponse shouldHaveSize 3
 
-            val forsendelseResponse1 = journalResponse.find { it.journalpostId == "BIF-${forsendelse1.forsendelseId}" }!!
-            val forsendelseResponse2 = journalResponse.find { it.journalpostId == "BIF-${forsendelse2.forsendelseId}" }!!
-            val forsendelseResponse3 = journalResponse.find { it.journalpostId == "BIF-${forsendelse3Avbrutt.forsendelseId}" }!!
+            val forsendelseResponse1 =
+                journalResponse.find { it.journalpostId == "BIF-${forsendelse1.forsendelseId}" }!!
+            val forsendelseResponse2 =
+                journalResponse.find { it.journalpostId == "BIF-${forsendelse2.forsendelseId}" }!!
+            val forsendelseResponse3 =
+                journalResponse.find { it.journalpostId == "BIF-${forsendelse3Avbrutt.forsendelseId}" }!!
 
             forsendelseResponse1.innhold shouldBe "FORSENDELSE 1"
             forsendelseResponse2.innhold shouldBe "FORSENDELSE 2"
