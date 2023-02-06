@@ -5,10 +5,7 @@ import no.nav.bidrag.dokument.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.*
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.database.model.*
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.*
 
@@ -30,8 +27,12 @@ fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
 fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {
         AvsenderMottakerDto(
-            it.navn,
-            it.ident,
+            navn = it.navn,
+            ident = it.ident,
+            type = when (it.identType) {
+                MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
+                else -> AvsenderMottakerDtoIdType.FNR
+            },
             adresse = it.adresse?.let { adresse ->
                 MottakerAdresseTo(
                     adresselinje1 = adresse.adresselinje1,
