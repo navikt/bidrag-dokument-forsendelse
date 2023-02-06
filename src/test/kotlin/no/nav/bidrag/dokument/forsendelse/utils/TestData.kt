@@ -23,6 +23,7 @@ val SAKSBEHANDLER_NAVN = "Saksbehandlersen, Saksbehandler"
 val SAKSNUMMER = "21312312"
 val GJELDER_IDENT = "12312333123"
 val MOTTAKER_IDENT = "2312333123"
+val SAMHANDLER_ID = "80000365555"
 val MOTTAKER_NAVN = "Nils Nilsen"
 val JOURNALFØRENDE_ENHET = "4806"
 val TITTEL_HOVEDDOKUMENT = "Tittel på hoveddokument"
@@ -104,18 +105,18 @@ class ForsendelseBuilder {
 
     internal fun build(): Forsendelse {
         val forsendelse = Forsendelse(
-                forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
-                enhet = journalførendeenhet,
-                status = status,
-                språk = "NB",
-                saksnummer = saksnummer,
-                gjelderIdent = gjelderIdent,
-                mottaker = mottaker,
-                opprettetAvIdent = SAKSBEHANDLER_IDENT,
-                opprettetAvNavn = SAKSBEHANDLER_NAVN,
-                endretAvIdent = SAKSBEHANDLER_IDENT,
-                dokumenter = opprettDokumenter,
-                journalpostIdFagarkiv = arkivJournalpostId
+            forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
+            enhet = journalførendeenhet,
+            status = status,
+            språk = "NB",
+            saksnummer = saksnummer,
+            gjelderIdent = gjelderIdent,
+            mottaker = mottaker,
+            opprettetAvIdent = SAKSBEHANDLER_IDENT,
+            opprettetAvNavn = SAKSBEHANDLER_NAVN,
+            endretAvIdent = SAKSBEHANDLER_IDENT,
+            dokumenter = opprettDokumenter,
+            journalpostIdFagarkiv = arkivJournalpostId
         )
 
         opprettDokumenter.forEach { it.forsendelse = forsendelse }
@@ -131,69 +132,71 @@ fun opprettForsendelse(setup: ForsendelseBuilder.() -> Unit): Forsendelse {
 }
 
 fun nyttDokument(
-        tittel: String = TITTEL_HOVEDDOKUMENT,
-        journalpostId: String? = "123123",
-        dokumentMalId: String? = HOVEDDOKUMENT_DOKUMENTMAL,
-        dokumentreferanseOriginal: String? = "123213213",
-        dokumentStatus: DokumentStatus = DokumentStatus.FERDIGSTILT,
-        arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-        rekkefølgeIndeks: Int = 0,
-        slettet: Boolean = false
+    tittel: String = TITTEL_HOVEDDOKUMENT,
+    journalpostId: String? = "123123",
+    dokumentMalId: String? = HOVEDDOKUMENT_DOKUMENTMAL,
+    dokumentreferanseOriginal: String? = "123213213",
+    dokumentStatus: DokumentStatus = DokumentStatus.FERDIGSTILT,
+    arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+    rekkefølgeIndeks: Int = 0,
+    slettet: Boolean = false
 ): Dokument {
     val forsendelse = opprettForsendelse { }
     return Dokument(
-            arkivsystem = arkivsystem,
-            tittel = tittel,
-            journalpostIdOriginal = journalpostId,
-            dokumentreferanseOriginal = dokumentreferanseOriginal,
-            dokumentStatus = dokumentStatus,
-            dokumentmalId = dokumentMalId,
-            forsendelse = forsendelse,
-            rekkefølgeIndeks = rekkefølgeIndeks,
-            slettetTidspunkt = if (slettet) LocalDate.now() else null
+        arkivsystem = arkivsystem,
+        tittel = tittel,
+        journalpostIdOriginal = journalpostId,
+        dokumentreferanseOriginal = dokumentreferanseOriginal,
+        dokumentStatus = dokumentStatus,
+        dokumentmalId = dokumentMalId,
+        forsendelse = forsendelse,
+        rekkefølgeIndeks = rekkefølgeIndeks,
+        slettetTidspunkt = if (slettet) LocalDate.now() else null
 
     )
 }
 
 fun nyOpprettForsendelseForespørsel() = OpprettForsendelseForespørsel(
-        gjelderIdent = GJELDER_IDENT,
-        enhet = JOURNALFØRENDE_ENHET,
-        saksnummer = SAKSNUMMER,
-        mottaker = MottakerTo(
-                ident = MOTTAKER_IDENT,
-                navn = MOTTAKER_NAVN,
-                språk = SPRÅK_NORSK_BOKMÅL,
-                identType = MottakerIdentTypeTo.FNR,
-                adresse = MottakerAdresseTo(
-                        adresselinje1 = ADRESSE_ADRESSELINJE1,
-                        adresselinje2 = ADRESSE_ADRESSELINJE2,
-                        adresselinje3 = ADRESSE_ADRESSELINJE3,
-                        poststed = ADRESSE_POSTSTED,
-                        postnummer = ADRESSE_POSTNUMMER,
-                        bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
-                        landkode3 = ADRESSE_LANDKODE3,
-                        landkode = ADRESSE_LANDKODE
-                )
-        ),
+    gjelderIdent = GJELDER_IDENT,
+    enhet = JOURNALFØRENDE_ENHET,
+    saksnummer = SAKSNUMMER,
+    mottaker = MottakerTo(
+        ident = MOTTAKER_IDENT,
+        navn = MOTTAKER_NAVN,
         språk = SPRÅK_NORSK_BOKMÅL,
-        dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
-                OpprettDokumentForespørsel(
-                        tittel = TITTEL_VEDLEGG_1,
-                        dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                        journalpostId = "JOARK-123123213",
-                        dokumentreferanse = "123213"
-                )
+        identType = MottakerIdentTypeTo.FNR,
+        adresse = MottakerAdresseTo(
+            adresselinje1 = ADRESSE_ADRESSELINJE1,
+            adresselinje2 = ADRESSE_ADRESSELINJE2,
+            adresselinje3 = ADRESSE_ADRESSELINJE3,
+            poststed = ADRESSE_POSTSTED,
+            postnummer = ADRESSE_POSTNUMMER,
+            bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
+            landkode3 = ADRESSE_LANDKODE3,
+            landkode = ADRESSE_LANDKODE
         )
+    ),
+    språk = SPRÅK_NORSK_BOKMÅL,
+    dokumenter = listOf(
+        OpprettDokumentForespørsel(
+            tittel = TITTEL_HOVEDDOKUMENT,
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
+        ),
+        OpprettDokumentForespørsel(
+            tittel = TITTEL_VEDLEGG_1,
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            journalpostId = "JOARK-123123213",
+            dokumentreferanse = "123213"
+        )
+    )
 )
 
-fun nyOpprettJournalpostResponse(journalpostId: String = NY_JOURNALPOSTID, dokumenter: List<OpprettDokumentDto> =
-        listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1"))): OpprettJournalpostResponse {
+fun nyOpprettJournalpostResponse(
+    journalpostId: String = NY_JOURNALPOSTID, dokumenter: List<OpprettDokumentDto> =
+        listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1"))
+): OpprettJournalpostResponse {
     return OpprettJournalpostResponse(
-            dokumenter = dokumenter,
-            journalpostId = journalpostId
+        dokumenter = dokumenter,
+        journalpostId = journalpostId
     )
 }
