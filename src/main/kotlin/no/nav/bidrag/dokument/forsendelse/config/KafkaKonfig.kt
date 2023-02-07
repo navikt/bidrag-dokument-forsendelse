@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.config
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +16,7 @@ private val log = KotlinLogging.logger {}
 class KafkaKonfig {
 
     @Bean
-    fun defaultErrorHandler(@Value("\${KAFKA_MAX_RETRY:10}") maxRetry: Int): DefaultErrorHandler {
+    fun defaultErrorHandler(@Value("\${KAFKA_MAX_RETRY:-1}") maxRetry: Int): DefaultErrorHandler {
         // Max retry should not be set in production
         val backoffPolicy =
             if (maxRetry == -1) ExponentialBackOff() else ExponentialBackOffWithMaxRetries(maxRetry)
@@ -38,6 +39,7 @@ class KafkaKonfig {
             )
         }, backoffPolicy)
         errorHandler.setRetryListeners(KafkaRetryListener())
+        errorHandler.addNotRetryableExceptions(KunneIkkeLeseMeldingFraHendelse::class.java)
         return errorHandler
     }
 }
