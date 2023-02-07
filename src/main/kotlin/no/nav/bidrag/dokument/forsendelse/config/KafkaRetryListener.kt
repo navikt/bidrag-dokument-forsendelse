@@ -13,17 +13,11 @@ class KafkaRetryListener : RetryListener {
         exception: Exception,
         deliveryAttempt: Int
     ) {
-        log.warn(
-            "Håndtering av kafka melding ${record.value()} feilet. Dette er $deliveryAttempt. forsøk",
-            exception
-        )
+        log.error(exception) { "Håndtering av kafka melding ${record.value()} feilet. Dette er $deliveryAttempt. forsøk" }
     }
 
     override fun recovered(record: ConsumerRecord<*, *>, exception: java.lang.Exception) {
-        log.warn(
-            "Håndtering av kafka melding ${record.value()} er enten suksess eller ignorert pågrunn av ugyldig data",
-            exception
-        )
+        log.error(exception) { "Håndtering av kafka melding ${record.value()} er enten suksess eller ignorert pågrunn av ugyldig data" }
     }
 
     override fun recoveryFailed(
