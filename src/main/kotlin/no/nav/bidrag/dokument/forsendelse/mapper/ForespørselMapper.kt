@@ -10,35 +10,37 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
-import no.nav.bidrag.dokument.forsendelse.model.*
+import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
+import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
+import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
+import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 
 object ForespørselMapper {
     fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String?) = Mottaker(
-            navn = this.navn ?: person?.navn,
-            ident = this.ident,
-            språk = this.språk?.uppercase() ?: språk?.uppercase(),
-            identType = when (this.identType) {
-                MottakerIdentTypeTo.ORGANISASJON -> MottakerIdentType.ORGANISASJON
-                MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
-                MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
-                else -> this.ident?.tilIdentType()
-            },
-            adresse = this.adresse?.tilAdresseDo()
+        navn = this.navn ?: person?.navn,
+        ident = this.ident,
+        språk = this.språk?.uppercase() ?: språk?.uppercase(),
+        identType = when (this.identType) {
+            MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
+            MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
+            else -> this.ident?.tilIdentType()
+        },
+        adresse = this.adresse?.tilAdresseDo()
     )
 
-    fun PersonIdent.tilIdentType() = if (this.erOrganisasjon()) MottakerIdentType.ORGANISASJON
-    else if (this.erSamhandler()) MottakerIdentType.SAMHANDLER
-    else MottakerIdentType.FNR
+    fun PersonIdent.tilIdentType() =
+        if (this.erSamhandler()) MottakerIdentType.SAMHANDLER
+        else MottakerIdentType.FNR
 
     fun MottakerAdresseTo.tilAdresseDo() = Adresse(
-            adresselinje1 = this.adresselinje1,
-            adresselinje2 = this.adresselinje2,
-            adresselinje3 = this.adresselinje3,
-            bruksenhetsnummer = this.bruksenhetsnummer,
-            landkode = this.landkode ?: alpha3LandkodeTilAlpha2(this.landkode3),
-            landkode3 = this.landkode3,
-            postnummer = this.postnummer,
-            poststed = this.poststed
+        adresselinje1 = this.adresselinje1,
+        adresselinje2 = this.adresselinje2,
+        adresselinje3 = this.adresselinje3,
+        bruksenhetsnummer = this.bruksenhetsnummer,
+        landkode = this.landkode ?: alpha3LandkodeTilAlpha2(this.landkode3),
+        landkode3 = this.landkode3,
+        postnummer = this.postnummer,
+        poststed = this.poststed
     )
 
     fun JournalpostId.tilArkivSystemDo() = when (this.arkivsystem) {
@@ -53,7 +55,9 @@ object ForespørselMapper {
         else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
     }
 
-    fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() = this.bestillDokument && this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
+    fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
+        this.bestillDokument && this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
+
     fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
         DokumentStatus.IKKE_BESTILT else if (!this.bestillDokument) DokumentStatus.UNDER_PRODUKSJON else when (this.status) {
         DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
@@ -65,15 +69,15 @@ object ForespørselMapper {
     }
 
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
-            forsendelse = forsendelse,
-            tittel = this.tittel,
-            språk = this.språk,
-            arkivsystem = this.tilArkivsystemDo(),
-            dokumentStatus = this.tilDokumentStatusDo(),
-            dokumentreferanseOriginal = this.dokumentreferanse,
-            journalpostIdOriginal = this.journalpostId?.utenPrefiks,
-            dokumentmalId = this.dokumentmalId,
-            metadata = this.metadata,
-            rekkefølgeIndeks = indeks
+        forsendelse = forsendelse,
+        tittel = this.tittel,
+        språk = this.språk,
+        arkivsystem = this.tilArkivsystemDo(),
+        dokumentStatus = this.tilDokumentStatusDo(),
+        dokumentreferanseOriginal = this.dokumentreferanse,
+        journalpostIdOriginal = this.journalpostId?.utenPrefiks,
+        dokumentmalId = this.dokumentmalId,
+        metadata = this.metadata,
+        rekkefølgeIndeks = indeks
     )
 }

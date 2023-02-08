@@ -13,33 +13,37 @@ typealias JournalpostId = String
 
 val JournalpostId.utenPrefiks get() = this.replace("\\D".toRegex(), "")
 val JournalpostId.harArkivPrefiks get() = this.contains("-")
-val JournalpostId.arkivsystem get(): DokumentArkivSystemDto? = if (!harArkivPrefiks) null else if (this.startsWith("JOARK")) DokumentArkivSystemDto.JOARK else DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
+val JournalpostId.arkivsystem
+    get(): DokumentArkivSystemDto? = if (!harArkivPrefiks) null else if (this.startsWith(
+            "JOARK"
+        )
+    ) DokumentArkivSystemDto.JOARK else DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
 
 @Schema(description = "Metadata til en respons etter dokumenter i forsendelse ble opprettet")
 data class DokumentRespons(
-        val dokumentreferanse: String,
-        val tittel: String,
-        val journalpostId: String? = null,
-        val dokumentmalId: String? = null,
-        val metadata: Map<String, String> = emptyMap(),
-        val status: DokumentStatusTo? = null,
-        val arkivsystem: DokumentArkivSystemDto? = null
+    val dokumentreferanse: String,
+    val tittel: String,
+    val journalpostId: String? = null,
+    val dokumentmalId: String? = null,
+    val metadata: Map<String, String> = emptyMap(),
+    val status: DokumentStatusTo? = null,
+    val arkivsystem: DokumentArkivSystemDto? = null
 )
 
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 sealed class DokumentForespørsel(
-        @Schema(description = "Dokumentets tittel") open val tittel: String? = "",
-        @Schema(description = "Språket på inneholdet i dokumentet.") open val språk: String? = null,
-        @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") open val dokumentmalId: String? = null,
-        @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
-        @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
-        @Schema(description = "Selve PDF dokumentet formatert som Base64. Dette skal bare settes hvis dokumentet er redigert.") val fysiskDokument: ByteArray? = null,
-        @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") open val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
-        @Schema(description = "Arkivsystem hvor dokument er lagret") open val arkivsystem: DokumentArkivSystemDto? = null,
-        @Schema(description = "Dokument metadata") val metadata: Map<String, String> = emptyMap(),
+    @Schema(description = "Dokumentets tittel") open val tittel: String? = "",
+    @Schema(description = "Språket på inneholdet i dokumentet.") open val språk: String? = null,
+    @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") open val dokumentmalId: String? = null,
+    @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
+    @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
+    @Schema(description = "Selve PDF dokumentet formatert som Base64. Dette skal bare settes hvis dokumentet er redigert.") val fysiskDokument: ByteArray? = null,
+    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") open val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
+    @Schema(description = "Arkivsystem hvor dokument er lagret") open val arkivsystem: DokumentArkivSystemDto? = null,
+    @Schema(description = "Dokument metadata") val metadata: Map<String, String> = emptyMap(),
 
-        ) {
+    ) {
     override fun toString(): String {
         return this.toStringByReflection(mask = listOf("fysiskDokument"))
     }
@@ -47,26 +51,25 @@ sealed class DokumentForespørsel(
 }
 
 data class MottakerTo(
-        val ident: PersonIdent? = null,
-        val språk: String? = null,
-        val navn: String? = null,
-        val identType: MottakerIdentTypeTo? = null,
-        @Schema(description = "Adresse til mottaker hvis dokumentet sendes som brev") val adresse: MottakerAdresseTo? = null
+    val ident: PersonIdent? = null,
+    val språk: String? = null,
+    val navn: String? = null,
+    val identType: MottakerIdentTypeTo? = null,
+    @Schema(description = "Adresse til mottaker hvis dokumentet sendes som brev") val adresse: MottakerAdresseTo? = null
 )
 
 data class MottakerAdresseTo(
-        val adresselinje1: String,
-        val adresselinje2: String? = null,
-        val adresselinje3: String? = null,
-        val bruksenhetsnummer: String? = null,
-        @Schema(description = "Lankode må være i ISO 3166-1 alpha-2 format") val landkode: String? = null,
-        @Schema(description = "Lankode må være i ISO 3166-1 alpha-3 format") val landkode3: String? = null,
-        val postnummer: String? = null,
-        val poststed: String? = null,
+    val adresselinje1: String,
+    val adresselinje2: String? = null,
+    val adresselinje3: String? = null,
+    val bruksenhetsnummer: String? = null,
+    @Schema(description = "Lankode må være i ISO 3166-1 alpha-2 format") val landkode: String? = null,
+    @Schema(description = "Lankode må være i ISO 3166-1 alpha-3 format") val landkode3: String? = null,
+    val postnummer: String? = null,
+    val poststed: String? = null,
 )
 
 enum class MottakerIdentTypeTo {
-    ORGANISASJON,
     FNR,
     SAMHANDLER
 }

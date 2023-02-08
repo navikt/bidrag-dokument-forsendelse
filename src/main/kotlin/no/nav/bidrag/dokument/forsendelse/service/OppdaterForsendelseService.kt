@@ -28,85 +28,102 @@ private val log = KotlinLogging.logger {}
 @Component
 @Transactional
 class OppdaterForsendelseService(
-        private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-        private val forsendelseTjeneste: ForsendelseTjeneste,
-        private val dokumentTjeneste: DokumentTjeneste,
-        private val bidragDokumentConsumer: BidragDokumentConsumer,
-        private val fysiskDokumentService: FysiskDokumentService
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val dokumentTjeneste: DokumentTjeneste,
+    private val bidragDokumentConsumer: BidragDokumentConsumer,
+    private val fysiskDokumentService: FysiskDokumentService
 ) {
 
-    fun oppdaterForsendelse(forsendelseId: Long, forespørsel: OppdaterForsendelseForespørsel): OppdaterForsendelseResponse {
+    fun oppdaterForsendelse(
+        forsendelseId: Long,
+        forespørsel: OppdaterForsendelseForespørsel
+    ): OppdaterForsendelseResponse {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-                ?: fantIkkeForsendelse(forsendelseId)
+            ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
         forespørsel.validerGyldigEndring(forsendelse)
 
         log.info { "Oppdaterer forsendelse $forsendelseId" }
 
-        val oppdatertForsendelse = forsendelseTjeneste.lagre(forsendelse.copy(
+        val oppdatertForsendelse = forsendelseTjeneste.lagre(
+            forsendelse.copy(
                 dokumenter = oppdaterDokumenter(forsendelse, forespørsel)
-        ))
+            )
+        )
 
 
         return OppdaterForsendelseResponse(
-                forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
-                dokumenter = oppdatertForsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
-                    DokumentRespons(
-                            dokumentreferanse = it.dokumentreferanse,
-                            tittel = it.tittel
-                    )
-                }
+            forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
+            dokumenter = oppdatertForsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
+                DokumentRespons(
+                    dokumentreferanse = it.dokumentreferanse,
+                    tittel = it.tittel
+                )
+            }
         )
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    fun ferdigstillOgHentForsendelse(forsendelseId: Long, lokalUtskrift: Boolean = false): Forsendelse? {
+    fun ferdigstillOgHentForsendelse(
+        forsendelseId: Long,
+        lokalUtskrift: Boolean = false
+    ): Forsendelse? {
         ferdigstillForsendelse(forsendelseId, lokalUtskrift)
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
     }
 
     @Transactional
-    fun ferdigstillForsendelse(forsendelseId: Long, lokalUtskrift: Boolean = false): OpprettJournalpostResponse? {
+    fun ferdigstillForsendelse(
+        forsendelseId: Long,
+        lokalUtskrift: Boolean = false
+    ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType}." }
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
-                avsenderMottaker = if (!forsendelse.erNotat) AvsenderMottakerDto(
-                        ident = forsendelse.mottaker!!.ident,
-                        navn = forsendelse.mottaker.navn
-                ) else null,
-                referanseId = "BIF_${forsendelse.forsendelseId}",
-                gjelderIdent = forsendelse.gjelderIdent,
-                journalførendeEnhet = forsendelse.enhet,
-                journalposttype = when (forsendelse.forsendelseType) {
-                    ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
-                    ForsendelseType.NOTAT -> JournalpostType.NOTAT
-                },
-                kanal = if (lokalUtskrift) MottakUtsendingKanal.LOKAL_UTSKRIFT else null,
-                dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
-                    OpprettDokumentDto(
-                            brevkode = it.dokumentmalId,
-                            tittel = it.tittel,
-                            fysiskDokument = hentFysiskDokument(it)
-                    )
-                },
-                tilknyttSaker = listOf(forsendelse.saksnummer),
-                saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null,
-                skalFerdigstilles = true
+            avsenderMottaker = if (!forsendelse.erNotat) AvsenderMottakerDto(
+                ident = forsendelse.mottaker!!.ident,
+                navn = forsendelse.mottaker.navn,
+                type = when (forsendelse.mottaker.identType) {
+                    MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
+                    else -> AvsenderMottakerDtoIdType.FNR
+                }
+            ) else null,
+            referanseId = "BIF_${forsendelse.forsendelseId}",
+            gjelderIdent = forsendelse.gjelderIdent,
+            journalførendeEnhet = forsendelse.enhet,
+            journalposttype = when (forsendelse.forsendelseType) {
+                ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
+                ForsendelseType.NOTAT -> JournalpostType.NOTAT
+            },
+            kanal = if (lokalUtskrift) MottakUtsendingKanal.LOKAL_UTSKRIFT else null,
+            dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
+                OpprettDokumentDto(
+                    brevkode = it.dokumentmalId,
+                    tittel = it.tittel,
+                    fysiskDokument = hentFysiskDokument(it)
+                )
+            },
+            tilknyttSaker = listOf(forsendelse.saksnummer),
+            saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null,
+            skalFerdigstilles = true
         )
 
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
 
-        forsendelseTjeneste.lagre(forsendelse.copy(
+        forsendelseTjeneste.lagre(
+            forsendelse.copy(
                 journalpostIdFagarkiv = respons!!.journalpostId,
                 status = ForsendelseStatus.FERDIGSTILT,
                 dokumenter = forsendelse.dokumenter.mapIndexed { i, it ->
                     it.copy(
-                            dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null
+                        dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null
                     )
                 },
-                ferdigstiltTidspunkt = LocalDateTime.now())
+                ferdigstiltTidspunkt = LocalDateTime.now()
+            )
         )
 
         log.info { "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. Opprettet journalpostId=${respons.journalpostId}." }
@@ -116,42 +133,55 @@ class OppdaterForsendelseService(
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
-        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
-        else bidragDokumentConsumer.hentDokument(dokument.journalpostId
-                ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse)!!
+        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(
+            dokument.forsendelse.forsendelseId!!,
+            dokument.dokumentreferanse
+        )
+        else bidragDokumentConsumer.hentDokument(
+            dokument.journalpostId
+                ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse
+        )!!
     }
 
-    fun fjernDokumentFraForsendelse(forsendelseId: Long, dokumentreferanse: String): OppdaterForsendelseResponse? {
+    fun fjernDokumentFraForsendelse(
+        forsendelseId: Long,
+        dokumentreferanse: String
+    ): OppdaterForsendelseResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanEndreForsendelse()
 
         val oppdaterteDokumenter = forsendelse.dokumenter
-                .filter { it.dokumentreferanse != dokumentreferanse || it.dokumentreferanseOriginal == null }.map {
-                    it.copy(
-                            slettetTidspunkt = if (it.dokumentreferanse == dokumentreferanse) LocalDate.now() else null,
-                    )
-                }
+            .filter { it.dokumentreferanse != dokumentreferanse || it.dokumentreferanseOriginal == null }
+            .map {
+                it.copy(
+                    slettetTidspunkt = if (it.dokumentreferanse == dokumentreferanse) LocalDate.now() else null,
+                )
+            }
 
         if (oppdaterteDokumenter.isEmpty()) throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
 
-        forsendelseTjeneste.lagre(forsendelse
+        forsendelseTjeneste.lagre(
+            forsendelse
                 .copy(dokumenter = oppdaterteDokumenter.sortertEtterRekkefølge)
         )
 
         return OppdaterForsendelseResponse(
-                forsendelseId = forsendelse.forsendelseId.toString(),
-                dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
-                    DokumentRespons(
-                            dokumentreferanse = it.dokumentreferanse,
-                            tittel = it.tittel
-                    )
-                }
+            forsendelseId = forsendelse.forsendelseId.toString(),
+            dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
+                DokumentRespons(
+                    dokumentreferanse = it.dokumentreferanse,
+                    tittel = it.tittel
+                )
+            }
         )
     }
 
-    fun knyttDokumentTilForsendelse(forsendelseId: Long, forespørsel: OpprettDokumentForespørsel): DokumentRespons {
+    fun knyttDokumentTilForsendelse(
+        forsendelseId: Long,
+        forespørsel: OpprettDokumentForespørsel
+    ): DokumentRespons {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-                ?: fantIkkeForsendelse(forsendelseId)
+            ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
         forespørsel.validerKanLeggeTilDokument(forsendelse)
 
@@ -160,28 +190,34 @@ class OppdaterForsendelseService(
         log.info { "Knyttet nytt dokument til $forsendelseId med tittel=${forespørsel.tittel}, språk=${forespørsel.språk} dokumentmalId=${forespørsel.dokumentmalId}, dokumentreferanse=${nyDokument.dokumentreferanse} og journalpostId=${nyDokument.journalpostId}" }
 
         return DokumentRespons(
-                dokumentreferanse = nyDokument.dokumentreferanse,
-                tittel = nyDokument.tittel,
-                journalpostId = nyDokument.journalpostId
+            dokumentreferanse = nyDokument.dokumentreferanse,
+            tittel = nyDokument.tittel,
+            journalpostId = nyDokument.journalpostId
         )
     }
 
-    private fun oppdaterDokumenter(forsendelse: Forsendelse, forespørsel: OppdaterForsendelseForespørsel): List<Dokument> {
+    private fun oppdaterDokumenter(
+        forsendelse: Forsendelse,
+        forespørsel: OppdaterForsendelseForespørsel
+    ): List<Dokument> {
 
         val oppdaterteDokumenter = forsendelse.dokumenter
-                .mapIndexed { i, it ->
-                    val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)
-                    val indeks = forespørsel.dokumenter.indexOf(oppdaterDokument)
-                    it.copy(
-                            tittel = oppdaterDokument?.tittel ?: it.tittel,
-                            rekkefølgeIndeks = indeks
-                    )
-                }
+            .mapIndexed { i, it ->
+                val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)
+                val indeks = forespørsel.dokumenter.indexOf(oppdaterDokument)
+                it.copy(
+                    tittel = oppdaterDokument?.tittel ?: it.tittel,
+                    rekkefølgeIndeks = indeks
+                )
+            }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 
-    private fun oppdaterDokumenterOld(forsendelse: Forsendelse, forespørsel: OppdaterForsendelseForespørsel): List<Dokument> {
+    private fun oppdaterDokumenterOld(
+        forsendelse: Forsendelse,
+        forespørsel: OppdaterForsendelseForespørsel
+    ): List<Dokument> {
         val oppdaterteDokumenterFraForespørsel = forespørsel.dokumenter
 //        val eksisterendeDokumenter = forsendelse.dokumenter
 //        val nyeDokumenterFraForespørsel = oppdaterteDokumenterFraForespørsel.filter{!it.fjernTilknytning }.filter { dokumentFraForespørsel -> !eksisterendeDokumenter.any {  dokumentFraForespørsel.dokumentreferanse == it.dokumentreferanse} }
@@ -189,18 +225,19 @@ class OppdaterForsendelseService(
 
 //        val oppdatertHoveddokumentReferanse = oppdaterteDokumenterFraForespørsel.find { it.tilknyttetSom == DokumentTilknyttetSomTo.HOVEDDOKUMENT }?.dokumentreferanse
 
-        val oppdaterteDokumenter = forsendelse.dokumenter//.filter{!forespørsel.skalDokumentSlettes(it.dokumentreferanse) || it.eksternDokumentreferanse == null}
+        val oppdaterteDokumenter =
+            forsendelse.dokumenter//.filter{!forespørsel.skalDokumentSlettes(it.dokumentreferanse) || it.eksternDokumentreferanse == null}
                 .map {
                     val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)
                     it.copy(
-                            tittel = oppdaterDokument?.tittel ?: it.tittel,
-                            dokumentmalId = oppdaterDokument?.dokumentmalId ?: it.dokumentmalId,
+                        tittel = oppdaterDokument?.tittel ?: it.tittel,
+                        dokumentmalId = oppdaterDokument?.dokumentmalId ?: it.dokumentmalId,
 //                    tilknyttetSom = when (oppdatertHoveddokumentReferanse) {
 //                        null -> it.tilknyttetSom
 //                        it.dokumentreferanse -> DokumentTilknyttetSom.HOVEDDOKUMENT
 //                        else -> DokumentTilknyttetSom.VEDLEGG
 //                    },
-                            //slettetTidspunkt = if (forespørsel.skalDokumentSlettes(it.dokumentreferanse)) LocalDate.now() else null
+                        //slettetTidspunkt = if (forespørsel.skalDokumentSlettes(it.dokumentreferanse)) LocalDate.now() else null
                     )
                 } //+ nyeDokumenter
 

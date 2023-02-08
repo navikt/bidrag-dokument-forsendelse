@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
 import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
@@ -21,7 +22,11 @@ import org.springframework.stereotype.Component
 private val log = KotlinLogging.logger {}
 
 @Component
-class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjeneste: DokumentTjeneste, val oppdaterForsendelseService: OppdaterForsendelseService) {
+class DokumentHendelseLytter(
+    val objectMapper: ObjectMapper,
+    val dokumentTjeneste: DokumentTjeneste,
+    val oppdaterForsendelseService: OppdaterForsendelseService
+) {
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {
@@ -36,19 +41,19 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
         val oppdaterteDokumenter = dokumenter.map {
             log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
             dokumentTjeneste.lagreDokument(
-                    it.copy(
-                            arkivsystem = when (hendelse.arkivSystem) {
-                                DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                                else -> it.arkivsystem
-                            },
-                            dokumentStatus = when (hendelse.status) {
-                                DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
-                                DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
-                                DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
-                                else -> it.dokumentStatus
-                            }
+                it.copy(
+                    arkivsystem = when (hendelse.arkivSystem) {
+                        DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                        else -> it.arkivsystem
+                    },
+                    dokumentStatus = when (hendelse.status) {
+                        DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
+                        DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
+                        DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
+                        else -> it.dokumentStatus
+                    }
 
-                    )
+                )
             )
         }
 
@@ -76,7 +81,7 @@ class DokumentHendelseLytter(val objectMapper: ObjectMapper, val dokumentTjenest
             return objectMapper.readValue(melding.value(), DokumentHendelse::class.java)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved konverting av melding fra hendelse", e)
-            throw e
+            throw KunneIkkeLeseMeldingFraHendelse(e.message, e)
         }
     }
 }

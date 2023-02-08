@@ -13,7 +13,7 @@ import javax.persistence.*
 
 @Entity(name = "dokument")
 @Table(name = "dokument", uniqueConstraints = [
-    UniqueConstraint(columnNames = ["dokumentreferanseOriginal", "forsendelse_id"]),
+    UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
 ])
 @TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType::class)
 data class Dokument(
