@@ -19,6 +19,8 @@ env:
 
   BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
   BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
+
+  TOPIC_DOKUMENT: bidrag.dokument
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false
