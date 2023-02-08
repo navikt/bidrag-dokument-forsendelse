@@ -22,7 +22,7 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
     fun hentDokument(forsendelseId: Long, dokumentreferanse: String): ByteArray {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-                ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
+            ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
         val arkivSystem = forsendelse.dokumenter.hentDokument(dokumentreferanse)?.arkivsystem
         if (arkivSystem == null || arkivSystem != DokumentArkivSystem.BIDRAG) {
@@ -39,14 +39,14 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
     fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String?): List<DokumentMetadata> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-                ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
+            ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
         if (dokumentreferanse.isNullOrEmpty()) {
             return forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { mapTilDokumentMetadata(it) }
         }
 
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)
-                ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
+            ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
 
         return listOf(mapTilDokumentMetadata(dokument))
     }
@@ -55,23 +55,33 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {
             return DokumentMetadata(
-                    journalpostId = dokument.journalpostId,
-                    dokumentreferanse = dokument.dokumentreferanse,
-                    format = when (dokument.dokumentStatus) {
-                        DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
-                        else -> DokumentFormatDto.PDF
-                    },
-                    status = dokument.tilDokumentStatusDto(),
-                    arkivsystem = dokument.tilArkivSystemDto()
+                journalpostId = dokument.journalpostId,
+                dokumentreferanse = dokument.dokumentreferanse,
+                format = when (dokument.dokumentStatus) {
+                    DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
+                    else -> DokumentFormatDto.PDF
+                },
+                status = dokument.tilDokumentStatusDto(),
+                arkivsystem = dokument.tilArkivSystemDto()
+            )
+        }
+
+        if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) {
+            return DokumentMetadata(
+                journalpostId = dokument.journalpostId,
+                dokumentreferanse = dokument.dokumentreferanse,
+                format = DokumentFormatDto.MBDOK,
+                status = dokument.tilDokumentStatusDto(),
+                arkivsystem = dokument.tilArkivSystemDto()
             )
         }
 
         return DokumentMetadata(
-                journalpostId = dokument.journalpostId,
-                dokumentreferanse = dokument.dokumentreferanse,
-                format = DokumentFormatDto.PDF,
-                status = dokument.tilDokumentStatusDto(),
-                arkivsystem = dokument.tilArkivSystemDto()
+            journalpostId = dokument.journalpostId,
+            dokumentreferanse = dokument.dokumentreferanse,
+            format = DokumentFormatDto.PDF,
+            status = dokument.tilDokumentStatusDto(),
+            arkivsystem = dokument.tilArkivSystemDto()
         )
     }
 }
