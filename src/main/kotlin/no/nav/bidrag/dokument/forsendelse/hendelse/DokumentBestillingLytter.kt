@@ -62,7 +62,7 @@ class DokumentBestillingLytter(
             dokumentTjeneste.lagreDokument(
                 dokument.copy(dokumentStatus = DokumentStatus.BESTILLING_FEILET)
             )
-            LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId" }
+            LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }
         }
 
     }
