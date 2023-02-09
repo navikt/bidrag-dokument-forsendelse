@@ -10,8 +10,35 @@ import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.database.model.*
-import no.nav.bidrag.dokument.forsendelse.utils.*
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_BRUKSENHETSNUMMER
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_LANDKODE
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_LANDKODE3
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTNUMMER
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTSTED
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
+import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
+import no.nav.bidrag.dokument.forsendelse.utils.JOURNALFØRENDE_ENHET
+import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSNUMMER
+import no.nav.bidrag.dokument.forsendelse.utils.SAMHANDLER_ID
+import no.nav.bidrag.dokument.forsendelse.utils.SPRÅK_NORSK_BOKMÅL
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_2
+import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
@@ -284,6 +311,53 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             hoveddokument.arkivsystem shouldBe DokumentArkivSystem.UKJENT
 
             stubUtils.Valider().bestillDokumentIkkeKalt(HOVEDDOKUMENT_DOKUMENTMAL)
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse med tittel som inneholder ugyldig teng`() {
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "$TITTEL_VEDLEGG_1\u001A\u0085",
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                    journalpostId = "JOARK-123123213",
+                    dokumentreferanse = "123213"
+                )
+            )
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelseId = response.body!!.forsendelseId!!
+
+        val forsendelseMedEnDokument = testDataManager.hentForsendelse(forsendelseId)!!
+
+        forsendelseMedEnDokument.dokumenter shouldHaveSize 1
+        val dokument = forsendelseMedEnDokument.dokumenter[0]
+        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
+        dokument.tittel shouldBe TITTEL_VEDLEGG_1
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+            tittel = "Tittel ny dokument\u001A",
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+        )
+        val responseNyDokument =
+            utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+            forsendelse.dokumenter shouldHaveSize 2
+            val nyDokument = forsendelse.dokumenter.find { it.tittel == "Tittel ny dokument" }!!
+            nyDokument.tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
+            nyDokument.rekkefølgeIndeks shouldBe forsendelse.dokumenter.size - 1
+            nyDokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            nyDokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
         }
     }
 
