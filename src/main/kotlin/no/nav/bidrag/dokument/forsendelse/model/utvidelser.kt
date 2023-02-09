@@ -19,5 +19,5 @@ fun Any.toStringByReflection(exclude: List<String> = listOf(), mask: List<String
     return "${this::class.simpleName}[${propsString}]"
 }
 
-fun String.inneholderKontrollTegn() = this.chars().anyMatch { it in CONTROL_CHARACTERS_MAX downTo CONTROL_CHARACTERS_MIN }
+fun String.inneholderKontrollTegn() = Regex("\\p{C}").containsMatchIn(this)
 fun String.fjernKontrollTegn() = this.replace("\\p{C}".toRegex(), "")
