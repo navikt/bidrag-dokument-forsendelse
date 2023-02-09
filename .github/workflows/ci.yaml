@@ -73,6 +73,7 @@ jobs:
 
     env:
       INGRESS_DOKUMENT_FORSENDELSE: https://bidrag-dokument-forsendelse.dev.intern.nav.no
+      INGRESS_CUCUMBER: https://bidrag-cucumber-cloud.ekstern.dev.nav.no
 
     steps:
       - name: feature ingresses
