@@ -1,7 +1,15 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.*
+import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.JournalpostId
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
+import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
@@ -13,6 +21,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
+import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 
 object ForespørselMapper {
@@ -70,7 +79,7 @@ object ForespørselMapper {
 
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
         forsendelse = forsendelse,
-        tittel = this.tittel,
+        tittel = this.tittel.fjernKontrollTegn(),
         språk = this.språk,
         arkivsystem = this.tilArkivsystemDo(),
         dokumentStatus = this.tilDokumentStatusDo(),

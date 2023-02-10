@@ -14,18 +14,20 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 
-abstract class KontrollerTestContainerRunner: TestContainerRunner() {
+abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     @LocalServerPort
     private val port = 0
 
     @Autowired
     lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
-    protected fun rootUri(): String{
+    protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
 
     @BeforeEach
-    fun setupMocks(){
+    fun setupMocks() {
+        stubUtils.stubHentPerson()
+        stubUtils.stubHentPersonSpraak()
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
@@ -34,12 +36,26 @@ abstract class KontrollerTestContainerRunner: TestContainerRunner() {
     }
 
     protected fun utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel: OpprettForsendelseForespørsel): ResponseEntity<OpprettForsendelseRespons> {
-        return httpHeaderTestRestTemplate.exchange(rootUri(), HttpMethod.POST, HttpEntity(opprettForsendelseForespørsel), OpprettForsendelseRespons::class.java)
+        return httpHeaderTestRestTemplate.exchange(
+            rootUri(),
+            HttpMethod.POST,
+            HttpEntity(opprettForsendelseForespørsel),
+            OpprettForsendelseRespons::class.java
+        )
     }
 
-    protected fun utførOppdaterForsendelseForespørsel(forsendelseId: String, oppdaterForespørsel: OppdaterForsendelseForespørsel): ResponseEntity<OppdaterForsendelseResponse> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/$forsendelseId", HttpMethod.PATCH, HttpEntity(oppdaterForespørsel), OppdaterForsendelseResponse::class.java)
+    protected fun utførOppdaterForsendelseForespørsel(
+        forsendelseId: String,
+        oppdaterForespørsel: OppdaterForsendelseForespørsel
+    ): ResponseEntity<OppdaterForsendelseResponse> {
+        return httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/$forsendelseId",
+            HttpMethod.PATCH,
+            HttpEntity(oppdaterForespørsel),
+            OppdaterForsendelseResponse::class.java
+        )
     }
+
     protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId", HttpMethod.GET, null, JournalpostResponse::class.java)
     }

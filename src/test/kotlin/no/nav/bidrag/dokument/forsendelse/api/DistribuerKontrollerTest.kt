@@ -25,8 +25,16 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId/enabled", HttpMethod.GET, null, Void::class.java)
     }
 
-    protected fun utførDistribuerForsendelse(forsendelseId: String, forespørsel: DistribuerJournalpostRequest? = null): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId", HttpMethod.POST, forespørsel?.let { HttpEntity(it) }, DistribuerJournalpostResponse::class.java)
+    protected fun utførDistribuerForsendelse(
+        forsendelseId: String,
+        forespørsel: DistribuerJournalpostRequest? = null
+    ): ResponseEntity<DistribuerJournalpostResponse> {
+        return httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/journal/distribuer/$forsendelseId",
+            HttpMethod.POST,
+            forespørsel?.let { HttpEntity(it) },
+            DistribuerJournalpostResponse::class.java
+        )
     }
 
     @Test
@@ -54,6 +62,28 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    fun `skal ikke distribuere forsendelse hvis et av dokumentene har tittel med ugyldig tegn`() {
+        val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0)
+            +nyttDokument(
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                tittel = "\u001A Tittel test \u001A",
+                dokumentMalId = "BI100",
+                rekkefølgeIndeks = 1
+            )
+        }
+
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
+
+        response.statusCode shouldBe HttpStatus.BAD_REQUEST
+
+        response.headers["Warning"]?.get(0) shouldBe "Forsendelsen kan ikke ferdigstilles: Dokument med tittel   Tittel test   og dokumentreferanse ${forsendelse.dokumenter[1].dokumentreferanse} i forsendelse ${forsendelse.forsendelseId} inneholder ugyldig tegn"
+    }
+
+    @Test
     fun `skal distribuere forsendelse`() {
         val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
         val nyJournalpostId = "21313331231"
@@ -61,10 +91,19 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         stubUtils.stubBestillDistribusjon(bestillingId)
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0)
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "Tittel vedlegg", dokumentMalId = "BI100", rekkefølgeIndeks = 1)
+            +nyttDokument(
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                tittel = "Tittel vedlegg",
+                dokumentMalId = "BI100",
+                rekkefølgeIndeks = 1
+            )
         }
 
-        stubUtils.stubOpprettJournalpost(nyJournalpostId, forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
+        stubUtils.stubOpprettJournalpost(
+            nyJournalpostId,
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
 
@@ -82,21 +121,24 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
 
-            stubUtils.Valider().opprettJournalpostKaltMed("{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}")
+            stubUtils.Valider().opprettJournalpostKaltMed(
+                "{" +
+                        "\"skalFerdigstilles\":true," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
+            )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
-            stubUtils.Valider().hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
+            stubUtils.Valider()
+                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
         }
     }
 
@@ -108,10 +150,19 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         stubUtils.stubBestillDistribusjon(bestillingId)
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0)
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "Tittel vedlegg", dokumentMalId = "BI100", rekkefølgeIndeks = 1)
+            +nyttDokument(
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                tittel = "Tittel vedlegg",
+                dokumentMalId = "BI100",
+                rekkefølgeIndeks = 1
+            )
         }
 
-        stubUtils.stubOpprettJournalpost(nyJournalpostId, forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
+        stubUtils.stubOpprettJournalpost(
+            nyJournalpostId,
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, DistribuerJournalpostRequest(lokalUtskrift = true))
 
@@ -129,22 +180,25 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
 
-            stubUtils.Valider().opprettJournalpostKaltMed("{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"kanal\":\"LOKAL_UTSKRIFT\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}")
+            stubUtils.Valider().opprettJournalpostKaltMed(
+                "{" +
+                        "\"skalFerdigstilles\":true," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"kanal\":\"LOKAL_UTSKRIFT\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
+            )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
-            stubUtils.Valider().hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
+            stubUtils.Valider()
+                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
         }
     }
 }

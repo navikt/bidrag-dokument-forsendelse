@@ -6,7 +6,13 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.harArkivPrefiks
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.model.*
+import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
+import no.nav.bidrag.dokument.forsendelse.model.inneholderKontrollTegn
+import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.dokument.forsendelse.model.validerErSann
+import no.nav.bidrag.dokument.forsendelse.model.validerIkkeNullEllerTom
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
@@ -122,6 +128,12 @@ object ForespørselValidering {
 
         if (!this.dokumenter.erAlleFerdigstilt) {
             feilmeldinger.add("En eller flere dokumenter i forsendelsen er ikke ferdigstilt.")
+        }
+
+        this.dokumenter.forEach {
+            if (it.tittel.inneholderKontrollTegn()) {
+                feilmeldinger.add("Dokument med tittel ${it.tittel} og dokumentreferanse ${it.dokumentreferanse} i forsendelse ${this.forsendelseId} inneholder ugyldig tegn")
+            }
         }
 
         if (feilmeldinger.isNotEmpty()) {
