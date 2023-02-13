@@ -80,7 +80,7 @@ class OppdaterForsendelseService(
     ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
-        log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType}." }
+        log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) AvsenderMottakerDto(
@@ -108,7 +108,11 @@ class OppdaterForsendelseService(
             },
             tilknyttSaker = listOf(forsendelse.saksnummer),
             saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null,
-            skalFerdigstilles = true
+            skalFerdigstilles = true,
+            tema = when (forsendelse.tema) {
+                ForsendelseTema.FAR -> "FAR"
+                else -> "BID"
+            }
         )
 
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)

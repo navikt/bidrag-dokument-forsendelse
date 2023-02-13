@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
@@ -20,12 +21,12 @@ private val log = KotlinLogging.logger {}
 
 @Component
 class OpprettForsendelseService(
-        private val tilgangskontrollService: TilgangskontrollService,
-        private val dokumentBestillingService: DokumentBestillingService,
-        private val forsendelseTjeneste: ForsendelseTjeneste,
-        private val personConsumer: BidragPersonConsumer,
-        private val dokumenttjeneste: DokumentTjeneste,
-        private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+    private val tilgangskontrollService: TilgangskontrollService,
+    private val dokumentBestillingService: DokumentBestillingService,
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val personConsumer: BidragPersonConsumer,
+    private val dokumenttjeneste: DokumentTjeneste,
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
 ) {
 
     @Transactional
@@ -40,13 +41,13 @@ class OpprettForsendelseService(
 
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
-                forsendelseId = forsendelse.forsendelseId,
-                dokumenter = dokumenter.map {
-                    DokumentRespons(
-                            dokumentreferanse = it.dokumentreferanse,
-                            tittel = it.tittel
-                    )
-                }
+            forsendelseId = forsendelse.forsendelseId,
+            dokumenter = dokumenter.map {
+                DokumentRespons(
+                    dokumentreferanse = it.dokumentreferanse,
+                    tittel = it.tittel
+                )
+            }
         )
     }
 
@@ -54,7 +55,7 @@ class OpprettForsendelseService(
         if (forespørsel.dokumenter.isEmpty()) return ForsendelseType.UTGÅENDE
         val dokumentmalDetaljer = dokumentBestillingService.hentDokumentmalDetaljer()
         return forespørsel.dokumenter.harNotat(dokumentmalDetaljer).ifTrue { ForsendelseType.NOTAT }
-                ?: ForsendelseType.UTGÅENDE
+            ?: ForsendelseType.UTGÅENDE
 
     }
 
@@ -65,15 +66,19 @@ class OpprettForsendelseService(
         val mottakerInfo = personConsumer.hentPerson(mottakerIdent)
         val mottakerSpråk = personConsumer.hentPersonSpråk(mottakerIdent)
         val forsendelse = Forsendelse(
-                saksnummer = forespørsel.saksnummer,
-                forsendelseType = forsendelseType,
-                gjelderIdent = forespørsel.gjelderIdent,
-                enhet = forespørsel.enhet,
-                språk = forespørsel.språk?.uppercase() ?: "NB",
-                opprettetAvIdent = bruker?.ident ?: "UKJENT",
-                endretAvIdent = bruker?.ident ?: "UKJENT",
-                opprettetAvNavn = bruker?.navn,
-                mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk)
+            saksnummer = forespørsel.saksnummer,
+            forsendelseType = forsendelseType,
+            gjelderIdent = forespørsel.gjelderIdent,
+            enhet = forespørsel.enhet,
+            språk = forespørsel.språk?.uppercase() ?: "NB",
+            opprettetAvIdent = bruker?.ident ?: "UKJENT",
+            endretAvIdent = bruker?.ident ?: "UKJENT",
+            opprettetAvNavn = bruker?.navn,
+            mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
+            tema = when (forespørsel.tema) {
+                "FAR" -> ForsendelseTema.FAR
+                else -> ForsendelseTema.BID
+            }
         )
 
         return forsendelseTjeneste.lagre(forsendelse)
