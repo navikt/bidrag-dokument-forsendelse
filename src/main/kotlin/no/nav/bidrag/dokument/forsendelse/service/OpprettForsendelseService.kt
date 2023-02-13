@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
@@ -76,7 +77,7 @@ class OpprettForsendelseService(
             opprettetAvNavn = bruker?.navn,
             mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
             tema = when (forespørsel.tema) {
-                "FAR" -> ForsendelseTema.FAR
+                JournalTema.FAR -> ForsendelseTema.FAR
                 else -> ForsendelseTema.BID
             }
         )

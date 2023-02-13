@@ -18,7 +18,7 @@ data class OpprettForsendelseForespørsel(
     val dokumenter: List<OpprettDokumentForespørsel> = emptyList(),
     @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String,
-    @Schema(description = "Tema forsendelsen skal opprettes med") val tema: String? = null,
+    @Schema(description = "Tema forsendelsen skal opprettes med") val tema: JournalTema? = null,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
     @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null,
 )

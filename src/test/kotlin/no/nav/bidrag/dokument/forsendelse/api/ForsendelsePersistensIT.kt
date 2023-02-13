@@ -4,6 +4,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
@@ -44,7 +45,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
     @Test
     fun `Skal opprette forsendelse med tema FAR`() {
 
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(tema = "FAR")
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(tema = JournalTema.FAR)
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
