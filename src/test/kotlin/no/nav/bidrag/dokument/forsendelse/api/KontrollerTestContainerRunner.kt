@@ -32,6 +32,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
         stubUtils.stubTilgangskontrollSak()
+        stubUtils.stubTilgangskontrollTema()
         stubUtils.stubTilgangskontrollPerson()
     }
 

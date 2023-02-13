@@ -24,13 +24,19 @@ class CacheConfig {
         const val SAKSBEHANDLERINFO_CACHE = "SAKSBEHANDLERINFO_CACHE"
         const val TILGANG_SAK_CACHE = "TILGANG_SAK_CACHE"
         const val TILGANG_PERSON_CACHE = "TILGANG_PERSON_CACHE"
+        const val TILGANG_TEMA_CACHE = "TILGANG_TEMA_CACHE"
     }
+
     @Bean
     fun cacheManager(): CacheManager {
         val caffeineCacheManager = CaffeineCacheManager()
-        caffeineCacheManager.registerCustomCache(PERSON_SPRAAK_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
+        caffeineCacheManager.registerCustomCache(
+            PERSON_SPRAAK_CACHE,
+            Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
+        )
         caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMADETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(TILGANG_TEMA_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         return caffeineCacheManager;

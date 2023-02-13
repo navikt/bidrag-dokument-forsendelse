@@ -5,10 +5,24 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.dto.*
+import no.nav.bidrag.dokument.dto.AktorDto
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.utils.*
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
+import no.nav.bidrag.dokument.forsendelse.utils.JOURNALFØRENDE_ENHET
+import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSNUMMER
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
+import no.nav.bidrag.dokument.forsendelse.utils.med
+import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import org.junit.jupiter.api.Test
@@ -177,7 +191,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         }
 
         val response = httpHeaderTestRestTemplate.exchange(
-            "${rootUri()}/sak/${forsendelse1.saksnummer}/journal",
+            "${rootUri()}/sak/${forsendelse1.saksnummer}/journal?fagomrade=BID",
             HttpMethod.GET,
             null,
             object : ParameterizedTypeReference<List<JournalpostDto>>() {})
@@ -201,6 +215,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal ikke hente forsendelser som er arkivert i fagarkivet (JOARK) eller har status AVBRUTT`() {
+        stubUtils.stubTilgangskontrollPerson()
         val saksnummer = "3123213123213"
         val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer

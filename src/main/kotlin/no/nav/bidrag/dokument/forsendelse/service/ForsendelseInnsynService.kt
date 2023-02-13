@@ -17,12 +17,13 @@ private val log = KotlinLogging.logger {}
 val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.journalpostIdFagarkiv == null }
 
 @Component
-class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste) {
+class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val tilgangskontrollService: TilgangskontrollService) {
 
     fun hentForsendelseForSakJournal(saksnummer: String, temaListe: List<JournalTema> = listOf(JournalTema.BID)): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
         val forsendelserFiltrert = forsendelser.filtrerIkkeFerdigstiltEllerArkivert
             .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
+            .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
             .map(Forsendelse::tilJournalpostDto)
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }

@@ -55,7 +55,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal opprette forsendelse`() {
 
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(batchId = "FB050")
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -90,6 +90,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 forsendelse.forsendelseType shouldBe ForsendelseType.UTGÅENDE
                 forsendelse.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
                 forsendelse.språk shouldBe SPRÅK_NORSK_BOKMÅL
+                forsendelse.batchId shouldBe "FB050"
                 forsendelse.saksnummer shouldBe SAKSNUMMER
                 forsendelse.opprettetAvIdent shouldBe SAKSBEHANDLER_IDENT
                 forsendelse.opprettetAvNavn shouldBe SAKSBEHANDLER_NAVN

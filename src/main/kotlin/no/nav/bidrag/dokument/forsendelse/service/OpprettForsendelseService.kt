@@ -68,6 +68,7 @@ class OpprettForsendelseService(
         val mottakerSpråk = personConsumer.hentPersonSpråk(mottakerIdent)
         val forsendelse = Forsendelse(
             saksnummer = forespørsel.saksnummer,
+            batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
             enhet = forespørsel.enhet,

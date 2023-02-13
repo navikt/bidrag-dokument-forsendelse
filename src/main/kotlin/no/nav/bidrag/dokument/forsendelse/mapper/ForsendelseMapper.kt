@@ -1,13 +1,37 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
-import no.nav.bidrag.dokument.dto.*
+import no.nav.bidrag.dokument.dto.AktorDto
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.dto.DokumentDto
+import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.dto.DokumentType
+import no.nav.bidrag.dokument.dto.Fagomrade
+import no.nav.bidrag.dokument.dto.JournalpostDto
+import no.nav.bidrag.dokument.dto.Journalstatus
+import no.nav.bidrag.dokument.dto.KodeDto
 import no.nav.bidrag.dokument.dto.MottakerAdresseTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.*
+import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.*
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
-import no.nav.bidrag.dokument.forsendelse.utvidelser.*
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erUtgående
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 
 fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
     DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
@@ -52,7 +76,10 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     gjelderAktor = AktorDto(this.gjelderIdent),
     brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
     innhold = this.dokumenter.hoveddokument?.tittel ?: "Forsendelse $forsendelseId",
-    fagomrade = Fagomrade.BIDRAG,
+    fagomrade = when (tema) {
+        ForsendelseTema.FAR -> Fagomrade.FARSKAP
+        else -> Fagomrade.BIDRAG
+    },
     dokumentType = when (this.forsendelseType) {
         ForsendelseType.NOTAT -> DokumentType.NOTAT
         ForsendelseType.UTGÅENDE -> DokumentType.UTGÅENDE
