@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.api.innsyn
 
+import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
+@Timed
 class ForsendelseJournalKontroller(
     val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste,
     val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
