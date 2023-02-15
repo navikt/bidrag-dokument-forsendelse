@@ -1,5 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
+import io.micrometer.core.aop.TimedAspect
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.info.Info
@@ -34,10 +36,15 @@ class DefaultConfiguration {
     @Bean
     fun lockProvider(dataSource: DataSource): LockProvider {
         return JdbcTemplateLockProvider(
-                JdbcTemplateLockProvider.Configuration.builder()
-                        .withJdbcTemplate(JdbcTemplate(dataSource))
-                        .usingDbTime()
-                        .build()
+            JdbcTemplateLockProvider.Configuration.builder()
+                .withJdbcTemplate(JdbcTemplate(dataSource))
+                .usingDbTime()
+                .build()
         )
+    }
+
+    @Bean
+    fun timedAspect(registry: MeterRegistry): TimedAspect {
+        return TimedAspect(registry)
     }
 }
