@@ -29,7 +29,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
         return if (forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON) listOf(
             AvvikType.FEILFORE_SAK,
             AvvikType.SLETT_JOURNALPOST,
-            AvvikType.ENDRE_FAGOMRADE
+//            AvvikType.ENDRE_FAGOMRADE
         )
         else emptyList()
     }

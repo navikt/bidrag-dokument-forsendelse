@@ -13,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -32,9 +33,9 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 
-        respons.body!! shouldHaveSize 3
+        respons.body!! shouldHaveSize 2
         respons.body!! shouldContain AvvikType.FEILFORE_SAK
-        respons.body!! shouldContain AvvikType.ENDRE_FAGOMRADE
+//        respons.body!! shouldContain AvvikType.ENDRE_FAGOMRADE
         respons.body!! shouldContain AvvikType.SLETT_JOURNALPOST
     }
 
@@ -56,7 +57,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 
-        respons.body!! shouldHaveSize 3
+        respons.body!! shouldHaveSize 2
         respons.body!! shouldContain AvvikType.FEILFORE_SAK
 
         val forsendelseListe = utførHentJournalForSaksnummer(saksnummer)
@@ -103,7 +104,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 
-        respons.body!! shouldHaveSize 3
+        respons.body!! shouldHaveSize 2
         respons.body!! shouldContain AvvikType.SLETT_JOURNALPOST
 
         val forsendelseListe = utførHentJournalForSaksnummer(saksnummer)
@@ -131,6 +132,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE for forsendelse til tema FAR`() {
 
         val saksnummer = "13213213213"
@@ -174,6 +176,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE fra FAR til BID`() {
 
         val saksnummer = "13213213213"
@@ -199,6 +202,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE til samme tema`() {
 
         val saksnummer = "13213213213"
@@ -224,6 +228,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal ikke utføre avvik ENDRE_FAGOMRÅDE for forsendelse hvis tema er ikke bidrag tema`() {
 
         val saksnummer = "13213213213"
