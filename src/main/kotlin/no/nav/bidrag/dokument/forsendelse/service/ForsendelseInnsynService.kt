@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
 
-val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert get() = this.filter { it.journalpostIdFagarkiv == null }
+val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert
+    get() = this.filter { it.journalpostIdFagarkiv == null }.filter { it.status != ForsendelseStatus.SLETTET }
 
 @Component
 class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val tilgangskontrollService: TilgangskontrollService) {

@@ -123,4 +123,35 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         )
     }
 
+    protected fun utførSlettJournalpostForsendelseAvvik(forsendelseId: String): ResponseEntity<Void> {
+        val headers = HttpHeaders()
+        headers.set(EnhetFilter.X_ENHET_HEADER, "4806")
+        return httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/journal/$forsendelseId/avvik",
+            HttpMethod.POST,
+            HttpEntity(Avvikshendelse(AvvikType.SLETT_JOURNALPOST.name, "4806"), headers),
+            Void::class.java
+        )
+    }
+
+    protected fun utførEndreFagområdeForsendelseAvvik(forsendelseId: String, nyFagområde: String): ResponseEntity<Void> {
+        val headers = HttpHeaders()
+        headers.set(EnhetFilter.X_ENHET_HEADER, "4806")
+        return httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/journal/$forsendelseId/avvik",
+            HttpMethod.POST,
+            HttpEntity(
+                Avvikshendelse(
+                    saksnummer = null,
+                    adresse = null,
+                    dokumenter = emptyList(),
+                    beskrivelse = null,
+                    avvikType = AvvikType.ENDRE_FAGOMRADE.name,
+                    detaljer = mapOf("fagomrade" to nyFagområde, "enhetsnummer" to "4806")
+                ), headers
+            ),
+            Void::class.java
+        )
+    }
+
 }

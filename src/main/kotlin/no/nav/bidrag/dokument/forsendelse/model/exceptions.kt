@@ -27,4 +27,5 @@ fun fantIkkeForsendelseNoContent(forsendelseId: Long): Nothing =
     throw HttpClientErrorException(HttpStatus.NO_CONTENT, "Fant ikke forsendelse med id $forsendelseId")
 
 fun fantIkkeSak(saksnummer: String): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Sak med saksnummer $saksnummer finnes ikke")
+fun ugyldigAvviksForespørsel(melding: String): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Ugyldig avvikforespørsel: $melding")
 fun ingenTilgang(message: String): Nothing = throw HttpClientErrorException(HttpStatus.FORBIDDEN, message)

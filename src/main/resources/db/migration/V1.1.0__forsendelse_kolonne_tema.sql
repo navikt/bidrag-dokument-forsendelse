@@ -1,4 +1,4 @@
 alter table forsendelse
-    add column if not exists tema text default 'BID';
+    add column if not exists tema text not null default 'BID';
 alter table forsendelse
     add column if not exists batch_id text;

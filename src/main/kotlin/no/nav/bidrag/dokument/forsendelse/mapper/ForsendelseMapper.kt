@@ -87,6 +87,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     journalfortAv = opprettetAvIdent,
     journalstatus = when (this.status) {
         ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> Journalstatus.EKSPEDERT
+        ForsendelseStatus.SLETTET -> Journalstatus.UTGAR
         ForsendelseStatus.AVBRUTT -> Journalstatus.FEILREGISTRERT
         ForsendelseStatus.FERDIGSTILT -> if (erUtgående) Journalstatus.KLAR_TIL_PRINT else Journalstatus.FERDIGSTILT
         ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt)
@@ -141,7 +142,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
         ForsendelseStatus.UNDER_PRODUKSJON -> ForsendelseStatusTo.UNDER_PRODUKSJON
         ForsendelseStatus.DISTRIBUERT -> ForsendelseStatusTo.DISTRIBUERT
         ForsendelseStatus.DISTRIBUERT_LOKALT -> ForsendelseStatusTo.DISTRIBUERT_LOKALT
-        ForsendelseStatus.AVBRUTT -> ForsendelseStatusTo.SLETTET
+        ForsendelseStatus.SLETTET, ForsendelseStatus.AVBRUTT -> ForsendelseStatusTo.SLETTET
         ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
     },
     opprettetDato = this.opprettetTidspunkt.toLocalDate(),
