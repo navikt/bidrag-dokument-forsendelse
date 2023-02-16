@@ -2,18 +2,22 @@ package no.nav.bidrag.dokument.forsendelse.api
 
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.Fagomrade
 import no.nav.bidrag.dokument.dto.Journalstatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 
 
 class AvvikKontrollerTest : KontrollerTestRunner() {
@@ -70,6 +74,9 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
         val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
 
         forsendelseEtter!!.status shouldBe ForsendelseStatus.AVBRUTT
+        forsendelseEtter.avbruttAvIdent shouldBe SAKSBEHANDLER_IDENT
+        forsendelseEtter.avbruttTidspunkt shouldNotBe null
+        forsendelseEtter.avbruttTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
 
         val forsendelseListeEtter = utførHentJournalForSaksnummer(saksnummer)
         forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
@@ -114,6 +121,9 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
         val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
 
         forsendelseEtter!!.status shouldBe ForsendelseStatus.SLETTET
+        forsendelseEtter.avbruttAvIdent shouldBe SAKSBEHANDLER_IDENT
+        forsendelseEtter.avbruttTidspunkt shouldNotBe null
+        forsendelseEtter.avbruttTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
 
         val forsendelseListeEtter = utførHentJournalForSaksnummer(saksnummer)
         forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
