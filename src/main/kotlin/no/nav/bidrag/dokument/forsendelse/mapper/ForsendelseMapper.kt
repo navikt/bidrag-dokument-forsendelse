@@ -84,7 +84,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         ForsendelseType.NOTAT -> DokumentType.NOTAT
         ForsendelseType.UTGÅENDE -> DokumentType.UTGÅENDE
     },
-    journalfortAv = opprettetAvIdent,
+    journalfortAv = if (opprettetAvIdent == "bisys") "Bisys (Automatisk jobb)" else opprettetAvIdent,
     journalstatus = when (this.status) {
         ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> Journalstatus.EKSPEDERT
         ForsendelseStatus.SLETTET -> Journalstatus.UTGAR
