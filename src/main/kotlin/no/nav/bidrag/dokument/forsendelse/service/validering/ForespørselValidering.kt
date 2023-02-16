@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service.validering
 
+import no.nav.bidrag.dokument.dto.Fagomrade
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.harArkivPrefiks
@@ -108,6 +109,13 @@ object ForespørselValidering {
     fun Forsendelse.validerKanEndreForsendelse() {
         if (this.status != ForsendelseStatus.UNDER_PRODUKSJON) {
             throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres")
+        }
+    }
+
+    fun Forsendelse.validerKanEndreTilFagområde(nyTema: String) {
+        val erGyldigTema = listOf(Fagomrade.BIDRAG.uppercase(), Fagomrade.FARSKAP.uppercase()).contains(nyTema.uppercase())
+        if (!erGyldigTema) {
+            throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} kan ikke endres til tema $nyTema. $nyTema er ikke en gyldig Bidrag tema.")
         }
     }
 

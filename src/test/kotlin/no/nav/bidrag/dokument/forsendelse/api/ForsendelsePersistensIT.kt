@@ -4,9 +4,11 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
@@ -30,6 +32,28 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
             val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)
             forsendelse shouldNotBe null
+            forsendelse!!.tema shouldBe ForsendelseTema.BID
+        }
+
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med tema FAR`() {
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(tema = JournalTema.FAR)
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)
+            forsendelse shouldNotBe null
+            forsendelse!!.tema shouldBe ForsendelseTema.FAR
         }
 
 
@@ -54,20 +78,20 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         val vedlegg2 = forsendelse.dokumenter.vedlegger[1]
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
-                dokumenter = listOf(
-                        OppdaterDokumentForespørsel(
-                                tittel = vedlegg1.tittel,
-                                dokumentreferanse = vedlegg1.dokumentreferanse
-                        ),
-                        OppdaterDokumentForespørsel(
-                                tittel = "Ny tittel hoveddok",
-                                dokumentreferanse = hoveddokument.dokumentreferanse
-                        ),
-                        OppdaterDokumentForespørsel(
-                                tittel = vedlegg2.tittel,
-                                dokumentreferanse = vedlegg2.dokumentreferanse
-                        )
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    tittel = vedlegg1.tittel,
+                    dokumentreferanse = vedlegg1.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny tittel hoveddok",
+                    dokumentreferanse = hoveddokument.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = vedlegg2.tittel,
+                    dokumentreferanse = vedlegg2.dokumentreferanse
                 )
+            )
         )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.OK

@@ -4,6 +4,7 @@ enum class ForsendelseStatus {
     UNDER_PRODUKSJON,
     FERDIGSTILT,
     AVBRUTT,
+    SLETTET,
     DISTRIBUERT,
     DISTRIBUERT_LOKALT
 }

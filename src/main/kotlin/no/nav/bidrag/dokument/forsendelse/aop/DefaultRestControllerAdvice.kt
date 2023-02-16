@@ -45,7 +45,7 @@ class DefaultRestControllerAdvice {
     @ExceptionHandler(HttpStatusCodeException::class)
     fun handleHttpClientErrorException(exception: HttpStatusCodeException): ResponseEntity<*> {
         val errorMessage = getErrorMessage(exception)
-        LOGGER.warn(errorMessage, exception)
+        LOGGER.error(errorMessage, exception)
         return ResponseEntity
             .status(exception.statusCode)
             .header(HttpHeaders.WARNING, errorMessage)
@@ -132,7 +132,7 @@ class DefaultRestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(Exception::class)
     fun handleOtherExceptions(exception: Exception): ResponseEntity<*> {
-        LOGGER.warn("Det skjedde en ukjent feil: ${exception.message}", exception)
+        LOGGER.error("Det skjedde en ukjent feil: ${exception.message}", exception)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .header(HttpHeaders.WARNING, "Det skjedde en ukjent feil: ${exception.message}")

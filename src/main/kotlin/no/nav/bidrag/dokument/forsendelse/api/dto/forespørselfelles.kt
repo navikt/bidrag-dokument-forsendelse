@@ -9,6 +9,10 @@ import org.apache.commons.lang3.Range
 
 val BID_JP_RANGE: Range<Long> = Range.between(18900000L, 40000000L)
 
+enum class JournalTema {
+    BID,
+    FAR
+}
 typealias JournalpostId = String
 
 val JournalpostId.utenPrefiks get() = this.replace("\\D".toRegex(), "")

@@ -2,13 +2,18 @@ package no.nav.bidrag.dokument.forsendelse.utils
 
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
-import no.nav.bidrag.dokument.forsendelse.api.dto.*
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import java.time.LocalDate
@@ -57,6 +62,7 @@ class ForsendelseBuilder {
     private var tittel: String? = null
     private var status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON
     private var arkivJournalpostId: String? = null
+    private var tema: ForsendelseTema = ForsendelseTema.BID
     private var saksnummer: String = SAKSNUMMER
     private var gjelderIdent: String = GJELDER_IDENT
     private var mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN)
@@ -89,6 +95,11 @@ class ForsendelseBuilder {
     }
 
     @OpprettForsendelseTestdataDsl
+    infix fun med.tema(_tema: ForsendelseTema) {
+        tema = _tema
+    }
+
+    @OpprettForsendelseTestdataDsl
     infix fun med.gjelderIdent(_gjelderIdent: String) {
         tittel = _gjelderIdent
     }
@@ -112,6 +123,7 @@ class ForsendelseBuilder {
             saksnummer = saksnummer,
             gjelderIdent = gjelderIdent,
             mottaker = mottaker,
+            tema = tema,
             opprettetAvIdent = SAKSBEHANDLER_IDENT,
             opprettetAvNavn = SAKSBEHANDLER_NAVN,
             endretAvIdent = SAKSBEHANDLER_IDENT,
