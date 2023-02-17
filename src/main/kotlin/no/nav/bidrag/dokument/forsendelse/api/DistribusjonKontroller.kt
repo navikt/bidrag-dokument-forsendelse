@@ -51,6 +51,6 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @RequestParam(required = false) batchId: String?
     ): DistribuerJournalpostResponse {
-        return distribusjonService.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest)
+        return distribusjonService.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest, batchId)
     }
 }

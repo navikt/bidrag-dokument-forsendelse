@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.matching.ContainsPattern
+import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
@@ -45,10 +46,10 @@ class StubUtils {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/person/informasjon"))
                 .withRequestBody(if (fnr.isNullOrEmpty()) AnythingPattern() else ContainsPattern(fnr)).willReturn(
-                aClosedJsonResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withBody(jsonToString(personResponse))
-            )
+                    aClosedJsonResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withBody(jsonToString(personResponse))
+                )
         )
     }
 
@@ -200,10 +201,11 @@ class StubUtils {
             WireMock.verify(verify)
         }
 
-        fun bestillDistribusjonKaltMed(journalpostId: String, vararg contains: String) {
+        fun bestillDistribusjonKaltMed(journalpostId: String, vararg contains: String, batchId: String? = null) {
             val verify = WireMock.postRequestedFor(
-                WireMock.urlMatching("/dokument/journal/distribuer/$journalpostId")
+                WireMock.urlMatching("/dokument/journal/distribuer/${journalpostId}(.*)")
             )
+            batchId?.let { verify.withQueryParam("batchId", EqualToPattern(batchId)) }
             verifyContains(verify, *contains)
         }
 
