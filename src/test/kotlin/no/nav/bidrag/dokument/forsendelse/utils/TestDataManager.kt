@@ -7,12 +7,14 @@ import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
 @Component
-class TestDataManager(val forsendelseRepository: ForsendelseRepository, val dokumentRepository: DokumentRepository){
+class TestDataManager(val forsendelseRepository: ForsendelseRepository, val dokumentRepository: DokumentRepository) {
 
     @Transactional
     fun hentForsendelse(forsendelseId: Long): Forsendelse? {
         return forsendelseRepository.findById(forsendelseId).get()
     }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun lagreForsendelse(forsendelseToSave: Forsendelse): Forsendelse {
         return forsendelseRepository.save(forsendelseToSave)
     }
@@ -24,7 +26,8 @@ class TestDataManager(val forsendelseRepository: ForsendelseRepository, val doku
         forsendelseBuilder.setup()
         return lagreForsendelse(forsendelseBuilder.build())
     }
-    fun slettAlleData(){
+
+    fun slettAlleData() {
         forsendelseRepository.deleteAll()
     }
 }

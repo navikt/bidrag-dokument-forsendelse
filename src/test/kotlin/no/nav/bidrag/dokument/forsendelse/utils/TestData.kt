@@ -143,6 +143,40 @@ fun opprettForsendelse(setup: ForsendelseBuilder.() -> Unit): Forsendelse {
     return forsendelseBuilder.build()
 }
 
+fun opprettForsendelse2(
+    erNotat: Boolean = false,
+    journalførendeenhet: String = JOURNALFØRENDE_ENHET,
+    distribusjonBestillingsId: String? = null,
+    status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON,
+    arkivJournalpostId: String? = null,
+    tema: ForsendelseTema = ForsendelseTema.BID,
+    saksnummer: String = SAKSNUMMER,
+    gjelderIdent: String = GJELDER_IDENT,
+    mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN),
+    opprettDokumenter: List<Dokument> = listOf()
+): Forsendelse {
+    val forsendelse = Forsendelse(
+        forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
+        enhet = journalførendeenhet,
+        status = status,
+        språk = "NB",
+        saksnummer = saksnummer,
+        gjelderIdent = gjelderIdent,
+        mottaker = mottaker,
+        tema = tema,
+        opprettetAvIdent = SAKSBEHANDLER_IDENT,
+        opprettetAvNavn = SAKSBEHANDLER_NAVN,
+        endretAvIdent = SAKSBEHANDLER_IDENT,
+        dokumenter = opprettDokumenter,
+        journalpostIdFagarkiv = arkivJournalpostId,
+        distribusjonBestillingsId = distribusjonBestillingsId
+    )
+
+    opprettDokumenter.forEach { it.forsendelse = forsendelse }
+
+    return forsendelse
+}
+
 fun nyttDokument(
     tittel: String = TITTEL_HOVEDDOKUMENT,
     journalpostId: String? = "123123",

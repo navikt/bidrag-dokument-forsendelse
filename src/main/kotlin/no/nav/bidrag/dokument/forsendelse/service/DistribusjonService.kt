@@ -22,82 +22,117 @@ private val log = KotlinLogging.logger {}
 
 @Component
 class DistribusjonService(
-        private val oppdaterForsendelseService: OppdaterForsendelseService,
-        private val forsendelseTjeneste: ForsendelseTjeneste,
-        private val bidragDokumentConsumer: BidragDokumentConsumer,
-        private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+    private val oppdaterForsendelseService: OppdaterForsendelseService,
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val bidragDokumentConsumer: BidragDokumentConsumer,
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
 ) {
 
-    fun kanDistribuere(forsendelseId: Long): Boolean {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
+    fun harDistribuert(forsendelse: Forsendelse): Boolean {
 
-        if (forsendelse.forsendelseType != ForsendelseType.UTGÅENDE) return false
+        return forsendelse.status == ForsendelseStatus.DISTRIBUERT || forsendelse.status == ForsendelseStatus.DISTRIBUERT_LOKALT
+    }
 
-        return forsendelse.status == ForsendelseStatus.FERDIGSTILT
-                || forsendelse.dokumenter.erAlleFerdigstilt && forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON
+    fun validerKanDistribuere(forsendelse: Forsendelse) {
+        val forsendelseId = forsendelse.forsendelseId!!
+        if (forsendelse.forsendelseType != ForsendelseType.UTGÅENDE) kanIkkeDistribuereForsendelse(forsendelseId, "Forsendelse er ikke utgående")
+
+        if (forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON && !forsendelse.dokumenter.erAlleFerdigstilt) {
+            kanIkkeDistribuereForsendelse(forsendelseId, "Alle dokumenter er ikke ferdigstilt")
+        }
+        if (!listOf(ForsendelseStatus.UNDER_PRODUKSJON, ForsendelseStatus.FERDIGSTILT).contains(forsendelse.status)) kanIkkeDistribuereForsendelse(
+            forsendelseId,
+            "Forsendelse har feil status ${forsendelse.status}"
+        )
+    }
+
+    fun validerKanDistribuere(forsendelseId: Long) {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+
+        validerKanDistribuere(forsendelse)
     }
 
     @Transactional
-    fun distribuer(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?): DistribuerJournalpostResponse {
-        if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
+    fun distribuer(
+        forsendelseId: Long,
+        distribuerJournalpostRequest: DistribuerJournalpostRequest?,
+        batchId: String?
+    ): DistribuerJournalpostResponse {
+        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        if (harDistribuert(forsendelse)) {
+            log.info { "Forsendelse $forsendelseId er allerede distribuert med journalpostId ${forsendelse.journalpostIdFagarkiv} og batchId ${forsendelse.batchId}" }
+            return DistribuerJournalpostResponse(
+                forsendelse.journalpostIdFagarkiv ?: "",
+                forsendelse.distribusjonBestillingsId
+            )
+        }
+        validerKanDistribuere(forsendelseId)
 
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
-        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt" }
-        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-                ?: fantIkkeForsendelse(forsendelseId)
+        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt og batchId=$batchId" }
 
         if (forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
             forsendelse = oppdaterForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
         }
 
-        return if (distribuerLokalt) bestillLokalDistribusjon(forsendelseId, forsendelse)
-        else bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse)
+        return if (distribuerLokalt) bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
+        else bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
     }
 
-    private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse): DistribuerJournalpostResponse {
-        bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", lokalUtskrift = true)
-                ?: distribusjonFeilet(forsendelseId)
-        forsendelseTjeneste.lagre(forsendelse.copy(
+    private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse, batchId: String?): DistribuerJournalpostResponse {
+        bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", lokalUtskrift = true, batchId = batchId)
+            ?: distribusjonFeilet(forsendelseId)
+        forsendelseTjeneste.lagre(
+            forsendelse.copy(
                 distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
                 distribuertTidspunkt = LocalDateTime.now(),
                 status = ForsendelseStatus.DISTRIBUERT_LOKALT,
                 endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
-                        ?: forsendelse.endretAvIdent,
+                    ?: forsendelse.endretAvIdent,
                 endretTidspunkt = LocalDateTime.now()
-        ))
+            )
+        )
         log.info { "Forsendelsen ble bestilt som distribuert lokalt. Forsendelse og Journalpost markert som distribuert lokalt. Ingen distribusjon er bestilt." }
         return DistribuerJournalpostResponse(
-                bestillingsId = null,
-                journalpostId = forsendelse.journalpostIdFagarkiv ?: ""
+            bestillingsId = null,
+            journalpostId = forsendelse.journalpostIdFagarkiv ?: ""
         )
     }
 
-    private fun bestillDistribusjon(forsendelseId: Long, distribuerJournalpostRequest: DistribuerJournalpostRequest?, forsendelse: Forsendelse): DistribuerJournalpostResponse {
+    private fun bestillDistribusjon(
+        forsendelseId: Long,
+        distribuerJournalpostRequest: DistribuerJournalpostRequest?,
+        forsendelse: Forsendelse,
+        batchId: String?
+    ): DistribuerJournalpostResponse {
         val adresse = distribuerJournalpostRequest?.adresse ?: forsendelse.mottaker?.adresse?.let {
             DistribuerTilAdresse(
-                    adresselinje1 = it.adresselinje1,
-                    adresselinje2 = it.adresselinje2,
-                    adresselinje3 = it.adresselinje3,
-                    land = it.landkode,
-                    postnummer = it.postnummer,
-                    poststed = it.poststed
+                adresselinje1 = it.adresselinje1,
+                adresselinje2 = it.adresselinje2,
+                adresselinje3 = it.adresselinje3,
+                land = it.landkode,
+                postnummer = it.postnummer,
+                poststed = it.poststed
             )
         }
-        val resultat = bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", adresse)
-                ?: distribusjonFeilet(forsendelseId)
+        val resultat = bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", adresse, batchId = batchId)
+            ?: distribusjonFeilet(forsendelseId)
 
-        log.info("Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv} og bestillingId=${resultat.bestillingsId}")
-        SIKKER_LOGG.info("Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, journalpostId=${forsendelse.journalpostIdFagarkiv} og bestillingId=${resultat.bestillingsId}")
+        log.info("Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv}, bestillingId=${resultat.bestillingsId} og batchId=$batchId")
+        SIKKER_LOGG.info("Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, journalpostId=${forsendelse.journalpostIdFagarkiv}, bestillingId=${resultat.bestillingsId} og batchId=$batchId")
 
-        forsendelseTjeneste.lagre(forsendelse.copy(
+        forsendelseTjeneste.lagre(
+            forsendelse.copy(
                 distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
                 distribuertTidspunkt = LocalDateTime.now(),
+                batchId = forsendelse.batchId ?: batchId,
                 distribusjonBestillingsId = resultat.bestillingsId,
                 status = ForsendelseStatus.DISTRIBUERT,
                 endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
-                        ?: forsendelse.endretAvIdent,
+                    ?: forsendelse.endretAvIdent,
                 endretTidspunkt = LocalDateTime.now()
-        ))
+            )
+        )
 
         return resultat
     }
