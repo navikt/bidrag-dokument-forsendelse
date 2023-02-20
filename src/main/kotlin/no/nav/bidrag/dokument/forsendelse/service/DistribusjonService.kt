@@ -28,13 +28,28 @@ class DistribusjonService(
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager
 ) {
 
-    fun kanDistribuere(forsendelseId: Long): Boolean {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
+    fun harDistribuert(forsendelse: Forsendelse): Boolean {
 
-        if (forsendelse.forsendelseType != ForsendelseType.UTGÅENDE) return false
+        return forsendelse.status == ForsendelseStatus.DISTRIBUERT || forsendelse.status == ForsendelseStatus.DISTRIBUERT_LOKALT
+    }
 
-        return forsendelse.status == ForsendelseStatus.FERDIGSTILT
-                || forsendelse.dokumenter.erAlleFerdigstilt && forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON
+    fun validerKanDistribuere(forsendelse: Forsendelse) {
+        val forsendelseId = forsendelse.forsendelseId!!
+        if (forsendelse.forsendelseType != ForsendelseType.UTGÅENDE) kanIkkeDistribuereForsendelse(forsendelseId, "Forsendelse er ikke utgående")
+
+        if (forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON && !forsendelse.dokumenter.erAlleFerdigstilt) {
+            kanIkkeDistribuereForsendelse(forsendelseId, "Alle dokumenter er ikke ferdigstilt")
+        }
+        if (!listOf(ForsendelseStatus.UNDER_PRODUKSJON, ForsendelseStatus.FERDIGSTILT).contains(forsendelse.status)) kanIkkeDistribuereForsendelse(
+            forsendelseId,
+            "Forsendelse har feil status ${forsendelse.status}"
+        )
+    }
+
+    fun validerKanDistribuere(forsendelseId: Long) {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+
+        validerKanDistribuere(forsendelse)
     }
 
     @Transactional
@@ -43,12 +58,18 @@ class DistribusjonService(
         distribuerJournalpostRequest: DistribuerJournalpostRequest?,
         batchId: String?
     ): DistribuerJournalpostResponse {
-        if (!kanDistribuere(forsendelseId)) kanIkkeDistribuereForsendelse(forsendelseId)
+        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        if (harDistribuert(forsendelse)) {
+            log.info { "Forsendelse $forsendelseId er allerede distribuert med journalpostId ${forsendelse.journalpostIdFagarkiv} og batchId ${forsendelse.batchId}" }
+            return DistribuerJournalpostResponse(
+                forsendelse.journalpostIdFagarkiv ?: "",
+                forsendelse.distribusjonBestillingsId
+            )
+        }
+        validerKanDistribuere(forsendelseId)
 
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
         log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt og batchId=$batchId" }
-        var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
 
         if (forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
             forsendelse = oppdaterForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!

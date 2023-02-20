@@ -33,8 +33,13 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
         ]
     )
     fun kanDistribuere(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<Void> {
-        return if (distribusjonService.kanDistribuere(forsendelseIdMedPrefix.numerisk)) ResponseEntity.ok().build()
-        else ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build()
+        return try {
+            distribusjonService.validerKanDistribuere(forsendelseIdMedPrefix.numerisk)
+            ResponseEntity.ok().build()
+        } catch (_: Exception) {
+            ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build()
+        }
+
     }
 
     @PostMapping("/journal/distribuer/{forsendelseIdMedPrefix}")

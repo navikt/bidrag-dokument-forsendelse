@@ -244,6 +244,14 @@ class StubUtils {
             WireMock.verify(0, verify)
         }
 
+
+        fun opprettJournalpostIkkeKalt() {
+            val verify = WireMock.postRequestedFor(
+                WireMock.urlMatching("/dokument/journalpost/JOARK")
+            )
+            WireMock.verify(0, verify)
+        }
+
         fun opprettJournalpostKaltMed(vararg contains: String) {
             val verify = WireMock.postRequestedFor(
                 WireMock.urlMatching("/dokument/journalpost/JOARK")

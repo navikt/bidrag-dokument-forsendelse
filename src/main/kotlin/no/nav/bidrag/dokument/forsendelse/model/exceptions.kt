@@ -14,8 +14,8 @@ class KanIkkeDistribuereForsendelse(forsendelseId: Long) : RuntimeException("Kun
 class KunneIkkeLeseMeldingFraHendelse(melding: String?, throwable: Throwable) : RuntimeException(melding, throwable)
 
 
-fun kanIkkeDistribuereForsendelse(forsendelseId: Long): Nothing =
-    throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Kan ikke distribuere forsendelse $forsendelseId")
+fun kanIkkeDistribuereForsendelse(forsendelseId: Long, begrunnelse: String): Nothing =
+    throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Kan ikke distribuere forsendelse ${forsendelseId}: $begrunnelse")
 
 fun distribusjonFeilet(forsendelseId: Long): Nothing =
     throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved bestilling av distribusjon av forsendelse $forsendelseId")

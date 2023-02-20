@@ -9,9 +9,11 @@ import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
@@ -207,6 +209,34 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    fun `skal ikke distribuere hvis allerede distribuert`() {
+        val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
+        val nyJournalpostId = "21313331231"
+        stubUtils.stubHentDokument()
+        stubUtils.stubBestillDistribusjon(bestillingId)
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                status = ForsendelseStatus.DISTRIBUERT,
+                arkivJournalpostId = nyJournalpostId, distribusjonBestillingsId = bestillingId,
+                opprettDokumenter = listOf(nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0))
+            )
+        )
+
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+
+        assertSoftly {
+            response.body!!.journalpostId shouldBe nyJournalpostId
+            response.body!!.bestillingsId shouldBe bestillingId
+            stubUtils.Valider().opprettJournalpostIkkeKalt()
+            stubUtils.Valider().bestillDokumentIkkeKalt(HOVEDDOKUMENT_DOKUMENTMAL)
+        }
+    }
+
+    @Test
     fun `skal distribuere forsendelse med batchId`() {
         val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
         val nyJournalpostId = "21313331231"
@@ -274,17 +304,21 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         val nyJournalpostId = "21313331231"
         stubUtils.stubHentDokument()
         stubUtils.stubBestillDistribusjon(bestillingId)
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0)
-            +nyttDokument(
-                journalpostId = null,
-                dokumentreferanseOriginal = null,
-                dokumentStatus = DokumentStatus.FERDIGSTILT,
-                tittel = "Tittel vedlegg",
-                dokumentMalId = "BI100",
-                rekkefølgeIndeks = 1
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                opprettDokumenter = listOf(
+                    nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        tittel = "Tittel vedlegg",
+                        dokumentMalId = "BI100",
+                        rekkefølgeIndeks = 1
+                    )
+                )
             )
-        }
+        )
 
         stubUtils.stubOpprettJournalpost(
             nyJournalpostId,
