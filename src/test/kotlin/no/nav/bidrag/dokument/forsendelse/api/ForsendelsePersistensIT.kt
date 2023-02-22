@@ -29,6 +29,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
 
+
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
             val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)
             forsendelse shouldNotBe null

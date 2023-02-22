@@ -405,6 +405,59 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             nyDokument.rekkefølgeIndeks shouldBe forsendelse.dokumenter.size - 1
             nyDokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
             nyDokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+            responseNyDokument.body!!.dokumentreferanse shouldBe nyDokument.dokumentreferanse
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse uten bestille dokument og legge til nytt dokument uten å bestille dokument`() {
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = TITTEL_VEDLEGG_1,
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                    journalpostId = "JOARK-123123213",
+                    dokumentreferanse = "123213",
+                    bestillDokument = false
+                )
+            )
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelseId = response.body!!.forsendelseId!!
+
+        val forsendelseMedEnDokument = testDataManager.hentForsendelse(forsendelseId)!!
+
+        forsendelseMedEnDokument.dokumenter shouldHaveSize 1
+        val dokument = forsendelseMedEnDokument.dokumenter[0]
+        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+            tittel = "Tittel ny dokument",
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            språk = "EN", bestillDokument = false
+        )
+        val responseNyDokument =
+            utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+            forsendelse.dokumenter shouldHaveSize 2
+            val nyDokument = forsendelse.dokumenter.find { it.tittel == "Tittel ny dokument" }!!
+            responseNyDokument.body!!.dokumentreferanse shouldBe nyDokument.dokumentreferanse
+            nyDokument.språk shouldBe "EN"
+            nyDokument.tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
+            nyDokument.rekkefølgeIndeks shouldBe forsendelse.dokumenter.size - 1
+            nyDokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            nyDokument.arkivsystem shouldBe DokumentArkivSystem.UKJENT
+
+            stubUtils.Valider().bestillDokumentIkkeKalt(HOVEDDOKUMENT_DOKUMENTMAL)
         }
     }
 

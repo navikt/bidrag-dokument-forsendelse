@@ -21,6 +21,7 @@ env:
   BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
 
   TOPIC_DOKUMENT: bidrag.dokument
+  TOPIC_JOURNALPOST: bidrag.journalpost
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false

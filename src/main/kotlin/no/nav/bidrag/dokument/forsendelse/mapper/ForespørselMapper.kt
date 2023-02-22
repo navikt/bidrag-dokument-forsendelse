@@ -65,10 +65,10 @@ object ForespørselMapper {
     }
 
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
-        this.bestillDokument && this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
+        this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
 
-    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.erBestillingAvNyttDokument())
-        DokumentStatus.IKKE_BESTILT else if (!this.bestillDokument) DokumentStatus.UNDER_PRODUKSJON else when (this.status) {
+    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.bestillDokument && this.erBestillingAvNyttDokument())
+        DokumentStatus.IKKE_BESTILT else if (this.erBestillingAvNyttDokument()) DokumentStatus.UNDER_PRODUKSJON else when (this.status) {
         DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
         DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
         DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT

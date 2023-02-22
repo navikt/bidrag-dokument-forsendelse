@@ -15,6 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
 import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
+import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
@@ -25,6 +26,7 @@ private val log = KotlinLogging.logger {}
 class DokumentHendelseLytter(
     val objectMapper: ObjectMapper,
     val dokumentTjeneste: DokumentTjeneste,
+    val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
     val oppdaterForsendelseService: OppdaterForsendelseService
 ) {
 
@@ -57,8 +59,17 @@ class DokumentHendelseLytter(
             )
         }
 
+        sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
         ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
 
+    }
+
+    private fun sendJournalposthendelseHvisKlarForDistribusjon(dokumenter: List<Dokument>) {
+        dokumenter.forEach {
+            if (it.forsendelse.kanDistribueres()) {
+                journalpostKafkaHendelseProdusent.publiserForsendelse(it.forsendelse)
+            }
+        }
     }
 
     private fun ferdigstillHvisForsendelseErNotat(dokumenter: List<Dokument>) {

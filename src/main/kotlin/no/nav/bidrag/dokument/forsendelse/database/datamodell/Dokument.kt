@@ -12,49 +12,51 @@ import javax.persistence.*
 
 
 @Entity(name = "dokument")
-@Table(name = "dokument", uniqueConstraints = [
-    UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
-])
+@Table(
+    name = "dokument", uniqueConstraints = [
+        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
+    ]
+)
 @TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType::class)
 data class Dokument(
-        @Id
-        @GeneratedValue(generator = "sequence-generator")
-        @GenericGenerator(
-                name = "sequence-generator",
-                strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-                parameters = [
-                    Parameter(name = "sequence_name", value = "dokument_dokument_id_seq"),
-                    Parameter(name = "initial_value", value = "100000000"),
-                    Parameter(name = "min_value", value = "100000000"),
-                    Parameter(name = "increment_size", value = "1")
-                ]
-        )
-        val dokumentId: Long? = null,
+    @Id
+    @GeneratedValue(generator = "sequence-generator")
+    @GenericGenerator(
+        name = "sequence-generator",
+        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+        parameters = [
+            Parameter(name = "sequence_name", value = "dokument_dokument_id_seq"),
+            Parameter(name = "initial_value", value = "100000000"),
+            Parameter(name = "min_value", value = "100000000"),
+            Parameter(name = "increment_size", value = "1")
+        ]
+    )
+    val dokumentId: Long? = null,
 
-        val dokumentreferanseOriginal: String? = null,
-        val journalpostIdOriginal: String? = null,
-        val tittel: String,
-        val språk: String? = null,
-        val dokumentmalId: String? = null,
-        val dokumentreferanseFagarkiv: String? = null,
+    val dokumentreferanseOriginal: String? = null,
+    val journalpostIdOriginal: String? = null,
+    val tittel: String,
+    val språk: String? = null,
+    val dokumentmalId: String? = null,
+    val dokumentreferanseFagarkiv: String? = null,
 
-        val slettetTidspunkt: LocalDate? = null,
+    val slettetTidspunkt: LocalDate? = null,
 
-        @Enumerated(EnumType.STRING)
-        val dokumentStatus: DokumentStatus,
+    @Enumerated(EnumType.STRING)
+    val dokumentStatus: DokumentStatus,
 
-        @Enumerated(EnumType.STRING)
-        val arkivsystem: DokumentArkivSystem,
+    @Enumerated(EnumType.STRING)
+    val arkivsystem: DokumentArkivSystem,
 
-        val rekkefølgeIndeks: Int,
+    val rekkefølgeIndeks: Int,
 
-        @Type(type = "hstore")
-        @Column(columnDefinition = "hstore")
-        val metadata: Map<String, String> = mapOf(),
+    @Type(type = "hstore")
+    @Column(columnDefinition = "hstore")
+    val metadata: Map<String, String> = mapOf(),
 
-        @ManyToOne
-        @JoinColumn(name = "forsendelse_id")
-        var forsendelse: Forsendelse
+    @ManyToOne
+    @JoinColumn(name = "forsendelse_id")
+    var forsendelse: Forsendelse
 ) {
 
     override fun toString(): String {

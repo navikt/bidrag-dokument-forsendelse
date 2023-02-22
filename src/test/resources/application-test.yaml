@@ -4,6 +4,7 @@ AZURE_APP_CLIENT_ID: asdasd-sadas-ddas-qwe
 AZURE_APP_CLIENT_SECRET: asdasdsad214123sadas
 NAIS_APP_NAME: bidrag-dokument-forsendelse
 TOPIC_DOKUMENT: bidrag.dokument
+TOPIC_JOURNALPOST: bidrag.journalpost
 BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestilling
 BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
 BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
