@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.ninjasquad.springmockk.SpykBean
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -11,6 +12,7 @@ import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostStatus
+import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
@@ -19,6 +21,7 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.er
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -147,6 +150,13 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
         val hendelse = readFromJournalpostTopic()
         hendelse shouldNotBe null
         hendelse!!.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name
+        hendelse.journalpostId shouldBe forsendelse1.forsendelseIdMedPrefix
+        hendelse.tema shouldBe forsendelse1.tema
+        hendelse.enhet shouldBe forsendelse1.enhet
+        hendelse.tittel shouldBe forsendelse1.dokumenter.hoveddokument?.tittel
+        hendelse.fnr shouldBe forsendelse1.gjelderIdent
+        hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
+        hendelse.sakstilknytninger!! shouldContain forsendelse1.saksnummer
     }
 
     @Test
