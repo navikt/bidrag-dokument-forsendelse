@@ -151,7 +151,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
         hendelse shouldNotBe null
         hendelse!!.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name
         hendelse.journalpostId shouldBe forsendelse1.forsendelseIdMedPrefix
-        hendelse.tema shouldBe forsendelse1.tema
+        hendelse.tema shouldBe forsendelse1.tema.name
         hendelse.enhet shouldBe forsendelse1.enhet
         hendelse.tittel shouldBe forsendelse1.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe forsendelse1.gjelderIdent
