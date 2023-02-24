@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.innsyn
 
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.dto.JournalpostDto
@@ -32,9 +33,14 @@ class ForsendelseJournalKontroller(
             ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid"),
         ]
     )
-    fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId): JournalpostResponse {
+    fun hentForsendelse(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId, @Parameter(
+            name = "saksnummer",
+            description = "journalposten tilhører sak"
+        ) @RequestParam(required = false) saksnummer: String?
+    ): JournalpostResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return forsendelseInnsynTjeneste.hentForsendelseJournal(forsendelseId)
+        return forsendelseInnsynTjeneste.hentForsendelseJournal(forsendelseId, saksnummer)
     }
 
     @GetMapping("/sak/{saksnummer}/journal")

@@ -23,6 +23,9 @@ fun distribusjonFeilet(forsendelseId: Long): Nothing =
 fun fantIkkeForsendelse(forsendelseId: Long): Nothing =
     throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke forsendelse med id $forsendelseId")
 
+fun fantIkkeForsendelse(forsendelseId: Long, saksnummer: String): Nothing =
+    throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke forsendelse med id $forsendelseId og saksnummer $saksnummer")
+
 fun fantIkkeForsendelseNoContent(forsendelseId: Long): Nothing =
     throw HttpClientErrorException(HttpStatus.NO_CONTENT, "Fant ikke forsendelse med id $forsendelseId")
 

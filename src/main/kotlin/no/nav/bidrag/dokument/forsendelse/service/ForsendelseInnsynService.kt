@@ -32,9 +32,12 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
         return forsendelserFiltrert
     }
 
-    fun hentForsendelseJournal(forsendelseId: Long): JournalpostResponse {
+    fun hentForsendelseJournal(forsendelseId: Long, saksnummer: String? = null): JournalpostResponse {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
             ?: fantIkkeForsendelse(forsendelseId)
+
+        if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
+
         log.info { "Hentet forsendelse $forsendelseId med saksnummer ${forsendelse.saksnummer}" }
 
         return JournalpostResponse(
@@ -50,8 +53,9 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
             .map(Forsendelse::tilForsendelseRespons)
     }
 
-    fun hentForsendelse(forsendelseId: Long): ForsendelseResponsTo? {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
+    fun hentForsendelse(forsendelseId: Long, saksnummer: String? = null): ForsendelseResponsTo {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
         return forsendelse.tilForsendelseRespons()
     }
