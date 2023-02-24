@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.innsyn
 
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
@@ -10,11 +11,11 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsu
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
 @RequestMapping("/api/forsendelse/v2")
@@ -29,11 +30,15 @@ class ForsendelseInnsynKontroller(
     @ApiResponses(
         value = [ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")]
     )
-    fun hentForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<ForsendelseResponsTo> {
+    fun hentForsendelse(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+        @Parameter(
+            name = "saksnummer",
+            description = "journalposten tilhører sak"
+        ) @RequestParam(required = false) saksnummer: String?
+    ): ForsendelseResponsTo {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = forsendelseInnsynTjeneste.hentForsendelse(forsendelseId)
-            ?: return ResponseEntity.noContent().build()
-        return ResponseEntity.ok(respons)
+        return forsendelseInnsynTjeneste.hentForsendelse(forsendelseId, saksnummer)
     }
 
     @GetMapping("/sak/{saksnummer}/journal")

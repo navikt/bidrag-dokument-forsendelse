@@ -100,8 +100,13 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         )
     }
 
-    protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId", HttpMethod.GET, null, JournalpostResponse::class.java)
+    protected fun utførHentJournalpost(forsendelseId: String, saksnummer: String? = null): ResponseEntity<JournalpostResponse> {
+        return httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/journal/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
+            HttpMethod.GET,
+            null,
+            JournalpostResponse::class.java
+        )
     }
 
     protected fun utførHentAvvik(forsendelseId: String): ResponseEntity<List<AvvikType>> {

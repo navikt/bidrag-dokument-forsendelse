@@ -79,6 +79,26 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    fun `Skal hente forsendelse med saksnummer`() {
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+        }
+        val response = utførHentJournalpost(forsendelse.forsendelseId.toString(), SAKSNUMMER)
+
+        response.statusCode shouldBe HttpStatus.OK
+    }
+
+    @Test
+    fun `Skal ikke hente forsendelse hvis forsendelse ikke har saksnummer i forespørsel`() {
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+        }
+        val response = utførHentJournalpost(forsendelse.forsendelseId.toString(), "13213123")
+
+        response.statusCode shouldBe HttpStatus.NOT_FOUND
+    }
+
+    @Test
     fun `Skal returnere forsendelse med status F hvis forsendels er avbrutt`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status ForsendelseStatus.AVBRUTT

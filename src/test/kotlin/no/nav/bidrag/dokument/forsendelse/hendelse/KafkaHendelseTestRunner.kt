@@ -2,12 +2,16 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.kotest.matchers.shouldNotBe
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentHendelse
+import no.nav.bidrag.dokument.dto.JournalpostHendelse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.Assert
 import org.junit.jupiter.api.AfterEach
@@ -19,15 +23,19 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.KafkaTestUtils
-import java.util.Collections
 
-@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "spring.kafka.bootstrap-servers", topics = ["bidrag.dokument"])
-abstract class KafkaHendelseTestRunner: CommonTestRunner() {
+private val log = KotlinLogging.logger {}
+
+@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "spring.kafka.bootstrap-servers", topics = ["bidrag.dokument", "bidrag.journalpost"])
+abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     @Value("\${TOPIC_DOKUMENT}")
     private lateinit var topicDokument: String
 
+    @Value("\${TOPIC_JOURNALPOST}")
+    private lateinit var topicJournalpost: String
+
     @BeforeEach
-    fun setupMocks(){
+    fun setupMocks() {
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
@@ -36,19 +44,35 @@ abstract class KafkaHendelseTestRunner: CommonTestRunner() {
     }
 
     @AfterEach
-    fun cleanupDatabase(){
+    fun cleanupDatabase() {
         testDataManager.slettAlleData()
     }
 
     @Autowired
     lateinit var embeddedKafkaBroker: EmbeddedKafkaBroker
 
+    fun readFromJournalpostTopic(): JournalpostHendelse? {
+        val consumer = configureConsumer(topicJournalpost)
+        return try {
+            val singleRecord = KafkaTestUtils.getSingleRecord(consumer, topicJournalpost, 4000)
+            singleRecord shouldNotBe null
+            ObjectMapper().findAndRegisterModules().readValue(singleRecord.value(), JournalpostHendelse::class.java)
+        } catch (e: Exception) {
+            log.error("Det skjedde en feil ved lesing av kafka melding", e)
+            null
+        } finally {
+            consumer?.close()
+        }
+
+    }
+
     fun configureConsumer(topic: String): Consumer<Int, String>? {
         val consumerProps = KafkaTestUtils.consumerProps("testGroup", "true", embeddedKafkaBroker)
         consumerProps[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
-        val consumer: Consumer<Int, String> = DefaultKafkaConsumerFactory<Int, String>(consumerProps)
-            .createConsumer()
-        consumer.subscribe(Collections.singleton(topic))
+        consumerProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        val consumer = DefaultKafkaConsumerFactory<Int, String>(consumerProps).createConsumer()
+        consumer.subscribe(listOf(topic))
         return consumer
     }
 
@@ -59,7 +83,7 @@ abstract class KafkaHendelseTestRunner: CommonTestRunner() {
         return DefaultKafkaProducerFactory<String, String>(producerProps).createProducer()
     }
 
-    fun sendMeldingTilDokumentHendelse(melding: DokumentHendelse){
+    fun sendMeldingTilDokumentHendelse(melding: DokumentHendelse) {
         configureProducer().send(ProducerRecord(topicDokument, jsonToString(melding)))
     }
 

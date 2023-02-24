@@ -65,14 +65,14 @@ class OpprettForsendelseService(
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         val mottakerIdent = forespørsel.mottaker!!.ident!!
         val mottakerInfo = personConsumer.hentPerson(mottakerIdent)
-        val mottakerSpråk = personConsumer.hentPersonSpråk(mottakerIdent)
+        val mottakerSpråk = forespørsel.språk ?: personConsumer.hentPersonSpråk(mottakerIdent) ?: "NB"
         val forsendelse = Forsendelse(
             saksnummer = forespørsel.saksnummer,
             batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
             enhet = forespørsel.enhet,
-            språk = forespørsel.språk?.uppercase() ?: "NB",
+            språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
             endretAvIdent = bruker?.ident ?: "UKJENT",
             opprettetAvNavn = bruker?.navn,

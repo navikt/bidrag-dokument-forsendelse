@@ -12,6 +12,7 @@ env:
   BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument-feature
 
   TOPIC_DOKUMENT: bidrag.dokument-feature
+  TOPIC_JOURNALPOST: bidrag.journalpost-feature
 
   BIDRAG_SAK_URL: https://bidrag-sak-feature.dev-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak-feature

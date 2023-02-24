@@ -187,7 +187,7 @@ fun nyttDokument(
     rekkefølgeIndeks: Int = 0,
     slettet: Boolean = false
 ): Dokument {
-    val forsendelse = opprettForsendelse { }
+    val forsendelse = opprettForsendelse2()
     return Dokument(
         arkivsystem = arkivsystem,
         tittel = tittel,
