@@ -96,7 +96,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     },
     journalpostId = forsendelseIdMedPrefix,
     dokumentDato = this.opprettetTidspunkt.toLocalDate(),
-    journalfortDato = this.opprettetTidspunkt.toLocalDate(),
+    journalfortDato = this.ferdigstiltTidspunkt?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate(),
     journalforendeEnhet = this.enhet,
     feilfort = status == ForsendelseStatus.AVBRUTT,
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { dokument ->
