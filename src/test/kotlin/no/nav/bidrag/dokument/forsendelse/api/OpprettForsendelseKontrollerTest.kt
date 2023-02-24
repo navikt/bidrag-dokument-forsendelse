@@ -66,7 +66,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             assertSoftly {
                 forsendelse.dokumenter shouldHaveSize 2
                 val hoveddokument = forsendelse.dokumenter.hoveddokument!!
-                hoveddokument.språk shouldBe null
+                hoveddokument.språk shouldBe forsendelse.språk
                 hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
                 hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
                 hoveddokument.rekkefølgeIndeks shouldBe 0
@@ -78,7 +78,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 hoveddokument.tilknyttetSom shouldBe DokumentTilknyttetSom.HOVEDDOKUMENT
 
                 val vedlegg = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge[1]
-                vedlegg.språk shouldBe null
+                vedlegg.språk shouldBe forsendelse.språk
                 vedlegg.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
                 vedlegg.arkivsystem shouldBe DokumentArkivSystem.JOARK
                 vedlegg.rekkefølgeIndeks shouldBe 1
@@ -171,7 +171,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             mottaker.adresse shouldBe null
 
             stubUtils.Valider().hentPersonKaltMed(SAMHANDLER_ID)
-            stubUtils.Valider().hentPersonSpråkKaltMed(SAMHANDLER_ID)
+            stubUtils.Valider().hentPersonSpråkIkkeKaltMed(SAMHANDLER_ID)
         }
 
 
@@ -206,7 +206,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             mottaker.adresse shouldBe null
 
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
-            stubUtils.Valider().hentPersonSpråkKaltMed(MOTTAKER_IDENT)
+            stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
         }
 
 
@@ -216,6 +216,41 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
     }
 
+    @Test
+    fun `Skal opprette forsendelse med mottakerspråk hvis språk ikke er satt`() {
+
+        stubUtils.stubHentPersonSpraak("EN")
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(språk = null)
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+        assertSoftly {
+            forsendelse.mottaker shouldNotBe null
+
+            val mottaker = forsendelse.mottaker!!
+            mottaker.ident shouldBe MOTTAKER_IDENT
+            mottaker.navn shouldBe MOTTAKER_NAVN
+            mottaker.språk shouldBe "EN"
+            mottaker.identType shouldBe MottakerIdentType.FNR
+
+            stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
+            stubUtils.Valider().hentPersonSpråkKaltMed(MOTTAKER_IDENT)
+
+            stubUtils.Valider().bestillDokumentKaltMed(
+                HOVEDDOKUMENT_DOKUMENTMAL, "\"språk\":\"EN\""
+            )
+        }
+
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+    }
 
     @Test
     fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`() {
@@ -316,7 +351,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse med tittel som inneholder ugyldig teng`() {
+    fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse med tittel som inneholder ugyldig tegn`() {
 
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
@@ -464,6 +499,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument med annen språk på opprettet forsendelse`() {
 
+        val nyDokumentmal = "BI00133"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -489,7 +525,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = "Tittel ny dokument",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            dokumentmalId = nyDokumentmal,
             språk = "EN"
         )
         val responseNyDokument =
@@ -508,9 +544,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             nyDokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
 
             stubUtils.Valider().bestillDokumentKaltMed(
-                HOVEDDOKUMENT_DOKUMENTMAL,
+                nyDokumentmal,
                 "\"dokumentreferanse\":\"${nyDokument.dokumentreferanse}\"",
-                "\"språk\":\"${forsendelse.språk}\""
+                "\"språk\":\"${nyDokument.språk}\""
             )
         }
     }

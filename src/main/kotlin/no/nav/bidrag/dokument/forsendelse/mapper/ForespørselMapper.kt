@@ -25,10 +25,10 @@ import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 
 object ForespørselMapper {
-    fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String?) = Mottaker(
+    fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String) = Mottaker(
         navn = this.navn ?: person?.navn,
         ident = this.ident,
-        språk = this.språk?.uppercase() ?: språk?.uppercase(),
+        språk = språk.uppercase(),
         identType = when (this.identType) {
             MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
             MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
@@ -80,7 +80,7 @@ object ForespørselMapper {
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
         forsendelse = forsendelse,
         tittel = this.tittel.fjernKontrollTegn(),
-        språk = this.språk,
+        språk = this.språk ?: forsendelse.språk,
         arkivsystem = this.tilArkivsystemDo(),
         dokumentStatus = this.tilDokumentStatusDo(),
         dokumentreferanseOriginal = this.dokumentreferanse,

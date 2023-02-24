@@ -230,6 +230,13 @@ class StubUtils {
             WireMock.verify(verify)
         }
 
+        fun hentPersonSpråkIkkeKaltMed(fnr: String?) {
+            val verify = WireMock.postRequestedFor(
+                WireMock.urlMatching("/person/spraak")
+            ).withRequestBody(ContainsPattern(fnr))
+            WireMock.verify(0, verify)
+        }
+
         fun bestillDokumentKaltMed(dokumentmal: String, vararg contains: String) {
             val verify = WireMock.postRequestedFor(
                 WireMock.urlMatching("/bestilling/bestill/$dokumentmal")
