@@ -46,6 +46,7 @@ class JournalpostKafkaHendelseProdusent(
                 fnr = forsendelse.gjelderIdent,
                 tittel = forsendelse.dokumenter.hoveddokument?.tittel,
                 tema = forsendelse.tema.name,
+                batchId = forsendelse.batchId,
                 hendelseType = HendelseType.ENDRING,
                 enhet = forsendelse.enhet,
                 dokumentDato = forsendelse.opprettetTidspunkt.toLocalDate(),
