@@ -1,10 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
-import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.listener.RetryListener
-
-private val log = KotlinLogging.logger {}
 
 class KafkaRetryListener : RetryListener {
 
@@ -13,11 +11,11 @@ class KafkaRetryListener : RetryListener {
         exception: Exception,
         deliveryAttempt: Int
     ) {
-        log.error(exception) { "Håndtering av kafka melding ${record.value()} feilet. Dette er $deliveryAttempt. forsøk" }
+        SIKKER_LOGG.error(exception) { "Håndtering av kafka melding ${record.value()} feilet. Dette er $deliveryAttempt. forsøk" }
     }
 
     override fun recovered(record: ConsumerRecord<*, *>, exception: java.lang.Exception) {
-        log.error(exception) { "Håndtering av kafka melding ${record.value()} er enten suksess eller ignorert pågrunn av ugyldig data" }
+        SIKKER_LOGG.error(exception) { "Håndtering av kafka melding ${record.value()} er enten suksess eller ignorert pågrunn av ugyldig data" }
     }
 
     override fun recoveryFailed(

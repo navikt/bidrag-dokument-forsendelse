@@ -38,7 +38,7 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
 
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
-        log.info { "Hentet forsendelse $forsendelseId med saksnummer ${forsendelse.saksnummer}" }
+        log.debug { "Hentet forsendelse $forsendelseId med saksnummer ${forsendelse.saksnummer}" }
 
         return JournalpostResponse(
             journalpost = forsendelse.tilJournalpostDto(),
