@@ -23,6 +23,7 @@ import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.dokument.forsendelse.service.KodeverkService
 
 object ForespørselMapper {
     fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String) = Mottaker(
@@ -49,7 +50,7 @@ object ForespørselMapper {
         landkode = this.landkode ?: alpha3LandkodeTilAlpha2(this.landkode3),
         landkode3 = this.landkode3,
         postnummer = this.postnummer,
-        poststed = this.poststed
+        poststed = this.poststed ?: KodeverkService.hentNorskPoststed(this.postnummer, this.landkode ?: this.landkode3)
     )
 
     fun JournalpostId.tilArkivSystemDo() = when (this.arkivsystem) {

@@ -1,5 +1,3 @@
-
-
 version: "3.9"
 services:
   zookeeper:
@@ -30,7 +28,7 @@ services:
   database:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "5454:5432"
     environment:
       POSTGRES_USER: cloudsqliamuser
       POSTGRES_PASSWORD: admin

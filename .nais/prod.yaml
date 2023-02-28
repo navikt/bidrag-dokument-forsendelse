@@ -22,6 +22,8 @@ env:
 
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
+
+  KODEVERK_URL: https://kodeverk.prod-fss-pub.nais.io
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false
