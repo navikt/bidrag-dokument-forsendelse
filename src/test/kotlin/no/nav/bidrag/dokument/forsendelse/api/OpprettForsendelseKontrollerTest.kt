@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
@@ -143,6 +144,54 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
     }
+
+    @Test
+    fun `Skal opprette forsendelse med samhandlerid som mangler poststed`() {
+
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            mottaker = MottakerTo(
+                ident = SAMHANDLER_ID,
+                identType = MottakerIdentTypeTo.SAMHANDLER,
+                adresse = MottakerAdresseTo(
+                    adresselinje1 = "Adresselinje1",
+                    postnummer = "2306",
+                    landkode3 = "NOR"
+                )
+            )
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+        assertSoftly {
+            forsendelse.mottaker shouldNotBe null
+
+            val mottaker = forsendelse.mottaker!!
+            mottaker.ident shouldBe SAMHANDLER_ID
+            mottaker.navn shouldBe MOTTAKER_NAVN
+            mottaker.språk shouldBe SPRÅK_NORSK_BOKMÅL
+            mottaker.identType shouldBe MottakerIdentType.SAMHANDLER
+
+            mottaker.adresse shouldNotBe null
+            mottaker.adresse?.landkode shouldBe "NO"
+            mottaker.adresse?.poststed shouldBe "HAMAR"
+            mottaker.adresse?.postnummer shouldBe "2306"
+
+            stubUtils.Valider().hentPersonKaltMed(SAMHANDLER_ID)
+            stubUtils.Valider().hentPersonSpråkIkkeKaltMed(SAMHANDLER_ID)
+        }
+
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost.avsenderMottaker!!.ident shouldBe SAMHANDLER_ID
+        journalpost.avsenderMottaker?.navn shouldBe MOTTAKER_NAVN
+    }
+
 
     @Test
     fun `Skal opprette forsendelse med samhandlerid`() {
