@@ -158,6 +158,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             dokumentmalId = it.dokumentmalId,
             arkivsystem = it.tilArkivSystemDto(),
             metadata = it.metadata,
+            dokumentDato = it.opprettetTidspunkt,
             status = when (it.dokumentStatus) {
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON

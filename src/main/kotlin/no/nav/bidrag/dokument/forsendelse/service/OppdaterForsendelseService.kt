@@ -58,7 +58,8 @@ class OppdaterForsendelseService(
             dokumenter = oppdatertForsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
-                    tittel = it.tittel
+                    tittel = it.tittel,
+                    dokumentDato = it.opprettetTidspunkt
                 )
             }
         )
@@ -174,7 +175,8 @@ class OppdaterForsendelseService(
             dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
-                    tittel = it.tittel
+                    tittel = it.tittel,
+                    dokumentDato = it.opprettetTidspunkt
                 )
             }
         )
@@ -196,7 +198,8 @@ class OppdaterForsendelseService(
         return DokumentRespons(
             dokumentreferanse = nyDokument.dokumentreferanse,
             tittel = nyDokument.tittel,
-            journalpostId = nyDokument.journalpostId
+            journalpostId = nyDokument.journalpostId,
+            dokumentDato = nyDokument.opprettetTidspunkt
         )
     }
 

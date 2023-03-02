@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import org.apache.commons.lang3.Range
+import java.time.LocalDate
 
 val BID_JP_RANGE: Range<Long> = Range.between(18900000L, 40000000L)
 
@@ -27,6 +28,7 @@ val JournalpostId.arkivsystem
 data class DokumentRespons(
     val dokumentreferanse: String,
     val tittel: String,
+    val dokumentDato: LocalDate,
     val journalpostId: String? = null,
     val dokumentmalId: String? = null,
     val metadata: Map<String, String> = emptyMap(),

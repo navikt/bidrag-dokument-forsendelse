@@ -41,6 +41,7 @@ data class Dokument(
     val dokumentreferanseFagarkiv: String? = null,
 
     val slettetTidspunkt: LocalDate? = null,
+    val opprettetTidspunkt: LocalDate = LocalDate.now(),
 
     @Enumerated(EnumType.STRING)
     val dokumentStatus: DokumentStatus,

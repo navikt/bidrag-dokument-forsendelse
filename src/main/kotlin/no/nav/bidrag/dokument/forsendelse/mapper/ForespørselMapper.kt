@@ -88,6 +88,6 @@ object ForespørselMapper {
         journalpostIdOriginal = this.journalpostId?.utenPrefiks,
         dokumentmalId = this.dokumentmalId,
         metadata = this.metadata,
-        rekkefølgeIndeks = indeks
+        rekkefølgeIndeks = indeks,
     )
 }
