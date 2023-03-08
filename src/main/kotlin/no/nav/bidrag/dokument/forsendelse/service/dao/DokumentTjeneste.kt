@@ -14,8 +14,8 @@ import javax.transaction.Transactional
 
 @Component
 class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingService: DokumentBestillingService) {
-    fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel): Dokument {
-        val nyDokument = forespørsel.tilDokumentDo(forsendelse, forsendelse.dokumenter.size)
+    fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel, indeks: Int? = null): Dokument {
+        val nyDokument = forespørsel.tilDokumentDo(forsendelse, indeks ?: forsendelse.dokumenter.size)
 
         return lagreDokument(nyDokument)
     }

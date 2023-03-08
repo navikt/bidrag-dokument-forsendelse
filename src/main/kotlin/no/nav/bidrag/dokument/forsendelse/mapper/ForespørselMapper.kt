@@ -1,12 +1,12 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalpostId
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
@@ -59,7 +59,7 @@ object ForespørselMapper {
         else -> null
     }
 
-    fun DokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when (this.arkivsystem) {
+    fun OpprettDokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when (this.arkivsystem) {
         DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
         DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
         else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
@@ -68,7 +68,7 @@ object ForespørselMapper {
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
         this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
 
-    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (this.bestillDokument && this.erBestillingAvNyttDokument())
+    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (bestillDokument && this.erBestillingAvNyttDokument())
         DokumentStatus.IKKE_BESTILT else if (this.erBestillingAvNyttDokument()) DokumentStatus.UNDER_PRODUKSJON else when (this.status) {
         DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
         DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
@@ -76,6 +76,8 @@ object ForespørselMapper {
         DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
         DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
         DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
+        DokumentStatusTo.MÅ_KONTROLLERES -> DokumentStatus.MÅ_KONTROLLERES
+        DokumentStatusTo.KONTROLLERT -> DokumentStatus.KONTROLLERT
     }
 
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
@@ -89,5 +91,16 @@ object ForespørselMapper {
         dokumentmalId = this.dokumentmalId,
         metadata = this.metadata,
         rekkefølgeIndeks = indeks,
+    )
+
+    fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel() = OpprettDokumentForespørsel(
+        tittel = tittel!!,
+        dokumentreferanse = dokumentreferanse,
+        status = DokumentStatusTo.MÅ_KONTROLLERES,
+        dokumentmalId = dokumentmalId,
+        journalpostId = journalpostId,
+        dokumentDato = dokumentDato,
+        arkivsystem = arkivsystem,
+        metadata = metadata
     )
 }

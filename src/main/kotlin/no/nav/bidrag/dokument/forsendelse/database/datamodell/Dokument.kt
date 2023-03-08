@@ -8,6 +8,7 @@ import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.persistence.*
 
 
@@ -41,7 +42,8 @@ data class Dokument(
     val dokumentreferanseFagarkiv: String? = null,
 
     val slettetTidspunkt: LocalDate? = null,
-    val opprettetTidspunkt: LocalDate = LocalDate.now(),
+    val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
+    val dokumentDato: LocalDateTime = LocalDateTime.now(),
 
     @Enumerated(EnumType.STRING)
     val dokumentStatus: DokumentStatus,

@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import java.time.LocalDateTime
 
 @Schema(description = "Metadata for opprettelse av forsendelse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,11 +36,13 @@ data class OpprettForsendelseRespons(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettDokumentForespørsel(
     @Schema(description = "Dokumentets tittel") override val tittel: String = "",
-    @Schema(description = "Språket på inneholdet i dokumentet.") override val språk: String? = null,
+    @Schema(description = "Språket på inneholdet i dokumentet.") val språk: String? = null,
     @Schema(description = "Arkivsystem hvor dokument er lagret") override val arkivsystem: DokumentArkivSystemDto? = null,
+    @Schema(description = "Dato dokument ble opprettet") override val dokumentDato: LocalDateTime? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") override val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") override val journalpostId: JournalpostId? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") override val dokumentmalId: String? = null,
-    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") override val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
+    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
     @Schema(description = "Om dokumentet med dokumentmalId skal bestilles. Hvis dette er satt til false så antas det at kallende system bestiller dokumentet selv.") val bestillDokument: Boolean = true,
+    @Schema(description = "Dokument metadata") override val metadata: Map<String, String> = emptyMap(),
 ) : DokumentForespørsel()

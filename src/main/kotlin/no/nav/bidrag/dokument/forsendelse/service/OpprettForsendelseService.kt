@@ -47,7 +47,7 @@ class OpprettForsendelseService(
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
                     tittel = it.tittel,
-                    dokumentDato = it.opprettetTidspunkt
+                    dokumentDato = it.dokumentDato
                 )
             }
         )

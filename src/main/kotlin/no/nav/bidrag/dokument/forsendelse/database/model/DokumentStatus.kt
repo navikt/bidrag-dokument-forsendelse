@@ -6,5 +6,7 @@ enum class DokumentStatus {
     FERDIGSTILT, // Dokumentet er ferdigstilt.
     IKKE_BESTILT, // Ingen bestilling har blitt sendt for produksjon av dokumentet.
     BESTILLING_FEILET,
-    AVBRUTT // Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
+    AVBRUTT, // Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
+    MÅ_KONTROLLERES,
+    KONTROLLERT
 }

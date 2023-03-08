@@ -1,6 +1,7 @@
 name: bidrag-dokument-forsendelse-feature
 ingresses:
   - https://bidrag-dokument-forsendelse-feature.dev.intern.nav.no
+  - https://bidrag-dokument-forsendelse-feature.intern.dev.nav.no
 env:
   BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon-feature.dev-fss-pub.nais.io/bidrag-organisasjon
   BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon-feature
@@ -17,7 +18,7 @@ env:
   BIDRAG_SAK_URL: https://bidrag-sak-feature.dev-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak-feature
 
-  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.dev.intern.nav.no
+  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.intern.dev.nav.no
   BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll-feature
 
   BIDRAG_PERSON_URL: https://bidrag-person-feature.dev-fss-pub.nais.io/bidrag-person

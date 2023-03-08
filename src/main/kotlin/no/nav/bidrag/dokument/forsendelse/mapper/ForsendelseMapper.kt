@@ -34,6 +34,8 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 
 fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
+    DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusDto.UNDER_REDIGERING
+    DokumentStatus.KONTROLLERT -> DokumentStatusDto.FERDIGSTILT
     DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
     DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
     DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
@@ -132,6 +134,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             }
         )
     },
+    gjelderIdent = this.gjelderIdent,
     tittel = this.dokumenter.hoveddokument?.tittel,
     saksnummer = this.saksnummer,
     forsendelseType = when (this.forsendelseType) {
@@ -158,8 +161,10 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             dokumentmalId = it.dokumentmalId,
             arkivsystem = it.tilArkivSystemDto(),
             metadata = it.metadata,
-            dokumentDato = it.opprettetTidspunkt,
+            dokumentDato = it.dokumentDato,
             status = when (it.dokumentStatus) {
+                DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusTo.MÅ_KONTROLLERES
+                DokumentStatus.KONTROLLERT -> DokumentStatusTo.KONTROLLERT
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
                 DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT
