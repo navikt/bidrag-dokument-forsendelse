@@ -27,7 +27,7 @@ fun OppdaterForsendelseForespørsel.skalDokumentSlettes(dokumentreferanse: Strin
 
 fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse: Forsendelse) {
     val feilmeldinger = mutableListOf<String>()
-    val forsendelseDokumentreferanse = eksisterendeForsendelse.dokumenter.map { it.dokumentreferanse }.toSet()
+    val forsendelseDokumentreferanse = eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet.map { it.dokumentreferanse }.toSet()
     val forespørselDokumentreferanser = this.dokumenter.map { it.dokumentreferanse }.toSet()
     val forsendelseHarAlleDokumenterSomSkalEndres = forespørselDokumentreferanser.containsAll(forsendelseDokumentreferanse)
     val harSammeAntallDokumenter = eksisterendeForsendelse.dokumenter.size == this.dokumenter.size
