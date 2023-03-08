@@ -266,7 +266,7 @@ class OppdaterForsendelseService(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks
                 ) ?: dokumentTjeneste.opprettNyttDokument(forsendelse, it.tilOpprettDokumentForespørsel(), indeks)
-            } + slettetDokumenter
+            } + slettetDokumenter + forsendelse.dokumenter.dokumenterSlettet
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 
