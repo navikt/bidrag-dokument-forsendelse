@@ -251,7 +251,7 @@ class OppdaterForsendelseService(
         forespørsel: OppdaterForsendelseForespørsel
     ): List<Dokument> {
 
-        val slettetDokumenter =
+        val logiskSlettetDokumenterFraForespørsel =
             forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && (it.dokumentreferanseOriginal == null && it.journalpostIdOriginal == null) }
                 .map {
                     it.copy(
@@ -266,7 +266,7 @@ class OppdaterForsendelseService(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks
                 ) ?: dokumentTjeneste.opprettNyttDokument(forsendelse, it.tilOpprettDokumentForespørsel(), indeks)
-            } + slettetDokumenter + forsendelse.dokumenter.dokumenterSlettet
+            } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 

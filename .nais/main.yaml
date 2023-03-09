@@ -6,7 +6,7 @@ env:
   BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon.dev-fss-pub.nais.io/bidrag-organisasjon
   BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon
 
-  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.dev.intern.nav.no
+  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.intern.dev.nav.no
   BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling
 
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io/bidrag-dokument
