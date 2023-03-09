@@ -59,7 +59,7 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
                 dokumentreferanse = dokument.dokumentreferanse,
                 format = when (dokument.dokumentStatus) {
                     DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
-                    else -> DokumentFormatDto.PDF
+                    else -> DokumentFormatDto.MBDOK
                 },
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = dokument.tilArkivSystemDto()
