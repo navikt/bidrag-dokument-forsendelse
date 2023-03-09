@@ -6,7 +6,7 @@ env:
   BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon-feature.dev-fss-pub.nais.io/bidrag-organisasjon
   BIDRAG_ORGANISASJON_SCOPE: dev-fss.bidrag.bidrag-organisasjon-feature
 
-  BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling-feature.intern.dev.nav.no
+  BIDRAG_DOKUMENT_BESTILLING_URL: http://bidrag-dokument-bestilling-feature
   BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling-feature
 
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument-feature.dev-fss-pub.nais.io/bidrag-dokument
@@ -18,7 +18,7 @@ env:
   BIDRAG_SAK_URL: https://bidrag-sak-feature.dev-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak-feature
 
-  BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.intern.dev.nav.no
+  BIDRAG_TILGANGSKONTROLL_URL: http://bidrag-tilgangskontroll-feature
   BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll-feature
 
   BIDRAG_PERSON_URL: https://bidrag-person-feature.dev-fss-pub.nais.io/bidrag-person
