@@ -33,6 +33,9 @@ database:
   tier: db-f1-micro
 kafka:
   pool: nav-dev
+outbound-access-apps:
+   - bidrag-tilgangskontroll-feature
+   - bidrag-dokument-bestilling-feature
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
