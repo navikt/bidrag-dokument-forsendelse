@@ -66,6 +66,7 @@ data class Dokument(
         return this.toStringByReflection(listOf("forsendelse"))
     }
 
+    val erFraAnnenKilde get() = !(dokumentreferanseOriginal == null && journalpostIdOriginal == null)
     val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
     val dokumentreferanse get() = dokumentreferanseOriginal ?: "BIF$dokumentId"
 
@@ -81,5 +82,9 @@ data class Dokument(
         }
 
     private fun harJournalpostIdArkivPrefiks(): Boolean = journalpostIdOriginal?.contains("-") == true
+
+}
+
+class Metadata : Map<String, String> by mapOf() {
 
 }

@@ -22,6 +22,7 @@ data class OppdaterForsendelseResponse(
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OppdaterDokumentForespørsel(
+    @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") override val journalpostId: JournalpostId? = null,
     override val dokumentmalId: String? = null,
     override val dokumentreferanse: String? = null,
     override val tittel: String? = null,

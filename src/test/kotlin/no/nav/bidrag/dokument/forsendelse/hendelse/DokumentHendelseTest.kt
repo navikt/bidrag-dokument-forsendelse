@@ -18,8 +18,8 @@ import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
-import no.nav.bidrag.dokument.forsendelse.utils.er
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.awaitility.kotlin.await
@@ -212,16 +212,21 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
         val nyJournalpostId = "1331234412321"
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
-        val forsendelseNotat = testDataManager.opprettOgLagreForsendelse {
-            er notat true
-            +nyttDokument(
-                dokumentreferanseOriginal = null,
-                journalpostId = null,
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "Forsendelse notat",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        val forsendelseNotat = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                erNotat = true,
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentreferanseOriginal = null,
+                        journalpostId = null,
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        tittel = "Forsendelse notat",
+                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                        dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03")
+                    )
+                )
             )
-        }
+        )
 
         val hendelse = opprettHendelse(forsendelseNotat.dokumenter[0].dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelse)
@@ -241,6 +246,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
                         "\"dokumenter\":[" +
                         "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
                         "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"NOTAT\"," +
                         "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +

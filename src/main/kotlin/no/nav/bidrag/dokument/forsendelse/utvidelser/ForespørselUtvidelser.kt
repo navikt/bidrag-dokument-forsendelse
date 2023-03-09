@@ -30,11 +30,6 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     val forsendelseDokumentreferanse = eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet.map { it.dokumentreferanse }.toSet()
     val forespørselDokumentreferanser = this.dokumenter.map { it.dokumentreferanse }.toSet()
     val forsendelseHarAlleDokumenterSomSkalEndres = forespørselDokumentreferanser.containsAll(forsendelseDokumentreferanse)
-    val harSammeAntallDokumenter = eksisterendeForsendelse.dokumenter.size == this.dokumenter.size
-
-//    if (!harSammeAntallDokumenter || !forsendelseHarAlleDokumenterSomSkalEndres) {
-//        feilmeldinger.add("Alle dokumenter må sendes i forespørsel ved endring")
-//    }
 
     if (!forsendelseHarAlleDokumenterSomSkalEndres) {
         feilmeldinger.add("Alle dokumenter må sendes i forespørsel ved endring")

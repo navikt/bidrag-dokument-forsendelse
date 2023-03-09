@@ -5,7 +5,6 @@ management:
         include: "prometheus,health"
 
 springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
-
 spring.main.banner-mode: off
 #springfox.documentation.swagger-ui.base-url: /
 spring.application.name: ${NAIS_APP_NAME:bidrag-dokument-forsendelse}

@@ -24,6 +24,7 @@ import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.service.KodeverkService
+import java.time.LocalDateTime
 
 object ForespørselMapper {
     fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String) = Mottaker(
@@ -87,9 +88,10 @@ object ForespørselMapper {
         arkivsystem = this.tilArkivsystemDo(),
         dokumentStatus = this.tilDokumentStatusDo(),
         dokumentreferanseOriginal = this.dokumentreferanse,
+        dokumentDato = this.dokumentDato ?: LocalDateTime.now(),
         journalpostIdOriginal = this.journalpostId?.utenPrefiks,
         dokumentmalId = this.dokumentmalId,
-        metadata = this.metadata,
+        metadata = this.metadata ?: emptyMap(),
         rekkefølgeIndeks = indeks,
     )
 

@@ -116,7 +116,8 @@ class OppdaterForsendelseService(
             tema = when (forsendelse.tema) {
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
-            }
+            },
+            datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
@@ -195,9 +196,7 @@ class OppdaterForsendelseService(
         forsendelse.validerKanEndreForsendelse()
         forespørsel.validerKanLeggeTilDokument(forsendelse)
 
-        val nyDokument = dokumentTjeneste.opprettNyttDokument(forsendelse, forespørsel)
-
-        log.info { "Knyttet nytt dokument til $forsendelseId med tittel=${forespørsel.tittel}, språk=${forespørsel.språk} dokumentmalId=${forespørsel.dokumentmalId}, dokumentreferanse=${nyDokument.dokumentreferanse} og journalpostId=${nyDokument.journalpostId}" }
+        val nyDokument = knyttDokumentTilForsendelse(forsendelse, forespørsel)
 
         return DokumentRespons(
             dokumentreferanse = nyDokument.dokumentreferanse,
@@ -205,6 +204,20 @@ class OppdaterForsendelseService(
             journalpostId = nyDokument.journalpostId,
             dokumentDato = nyDokument.dokumentDato
         )
+    }
+
+    fun knyttDokumentTilForsendelse(
+        forsendelse: Forsendelse,
+        forespørsel: OpprettDokumentForespørsel
+    ): Dokument {
+        forsendelse.validerKanEndreForsendelse()
+        forespørsel.validerKanLeggeTilDokument(forsendelse)
+
+        val nyDokument = dokumentTjeneste.opprettNyttDokument(forsendelse, forespørsel)
+
+        log.info { "Knyttet nytt dokument til ${forsendelse.forsendelseId} med tittel=${forespørsel.tittel}, språk=${forespørsel.språk} dokumentmalId=${forespørsel.dokumentmalId}, dokumentreferanse=${nyDokument.dokumentreferanse} og journalpostId=${nyDokument.journalpostId}" }
+
+        return nyDokument
     }
 
     private fun oppdaterDokument(
@@ -252,7 +265,7 @@ class OppdaterForsendelseService(
     ): List<Dokument> {
 
         val logiskSlettetDokumenterFraForespørsel =
-            forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && (it.dokumentreferanseOriginal == null && it.journalpostIdOriginal == null) }
+            forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde }
                 .map {
                     it.copy(
                         slettetTidspunkt = LocalDate.now()
@@ -264,9 +277,14 @@ class OppdaterForsendelseService(
                 val eksisterendeDokument = forsendelse.dokumenter.hentDokument(it.dokumentreferanse)
                 eksisterendeDokument?.copy(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
-                    rekkefølgeIndeks = indeks
-                ) ?: dokumentTjeneste.opprettNyttDokument(forsendelse, it.tilOpprettDokumentForespørsel(), indeks)
+                    rekkefølgeIndeks = indeks,
+                    metadata = it.metadata ?: eksisterendeDokument.metadata,
+                    dokumentDato = if (indeks == 0 && forsendelse.erNotat) forespørsel.dokumentDato
+                        ?: eksisterendeDokument.dokumentDato else eksisterendeDokument.dokumentDato
+                ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
             } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
+
+        if (oppdaterteDokumenter.dokumenterIkkeSlettet.isEmpty()) throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 

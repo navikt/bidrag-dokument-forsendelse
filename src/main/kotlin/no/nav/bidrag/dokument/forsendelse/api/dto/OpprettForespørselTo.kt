@@ -44,5 +44,5 @@ data class OpprettDokumentForespørsel(
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") override val dokumentmalId: String? = null,
     @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
     @Schema(description = "Om dokumentet med dokumentmalId skal bestilles. Hvis dette er satt til false så antas det at kallende system bestiller dokumentet selv.") val bestillDokument: Boolean = true,
-    @Schema(description = "Dokument metadata") override val metadata: Map<String, String> = emptyMap(),
+    @Schema(description = "Dokument metadata") override val metadata: Map<String, String>? = null,
 ) : DokumentForespørsel()

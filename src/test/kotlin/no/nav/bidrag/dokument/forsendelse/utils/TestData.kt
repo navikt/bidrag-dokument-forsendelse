@@ -17,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 val DOKUMENT_FIL = "JVBERi0xLjcgQmFzZTY0IGVuY29kZXQgZnlzaXNrIGRva3VtZW50"
 
@@ -153,7 +154,7 @@ fun opprettForsendelse2(
     saksnummer: String = SAKSNUMMER,
     gjelderIdent: String = GJELDER_IDENT,
     mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN),
-    opprettDokumenter: List<Dokument> = listOf()
+    dokumenter: List<Dokument> = listOf()
 ): Forsendelse {
     val forsendelse = Forsendelse(
         forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
@@ -167,12 +168,12 @@ fun opprettForsendelse2(
         opprettetAvIdent = SAKSBEHANDLER_IDENT,
         opprettetAvNavn = SAKSBEHANDLER_NAVN,
         endretAvIdent = SAKSBEHANDLER_IDENT,
-        dokumenter = opprettDokumenter,
+        dokumenter = dokumenter,
         journalpostIdFagarkiv = arkivJournalpostId,
         distribusjonBestillingsId = distribusjonBestillingsId
     )
 
-    opprettDokumenter.forEach { it.forsendelse = forsendelse }
+    dokumenter.forEach { it.forsendelse = forsendelse }
 
     return forsendelse
 }
@@ -185,7 +186,8 @@ fun nyttDokument(
     dokumentStatus: DokumentStatus = DokumentStatus.FERDIGSTILT,
     arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
     rekkefølgeIndeks: Int = 0,
-    slettet: Boolean = false
+    slettet: Boolean = false,
+    dokumentDato: LocalDateTime = LocalDateTime.now()
 ): Dokument {
     val forsendelse = opprettForsendelse2()
     return Dokument(
@@ -197,7 +199,8 @@ fun nyttDokument(
         dokumentmalId = dokumentMalId,
         forsendelse = forsendelse,
         rekkefølgeIndeks = rekkefølgeIndeks,
-        slettetTidspunkt = if (slettet) LocalDate.now() else null
+        slettetTidspunkt = if (slettet) LocalDate.now() else null,
+        dokumentDato = dokumentDato
 
     )
 }
