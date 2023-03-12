@@ -17,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
 import no.nav.bidrag.dokument.forsendelse.utils.er
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
@@ -305,6 +307,138 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
             oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
             stubUtils.Valider().bestillDokumentKaltMed("AAA")
+        }
+    }
+
+    @Test
+    fun `Skal ikke oppdatere dokumentdato på notat og utgående`() {
+
+        val forsendelseNotat = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                erNotat = true,
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        rekkefølgeIndeks = 0,
+                        dokumentDato = LocalDateTime.parse("2020-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+
+        val forsendelseUtgående = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        rekkefølgeIndeks = 0,
+                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+
+        val forsendelseUtgåendeMedDokdatoIForespørsel = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        rekkefølgeIndeks = 0,
+                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+
+        utførOppdaterForsendelseForespørsel(
+            forsendelseNotat.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+                dokumenter = listOf(
+                    OppdaterDokumentForespørsel(
+                        tittel = "Ny tittel notat",
+                        dokumentreferanse = forsendelseNotat.dokumenter[0].dokumentreferanse
+                    )
+                )
+            )
+        ).statusCode shouldBe HttpStatus.OK
+
+        utførOppdaterForsendelseForespørsel(
+            forsendelseUtgående.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+                dokumenter = listOf(
+                    OppdaterDokumentForespørsel(
+                        tittel = "Ny tittel utgående",
+                        dokumentreferanse = forsendelseUtgående.dokumenter[0].dokumentreferanse
+                    )
+                )
+            )
+        ).statusCode shouldBe HttpStatus.OK
+
+        utførOppdaterForsendelseForespørsel(
+            forsendelseUtgåendeMedDokdatoIForespørsel.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+                dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+                dokumenter = listOf(
+                    OppdaterDokumentForespørsel(
+                        tittel = "Ny tittel utgående",
+                        dokumentreferanse = forsendelseUtgåendeMedDokdatoIForespørsel.dokumenter[0].dokumentreferanse
+                    )
+                )
+            )
+        ).statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelseNotat = testDataManager.hentForsendelse(forsendelseNotat.forsendelseId!!)!!
+        val oppdatertForsendelseUtgående = testDataManager.hentForsendelse(forsendelseUtgående.forsendelseId!!)!!
+        val oppdatertForsendelseUtgåendeMedDokdatoIForespørsel =
+            testDataManager.hentForsendelse(forsendelseUtgåendeMedDokdatoIForespørsel.forsendelseId!!)!!
+
+        assertSoftly {
+            oppdatertForsendelseNotat.dokumenter.hoveddokument?.tittel shouldBe "Ny tittel notat"
+            oppdatertForsendelseUtgående.dokumenter.hoveddokument?.tittel shouldBe "Ny tittel utgående"
+            oppdatertForsendelseNotat.dokumentDato shouldBe LocalDateTime.parse("2020-01-01T01:02:03")
+            oppdatertForsendelseUtgående.dokumentDato shouldBe LocalDateTime.parse("2021-01-01T01:02:03")
+            oppdatertForsendelseUtgåendeMedDokdatoIForespørsel.dokumentDato shouldBe LocalDateTime.parse("2021-01-01T01:02:03")
+        }
+    }
+
+    @Test
+    fun `Skal oppdatere dokumentdato på notat`() {
+
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                erNotat = true,
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        rekkefølgeIndeks = 0,
+                        dokumentDato = LocalDateTime.parse("2020-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+            dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny tittel notat",
+                    dokumentreferanse = hoveddokument.dokumentreferanse
+                )
+            )
+        )
+        val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+        respons.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 1
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe "Ny tittel notat"
+            oppdaterForespørsel.dokumentDato shouldBe LocalDateTime.parse("2022-01-05T01:02:03")
         }
     }
 

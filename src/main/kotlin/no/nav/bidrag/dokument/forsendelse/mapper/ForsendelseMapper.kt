@@ -27,7 +27,9 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erUtgående
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
@@ -97,7 +99,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         else Journalstatus.UNDER_PRODUKSJON
     },
     journalpostId = forsendelseIdMedPrefix,
-    dokumentDato = this.opprettetTidspunkt.toLocalDate(),
+    dokumentDato = if (erNotat) this.dokumentDato?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate() else this.opprettetTidspunkt.toLocalDate(),
     journalfortDato = this.opprettetTidspunkt.toLocalDate(),
     journalforendeEnhet = this.enhet,
     feilfort = status == ForsendelseStatus.AVBRUTT,
