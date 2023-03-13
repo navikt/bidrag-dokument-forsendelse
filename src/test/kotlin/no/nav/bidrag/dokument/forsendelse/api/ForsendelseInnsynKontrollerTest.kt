@@ -23,6 +23,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import org.junit.jupiter.api.Test
@@ -30,6 +31,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
@@ -37,9 +39,16 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
-        }
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                    )
+                )
+            )
+        )
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -47,6 +56,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         val forsendelseResponse = response.body!!.journalpost!!
 
         assertSoftly {
+            forsendelseResponse.dokumentDato!! shouldHaveSameDayAs LocalDate.now()
             forsendelseResponse.innhold shouldBe TITTEL_HOVEDDOKUMENT
             forsendelseResponse.gjelderIdent shouldBe GJELDER_IDENT
             forsendelseResponse.gjelderAktor shouldBe AktorDto(GJELDER_IDENT)
@@ -75,6 +85,44 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             hoveddokument.journalpostId shouldBe "BID-123123"
             hoveddokument.dokumentmalId shouldBe HOVEDDOKUMENT_DOKUMENTMAL
             hoveddokument.dokumentreferanse shouldBe forsendelse.dokumenter[0].dokumentreferanse
+        }
+    }
+
+    @Test
+    fun `Skal hente forsendelse notat`() {
+        val dokumentdato = LocalDateTime.parse("2021-01-01T01:02:03")
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                erNotat = true,
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        dokumentDato = dokumentdato
+                    )
+                )
+            )
+        )
+        val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelseResponse = response.body!!.journalpost!!
+
+        assertSoftly {
+            forsendelseResponse.dokumentDato!! shouldBe dokumentdato.toLocalDate()
+            forsendelseResponse.journalstatus shouldBe "D"
+            forsendelseResponse.dokumentType shouldBe "X"
+            forsendelseResponse.innhold shouldBe TITTEL_HOVEDDOKUMENT
+            forsendelseResponse.gjelderIdent shouldBe GJELDER_IDENT
+            forsendelseResponse.gjelderAktor shouldBe AktorDto(GJELDER_IDENT)
+
+            forsendelseResponse.fagomrade shouldBe "BID"
+            forsendelseResponse.journalfortDato?.shouldHaveSameDayAs(LocalDate.now())
+            forsendelseResponse.dokumenter shouldHaveSize 1
+
+            val hoveddokument = forsendelseResponse.dokumenter[0]
+            hoveddokument.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            hoveddokument.arkivSystem shouldBe DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
         }
     }
 

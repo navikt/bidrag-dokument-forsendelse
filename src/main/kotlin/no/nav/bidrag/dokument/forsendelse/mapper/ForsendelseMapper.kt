@@ -151,6 +151,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
         ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
     },
     opprettetDato = this.opprettetTidspunkt.toLocalDate(),
+    dokumentDato = this.dokumentDato?.toLocalDate(),
     distribuertDato = this.distribuertTidspunkt?.toLocalDate(),
     enhet = this.enhet,
     opprettetAvIdent = this.opprettetAvIdent,
