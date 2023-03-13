@@ -46,7 +46,8 @@ class OpprettForsendelseService(
             dokumenter = dokumenter.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
-                    tittel = it.tittel
+                    tittel = it.tittel,
+                    dokumentDato = it.dokumentDato
                 )
             }
         )

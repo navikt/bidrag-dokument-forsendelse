@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import org.apache.commons.lang3.Range
+import java.time.LocalDateTime
 
 val BID_JP_RANGE: Range<Long> = Range.between(18900000L, 40000000L)
 
@@ -27,6 +28,7 @@ val JournalpostId.arkivsystem
 data class DokumentRespons(
     val dokumentreferanse: String,
     val tittel: String,
+    val dokumentDato: LocalDateTime,
     val journalpostId: String? = null,
     val dokumentmalId: String? = null,
     val metadata: Map<String, String> = emptyMap(),
@@ -37,15 +39,13 @@ data class DokumentRespons(
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 sealed class DokumentForespørsel(
-    @Schema(description = "Dokumentets tittel") open val tittel: String? = "",
-    @Schema(description = "Språket på inneholdet i dokumentet.") open val språk: String? = null,
+    @Schema(description = "Dokumentets tittel") open val tittel: String? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") open val dokumentmalId: String? = null,
+    @Schema(description = "Dato dokument ble opprettet") open val dokumentDato: LocalDateTime? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
-    @Schema(description = "Selve PDF dokumentet formatert som Base64. Dette skal bare settes hvis dokumentet er redigert.") val fysiskDokument: ByteArray? = null,
-    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") open val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
     @Schema(description = "Arkivsystem hvor dokument er lagret") open val arkivsystem: DokumentArkivSystemDto? = null,
-    @Schema(description = "Dokument metadata") val metadata: Map<String, String> = emptyMap(),
+    @Schema(description = "Dokument metadata") open val metadata: Map<String, String>? = null,
 
     ) {
     override fun toString(): String {
@@ -84,7 +84,9 @@ enum class DokumentStatusTo {
     AVBRUTT,
     UNDER_PRODUKSJON,
     UNDER_REDIGERING,
-    FERDIGSTILT
+    FERDIGSTILT,
+    MÅ_KONTROLLERES,
+    KONTROLLERT,
 }
 
 enum class ForsendelseTypeTo {

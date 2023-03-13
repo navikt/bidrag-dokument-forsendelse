@@ -218,7 +218,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 arkivJournalpostId = nyJournalpostId, distribusjonBestillingsId = bestillingId,
-                opprettDokumenter = listOf(nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0))
+                dokumenter = listOf(nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0))
             )
         )
 
@@ -306,7 +306,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         stubUtils.stubBestillDistribusjon(bestillingId)
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
-                opprettDokumenter = listOf(
+                dokumenter = listOf(
                     nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
                     nyttDokument(
                         journalpostId = null,

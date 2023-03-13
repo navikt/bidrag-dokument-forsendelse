@@ -24,6 +24,11 @@ spec:
             namespace: {{this.namespace}}
             cluster: {{this.cluster}}
       {{/each}}
+    outbound:
+      rules:
+      {{#each outbound-access-apps}}
+          - application: {{this}}
+      {{/each}}
   kafka:
     pool: {{ kafka.pool }}
   image: {{ image }}

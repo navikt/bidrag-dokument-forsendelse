@@ -27,13 +27,17 @@ import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erUtgående
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 
 fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
+    DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusDto.UNDER_REDIGERING
+    DokumentStatus.KONTROLLERT -> DokumentStatusDto.FERDIGSTILT
     DokumentStatus.BESTILLING_FEILET -> DokumentStatusDto.BESTILLING_FEILET
     DokumentStatus.UNDER_REDIGERING -> DokumentStatusDto.UNDER_REDIGERING
     DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusDto.UNDER_PRODUKSJON
@@ -95,7 +99,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         else Journalstatus.UNDER_PRODUKSJON
     },
     journalpostId = forsendelseIdMedPrefix,
-    dokumentDato = this.opprettetTidspunkt.toLocalDate(),
+    dokumentDato = if (erNotat) this.dokumentDato?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate() else this.opprettetTidspunkt.toLocalDate(),
     journalfortDato = this.opprettetTidspunkt.toLocalDate(),
     journalforendeEnhet = this.enhet,
     feilfort = status == ForsendelseStatus.AVBRUTT,
@@ -132,6 +136,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             }
         )
     },
+    gjelderIdent = this.gjelderIdent,
     tittel = this.dokumenter.hoveddokument?.tittel,
     saksnummer = this.saksnummer,
     forsendelseType = when (this.forsendelseType) {
@@ -146,6 +151,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
         ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
     },
     opprettetDato = this.opprettetTidspunkt.toLocalDate(),
+    dokumentDato = this.dokumentDato?.toLocalDate(),
     distribuertDato = this.distribuertTidspunkt?.toLocalDate(),
     enhet = this.enhet,
     opprettetAvIdent = this.opprettetAvIdent,
@@ -158,7 +164,10 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             dokumentmalId = it.dokumentmalId,
             arkivsystem = it.tilArkivSystemDto(),
             metadata = it.metadata,
+            dokumentDato = it.dokumentDato,
             status = when (it.dokumentStatus) {
+                DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusTo.MÅ_KONTROLLERES
+                DokumentStatus.KONTROLLERT -> DokumentStatusTo.KONTROLLERT
                 DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
                 DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
                 DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT

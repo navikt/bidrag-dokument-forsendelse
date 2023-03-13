@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.bidrag.dokument.dto.EndreJournalpostCommand
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
@@ -55,6 +56,26 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
     fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @RequestBody request: EndreJournalpostCommand) {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel())
+    }
+
+    @PatchMapping("/{forsendelseIdMedPrefix}/dokument/{dokumentreferanse}")
+    @Operation(
+        summary = "Oppdater dokument i en forsendelsee",
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Forsendelse hentet"),
+            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
+        ]
+    )
+    fun oppdaterDokument(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+        @PathVariable dokumentreferanse: String,
+        @RequestBody forespørsel: OppdaterDokumentForespørsel
+    ): DokumentRespons {
+        val forsendelseId = forsendelseIdMedPrefix.numerisk
+        return oppdaterForsendelseService.oppdaterDokument(forsendelseId, dokumentreferanse, forespørsel)
     }
 
     @PostMapping("/{forsendelseIdMedPrefix}/dokument")

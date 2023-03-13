@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service.validering
 
 import no.nav.bidrag.dokument.dto.Fagomrade
+import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.harArkivPrefiks
@@ -18,6 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import java.time.LocalDateTime
 
 object ForespørselValidering {
     fun OpprettForsendelseForespørsel.valider(forsendelseType: ForsendelseType) {
@@ -48,6 +50,29 @@ object ForespørselValidering {
             feilmeldinger.addAll(it.valider(i, false))
         }
 
+        if (feilmeldinger.isNotEmpty()) {
+            throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
+        }
+    }
+
+    fun OppdaterDokumentForespørsel.valider(forsendelse: Forsendelse, dokumentreferanse: String) {
+        val feilmeldinger: MutableList<String> = mutableListOf()
+        feilmeldinger.validerErSann(
+            this.tittel == null || this.tittel.isNotEmpty(),
+            "Tittel på dokument kan ikke være tom"
+        )
+        feilmeldinger.validerErSann(
+            this.dokumentreferanse == null || this.dokumentreferanse == dokumentreferanse,
+            "Dokumentreferanse $dokumentreferanse i forespørsel stemmer ikke med dokumentreferanse i inneholdet på forespørsel ${this.dokumentreferanse}"
+        )
+        feilmeldinger.validerErSann(
+            forsendelse.dokumenter.hentDokument(dokumentreferanse) != null,
+            "Forsendelse ${forsendelse.forsendelseId} har ingen dokument med dokumentreferanse $dokumentreferanse"
+        )
+
+        feilmeldinger.validerErSann(
+            this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()), "Dokumentdato kan ikke bli satt til fram i tid"
+        )
         if (feilmeldinger.isNotEmpty()) {
             throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
         }
