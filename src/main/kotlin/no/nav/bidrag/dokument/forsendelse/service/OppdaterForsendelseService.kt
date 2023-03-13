@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.*
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumeentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
@@ -220,7 +221,50 @@ class OppdaterForsendelseService(
         return nyDokument
     }
 
-    private fun oppdaterDokument(
+    fun opphevFerdigstillDokument(
+        forsendelse: Forsendelse,
+        dokumentreferanse: String,
+    ): List<Dokument> {
+
+        val oppdaterteDokumenter = forsendelse.dokumenter
+            .map {
+                if (it.dokumentreferanse == dokumentreferanse) {
+                    it.copy(
+                        dokumentStatus = when (it.dokumentStatus) {
+                            DokumentStatus.MÅ_KONTROLLERES, DokumentStatus.KONTROLLERT -> DokumentStatus.MÅ_KONTROLLERES
+                            else -> it.dokumentStatus
+                        }
+                    )
+                } else it
+
+            }
+
+        return oppdaterteDokumenter.sortertEtterRekkefølge
+    }
+
+    fun ferdigstillDokument(
+        forsendelse: Forsendelse,
+        dokumentreferanse: String,
+    ): List<Dokument> {
+
+        val oppdaterteDokumenter = forsendelse.dokumenter
+            .map {
+                if (it.dokumentreferanse == dokumentreferanse) {
+                    it.copy(
+                        dokumentStatus = when (it.dokumentStatus) {
+                            DokumentStatus.MÅ_KONTROLLERES, DokumentStatus.KONTROLLERT -> DokumentStatus.KONTROLLERT
+                            DokumentStatus.UNDER_REDIGERING, DokumentStatus.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
+                            else -> it.dokumentStatus
+                        }
+                    )
+                } else it
+
+            }
+
+        return oppdaterteDokumenter.sortertEtterRekkefølge
+    }
+
+    fun oppdaterDokument(
         forsendelse: Forsendelse,
         dokumentreferanse: String,
         forespørsel: OppdaterDokumentForespørsel
@@ -286,6 +330,50 @@ class OppdaterForsendelseService(
 
         if (oppdaterteDokumenter.dokumenterIkkeSlettet.isEmpty()) throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
         return oppdaterteDokumenter.sortertEtterRekkefølge
+    }
+
+    fun ferdigstillDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
+            ?: fantIkkeForsendelse(forsendelseId)
+        forsendelse.validerKanEndreForsendelse()
+
+        log.info { "Ferdgistiller dokument $dokumentreferanse i forsendelse $forsendelseId" }
+
+        val oppdatertForsendelse = forsendelseTjeneste.lagre(
+            forsendelse.copy(
+                dokumenter = ferdigstillDokument(forsendelse, dokumentreferanse)
+            )
+        )
+
+        val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
+        return DokumentRespons(
+            dokumentreferanse = oppdatertDokument.dokumentreferanse,
+            tittel = oppdatertDokument.tittel,
+            dokumentDato = oppdatertDokument.dokumentDato,
+            status = oppdatertDokument.tilDokumeentStatusTo()
+        )
+    }
+
+    fun opphevFerdigstillingAvDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
+            ?: fantIkkeForsendelse(forsendelseId)
+        forsendelse.validerKanEndreForsendelse()
+
+        log.info { "Opphever ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId" }
+
+        val oppdatertForsendelse = forsendelseTjeneste.lagre(
+            forsendelse.copy(
+                dokumenter = opphevFerdigstillDokument(forsendelse, dokumentreferanse)
+            )
+        )
+
+        val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
+        return DokumentRespons(
+            dokumentreferanse = oppdatertDokument.dokumentreferanse,
+            tittel = oppdatertDokument.tittel,
+            dokumentDato = oppdatertDokument.dokumentDato,
+            status = oppdatertDokument.tilDokumeentStatusTo()
+        )
     }
 
     fun oppdaterDokument(forsendelseId: Long, dokumentreferanse: String, forespørsel: OppdaterDokumentForespørsel): DokumentRespons {

@@ -13,6 +13,7 @@ data class ForsendelseResponsTo(
     val dokumenter: List<DokumentRespons> = emptyList(),
     @Schema(description = "Bidragsak som forsendelsen er knyttet til") val saksnummer: String? = null,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
+    @Schema(description = "Tema på forsendelsen") val tema: String? = null,
     @Schema(description = "Ident på saksbehandler eller applikasjon som opprettet forsendelsen") val opprettetAvIdent: String? = null,
     @Schema(description = "Navn på saksbehandler eller applikasjon som opprettet forsendelsen") val opprettetAvNavn: String? = null,
     @Schema(description = "Tittel på hoveddokumentet i forsendelsen") val tittel: String? = null,
