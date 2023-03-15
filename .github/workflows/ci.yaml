@@ -6,7 +6,7 @@ on:
       - '!release'
 
 env:
-  TEAM: bidrag
+  TEAM: teambidrag
   IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
   GITHUB_USERNAME: x-access-token
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
