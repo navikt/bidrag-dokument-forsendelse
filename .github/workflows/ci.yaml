@@ -42,8 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy docker image to dev
     needs: build
-    env:
-      IMAGE: ${{ steps.docker-push.outputs.image }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -56,6 +54,7 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: deploy/.nais/nais.yaml
           VARS: deploy/.nais/main.yaml
+          IMAGE: ${{ steps.docker-push.outputs.image }}
       - name: Deploy feature to dev-gcp
         if: github.ref != 'refs/heads/main'
         uses: nais/deploy/actions/deploy@v1
@@ -64,6 +63,7 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: deploy/.nais/nais.yaml
           VARS: deploy/.nais/feature.yaml
+          IMAGE: ${{ steps.docker-push.outputs.image }}
 
   run-tests-for-opprett-oppgave:
     runs-on: ubuntu-latest
