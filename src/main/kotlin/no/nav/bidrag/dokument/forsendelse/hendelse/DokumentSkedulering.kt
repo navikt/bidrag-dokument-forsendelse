@@ -18,6 +18,10 @@ class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, privat
 
     @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.MINUTES, initialDelay = 10)
     @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
+    fun bestillFeiledeDokumenterPåNyttSkeduler() {
+        bestillFeiledeDokumenterPåNytt()
+    }
+
     fun bestillFeiledeDokumenterPåNytt() {
 
         val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
