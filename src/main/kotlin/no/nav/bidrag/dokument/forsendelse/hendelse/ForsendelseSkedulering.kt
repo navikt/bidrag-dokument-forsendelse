@@ -21,7 +21,7 @@ class ForsendelseSkedulering(
 ) {
 
     @Scheduled(cron = "\${LAGRE_DIST_INFO_CRON}")
-    @SchedulerLock(name = "lagreDistribusjonsinfo", lockAtLeastFor = "30m")
+    @SchedulerLock(name = "lagreDistribusjonsinfo", lockAtLeastFor = "10m")
     @Transactional
     fun lagreDistribusjonsinfoSkeduler() {
         lagreDistribusjoninfo()
