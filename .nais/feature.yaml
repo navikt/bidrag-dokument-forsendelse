@@ -29,6 +29,7 @@ env:
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 
   LAGRE_DIST_INFO_PAGE_SIZE: 100
+  LAGRE_DIST_INFO_CRON: "* 0 * * * *"
 database:
   dbname: bidrag-dokument-forsendelse-feature
   autoResize: false

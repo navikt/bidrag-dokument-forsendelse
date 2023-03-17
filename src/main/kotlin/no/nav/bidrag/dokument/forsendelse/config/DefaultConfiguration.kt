@@ -29,7 +29,7 @@ import javax.sql.DataSource
 @EnableRetry
 @Configuration
 @EnableScheduling
-@EnableSchedulerLock(defaultLockAtMostFor = "10m")
+@EnableSchedulerLock(defaultLockAtMostFor = "30m")
 @Import(CorrelationIdFilter::class, DefaultCorsFilter::class, UserMdcFilter::class)
 class DefaultConfiguration {
 

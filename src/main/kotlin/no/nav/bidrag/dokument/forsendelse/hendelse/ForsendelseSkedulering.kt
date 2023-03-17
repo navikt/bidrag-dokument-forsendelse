@@ -9,7 +9,6 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeUnit
 import javax.transaction.Transactional
 
 private val LOGGER = KotlinLogging.logger {}
@@ -18,10 +17,10 @@ private val LOGGER = KotlinLogging.logger {}
 class ForsendelseSkedulering(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val distribusjonService: DistribusjonService,
-    @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int
+    @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int,
 ) {
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(cron = "\${LAGRE_DIST_INFO_CRON}")
     @SchedulerLock(name = "lagreDistribusjonsinfo", lockAtLeastFor = "30m")
     @Transactional
     fun lagreDistribusjonsinfoSkeduler() {
