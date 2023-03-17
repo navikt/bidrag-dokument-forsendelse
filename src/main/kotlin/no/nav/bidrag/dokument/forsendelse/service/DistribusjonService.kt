@@ -4,9 +4,11 @@ import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
+import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -74,7 +76,8 @@ class DistribusjonService(
                 status = ForsendelseStatus.DISTRIBUERT_LOKALT,
                 endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
                     ?: forsendelse.endretAvIdent,
-                endretTidspunkt = LocalDateTime.now()
+                endretTidspunkt = LocalDateTime.now(),
+                distribusjonKanal = DistribusjonKanal.LOKAL_UTSKRIFT
             )
         )
         log.info { "Forsendelsen ble bestilt som distribuert lokalt. Forsendelse og Journalpost markert som distribuert lokalt. Ingen distribusjon er bestilt." }
@@ -120,5 +123,9 @@ class DistribusjonService(
         )
 
         return resultat
+    }
+
+    fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? {
+        return bidragDokumentConsumer.hentDistribusjonInfo(journalpostId)
     }
 }

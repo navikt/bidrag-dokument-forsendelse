@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
@@ -332,6 +333,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe null
+            oppdatertForsendelse.distribusjonKanal shouldBe DistribusjonKanal.LOKAL_UTSKRIFT
             oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
             oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
             oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT_LOKALT

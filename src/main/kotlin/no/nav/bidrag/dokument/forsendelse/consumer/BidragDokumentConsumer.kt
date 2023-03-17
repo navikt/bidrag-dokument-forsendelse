@@ -36,6 +36,12 @@ class BidragDokumentConsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? {
+        val url = UriComponentsBuilder.fromUri(url).path("/journal/distribuer/info/$journalpostId")
+        return getForEntity(url.build().toUri())
+    }
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun distribuer(
         journalpostId: String,
         adresse: DistribuerTilAdresse? = null,
