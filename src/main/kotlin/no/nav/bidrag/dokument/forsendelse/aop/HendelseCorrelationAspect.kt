@@ -32,10 +32,17 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
 
     }
 
-    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentSkedulering.bestillFeiledeDokumenterPåNytt(..))")
-    fun leggKorreleringsIdPåSkjedulering(joinPoint: JoinPoint) {
+    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentSkedulering.bestillFeiledeDokumenterPåNyttSkeduler(..))")
+    fun leggKorreleringsIdPåSkedulering(joinPoint: JoinPoint) {
         val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
         val korrelasjonsId = "${tilfeldigVerdi}_bestillFeiledeDokumenterPaNytt"
+        MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
+    }
+
+    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.lagreDistribusjonsinfoSkeduler(..))")
+    fun leggKorreleringsIdPåForsendelseSkedulering(joinPoint: JoinPoint) {
+        val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
+        val korrelasjonsId = "${tilfeldigVerdi}_lagreDistribusjoninfo"
         MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
     }
 
@@ -56,6 +63,11 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
 
     @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentSkedulering.*(..))")
     fun clearCorrelationIdFromScheduler(joinPoint: JoinPoint) {
+        MDC.clear()
+    }
+
+    @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.*(..))")
+    fun clearCorrelationIdFromForsendlseScheduler(joinPoint: JoinPoint) {
         MDC.clear()
     }
 }

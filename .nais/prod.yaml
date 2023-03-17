@@ -26,7 +26,7 @@ env:
   KODEVERK_URL: https://kodeverk.prod-fss-pub.nais.io
 
   LAGRE_DIST_INFO_PAGE_SIZE: 10
-  LAGRE_DIST_INFO_CRON: "* 0 * * * *"
+  LAGRE_DIST_INFO_CRON: "0 0 0/1 * * ?"
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false
