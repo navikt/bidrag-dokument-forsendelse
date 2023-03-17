@@ -53,10 +53,11 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
 
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
+        val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
         if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {
             return DokumentMetadata(
                 journalpostId = dokument.journalpostId,
-                dokumentreferanse = dokument.dokumentreferanse,
+                dokumentreferanse = dokumentreferanse,
                 format = when (dokument.dokumentStatus) {
                     DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
                     else -> DokumentFormatDto.PDF
@@ -69,7 +70,7 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
         if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) {
             return DokumentMetadata(
                 journalpostId = dokument.journalpostId,
-                dokumentreferanse = dokument.dokumentreferanse,
+                dokumentreferanse = dokumentreferanse,
                 format = DokumentFormatDto.MBDOK,
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = dokument.tilArkivSystemDto()
@@ -78,7 +79,7 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
         return DokumentMetadata(
             journalpostId = dokument.journalpostId,
-            dokumentreferanse = dokument.dokumentreferanse,
+            dokumentreferanse = dokumentreferanse,
             format = DokumentFormatDto.PDF,
             status = dokument.tilDokumentStatusDto(),
             arkivsystem = dokument.tilArkivSystemDto()

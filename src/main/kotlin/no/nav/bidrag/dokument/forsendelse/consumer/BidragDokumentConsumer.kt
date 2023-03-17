@@ -30,7 +30,7 @@ class BidragDokumentConsumer(
     fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
         return getForEntity(
             UriComponentsBuilder.fromUri(url)
-                .path("/dokument/$journalpostId/$dokumentId").queryParam("optimizeForPrint", "false")
+                .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}").queryParam("optimizeForPrint", "false")
                 .build().toUri()
         )
     }

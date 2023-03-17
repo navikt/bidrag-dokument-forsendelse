@@ -96,7 +96,7 @@ class OppdaterForsendelseService(
                     else -> AvsenderMottakerDtoIdType.FNR
                 }
             ) else null,
-            referanseId = "BIF_${forsendelse.forsendelseId}",
+            referanseId = "BIF_${forsendelse.forsendelseId}_lokal",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
             journalposttype = when (forsendelse.forsendelseType) {
@@ -143,13 +143,16 @@ class OppdaterForsendelseService(
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
-        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(
+        val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
+
+        return if (dokument.erFraAnnenKilde) bidragDokumentConsumer.hentDokument(
+            dokument.journalpostId!!, dokument.dokumentreferanseOriginal
+        )!!
+        else if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(
             dokument.forsendelse.forsendelseId!!,
             dokument.dokumentreferanse
-        )
-        else bidragDokumentConsumer.hentDokument(
-            dokument.journalpostId
-                ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse
+        ) else bidragDokumentConsumer.hentDokument(
+            dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse
         )!!
     }
 

@@ -27,8 +27,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - run: mvn -B -e --settings .m2/maven-settings.xml clean install
-      - run: mvn install -B -e -DskipTests
+      - run: mvn -B -e --settings .m2/maven-settings.xml clean install -DskipTests
       - uses: nais/docker-build-push@v0
         id: docker-push
         with:
