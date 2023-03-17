@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
+import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
@@ -114,6 +115,16 @@ class StubUtils {
         )
     }
 
+    fun stubHentDistribusjonInfo(journalpostId: String? = null, kanal: String? = null, status: HttpStatus = HttpStatus.OK) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/dokument/journal/distribuer/info/${journalpostId ?: "(.*)"}")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(status.value())
+                    .withBody(jsonToString(DistribusjonInfoDto("EKSPEDERT", kanal ?: "NAV_NO")))
+            )
+        )
+    }
+
     fun stubBestillDistribusjon(bestillingId: String) {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/dokument/journal/distribuer/(.*)")).willReturn(
@@ -199,6 +210,13 @@ class StubUtils {
                 WireMock.urlMatching("/dokument/dokument/$journalpostId/$dokumentreferanse(.*)")
             )
             WireMock.verify(verify)
+        }
+
+        fun bestillDistribusjonKalt(antallGanger: Int) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/journal/distribuer/info/(.*)")
+            )
+            WireMock.verify(antallGanger, verify)
         }
 
         fun bestillDistribusjonKaltMed(journalpostId: String, vararg contains: String, batchId: String? = null) {

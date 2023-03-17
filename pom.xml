@@ -15,7 +15,7 @@
   <name>bidrag-dokument-forsendelse</name>
   <properties>
     <java.version>17</java.version>
-    <bidrag-dokument-dto.version>1.6.25</bidrag-dokument-dto.version>
+    <bidrag-dokument-dto.version>1.6.26</bidrag-dokument-dto.version>
     <kotlin.version>1.8.0</kotlin.version>
     <bidrag-commons.version>0.7.43</bidrag-commons.version>
     <logback-encoder.version>7.2</logback-encoder.version>

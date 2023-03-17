@@ -27,6 +27,8 @@ env:
   KODEVERK_URL: https://kodeverk.dev-fss-pub.nais.io
 
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+
+  LAGRE_DIST_INFO_PAGE_SIZE: 100
 database:
   dbname: bidrag-dokument-forsendelse-feature
   autoResize: false

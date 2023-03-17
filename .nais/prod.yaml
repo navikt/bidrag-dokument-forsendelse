@@ -24,6 +24,8 @@ env:
   TOPIC_JOURNALPOST: bidrag.journalpost
 
   KODEVERK_URL: https://kodeverk.prod-fss-pub.nais.io
+
+  LAGRE_DIST_INFO_PAGE_SIZE: 10
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false

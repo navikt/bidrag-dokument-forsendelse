@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
+import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
@@ -30,6 +31,8 @@ data class Forsendelse(
     @Enumerated(EnumType.STRING)
     val tema: ForsendelseTema = ForsendelseTema.BID,
     val enhet: String,
+    @Enumerated(EnumType.STRING)
+    val distribusjonKanal: DistribusjonKanal? = null,
     val språk: String,
     val saksnummer: String,
     val gjelderIdent: String,

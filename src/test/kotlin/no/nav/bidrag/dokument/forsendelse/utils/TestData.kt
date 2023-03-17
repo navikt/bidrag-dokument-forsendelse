@@ -148,6 +148,7 @@ fun opprettForsendelse2(
     erNotat: Boolean = false,
     journalførendeenhet: String = JOURNALFØRENDE_ENHET,
     distribusjonBestillingsId: String? = null,
+    distribusjonsTidspunkt: LocalDateTime? = null,
     status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON,
     arkivJournalpostId: String? = null,
     tema: ForsendelseTema = ForsendelseTema.BID,
@@ -170,7 +171,8 @@ fun opprettForsendelse2(
         endretAvIdent = SAKSBEHANDLER_IDENT,
         dokumenter = dokumenter,
         journalpostIdFagarkiv = arkivJournalpostId,
-        distribusjonBestillingsId = distribusjonBestillingsId
+        distribusjonBestillingsId = distribusjonBestillingsId,
+        distribuertTidspunkt = distribusjonsTidspunkt
     )
 
     dokumenter.forEach { it.forsendelse = forsendelse }
