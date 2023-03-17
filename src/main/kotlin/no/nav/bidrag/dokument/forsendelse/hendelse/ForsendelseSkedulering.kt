@@ -21,7 +21,7 @@ class ForsendelseSkedulering(
     @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int
 ) {
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS, initialDelay = 10)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
     @SchedulerLock(name = "lagreDistribusjonsinfo", lockAtLeastFor = "30m")
     @Transactional
     fun lagreDistribusjonsinfoSkeduler() {
