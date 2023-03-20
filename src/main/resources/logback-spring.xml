@@ -13,9 +13,6 @@
         <arguments/>
         <stackTrace/>
       </providers>
-      <jsonGeneratorDecorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator">
-        <valueMasker class="no.nav.bidrag.commons.logging.SensitiveLogMasker"/>
-      </jsonGeneratorDecorator>
     </encoder>
   </appender>
 
@@ -38,7 +35,7 @@
       <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
         <maxFileSize>50MB</maxFileSize>
       </triggeringPolicy>
-      <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+      <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
   </springProfile>
 
@@ -56,7 +53,7 @@
     <appender-ref ref="stdout_json"/>
   </root>
 
-  <logger name="secureLogger" level="INFO" additivity="false" >
-    <appender-ref ref="secureLog" />
+  <logger name="secureLogger" level="INFO" additivity="false">
+    <appender-ref ref="secureLog"/>
   </logger>
 </configuration>
