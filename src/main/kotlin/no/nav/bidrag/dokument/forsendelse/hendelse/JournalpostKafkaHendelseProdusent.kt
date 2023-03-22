@@ -34,7 +34,7 @@ class JournalpostKafkaHendelseProdusent(
     @Retryable(value = [Exception::class], maxAttempts = 10, backoff = Backoff(delay = 1000, maxDelay = 12000, multiplier = 2.0))
     fun publiser(journalpostHendelse: JournalpostHendelse) {
         log.info("Publiserer JournalpostHendelse for forsendelse ${journalpostHendelse.journalpostId}")
-        SIKKER_LOGG.info("Publiserer JournalpostHendelse ${journalpostHendelse}")
+        SIKKER_LOGG.info("Publiserer JournalpostHendelse $journalpostHendelse")
         kafkaTemplate.send(topic, journalpostHendelse.journalpostId, objectMapper.writeValueAsString(journalpostHendelse))
     }
 
@@ -58,7 +58,7 @@ class JournalpostKafkaHendelseProdusent(
                     ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE.name
                 },
                 status = when (forsendelse.status) {
-                    ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT.name
+                    ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT.name
                     ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR.name
                     ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT.name
                     ForsendelseStatus.FERDIGSTILT -> if (forsendelse.erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
