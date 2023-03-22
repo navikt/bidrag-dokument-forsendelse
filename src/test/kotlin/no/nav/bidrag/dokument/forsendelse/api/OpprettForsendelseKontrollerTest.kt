@@ -147,6 +147,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse med samhandlerid som mangler poststed`() {
+        mockKodeverk()
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             mottaker = MottakerTo(
                 ident = SAMHANDLER_ID,
