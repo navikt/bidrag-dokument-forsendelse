@@ -89,7 +89,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
 
         skedulering.lagreDistribusjoninfo()
 
-        stubUtils.Valider().bestillDistribusjonKalt(5)
+        stubUtils.Valider().hentDistribusjonInfoKalt(5)
 
         assertSoftly {
             testDataManager.hentForsendelse(forsendelseNy)?.distribusjonKanal shouldBe null
@@ -123,7 +123,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         skedulering.lagreDistribusjoninfo()
 
         // Pga retry så blir endepunktet kalt flere ganger
-        stubUtils.Valider().bestillDistribusjonKalt(7)
+        stubUtils.Valider().hentDistribusjonInfoKalt(7)
 
         assertSoftly {
             testDataManager.hentForsendelse(forsendelseNavNo)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
@@ -153,7 +153,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
 
         skedulering.lagreDistribusjoninfo()
 
-        stubUtils.Valider().bestillDistribusjonKalt(10)
+        stubUtils.Valider().hentDistribusjonInfoKalt(10)
 
     }
 }

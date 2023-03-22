@@ -3,6 +3,7 @@ AZURE_APP_TENANT_ID: 12321321-123213-3213123
 AZURE_APP_CLIENT_ID: asdasd-sadas-ddas-qwe
 AZURE_APP_CLIENT_SECRET: asdasdsad214123sadas
 LAGRE_DIST_INFO_CRON: "0 * * * * *"
+OPPDATER_DIST_STATUS_CRON: "0 * * * * *"
 NAIS_APP_NAME: bidrag-dokument-forsendelse
 TOPIC_DOKUMENT: bidrag.dokument
 TOPIC_JOURNALPOST: bidrag.journalpost

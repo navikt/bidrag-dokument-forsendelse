@@ -1,19 +1,15 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
-import io.mockk.verify
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
-import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
@@ -30,8 +26,6 @@ import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
 class DistribuerKontrollerTest : KontrollerTestRunner() {
-    @MockkBean(relaxed = true)
-    private lateinit var journalpostHendelseProdusent: JournalpostKafkaHendelseProdusent
     protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Void> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId/enabled", HttpMethod.GET, null, Void::class.java)
     }
@@ -211,13 +205,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider()
-                .hentDokumentKalt(
-                    forsendelse.dokumenter.hoveddokument?.journalpostId!!,
-                    forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!
-                )
-            verify(exactly = 1) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
+                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
         }
-
     }
 
     @Test
@@ -373,7 +362,6 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider()
                 .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
-            verify(exactly = 1) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
         }
     }
 }
