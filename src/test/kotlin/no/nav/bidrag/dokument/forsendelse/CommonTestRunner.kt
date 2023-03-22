@@ -46,10 +46,7 @@ abstract class CommonTestRunner {
 
     @BeforeEach
     fun initMocks() {
-        val postnummerString = Files.readString(kodeverkPostnummer.file.toPath())
-
-        every { kodeverkConsumer.hentPostnummre() } returns ObjectMapper().findAndRegisterModules()
-            .readValue(postnummerString, KodeverkResponse::class.java)
+        mockKodeverk()
     }
 
     @AfterEach
@@ -61,5 +58,12 @@ abstract class CommonTestRunner {
         applicationContext.getBeansOfType(WireMockServer::class.java)
             .values
             .forEach(WireMockServer::resetRequests)
+    }
+
+    protected fun mockKodeverk() {
+        val postnummerString = Files.readString(kodeverkPostnummer.file.toPath())
+
+        every { kodeverkConsumer.hentPostnummre() } returns ObjectMapper().findAndRegisterModules()
+            .readValue(postnummerString, KodeverkResponse::class.java)
     }
 }
