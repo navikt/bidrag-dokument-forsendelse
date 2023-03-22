@@ -5,7 +5,6 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
 import io.mockk.verify
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
@@ -21,7 +20,6 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.awaitility.kotlin.await
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -44,11 +42,6 @@ class DistribusjonHendelseTest : KafkaHendelseTestRunner() {
     lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
-    }
-
-    @BeforeEach
-    fun resetSpys() {
-        clearAllMocks()
     }
 
     protected fun utførDistribuerForsendelse(
