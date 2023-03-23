@@ -25,6 +25,10 @@ spec:
             cluster: {{this.cluster}}
       {{/each}}
     outbound:
+      external:
+      {{#each outbound-access-hosts}}
+          - host: {{this}}
+      {{/each}}
       rules:
       {{#each outbound-access-apps}}
           - application: {{this}}

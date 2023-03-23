@@ -37,6 +37,12 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
+outbound-access-hosts:
+   - https://bidrag-dokument.dev-fss-pub.nais.io
+   - https://bidrag-person.dev-fss-pub.nais.io
+   - https://bidrag-sak.dev-fss-pub.nais.io
+   - https://bidrag-organisasjon.dev-fss-pub.nais.io
+   - https://kodeverk.dev-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
