@@ -30,6 +30,8 @@ env:
 
   LAGRE_DIST_INFO_PAGE_SIZE: 100
   LAGRE_DIST_INFO_CRON: "0 */5 * * * ?"
+  OPPDATER_DIST_STATUS_CRON: "0 */5 * * * ?"
+  OPPDATER_DIST_STATUS_ENABLED: true
 database:
   dbname: bidrag-dokument-forsendelse-feature
   autoResize: false

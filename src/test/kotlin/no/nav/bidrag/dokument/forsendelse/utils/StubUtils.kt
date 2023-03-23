@@ -10,6 +10,7 @@ import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
@@ -120,7 +121,17 @@ class StubUtils {
             WireMock.get(WireMock.urlMatching("/dokument/journal/distribuer/info/${journalpostId ?: "(.*)"}")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
-                    .withBody(jsonToString(DistribusjonInfoDto("EKSPEDERT", kanal ?: "NAV_NO")))
+                    .withBody(jsonToString(DistribusjonInfoDto(JournalpostStatus.EKSPEDERT, kanal ?: "NAV_NO")))
+            )
+        )
+    }
+
+    fun stubHentDistribusjonInfo(journalpostId: String? = null, distInfo: DistribusjonInfoDto, status: HttpStatus = HttpStatus.OK) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/dokument/journal/distribuer/info/${journalpostId ?: "(.*)"}")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(status.value())
+                    .withBody(jsonToString(distInfo))
             )
         )
     }
@@ -212,7 +223,7 @@ class StubUtils {
             WireMock.verify(verify)
         }
 
-        fun bestillDistribusjonKalt(antallGanger: Int) {
+        fun hentDistribusjonInfoKalt(antallGanger: Int) {
             val verify = WireMock.getRequestedFor(
                 WireMock.urlMatching("/dokument/journal/distribuer/info/(.*)")
             )

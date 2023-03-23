@@ -51,15 +51,36 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     @Autowired
     lateinit var embeddedKafkaBroker: EmbeddedKafkaBroker
 
-    fun readFromJournalpostTopic(): JournalpostHendelse? {
+    fun readFromJournalpostTopic(journalpostId: String? = null): JournalpostHendelse? {
         val consumer = configureConsumer(topicJournalpost)
         return try {
-            val singleRecord = KafkaTestUtils.getSingleRecord(consumer, topicJournalpost, 4000)
-            singleRecord shouldNotBe null
-            ObjectMapper().findAndRegisterModules().readValue(singleRecord.value(), JournalpostHendelse::class.java)
+            val result = KafkaTestUtils.getRecords(consumer, 4000)
+            result shouldNotBe null
+            val records = result.records(topicJournalpost)
+            val hendelser = records
+                .map { ObjectMapper().findAndRegisterModules().readValue(it.value(), JournalpostHendelse::class.java) }
+
+            return if (journalpostId.isNullOrEmpty()) hendelser.first()
+            else hendelser.find { it.journalpostId == journalpostId }
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved lesing av kafka melding", e)
             null
+        } finally {
+            consumer?.close()
+        }
+
+    }
+
+    fun readAllFromJournalpostTopic(): List<JournalpostHendelse> {
+        val consumer = configureConsumer(topicJournalpost)
+        return try {
+            val result = KafkaTestUtils.getRecords(consumer, 4000)
+            result shouldNotBe null
+            val records = result.records(topicJournalpost)
+            return records.map { ObjectMapper().findAndRegisterModules().readValue(it.value(), JournalpostHendelse::class.java) }
+        } catch (e: Exception) {
+            log.error("Det skjedde en feil ved lesing av kafka melding", e)
+            emptyList()
         } finally {
             consumer?.close()
         }
