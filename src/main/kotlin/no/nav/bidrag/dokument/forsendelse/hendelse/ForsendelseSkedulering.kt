@@ -63,6 +63,7 @@ class ForsendelseSkedulering(
                             LOGGER.info {
                                 "Oppdatering av Forsendelse status er ikke skrudd på. Oppdaterer ikke forsendelse"
                             }
+                            return
                         }
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
