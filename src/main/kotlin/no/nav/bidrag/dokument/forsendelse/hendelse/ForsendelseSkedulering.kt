@@ -24,6 +24,7 @@ class ForsendelseSkedulering(
     private val distribusjonService: DistribusjonService,
     private val forsendelseHendelseBestilling: ForsendelseHendelseBestillingService,
     @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int,
+    @Value("\${OPPDATER_DIST_STATUS_ENABLED:true}") private val forsendelseDistStatusEnabled: Boolean,
 ) {
 
     @Scheduled(cron = "\${LAGRE_DIST_INFO_CRON}")
@@ -55,8 +56,13 @@ class ForsendelseSkedulering(
                     ?.takeIf { it.journalstatus == JournalpostStatus.DISTRIBUERT || it.journalstatus == JournalpostStatus.EKSPEDERT }
                     ?.let { distInfo ->
                         LOGGER.info {
-                            "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert. " +
+                            "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
                                     "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                        }
+                        if (!forsendelseDistStatusEnabled) {
+                            LOGGER.info {
+                                "Oppdatering av Forsendelse status er ikke skrudd på. Oppdaterer ikke forsendelse"
+                            }
                         }
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
