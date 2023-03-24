@@ -37,11 +37,11 @@ outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
 outbound-access-hosts:
-   - https://bidrag-dokument.prod-fss-pub.nais.io
-   - https://bidrag-person.prod-fss-pub.nais.io
-   - https://bidrag-sak.prod-fss-pub.nais.io
-   - https://bidrag-organisasjon.prod-fss-pub.nais.io
-   - https://kodeverk.prod-fss-pub.nais.io
+   - bidrag-dokument.prod-fss-pub.nais.io
+   - bidrag-person.prod-fss-pub.nais.io
+   - bidrag-sak.prod-fss-pub.nais.io
+   - bidrag-organisasjon.prod-fss-pub.nais.io
+   - kodeverk.prod-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

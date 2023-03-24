@@ -40,11 +40,11 @@ outbound-access-apps:
    - bidrag-dokument-bestilling-feature
    - bidrag-tilgangskontroll-feature
 outbound-access-hosts:
-   - https://bidrag-dokument-feature.dev-fss-pub.nais.io
-   - https://bidrag-person-feature.dev-fss-pub.nais.io
-   - https://bidrag-sak-feature.dev-fss-pub.nais.io
-   - https://bidrag-organisasjon-feature.dev-fss-pub.nais.io
-   - https://kodeverk.dev-fss-pub.nais.io
+   - bidrag-dokument-feature.dev-fss-pub.nais.io
+   - bidrag-person-feature.dev-fss-pub.nais.io
+   - bidrag-sak-feature.dev-fss-pub.nais.io
+   - bidrag-organisasjon-feature.dev-fss-pub.nais.io
+   - kodeverk.dev-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
