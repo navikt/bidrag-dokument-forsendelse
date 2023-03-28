@@ -79,3 +79,9 @@ BIF_2121212121:{"dokumentreferanse":"BIF_1000000007","journalpostId":null,"forse
 ```
 
 og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-dokument
+
+### Test nais.yaml implementation
+
+```
+docker run -v $(pwd)/.nais:/nais navikt/deployment:v1 ./deploy --dry-run --print-payload --resource /nais/nais.yaml --vars /nais/feature.yaml
+```

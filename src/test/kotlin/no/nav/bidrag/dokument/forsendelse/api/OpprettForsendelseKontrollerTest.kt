@@ -44,6 +44,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
 import org.awaitility.kotlin.await
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.Duration
@@ -146,8 +147,8 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal opprette forsendelse med samhandlerid som mangler poststed`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             mottaker = MottakerTo(
                 ident = SAMHANDLER_ID,

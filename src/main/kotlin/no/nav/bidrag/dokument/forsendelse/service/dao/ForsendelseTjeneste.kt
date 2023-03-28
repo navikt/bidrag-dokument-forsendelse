@@ -30,6 +30,11 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
     }
 
+    fun hentFerdigstilteIkkeDistribuert(): List<Forsendelse> {
+        return forsendelseRepository.hentFerdigstilteIkkeDistribuert()
+    }
+
+
     fun lagre(forsendelse: Forsendelse): Forsendelse {
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         return forsendelseRepository.save(

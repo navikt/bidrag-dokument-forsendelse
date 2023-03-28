@@ -27,7 +27,9 @@ env:
   KODEVERK_URL: https://kodeverk.dev-fss-pub.nais.io
 
   LAGRE_DIST_INFO_PAGE_SIZE: 10
-  LAGRE_DIST_INFO_CRON: "0 0 0/1 * * ?"
+  LAGRE_DIST_INFO_CRON: "0 */10 * * * ?"
+  OPPDATER_DIST_STATUS_CRON: "0 */10 * * * ?"
+  OPPDATER_DIST_STATUS_ENABLED: true
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false
@@ -37,6 +39,12 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
+outbound-access-hosts:
+   - bidrag-dokument.dev-fss-pub.nais.io
+   - bidrag-person.dev-fss-pub.nais.io
+   - bidrag-sak.dev-fss-pub.nais.io
+   - bidrag-organisasjon.dev-fss-pub.nais.io
+   - kodeverk.dev-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

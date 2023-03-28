@@ -37,3 +37,4 @@ AZURE_APP_CLIENT_SECRET: unset
 server.port: 8999
 NAIS_APP_NAME: bidrag-dokument-forsendelse
 LAGRE_DIST_INFO_CRON: "0 * * * * *"
+OPPDATER_DIST_STATUS_CRON: "0 * * * * *"

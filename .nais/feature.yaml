@@ -30,6 +30,8 @@ env:
 
   LAGRE_DIST_INFO_PAGE_SIZE: 100
   LAGRE_DIST_INFO_CRON: "0 */5 * * * ?"
+  OPPDATER_DIST_STATUS_CRON: "0 */5 * * * ?"
+  OPPDATER_DIST_STATUS_ENABLED: true
 database:
   dbname: bidrag-dokument-forsendelse-feature
   autoResize: false
@@ -37,8 +39,14 @@ database:
 kafka:
   pool: nav-dev
 outbound-access-apps:
-   - bidrag-tilgangskontroll-feature
    - bidrag-dokument-bestilling-feature
+   - bidrag-tilgangskontroll-feature
+outbound-access-hosts:
+   - bidrag-dokument-feature.dev-fss-pub.nais.io
+   - bidrag-person-feature.dev-fss-pub.nais.io
+   - bidrag-sak-feature.dev-fss-pub.nais.io
+   - bidrag-organisasjon-feature.dev-fss-pub.nais.io
+   - kodeverk.dev-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

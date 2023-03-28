@@ -46,6 +46,13 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
         MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
     }
 
+    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.oppdaterDistribusjonstatusSkeduler(..))")
+    fun leggKorreleringsIdPåForsendelseOppdaterDistribusjonstatusSkedulering(joinPoint: JoinPoint) {
+        val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
+        val korrelasjonsId = "${tilfeldigVerdi}_oppdaterDistribusjonstatus"
+        MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
+    }
+
     private fun hentSporingFraHendelse(hendelse: ConsumerRecord<String, String>): String? {
         return try {
             val jsonNode = objectMapper.readTree(hendelse.value())
