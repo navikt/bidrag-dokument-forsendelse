@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.database.model.*
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.kunneIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
@@ -21,7 +22,9 @@ import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValider
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanLeggeTilDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.*
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpStatusCodeException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -120,7 +123,7 @@ class OppdaterForsendelseService(
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
-        val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
+        val respons = opprettJournalpost(opprettJournalpostRequest, forsendelseId)
 
         forsendelseTjeneste.lagre(
             forsendelse.copy(
@@ -139,6 +142,17 @@ class OppdaterForsendelseService(
 
         return respons
 
+    }
+
+    private fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest, forsendelseId: Long): OpprettJournalpostResponse? {
+        try {
+            return bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
+        } catch (ex: HttpStatusCodeException) {
+            if (ex.statusCode == HttpStatus.BAD_REQUEST) {
+                kunneIkkeFerdigstilleForsendelse(forsendelseId)
+            }
+            throw ex
+        }
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
@@ -263,7 +277,6 @@ class OppdaterForsendelseService(
         forsendelse: Forsendelse,
         forespørsel: OppdaterForsendelseForespørsel
     ): List<Dokument> {
-
         val logiskSlettetDokumenterFraForespørsel =
             forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde }
                 .map {

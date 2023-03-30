@@ -311,7 +311,12 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal ikke oppdatere dokumentdato på notat og utgående`() {
+    fun `Skal ikke oppdatere dokumentdato på utgående`() {
+
+        val dokdatoNotat = LocalDateTime.parse("2020-01-01T01:02:03")
+        val dokdatoUtgående = LocalDateTime.parse("2021-01-01T01:02:03")
+        val dokdatoUtgående2 = LocalDateTime.parse("2021-01-01T01:02:03")
+        val dokdatoOppdater = LocalDateTime.parse("2022-01-05T01:02:03")
 
         val forsendelseNotat = testDataManager.lagreForsendelse(
             opprettForsendelse2(
@@ -321,7 +326,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                         journalpostId = null,
                         dokumentreferanseOriginal = null,
                         rekkefølgeIndeks = 0,
-                        dokumentDato = LocalDateTime.parse("2020-01-01T01:02:03")
+                        dokumentDato = dokdatoNotat
                     )
                 )
             )
@@ -334,7 +339,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                         journalpostId = null,
                         dokumentreferanseOriginal = null,
                         rekkefølgeIndeks = 0,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                        dokumentDato = dokdatoUtgående
                     )
                 )
             )
@@ -347,7 +352,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                         journalpostId = null,
                         dokumentreferanseOriginal = null,
                         rekkefølgeIndeks = 0,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                        dokumentDato = dokdatoUtgående2
                     )
                 )
             )
@@ -377,7 +382,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         utførOppdaterForsendelseForespørsel(
             forsendelseUtgåendeMedDokdatoIForespørsel.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
-                dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+                dokumentDato = dokdatoOppdater,
                 dokumenter = listOf(
                     OppdaterDokumentForespørsel(
                         tittel = "Ny tittel utgående",
@@ -395,15 +400,17 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         assertSoftly {
             oppdatertForsendelseNotat.dokumenter.hoveddokument?.tittel shouldBe "Ny tittel notat"
             oppdatertForsendelseUtgående.dokumenter.hoveddokument?.tittel shouldBe "Ny tittel utgående"
-            oppdatertForsendelseNotat.dokumentDato shouldBe LocalDateTime.parse("2020-01-01T01:02:03")
-            oppdatertForsendelseUtgående.dokumentDato shouldBe LocalDateTime.parse("2021-01-01T01:02:03")
-            oppdatertForsendelseUtgåendeMedDokdatoIForespørsel.dokumentDato shouldBe LocalDateTime.parse("2021-01-01T01:02:03")
+            oppdatertForsendelseNotat.dokumentDato shouldBe dokdatoNotat
+            oppdatertForsendelseUtgående.dokumentDato shouldBe dokdatoUtgående
+            oppdatertForsendelseUtgåendeMedDokdatoIForespørsel.dokumentDato shouldBe dokdatoUtgående2
         }
     }
 
     @Test
     fun `Skal oppdatere dokumentdato på notat`() {
 
+        val originalDato = LocalDateTime.parse("2020-01-01T01:02:03")
+        val oppdatertDato = LocalDateTime.parse("2022-01-05T01:02:03")
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 erNotat = true,
@@ -412,7 +419,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                         journalpostId = null,
                         dokumentreferanseOriginal = null,
                         rekkefølgeIndeks = 0,
-                        dokumentDato = LocalDateTime.parse("2020-01-01T01:02:03")
+                        dokumentDato = originalDato
                     )
                 )
             )
@@ -422,7 +429,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val hoveddokument = forsendelse.dokumenter.hoveddokument!!
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
-            dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+            dokumentDato = oppdatertDato,
             dokumenter = listOf(
                 OppdaterDokumentForespørsel(
                     tittel = "Ny tittel notat",
@@ -438,13 +445,45 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         assertSoftly {
             oppdatertForsendelse.dokumenter.size shouldBe 1
             oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe "Ny tittel notat"
-            oppdaterForespørsel.dokumentDato shouldBe LocalDateTime.parse("2022-01-05T01:02:03")
+            oppdaterForespørsel.dokumentDato shouldBe oppdatertDato
         }
     }
 
 
     @Nested
     inner class OppdaterForsendelseErrorHandling {
+        @Test
+        fun `Skal feile hvis dokumentdato på notat settes fram i tid`() {
+            val originalDato = LocalDateTime.parse("2020-01-01T01:02:03")
+            val oppdatertDato = LocalDateTime.now().plusDays(1)
+            val forsendelse = testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    erNotat = true,
+                    dokumenter = listOf(
+                        nyttDokument(
+                            journalpostId = null,
+                            dokumentreferanseOriginal = null,
+                            rekkefølgeIndeks = 0,
+                            dokumentDato = originalDato
+                        )
+                    )
+                )
+            )
+
+            val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+
+            val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+                dokumentDato = oppdatertDato,
+                dokumenter = listOf(
+                    OppdaterDokumentForespørsel(
+                        tittel = "Ny tittel notat",
+                        dokumentreferanse = hoveddokument.dokumentreferanse
+                    )
+                )
+            )
+            val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+            respons.statusCode shouldBe HttpStatus.BAD_REQUEST
+        }
 
         @Test
         fun `Skal feile hvis det forsøkes å legge til ny dokument på notat forsendelse`() {

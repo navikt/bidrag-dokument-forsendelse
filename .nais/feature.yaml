@@ -32,6 +32,7 @@ env:
   LAGRE_DIST_INFO_CRON: "0 */5 * * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 */5 * * * ?"
   OPPDATER_DIST_STATUS_ENABLED: true
+  KAFKA_MAX_RETRY: 5
 database:
   dbname: bidrag-dokument-forsendelse-feature
   autoResize: false
