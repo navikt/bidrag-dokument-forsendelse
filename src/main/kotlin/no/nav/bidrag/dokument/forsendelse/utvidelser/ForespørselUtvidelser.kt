@@ -9,6 +9,8 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.dokument.forsendelse.model.validerErSann
+import java.time.LocalDateTime
 
 val List<OppdaterDokumentForespørsel>.dokumenterIkkeSlettet get() = this.filter { it.fjernTilknytning == false }
 fun OppdaterForsendelseForespørsel.hentDokument(dokumentreferanse: String?) = dokumenter.find { it.dokumentreferanse == dokumentreferanse }
@@ -34,6 +36,10 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     if (!forsendelseHarAlleDokumenterSomSkalEndres) {
         feilmeldinger.add("Alle dokumenter må sendes i forespørsel ved endring")
     }
+
+    feilmeldinger.validerErSann(
+        this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()), "Dokumentdato kan ikke bli satt til fram i tid"
+    )
 
     if (feilmeldinger.isNotEmpty()) {
         throw UgyldigForespørsel(feilmeldinger.joinToString(", "))

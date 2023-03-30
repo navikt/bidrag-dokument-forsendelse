@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.config
 
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -40,6 +41,7 @@ class KafkaKonfig {
         }, backoffPolicy)
         errorHandler.setRetryListeners(KafkaRetryListener())
         errorHandler.addNotRetryableExceptions(KunneIkkeLeseMeldingFraHendelse::class.java)
+        errorHandler.addNotRetryableExceptions(KunneIkkeFerdigstilleForsendelse::class.java)
         return errorHandler
     }
 }
