@@ -4,5 +4,5 @@ enum class DokumentArkivSystem {
     JOARK,
     MIDLERTIDLIG_BREVLAGER,
     UKJENT,
-    BIDRAG,
+    BIDRAG
 }

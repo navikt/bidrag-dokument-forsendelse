@@ -61,7 +61,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
 
     protected fun utførSlettDokumentForespørsel(forsendelseId: Long, dokumentreferanse: String): ResponseEntity<OppdaterForsendelseResponse> {
         return httpHeaderTestRestTemplate.exchange(
-            "${rootUri()}/$forsendelseId/${dokumentreferanse}",
+            "${rootUri()}/$forsendelseId/$dokumentreferanse",
             HttpMethod.DELETE,
             null,
             OppdaterForsendelseResponse::class.java
@@ -82,10 +82,11 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
 
     protected fun utførHentJournalForSaksnummer(saksnummer: String, fagomrader: List<String> = listOf("BID")): ResponseEntity<List<JournalpostDto>> {
         return httpHeaderTestRestTemplate.exchange(
-            "${rootUri()}/sak/${saksnummer}/journal?${fagomrader.joinToString("&") { "fagomrade=$it" }}",
+            "${rootUri()}/sak/$saksnummer/journal?${fagomrader.joinToString("&") { "fagomrade=$it" }}",
             HttpMethod.GET,
             null,
-            object : ParameterizedTypeReference<List<JournalpostDto>>() {})
+            object : ParameterizedTypeReference<List<JournalpostDto>>() {}
+        )
     }
 
     protected fun utførOppdaterForsendelseForespørsel(
@@ -114,7 +115,8 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
             "${rootUri()}/journal/$forsendelseId/avvik",
             HttpMethod.GET,
             null,
-            object : ParameterizedTypeReference<List<AvvikType>>() {})
+            object : ParameterizedTypeReference<List<AvvikType>>() {}
+        )
     }
 
     protected fun utførAvbrytForsendelseAvvik(forsendelseId: String): ResponseEntity<Void> {
@@ -153,10 +155,10 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
                     beskrivelse = null,
                     avvikType = AvvikType.ENDRE_FAGOMRADE.name,
                     detaljer = mapOf("fagomrade" to nyFagområde, "enhetsnummer" to "4806")
-                ), headers
+                ),
+                headers
             ),
             Void::class.java
         )
     }
-
 }

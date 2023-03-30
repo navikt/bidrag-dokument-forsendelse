@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
-
 @Configuration
 @EnableSecurityConfiguration
 @Import(RestOperationsAzure::class)
@@ -18,9 +17,8 @@ class RestConfig {
     @Bean
     fun jackson2ObjectMapperBuilder(): Jackson2ObjectMapperBuilder {
         return Jackson2ObjectMapperBuilder()
-                .dateFormat(StdDateFormat())
-                .failOnUnknownProperties(false)
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
+            .dateFormat(StdDateFormat())
+            .failOnUnknownProperties(false)
+            .serializationInclusion(JsonInclude.Include.NON_NULL)
     }
-
 }

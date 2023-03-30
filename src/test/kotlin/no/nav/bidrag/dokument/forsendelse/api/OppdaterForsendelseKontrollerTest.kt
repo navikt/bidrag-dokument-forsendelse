@@ -28,12 +28,10 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
@@ -84,7 +82,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal oppdatere og opprette dokumenter i forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
@@ -128,13 +125,11 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             dokumenter[2].tittel shouldBe "Ny dokument 2 bestilt"
 
             stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
-
         }
     }
 
     @Test
     fun `Skal oppdatere og slette dokumentene i forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1, journalpostId = null, dokumentreferanseOriginal = null)
@@ -178,7 +173,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
         assertSoftly {
-
             oppdatertForsendelse.dokumenter.size shouldBe 4
 
             val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
@@ -190,10 +184,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         }
     }
 
-
     @Test
     fun `Skal slette dokument med ekstern referanse fra forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
@@ -237,7 +229,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal slette hoveddokument uten ekstern referanse fra forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)
@@ -270,7 +261,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             dokumenter[2].rekkefølgeIndeks shouldBe 2
         }
 
-
         val respons = utførHentJournalpost(forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 
@@ -285,7 +275,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal legge til dokument på forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
         }
@@ -449,7 +438,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         }
     }
 
-
     @Nested
     inner class OppdaterForsendelseErrorHandling {
         @Test
@@ -487,12 +475,11 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         @Test
         fun `Skal feile hvis det forsøkes å legge til ny dokument på notat forsendelse`() {
-
             val forsendelse = testDataManager.lagreForsendelse(
                 opprettForsendelse2(
                     erNotat = true,
                     dokumenter = listOf(
-                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, dokumentMalId = DOKUMENTMAL_NOTAT),
+                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, dokumentMalId = DOKUMENTMAL_NOTAT)
                     )
                 )
             )
@@ -509,17 +496,15 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                         tittel = "Ny dokument 1",
                         dokumentreferanse = "1123213213",
                         journalpostId = "JOARK-123123123"
-                    ),
+                    )
                 )
             )
             val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
             respons.statusCode shouldBe HttpStatus.BAD_REQUEST
         }
 
-
         @Test
         fun `Oppdater skal feile hvis ikke alle dokumenter er inkludert i forespørselen`() {
-
             val forsendelse = testDataManager.opprettOgLagreForsendelse {
                 +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
                 +nyttDokument(rekkefølgeIndeks = 1)
@@ -553,7 +538,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         @Test
         fun `Oppdater skal feile hvis samme dokumentent er inkludert flere ganger i forespørselen`() {
-
             val forsendelse = testDataManager.opprettOgLagreForsendelse {
                 +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
                 +nyttDokument(rekkefølgeIndeks = 1)
@@ -587,7 +571,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         @Test
         fun `Skal ikke kunne legge til dokument på forsendelse med type notat`() {
-
             val forsendelse = testDataManager.opprettOgLagreForsendelse {
                 er notat true
                 +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
@@ -607,7 +590,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         @Test
         fun `Skal feile hvis eksisterende dokumentreferanse blir forsøkt lagt til på forsendelse`() {
-
             val dokument = nyttDokument()
             val forsendelse = testDataManager.opprettOgLagreForsendelse {
                 +dokument

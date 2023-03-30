@@ -30,14 +30,17 @@ class ForsendelseJournalKontroller(
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid"),
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")
         ]
     )
     fun hentForsendelse(
-        @PathVariable forsendelseIdMedPrefix: ForsendelseId, @Parameter(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+        @Parameter(
             name = "saksnummer",
             description = "journalposten tilhører sak"
-        ) @RequestParam(required = false) saksnummer: String?
+        )
+        @RequestParam(required = false)
+        saksnummer: String?
     ): JournalpostResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return forsendelseInnsynTjeneste.hentForsendelseJournal(forsendelseId, saksnummer)
@@ -45,14 +48,14 @@ class ForsendelseJournalKontroller(
 
     @GetMapping("/sak/{saksnummer}/journal")
     @Operation(
-        description = "Hent alle forsendelse som har saksnummer",
+        description = "Hent alle forsendelse som har saksnummer"
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet."
-            ),
+            )
         ]
     )
     fun hentJournal(
@@ -64,7 +67,7 @@ class ForsendelseJournalKontroller(
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
     @Operation(
-        description = "Henter dokumentmaler som er støttet av applikasjonen",
+        description = "Henter dokumentmaler som er støttet av applikasjonen"
     )
     fun støttedeDokumentmaler(): List<String> {
         return bidragDokumentBestillingConsumer.støttedeDokumentmaler()

@@ -12,7 +12,11 @@ import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.DistribusjonService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
 @Timed
@@ -21,7 +25,7 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/enabled")
     @Operation(
         summary = "Sjekk om forsendelse kan distribueres",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(
         value = [
@@ -29,7 +33,7 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
             ApiResponse(
                 responseCode = "406",
                 description = "Kan ikke distribueres. Dette kan skyldes at forsendelsen ikke er ferdigstilt eller en eller flere av dokumentene ikke er ferdigstilt"
-            ),
+            )
         ]
     )
     fun kanDistribuere(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<Void> {
@@ -39,7 +43,6 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
         } catch (_: Exception) {
             ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build()
         }
-
     }
 
     @PostMapping("/journal/distribuer/{forsendelseIdMedPrefix}")

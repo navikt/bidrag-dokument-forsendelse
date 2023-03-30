@@ -62,10 +62,12 @@ class JournalpostKafkaHendelseProdusent(
                     ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR.name
                     ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT.name
                     ForsendelseStatus.FERDIGSTILT -> if (forsendelse.erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
-                    ForsendelseStatus.UNDER_PRODUKSJON -> if (forsendelse.dokumenter.erAlleFerdigstilt)
+                    ForsendelseStatus.UNDER_PRODUKSJON -> if (forsendelse.dokumenter.erAlleFerdigstilt) {
                         if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
-                    else JournalpostStatus.UNDER_PRODUKSJON.name
-                },
+                    } else {
+                        JournalpostStatus.UNDER_PRODUKSJON.name
+                    }
+                }
             )
         )
     }

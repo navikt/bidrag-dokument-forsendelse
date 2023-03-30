@@ -13,10 +13,10 @@ fun Any.toStringByReflection(exclude: List<String> = listOf(), mask: List<String
         .filter { exclude.isEmpty() || !exclude.contains(it.name) }
         .joinToString(", ") {
             val value = if (mask.isNotEmpty() && mask.contains(it.name)) "****" else it.getter.call(this).toString()
-            "${it.name}=${value}"
-        };
+            "${it.name}=$value"
+        }
 
-    return "${this::class.simpleName}[${propsString}]"
+    return "${this::class.simpleName}[$propsString]"
 }
 
 fun String.inneholderKontrollTegn() = Regex("\\p{C}").containsMatchIn(this)

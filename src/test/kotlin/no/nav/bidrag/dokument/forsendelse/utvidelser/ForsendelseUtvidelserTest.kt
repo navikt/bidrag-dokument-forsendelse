@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 
 class ForsendelseUtvidelserTest {
 
-
     @Test
     fun `Skal returnere dokumenter med hoveddokument først og vedleggene sortert rekkefølge`() {
         val hoveddokument = nyttDokument(tittel = "HOVEDDOK")
@@ -48,6 +47,5 @@ class ForsendelseUtvidelserTest {
         sortertDokumenter[1].rekkefølgeIndeks shouldBe 1
         sortertDokumenter[2].rekkefølgeIndeks shouldBe 2
         sortertDokumenter[3].rekkefølgeIndeks shouldBe 3
-
     }
 }

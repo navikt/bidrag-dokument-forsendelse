@@ -45,7 +45,6 @@ class DokumentBestillingLytter(
         val bestilling = tilForespørsel(forsendelse, dokument)
 
         try {
-
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info { "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}" }
 
@@ -64,7 +63,6 @@ class DokumentBestillingLytter(
             )
             LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }
         }
-
     }
 
     private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel {
@@ -78,18 +76,24 @@ class DokumentBestillingLytter(
             språk = dokument.språk ?: forsendelse.språk,
             saksbehandler = saksbehandlerIdent?.let { Saksbehandler(it) },
             mottaker = forsendelse.mottaker?.let { mottaker ->
-                MottakerTo(mottaker.ident, mottaker.navn, mottaker.språk, adresse = mottaker.adresse?.let {
-                    MottakerAdresseTo(
-                        adresselinje1 = it.adresselinje1,
-                        adresselinje2 = it.adresselinje2,
-                        adresselinje3 = it.adresselinje3,
-                        bruksenhetsnummer = it.bruksenhetsnummer,
-                        postnummer = it.postnummer,
-                        landkode = it.landkode,
-                        landkode3 = it.landkode3,
-                        poststed = it.poststed
-                    )
-                })
-            })
+                MottakerTo(
+                    mottaker.ident,
+                    mottaker.navn,
+                    mottaker.språk,
+                    adresse = mottaker.adresse?.let {
+                        MottakerAdresseTo(
+                            adresselinje1 = it.adresselinje1,
+                            adresselinje2 = it.adresselinje2,
+                            adresselinje3 = it.adresselinje3,
+                            bruksenhetsnummer = it.bruksenhetsnummer,
+                            postnummer = it.postnummer,
+                            landkode = it.landkode,
+                            landkode3 = it.landkode3,
+                            poststed = it.poststed
+                        )
+                    }
+                )
+            }
+        )
     }
 }

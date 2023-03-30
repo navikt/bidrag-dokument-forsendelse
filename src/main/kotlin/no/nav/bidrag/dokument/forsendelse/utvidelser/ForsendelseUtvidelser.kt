@@ -17,10 +17,12 @@ fun Forsendelse.validerKanDistribuere() {
     if (this.status == ForsendelseStatus.UNDER_PRODUKSJON && !this.dokumenter.erAlleFerdigstilt) {
         kanIkkeDistribuereForsendelse(forsendelseId, "Alle dokumenter er ikke ferdigstilt")
     }
-    if (!listOf(ForsendelseStatus.UNDER_PRODUKSJON, ForsendelseStatus.FERDIGSTILT).contains(this.status)) kanIkkeDistribuereForsendelse(
-        forsendelseId,
-        "Forsendelse har feil status ${this.status}"
-    )
+    if (!listOf(ForsendelseStatus.UNDER_PRODUKSJON, ForsendelseStatus.FERDIGSTILT).contains(this.status)) {
+        kanIkkeDistribuereForsendelse(
+            forsendelseId,
+            "Forsendelse har feil status ${this.status}"
+        )
+    }
 }
 
 fun Forsendelse.kanDistribueres(): Boolean {

@@ -23,19 +23,16 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
     fun `Skal opprette forsendelse`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
-
 
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
             val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)
             forsendelse shouldNotBe null
             forsendelse!!.tema shouldBe ForsendelseTema.BID
         }
-
 
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
@@ -45,7 +42,6 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
     fun `Skal opprette forsendelse med tema FAR`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(tema = JournalTema.FAR)
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
@@ -57,7 +53,6 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             forsendelse!!.tema shouldBe ForsendelseTema.FAR
         }
 
-
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
@@ -66,7 +61,6 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
             +nyttDokument(rekkefølgeIndeks = 1)

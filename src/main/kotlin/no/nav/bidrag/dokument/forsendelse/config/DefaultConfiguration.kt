@@ -22,7 +22,6 @@ import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.annotation.EnableScheduling
 import javax.sql.DataSource
 
-
 @EnableAspectJAutoProxy
 @OpenAPIDefinition(info = Info(title = "bidrag-dokument-forsendelse", version = "v1"), security = [SecurityRequirement(name = "bearer-key")])
 @SecurityScheme(bearerFormat = "JWT", name = "bearer-key", scheme = "bearer", type = SecuritySchemeType.HTTP)

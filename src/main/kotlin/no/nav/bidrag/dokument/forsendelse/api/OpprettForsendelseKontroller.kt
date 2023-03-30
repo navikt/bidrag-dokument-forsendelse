@@ -16,23 +16,25 @@ import javax.validation.Valid
 @ForsendelseApiKontroller
 @Timed
 class OpprettForsendelseKontroller(
-    val opprettForsendelseService: OpprettForsendelseService,
+    val opprettForsendelseService: OpprettForsendelseService
 ) {
 
     @PostMapping
     @Operation(
         summary = "Oppretter ny forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse opprettet"),
-            ApiResponse(responseCode = "400", description = "Forespørselen inneholder ugyldig verdi"),
+            ApiResponse(responseCode = "400", description = "Forespørselen inneholder ugyldig verdi")
         ]
     )
-    fun opprettForsendelse(@Valid @RequestBody request: OpprettForsendelseForespørsel): OpprettForsendelseRespons {
+    fun opprettForsendelse(
+        @Valid @RequestBody
+        request: OpprettForsendelseForespørsel
+    ): OpprettForsendelseRespons {
         SIKKER_LOGG.info("Oppretter ny forsendelse $request")
         return opprettForsendelseService.opprettForsendelse(request)
     }
-
 }

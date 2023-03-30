@@ -26,12 +26,15 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
     fun hentAvvik(forsendelseId: Long): List<AvvikType> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
-        return if (forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON) listOf(
-            AvvikType.FEILFORE_SAK,
-            AvvikType.SLETT_JOURNALPOST,
-            AvvikType.ENDRE_FAGOMRADE
-        )
-        else emptyList()
+        return if (forsendelse.status == ForsendelseStatus.UNDER_PRODUKSJON) {
+            listOf(
+                AvvikType.FEILFORE_SAK,
+                AvvikType.SLETT_JOURNALPOST,
+                AvvikType.ENDRE_FAGOMRADE
+            )
+        } else {
+            emptyList()
+        }
     }
 
     fun utførAvvik(forsendelseId: Long, avvikshendelse: Avvikshendelse, enhet: String?) {
@@ -41,7 +44,9 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
                 forsendelseId,
                 avvikType
             )
-        ) throw UgyldigAvvikForForsendelse("Kan ikke utføre avvik $avvikType på forsendelse $forsendelseId")
+        ) {
+            throw UgyldigAvvikForForsendelse("Kan ikke utføre avvik $avvikType på forsendelse $forsendelseId")
+        }
         when (avvikType) {
             AvvikType.FEILFORE_SAK -> avbrytForsendelse(forsendelseId)
             AvvikType.SLETT_JOURNALPOST -> slettForsendelse(forsendelseId)

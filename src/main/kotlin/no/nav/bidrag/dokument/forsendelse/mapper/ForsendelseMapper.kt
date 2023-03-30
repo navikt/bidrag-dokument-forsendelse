@@ -72,7 +72,8 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
                     landkode = adresse.landkode ?: alpha3LandkodeTilAlpha2(adresse.landkode3),
                     landkode3 = adresse.landkode3
                 )
-            })
+            }
+        )
     },
     joarkJournalpostId = this.journalpostIdFagarkiv,
     språk = this.språk,
@@ -94,9 +95,11 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         ForsendelseStatus.SLETTET -> Journalstatus.UTGAR
         ForsendelseStatus.AVBRUTT -> Journalstatus.FEILREGISTRERT
         ForsendelseStatus.FERDIGSTILT -> if (erUtgående) Journalstatus.KLAR_TIL_PRINT else Journalstatus.FERDIGSTILT
-        ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt)
+        ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt) {
             if (erUtgående) Journalstatus.KLAR_TIL_PRINT else Journalstatus.FERDIGSTILT
-        else Journalstatus.UNDER_PRODUKSJON
+        } else {
+            Journalstatus.UNDER_PRODUKSJON
+        }
     },
     journalpostId = forsendelseIdMedPrefix,
     dokumentDato = if (erNotat) this.dokumentDato?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate() else this.opprettetTidspunkt.toLocalDate(),
@@ -131,7 +134,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
                     adresselinje3 = adresse.adresselinje3,
                     poststed = adresse.poststed,
                     postnummer = adresse.postnummer,
-                    landkode = adresse.landkode,
+                    landkode = adresse.landkode
                 )
             }
         )
@@ -176,4 +179,5 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
                 DokumentStatus.AVBRUTT -> DokumentStatusTo.AVBRUTT
             }
         )
-    })
+    }
+)

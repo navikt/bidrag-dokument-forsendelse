@@ -36,7 +36,6 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
     @SpykBean
     private lateinit var journalpostHendelseProdusent: JournalpostKafkaHendelseProdusent
 
-
     @BeforeEach
     fun resetSpys() {
         clearAllMocks()
@@ -241,22 +240,21 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"NOTAT\"," +
-                        "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                        "\"saksbehandlerIdent\":\"Z999444\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"NOTAT\"," +
+                    "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
+                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                    "\"saksbehandlerIdent\":\"Z999444\"" +
+                    "}"
             )
 
             stubUtils.Valider().hentDokumentKalt(forsendelseEtter.forsendelseIdMedPrefix, forsendelseEtter.dokumenter[0].dokumentreferanse)
-
         }
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.data.repository.CrudRepository
 
 interface DokumentRepository : CrudRepository<Dokument, Long> {
 
-
     @Query("select d from dokument d where d.dokumentreferanseOriginal = :dokumentreferanse or d.dokumentId = :dokumentId")
     fun hentDokumenterMedDokumentreferanse(dokumentreferanse: String, dokumentId: Long?): List<Dokument>
 

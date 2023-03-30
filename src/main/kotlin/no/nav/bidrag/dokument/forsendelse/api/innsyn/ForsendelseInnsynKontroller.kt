@@ -35,7 +35,9 @@ class ForsendelseInnsynKontroller(
         @Parameter(
             name = "saksnummer",
             description = "journalposten tilhører sak"
-        ) @RequestParam(required = false) saksnummer: String?
+        )
+        @RequestParam(required = false)
+        saksnummer: String?
     ): ForsendelseResponsTo {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return forsendelseInnsynTjeneste.hentForsendelse(forsendelseId, saksnummer)
@@ -44,10 +46,12 @@ class ForsendelseInnsynKontroller(
     @GetMapping("/sak/{saksnummer}/journal")
     @Operation(description = "Hent alle forsendelse med saksnummer")
     @ApiResponses(
-        value = [ApiResponse(
-            responseCode = "200",
-            description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet."
-        )]
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet."
+            )
+        ]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
         return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)

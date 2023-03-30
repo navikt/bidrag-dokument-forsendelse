@@ -23,7 +23,6 @@ internal fun List<OpprettDokumentForespørsel>.harFlereDokumenterMedSammeJournal
 fun List<OpprettDokumentForespørsel>.harNotat(dokumentmalDetaljer: Map<String, DokumentMalDetaljer>) =
     this.any { dokumentmalDetaljer[it.dokumentmalId]?.type == DokumentMalType.NOTAT }
 
-
 fun OppdaterForsendelseForespørsel.skalDokumentSlettes(dokumentreferanse: String): Boolean =
     this.dokumenter.find { it.dokumentreferanse == dokumentreferanse }?.fjernTilknytning == true
 

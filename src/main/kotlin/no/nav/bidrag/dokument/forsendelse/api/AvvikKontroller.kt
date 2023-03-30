@@ -11,7 +11,11 @@ import no.nav.bidrag.dokument.dto.Avvikshendelse
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.AvvikService
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 
 @ForsendelseApiKontroller
 @Timed
@@ -20,7 +24,7 @@ class AvvikKontroller(val avvikService: AvvikService) {
     @PostMapping("/journal/{forsendelseIdMedPrefix}/avvik")
     @Operation(
         summary = "Utfør avvikshåndtering",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
     fun utførAvvik(
@@ -36,7 +40,7 @@ class AvvikKontroller(val avvikService: AvvikService) {
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Liste med gyldige avvikstyper"),
-            ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid"),
+            ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")
         ]
     )
     fun hentAvvik(@PathVariable forsendelseIdMedPrefix: ForsendelseId): List<AvvikType> {

@@ -59,6 +59,4 @@ class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjen
 
         return forsendelse.tilForsendelseRespons()
     }
-
-
 }

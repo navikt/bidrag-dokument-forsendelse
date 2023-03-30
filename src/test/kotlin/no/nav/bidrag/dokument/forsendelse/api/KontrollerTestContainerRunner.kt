@@ -60,5 +60,4 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
         return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId", HttpMethod.GET, null, JournalpostResponse::class.java)
     }
-
 }

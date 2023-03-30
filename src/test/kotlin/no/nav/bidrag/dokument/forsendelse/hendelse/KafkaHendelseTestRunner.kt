@@ -60,15 +60,17 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
             val hendelser = records
                 .map { ObjectMapper().findAndRegisterModules().readValue(it.value(), JournalpostHendelse::class.java) }
 
-            return if (journalpostId.isNullOrEmpty()) hendelser.first()
-            else hendelser.find { it.journalpostId == journalpostId }
+            return if (journalpostId.isNullOrEmpty()) {
+                hendelser.first()
+            } else {
+                hendelser.find { it.journalpostId == journalpostId }
+            }
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved lesing av kafka melding", e)
             null
         } finally {
             consumer?.close()
         }
-
     }
 
     fun readAllFromJournalpostTopic(): List<JournalpostHendelse> {
@@ -84,7 +86,6 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
         } finally {
             consumer?.close()
         }
-
     }
 
     fun configureConsumer(topic: String): Consumer<Int, String>? {
@@ -107,7 +108,6 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     fun sendMeldingTilDokumentHendelse(melding: DokumentHendelse) {
         configureProducer().send(ProducerRecord(topicDokument, jsonToString(melding)))
     }
-
 
     private fun jsonToString(data: Any): String {
         return try {

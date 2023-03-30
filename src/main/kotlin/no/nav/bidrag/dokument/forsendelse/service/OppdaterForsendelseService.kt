@@ -1,7 +1,13 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.*
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
+import no.nav.bidrag.dokument.dto.JournalpostType
+import no.nav.bidrag.dokument.dto.MottakUtsendingKanal
+import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
+import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
@@ -10,7 +16,11 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.*
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -21,7 +31,16 @@ import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValider
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanLeggeTilDokument
-import no.nav.bidrag.dokument.forsendelse.utvidelser.*
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumenterIkkeSlettet
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumenterLogiskSlettet
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.skalDokumentSlettes
+import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.validerGyldigEndring
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
@@ -57,7 +76,6 @@ class OppdaterForsendelseService(
                 dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel)
             )
         )
-
 
         return OppdaterForsendelseResponse(
             forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
@@ -141,7 +159,6 @@ class OppdaterForsendelseService(
         log.info { "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. Opprettet journalpostId=${respons.journalpostId}." }
 
         return respons
-
     }
 
     private fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest, forsendelseId: Long): OpprettJournalpostResponse? {
@@ -258,7 +275,6 @@ class OppdaterForsendelseService(
         forsendelse: Forsendelse,
         forespørsel: OppdaterForsendelseForespørsel
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .mapIndexed { i, it ->
                 val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)

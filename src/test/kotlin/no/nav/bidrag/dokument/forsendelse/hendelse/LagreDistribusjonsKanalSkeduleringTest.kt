@@ -45,7 +45,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
                         arkivsystem = DokumentArkivSystem.JOARK,
                         dokumentMalId = "MAL1"
                     )
-                ),
+                )
             )
         )
     }
@@ -154,6 +154,5 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         skedulering.lagreDistribusjoninfo()
 
         stubUtils.Valider().hentDistribusjonInfoKalt(10)
-
     }
 }

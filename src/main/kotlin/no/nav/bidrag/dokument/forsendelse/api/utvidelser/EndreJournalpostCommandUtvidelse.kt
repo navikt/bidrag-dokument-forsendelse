@@ -7,7 +7,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 fun EndreJournalpostCommand.tilOppdaterForsendelseForespørsel(): OppdaterForsendelseForespørsel {
-
     return OppdaterForsendelseForespørsel(
         dokumentDato = this.dokumentDato?.let { LocalDateTime.of(it, LocalTime.MIDNIGHT) },
         dokumenter = this.endreDokumenter.map {

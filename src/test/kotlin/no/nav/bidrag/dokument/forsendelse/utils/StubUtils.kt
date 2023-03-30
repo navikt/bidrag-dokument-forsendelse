@@ -31,7 +31,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import java.util.Arrays
 
-
 class StubUtils {
 
     private val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
@@ -94,7 +93,6 @@ class StubUtils {
             )
         )
     }
-
 
     fun stubHentDokument() {
         WireMock.stubFor(
@@ -205,7 +203,6 @@ class StubUtils {
         )
     }
 
-
     private fun jsonToString(data: Any): String {
         return try {
             objectMapper.writeValueAsString(data)
@@ -232,7 +229,7 @@ class StubUtils {
 
         fun bestillDistribusjonKaltMed(journalpostId: String, vararg contains: String, batchId: String? = null) {
             val verify = WireMock.postRequestedFor(
-                WireMock.urlMatching("/dokument/journal/distribuer/${journalpostId}(.*)")
+                WireMock.urlMatching("/dokument/journal/distribuer/$journalpostId(.*)")
             )
             batchId?.let { verify.withQueryParam("batchId", EqualToPattern(batchId)) }
             verifyContains(verify, *contains)
@@ -279,7 +276,6 @@ class StubUtils {
             )
             WireMock.verify(0, verify)
         }
-
 
         fun opprettJournalpostIkkeKalt() {
             val verify = WireMock.postRequestedFor(

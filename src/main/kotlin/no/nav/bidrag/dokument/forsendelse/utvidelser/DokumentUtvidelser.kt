@@ -17,7 +17,7 @@ val List<Dokument>.sortertEtterRekkefølge
     get(): List<Dokument> {
         val dokumenterIkkeSlettet = this.dokumenterIkkeSlettet.sortedBy { it.rekkefølgeIndeks }.mapIndexed { i, it ->
             it.copy(
-                rekkefølgeIndeks = i,
+                rekkefølgeIndeks = i
             )
         }
 
@@ -25,7 +25,7 @@ val List<Dokument>.sortertEtterRekkefølge
         val dokumenterSlettet = this.dokumenterLogiskSlettet.map {
             sisteIndeks++
             it.copy(
-                rekkefølgeIndeks = sisteIndeks,
+                rekkefølgeIndeks = sisteIndeks
             )
         }
         return dokumenterIkkeSlettet + dokumenterSlettet
