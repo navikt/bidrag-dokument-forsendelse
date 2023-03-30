@@ -91,7 +91,6 @@ object ForespørselMapper {
         dokumentDato = this.dokumentDato ?: LocalDateTime.now(),
         journalpostIdOriginal = this.journalpostId?.utenPrefiks,
         dokumentmalId = this.dokumentmalId,
-        metadata = this.metadata ?: emptyMap(),
         rekkefølgeIndeks = indeks,
     )
 

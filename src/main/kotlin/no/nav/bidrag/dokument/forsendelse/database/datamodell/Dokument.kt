@@ -54,8 +54,8 @@ data class Dokument(
     val rekkefølgeIndeks: Int,
 
     @Type(type = "hstore")
-    @Column(columnDefinition = "hstore")
-    val metadata: Map<String, String> = mapOf(),
+    @Column(columnDefinition = "hstore", name = "metadata")
+    private val _metadata: Map<String, String> = mapOf(),
 
     @ManyToOne
     @JoinColumn(name = "forsendelse_id")
@@ -65,6 +65,13 @@ data class Dokument(
     override fun toString(): String {
         return this.toStringByReflection(listOf("forsendelse"))
     }
+
+    val metadata
+        get(): DokumentMetadata {
+            val map = DokumentMetadata()
+            _metadata.let { map.putAll(_metadata) }
+            return map
+        }
 
     val erFraAnnenKilde get() = !(dokumentreferanseOriginal == null && journalpostIdOriginal == null)
     val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
@@ -85,6 +92,30 @@ data class Dokument(
 
 }
 
-class Metadata : Map<String, String> by mapOf() {
+class DokumentMetadata : MutableMap<String, String> by mutableMapOf() {
+
+    private val REDIGERING_METADATA_KEY = "redigering_metadata"
+
+    fun lagreRedigeringmetadata(data: String) {
+        remove(REDIGERING_METADATA_KEY)
+        put(REDIGERING_METADATA_KEY, data)
+    }
+
+    fun hentRedigeringmetadata(): String? {
+        return get(REDIGERING_METADATA_KEY)
+    }
+}
+
+
+class DokumentMetadataConvert : AttributeConverter<DokumentMetadata, HashMap<String, String>> {
+    override fun convertToEntityAttribute(dbData: HashMap<String, String>?): DokumentMetadata {
+        val map = DokumentMetadata()
+        dbData?.let { map.putAll(it) }
+        return map
+    }
+
+    override fun convertToDatabaseColumn(dbData: DokumentMetadata?): HashMap<String, String> {
+        return dbData?.let { HashMap(it) } ?: hashMapOf()
+    }
 
 }

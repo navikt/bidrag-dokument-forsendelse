@@ -31,7 +31,7 @@ data class DokumentRespons(
     val dokumentDato: LocalDateTime,
     val journalpostId: String? = null,
     val dokumentmalId: String? = null,
-    val metadata: Map<String, String> = emptyMap(),
+    val redigeringMetadata: String? = null,
     val status: DokumentStatusTo? = null,
     val arkivsystem: DokumentArkivSystemDto? = null
 )
@@ -45,6 +45,7 @@ sealed class DokumentForespørsel(
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
     @Schema(description = "Arkivsystem hvor dokument er lagret") open val arkivsystem: DokumentArkivSystemDto? = null,
+    @Schema(description = "Metadata brukt av redigeringsklient") open val redigeringMetadata: String? = null,
     @Schema(description = "Dokument metadata") open val metadata: Map<String, String>? = null,
 
     ) {

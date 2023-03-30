@@ -278,7 +278,12 @@ class OppdaterForsendelseService(
                 if (it.dokumentreferanse == dokumentreferanse) {
                     it.copy(
                         tittel = forespørsel.tittel ?: it.tittel,
-                        dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato
+                        dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato,
+                        _metadata = forespørsel.redigeringMetadata?.let { rd ->
+                            val metadata = it.metadata
+                            metadata.lagreRedigeringmetadata(rd)
+                            metadata.toMap()
+                        } ?: it.metadata,
                     )
                 } else it
 
@@ -325,7 +330,11 @@ class OppdaterForsendelseService(
                 eksisterendeDokument?.copy(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks,
-                    metadata = it.metadata ?: eksisterendeDokument.metadata,
+                    _metadata = it.redigeringMetadata?.let {
+                        val metadata = eksisterendeDokument.metadata
+                        metadata.lagreRedigeringmetadata(it)
+                        metadata
+                    } ?: eksisterendeDokument.metadata,
                     dokumentDato = if (indeks == 0 && forsendelse.erNotat) forespørsel.dokumentDato
                         ?: eksisterendeDokument.dokumentDato else eksisterendeDokument.dokumentDato
                 ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
@@ -397,7 +406,9 @@ class OppdaterForsendelseService(
         return DokumentRespons(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
-            dokumentDato = oppdatertDokument.dokumentDato
+            dokumentDato = oppdatertDokument.dokumentDato,
+            redigeringMetadata = oppdatertDokument.metadata.hentRedigeringmetadata()
+
         )
     }
 //    private fun oppdaterMottaker(eksisterendeMottaker: Mottaker?, oppdatertMottaker: MottakerTo?): Mottaker?{

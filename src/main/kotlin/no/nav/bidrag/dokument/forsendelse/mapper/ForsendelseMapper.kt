@@ -175,7 +175,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,
             arkivsystem = it.tilArkivSystemDto(),
-            metadata = it.metadata,
+            redigeringMetadata = it.metadata.hentRedigeringmetadata(),
             dokumentDato = it.dokumentDato,
             status = it.tilDokumeentStatusTo()
         )
