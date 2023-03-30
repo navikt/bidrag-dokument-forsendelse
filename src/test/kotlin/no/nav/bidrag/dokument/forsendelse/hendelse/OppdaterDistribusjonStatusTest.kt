@@ -78,9 +78,9 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                         dokumentStatus = DokumentStatus.FERDIGSTILT,
                         tittel = "FORSENDELSE 1",
                         arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = "MAL1",
+                        dokumentMalId = "MAL1"
                     )
-                ),
+                )
             )
         )
     }
@@ -96,9 +96,9 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                         dokumentStatus = DokumentStatus.FERDIGSTILT,
                         tittel = "FORSENDELSE 1",
                         arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = "MAL1",
+                        dokumentMalId = "MAL1"
                     )
-                ),
+                )
             )
         )
     }
@@ -137,7 +137,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
 
         val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
         stubUtils.stubHentDistribusjonInfo(
-            forsendelse1.journalpostIdFagarkiv, DistribusjonInfoDto(
+            forsendelse1.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
                 bestillingId = "bestillingid1",
                 kanal = DistribusjonKanal.SDP.name,
                 distribuertDato = distribuertDato,
@@ -146,7 +147,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
             )
         )
         stubUtils.stubHentDistribusjonInfo(
-            forsendelse2.journalpostIdFagarkiv, DistribusjonInfoDto(
+            forsendelse2.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
                 bestillingId = "bestillingid3",
                 kanal = DistribusjonKanal.SDP.name,
                 distribuertDato = distribuertDato,
@@ -155,9 +157,10 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
             )
         )
         stubUtils.stubHentDistribusjonInfo(
-            forsendelseIkkeDistribuert.journalpostIdFagarkiv, DistribusjonInfoDto(
+            forsendelseIkkeDistribuert.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
                 kanal = DistribusjonKanal.SDP.name,
-                journalstatus = JournalpostStatus.FERDIGSTILT,
+                journalstatus = JournalpostStatus.FERDIGSTILT
             )
         )
 
@@ -198,7 +201,6 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
 
         val hendelseLokalUtskrift = alleHendelser.find { it.journalpostId == forsendelse2Etter!!.forsendelseIdMedPrefix }
         hendelseLokalUtskrift!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
-
     }
 
     @Test
@@ -208,7 +210,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
 
         stubUtils.stubHentDistribusjonInfo(
-            forsendelse.journalpostIdFagarkiv, DistribusjonInfoDto(
+            forsendelse.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
                 bestillingId = "bestillingid2",
                 kanal = DistribusjonKanal.LOKAL_UTSKRIFT.name,
                 distribuertDato = distribuertDato,
@@ -253,7 +256,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
 
         stubUtils.stubHentDistribusjonInfo(
-            forsendelse.journalpostIdFagarkiv, DistribusjonInfoDto(
+            forsendelse.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
                 bestillingId = "bestillingid2",
                 kanal = DistribusjonKanal.SDP.name,
                 distribuertDato = distribuertDato,
@@ -329,7 +333,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
 
         stubUtils.stubOpprettJournalpost(
             nyJournalpostId,
-            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+        )
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
 
@@ -338,7 +343,6 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
 
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
-
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
             oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
             oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
@@ -355,7 +359,6 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         hendelse.fnr shouldBe oppdatertForsendelse.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
         hendelse.sakstilknytninger!! shouldContain oppdatertForsendelse.saksnummer
-
     }
 
     @Test
@@ -383,7 +386,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
 
         stubUtils.stubOpprettJournalpost(
             nyJournalpostId,
-            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+        )
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, DistribuerJournalpostRequest(lokalUtskrift = true))
 
@@ -392,7 +396,6 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
 
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
-
             oppdatertForsendelse.distribusjonBestillingsId shouldBe null
             oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT_LOKALT
             oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
@@ -409,6 +412,5 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         hendelse.fnr shouldBe oppdatertForsendelse.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
         hendelse.sakstilknytninger!! shouldContain oppdatertForsendelse.saksnummer
-
     }
 }

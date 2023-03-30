@@ -51,12 +51,10 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(batchId = "FB050")
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
@@ -120,25 +118,23 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 adresse.landkode shouldBe ADRESSE_LANDKODE
                 adresse.landkode3 shouldBe ADRESSE_LANDKODE3
 
-
                 stubUtils.Valider().bestillDokumentKaltMed(
-                    HOVEDDOKUMENT_DOKUMENTMAL, "{" +
-                            "\"mottaker\":" +
-                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                            "\"saksbehandler\":null," +
-                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                            "\"vedtaksId\":null," +
-                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                            "\"tittel\":\"${hoveddokument.tittel}\"," +
-                            "\"enhet\":\"${forsendelse.enhet}\"," +
-                            "\"språk\":\"${forsendelse.språk}\"}"
+                    HOVEDDOKUMENT_DOKUMENTMAL,
+                    "{" +
+                        "\"mottaker\":" +
+                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                        "\"saksbehandler\":null," +
+                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                        "\"vedtaksId\":null," +
+                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                        "\"tittel\":\"${hoveddokument.tittel}\"," +
+                        "\"enhet\":\"${forsendelse.enhet}\"," +
+                        "\"språk\":\"${forsendelse.språk}\"}"
                 )
             }
-
         }
-
 
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
@@ -184,7 +180,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(SAMHANDLER_ID)
         }
 
-
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
@@ -193,10 +188,8 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         journalpost.avsenderMottaker?.navn shouldBe MOTTAKER_NAVN
     }
 
-
     @Test
     fun `Skal opprette forsendelse med samhandlerid`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             mottaker = MottakerTo(
                 ident = SAMHANDLER_ID,
@@ -224,7 +217,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(SAMHANDLER_ID)
         }
 
-
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
@@ -235,7 +227,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse uten mottakernavn`() {
-
         val opprettForsendelseForespørsel =
             nyOpprettForsendelseForespørsel().copy(mottaker = MottakerTo(ident = MOTTAKER_IDENT))
 
@@ -259,7 +250,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
         }
 
-
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
@@ -268,7 +258,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse med mottakerspråk hvis språk ikke er satt`() {
-
         stubUtils.stubHentPersonSpraak("EN")
         val opprettForsendelseForespørsel =
             nyOpprettForsendelseForespørsel().copy(språk = null)
@@ -291,10 +280,10 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentPersonSpråkKaltMed(MOTTAKER_IDENT)
 
             stubUtils.Valider().bestillDokumentKaltMed(
-                HOVEDDOKUMENT_DOKUMENTMAL, "\"språk\":\"EN\""
+                HOVEDDOKUMENT_DOKUMENTMAL,
+                "\"språk\":\"EN\""
             )
         }
-
 
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
@@ -304,7 +293,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
             .copy(
                 dokumenter = listOf(
@@ -331,7 +319,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal ikke kunne opprette notat med flere dokumeenter`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
             .copy(
                 dokumenter = listOf(
@@ -351,10 +338,8 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         response.headers["Warning"]?.get(0) shouldContain "Kan ikke opprette ny forsendelse med flere dokumenter hvis forsendelsetype er Notat"
     }
 
-
     @Test
     fun `Skal opprette forsendelse og sette dokument status BESTILLING_FEILET når bestilling feiler`() {
-
         stubUtils.stubBestillDokumentFeiler()
 
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
@@ -374,14 +359,13 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og ikke bestille dokument hvis bestillDokument er false`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
                     bestillDokument = false
-                ),
+                )
             )
         )
 
@@ -402,7 +386,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse med tittel som inneholder ugyldig tegn`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -429,7 +412,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = "Tittel ny dokument\u001A",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
         )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
@@ -449,7 +432,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -475,7 +457,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = "Tittel ny dokument",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
         )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
@@ -496,7 +478,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse uten bestille dokument og legge til nytt dokument uten å bestille dokument`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -524,7 +505,8 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = "Tittel ny dokument",
             dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-            språk = "EN", bestillDokument = false
+            språk = "EN",
+            bestillDokument = false
         )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
@@ -548,7 +530,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument med annen språk på opprettet forsendelse`() {
-
         val nyDokumentmal = "BI00133"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
@@ -603,7 +584,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse uten dokument og legge til nytt dokument på opprettet forsendelse`() {
-
         val opprettForsendelseForespørsel =
             nyOpprettForsendelseForespørsel().copy(dokumenter = emptyList())
 
@@ -618,7 +598,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = "Tittel ny dokument",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
         )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
@@ -639,7 +619,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og fjerne dokument fra opprettet forsendelse`() {
-
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -697,5 +676,4 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         responseForsendelse.statusCode shouldBe HttpStatus.OK
         responseForsendelse.body!!.journalpost!!.dokumenter.size shouldBe 2
     }
-
 }

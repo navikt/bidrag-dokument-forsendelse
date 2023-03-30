@@ -16,7 +16,7 @@ data class OppdaterForsendelseForespørsel(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OppdaterForsendelseResponse(
     @Schema(description = "ForsendelseId på forsendelse som ble opprettet") val forsendelseId: String? = null,
-    @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList(),
+    @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList()
 )
 
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")
@@ -26,5 +26,5 @@ data class OppdaterDokumentForespørsel(
     override val dokumentmalId: String? = null,
     override val dokumentreferanse: String? = null,
     override val tittel: String? = null,
-    val fjernTilknytning: Boolean? = false,
+    val fjernTilknytning: Boolean? = false
 ) : DokumentForespørsel()

@@ -24,7 +24,7 @@ class ForsendelseSkedulering(
     private val distribusjonService: DistribusjonService,
     private val forsendelseHendelseBestilling: ForsendelseHendelseBestillingService,
     @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int,
-    @Value("\${OPPDATER_DIST_STATUS_ENABLED:true}") private val forsendelseDistStatusEnabled: Boolean,
+    @Value("\${OPPDATER_DIST_STATUS_ENABLED:true}") private val forsendelseDistStatusEnabled: Boolean
 ) {
 
     @Scheduled(cron = "\${LAGRE_DIST_INFO_CRON}")
@@ -57,7 +57,7 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
-                                    "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                                "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
                         }
                         if (!forsendelseDistStatusEnabled) {
                             LOGGER.info {
@@ -85,7 +85,6 @@ class ForsendelseSkedulering(
         }
     }
 
-
     fun lagreDistribusjoninfo() {
         val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserUtenDistribusjonKanal(distInfoPageSize)
         LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert men mangler distribusjon kanal. Henter og lagrer distribusjon kanal for forsendelsene. lesStørrelse=$distInfoPageSize" }
@@ -100,9 +99,9 @@ class ForsendelseSkedulering(
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)?.let { distInfo ->
                     LOGGER.info {
                         "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
-                                "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
-                                "${forsendelse.dokumenter.size} dokumenter, " +
-                                "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
+                            "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
+                            "${forsendelse.dokumenter.size} dokumenter, " +
+                            "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
                     }
                     forsendelseTjeneste.lagre(
                         forsendelse.copy(

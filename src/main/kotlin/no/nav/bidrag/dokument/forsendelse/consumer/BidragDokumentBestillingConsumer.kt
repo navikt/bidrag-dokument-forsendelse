@@ -23,15 +23,16 @@ inline fun <reified T> typeReference() = object : ParameterizedTypeReference<T>(
 
 @Service
 class BidragDokumentBestillingConsumer(
-        @Value("\${BIDRAG_DOKUMENT_BESTILLING_URL}") val url: URI,
-        @Qualifier("azure") private val restTemplate: RestOperations) : AbstractRestClient(restTemplate, "bidrag-dokument-bestilling") {
+    @Value("\${BIDRAG_DOKUMENT_BESTILLING_URL}") val url: URI,
+    @Qualifier("azure") private val restTemplate: RestOperations
+) : AbstractRestClient(restTemplate, "bidrag-dokument-bestilling") {
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(BidragDokumentBestillingConsumer::class.java)
     }
 
     private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
-            .path(path ?: "").build().toUri()
+        .path(path ?: "").build().toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun bestill(forespørsel: DokumentBestillingForespørsel, dokumentmalId: String): DokumentBestillingResponse? {
@@ -44,12 +45,12 @@ class BidragDokumentBestillingConsumer(
     @Cacheable(DOKUMENTMALER_CACHE)
     fun støttedeDokumentmaler(): List<String> {
         return optionsForEntity(createUri("/brevkoder"), null)
-                ?: emptyList()
+            ?: emptyList()
     }
 
     @Cacheable(DOKUMENTMADETALJER_CACHE)
     fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
         return getForEntity(createUri("/dokumentmal/detaljer"))
-                ?: emptyMap()
+            ?: emptyMap()
     }
 }

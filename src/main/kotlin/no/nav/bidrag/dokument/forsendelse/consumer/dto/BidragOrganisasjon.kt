@@ -8,13 +8,12 @@ data class EnhetInfo(var enhetIdent: String, var enhetNavn: String)
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SaksbehandlerInfoResponse(var ident: String, var navn: String)
 
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class EnhetKontaktInfoDto(
     var enhetIdent: String? = null,
     var enhetNavn: String? = null,
     var telefonnummer: String? = null,
-    var postadresse: EnhetPostadresseDto? = null,
+    var postadresse: EnhetPostadresseDto? = null
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,5 +23,5 @@ data class EnhetPostadresseDto(
     var adresselinje2: String? = null,
     var poststed: String? = null,
     var land: String? = null,
-    var kommunenr: String? = null,
+    var kommunenr: String? = null
 )

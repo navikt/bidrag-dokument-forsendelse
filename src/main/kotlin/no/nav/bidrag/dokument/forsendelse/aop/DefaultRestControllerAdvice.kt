@@ -2,7 +2,12 @@ package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.forsendelse.model.*
+import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
+import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
+import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpHeaders
@@ -24,9 +29,13 @@ class DefaultRestControllerAdvice {
     fun handleInvalidValueExceptions(exception: Exception): ResponseEntity<*> {
         val cause = exception.cause
         val valideringsFeil =
-            if (cause is MissingKotlinParameterException) createMissingKotlinParameterViolation(
-                cause
-            ) else null
+            if (cause is MissingKotlinParameterException) {
+                createMissingKotlinParameterViolation(
+                    cause
+                )
+            } else {
+                null
+            }
         LOGGER.warn(
             "Forespørselen inneholder ugyldig verdi: ${valideringsFeil ?: "ukjent feil"}",
             exception
@@ -68,7 +77,7 @@ class DefaultRestControllerAdvice {
         val errorFieldRegex = Regex("\\.([^.]*)\\[\\\"(.*)\"\\]\$")
         val paths = ex.path.map { errorFieldRegex.find(it.description)!! }.map {
             val (objectName, field) = it.destructured
-            "${objectName}.$field"
+            "$objectName.$field"
         }
         return "${paths.joinToString("->")} kan ikke være null"
     }
@@ -148,6 +157,4 @@ class DefaultRestControllerAdvice {
             .header(HttpHeaders.WARNING, "Ugyldig eller manglende sikkerhetstoken")
             .build<Any>()
     }
-
-
 }

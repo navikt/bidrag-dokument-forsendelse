@@ -1,7 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
-import no.nav.bidrag.dokument.forsendelse.database.model.*
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
@@ -9,13 +11,22 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.persistence.*
-
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 
 @Entity(name = "dokument")
 @Table(
-    name = "dokument", uniqueConstraints = [
-        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
+    name = "dokument",
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"])
     ]
 )
 @TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType::class)
@@ -72,19 +83,20 @@ data class Dokument(
 
     val journalpostId
         get() = run {
-            if (journalpostIdOriginal.isNullOrEmpty()) null
-            else if (harJournalpostIdArkivPrefiks()) journalpostIdOriginal
-            else when (arkivsystem) {
-                DokumentArkivSystem.JOARK -> "JOARK-$journalpostIdOriginal"
-                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostIdOriginal"
-                else -> journalpostIdOriginal
+            if (journalpostIdOriginal.isNullOrEmpty()) {
+                null
+            } else if (harJournalpostIdArkivPrefiks()) {
+                journalpostIdOriginal
+            } else {
+                when (arkivsystem) {
+                    DokumentArkivSystem.JOARK -> "JOARK-$journalpostIdOriginal"
+                    DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostIdOriginal"
+                    else -> journalpostIdOriginal
+                }
             }
         }
 
     private fun harJournalpostIdArkivPrefiks(): Boolean = journalpostIdOriginal?.contains("-") == true
-
 }
 
-class Metadata : Map<String, String> by mapOf() {
-
-}
+class Metadata : Map<String, String> by mapOf()

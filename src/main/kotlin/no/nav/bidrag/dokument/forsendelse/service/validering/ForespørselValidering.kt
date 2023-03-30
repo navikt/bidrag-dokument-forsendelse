@@ -71,7 +71,8 @@ object ForespørselValidering {
         )
 
         feilmeldinger.validerErSann(
-            this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()), "Dokumentdato kan ikke bli satt til fram i tid"
+            this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
+            "Dokumentdato kan ikke bli satt til fram i tid"
         )
         if (feilmeldinger.isNotEmpty()) {
             throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
@@ -125,7 +126,6 @@ object ForespørselValidering {
             feilmeldinger.add("Forsendelse $forsendelseId har allerede tilknyttet dokument med dokumentreferanse ${this.dokumentreferanse}")
         }
 
-
         if (feilmeldinger.isNotEmpty()) {
             throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
         }
@@ -173,5 +173,4 @@ object ForespørselValidering {
             throw KanIkkeFerdigstilleForsendelse(feilmeldinger.joinToString(","))
         }
     }
-
 }

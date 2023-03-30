@@ -29,7 +29,6 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
             val korrelasjonsId = "${tilfeldigVerdi}_prossesserDokumentHendelse"
             MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
         }
-
     }
 
     @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentSkedulering.bestillFeiledeDokumenterPåNyttSkeduler(..))")

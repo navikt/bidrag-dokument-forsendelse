@@ -1,7 +1,12 @@
 package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.web.client.AbstractRestClient
-import no.nav.bidrag.dokument.dto.*
+import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
+import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
+import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
+import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
+import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
+import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value

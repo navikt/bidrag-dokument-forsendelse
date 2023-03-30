@@ -6,5 +6,5 @@ data class DokumentBestilling(
 )
 
 data class ForsendelseHendelseBestilling(
-    val forsendelseId: Long,
+    val forsendelseId: Long
 )

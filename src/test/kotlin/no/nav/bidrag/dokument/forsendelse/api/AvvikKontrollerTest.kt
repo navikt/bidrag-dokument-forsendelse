@@ -19,12 +19,10 @@ import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-
 class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente avvik for forsendelse`() {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
         }
@@ -40,7 +38,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal utføre avvik FEILFORE_SAK for forsendelse`() {
-
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -87,7 +84,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal utføre avvik SLETT_JOURNALPOST for forsendelse`() {
-
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -132,7 +128,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE for forsendelse til tema FAR`() {
-
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -175,7 +170,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE fra FAR til BID`() {
-
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -200,7 +194,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE til samme tema`() {
-
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -225,7 +218,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal ikke utføre avvik ENDRE_FAGOMRÅDE for forsendelse hvis tema er ikke bidrag tema`() {
-
         val saksnummer = "13213213213"
 
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -240,7 +232,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     @ParameterizedTest
     @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON"], mode = EnumSource.Mode.EXCLUDE)
     fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus) {
-
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status status
             +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
@@ -251,5 +242,4 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
         respons.body!! shouldHaveSize 0
     }
-
 }

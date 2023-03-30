@@ -33,9 +33,7 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
-
 
     @Test
     fun `Skal hente forsendelse`() {
@@ -160,7 +158,6 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         response.body!!.journalpost!!.feilfort shouldBe true
     }
 
-
     @Test
     fun `Skal hente forsendelse med dokumenter i riktig rekkefølge`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
@@ -262,7 +259,8 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             "${rootUri()}/sak/${forsendelse1.saksnummer}/journal?fagomrade=BID",
             HttpMethod.GET,
             null,
-            object : ParameterizedTypeReference<List<JournalpostDto>>() {})
+            object : ParameterizedTypeReference<List<JournalpostDto>>() {}
+        )
 
         response.statusCode shouldBe HttpStatus.OK
 
@@ -331,5 +329,4 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             forsendelseResponse3.innhold shouldBe "FORSENDELSE 4"
         }
     }
-
 }

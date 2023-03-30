@@ -7,10 +7,9 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-
 @Testcontainers
 @ActiveProfiles(value = ["test", "testcontainer"])
-class TestContainerRunner: CommonTestRunner() {
+class TestContainerRunner : CommonTestRunner() {
 
     companion object {
         @Container
@@ -34,5 +33,4 @@ class TestContainerRunner: CommonTestRunner() {
             registry.add("spring.datasource.username", postgreSqlDb::getUsername)
         }
     }
-
 }

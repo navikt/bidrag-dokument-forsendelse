@@ -34,7 +34,6 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentFerdigstilteIkkeDistribuert()
     }
 
-
     fun lagre(forsendelse: Forsendelse): Forsendelse {
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         return forsendelseRepository.save(

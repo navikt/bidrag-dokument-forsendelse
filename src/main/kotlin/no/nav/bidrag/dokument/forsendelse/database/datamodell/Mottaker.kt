@@ -1,7 +1,15 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
 import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.OneToOne
 
 @Entity(name = "mottaker")
 data class Mottaker(

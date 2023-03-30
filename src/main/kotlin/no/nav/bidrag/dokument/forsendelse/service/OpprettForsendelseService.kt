@@ -58,11 +58,9 @@ class OpprettForsendelseService(
         val dokumentmalDetaljer = dokumentBestillingService.hentDokumentmalDetaljer()
         return forespørsel.dokumenter.harNotat(dokumentmalDetaljer).ifTrue { ForsendelseType.NOTAT }
             ?: ForsendelseType.UTGÅENDE
-
     }
 
     private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse {
-
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         val mottakerIdent = forespørsel.mottaker!!.ident!!
         val mottakerInfo = personConsumer.hentPerson(mottakerIdent)

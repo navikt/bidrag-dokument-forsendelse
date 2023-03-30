@@ -82,7 +82,6 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
             "\"dokumentreferanse\":\"${forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse}\""
         )
         stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
-
     }
 
     @Test
@@ -122,6 +121,5 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
 
         stubUtils.Valider().bestillDokumentIkkeKalt("MAL1")
         stubUtils.Valider().bestillDokumentIkkeKalt("MAL2")
-
     }
 }

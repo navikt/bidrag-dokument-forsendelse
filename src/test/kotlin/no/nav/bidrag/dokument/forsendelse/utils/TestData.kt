@@ -243,7 +243,8 @@ fun nyOpprettForsendelseForespørsel() = OpprettForsendelseForespørsel(
 )
 
 fun nyOpprettJournalpostResponse(
-    journalpostId: String = NY_JOURNALPOSTID, dokumenter: List<OpprettDokumentDto> =
+    journalpostId: String = NY_JOURNALPOSTID,
+    dokumenter: List<OpprettDokumentDto> =
         listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1"))
 ): OpprettJournalpostResponse {
     return OpprettJournalpostResponse(

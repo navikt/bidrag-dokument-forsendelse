@@ -12,7 +12,7 @@ data class DokumentBestillingForespørsel(
     val dokumentreferanse: String? = null,
     val tittel: String? = null,
     val enhet: String? = null,
-    val språk: String? = null,
+    val språk: String? = null
 )
 data class MottakerTo(
     val ident: String? = null,
@@ -29,13 +29,13 @@ data class MottakerAdresseTo(
     val landkode: String? = null,
     val landkode3: String? = null,
     val postnummer: String? = null,
-    val poststed: String? = null,
+    val poststed: String? = null
 )
 
 data class DokumentBestillingResponse(
     val dokumentId: String,
     val journalpostId: String,
-    val arkivSystem: DokumentArkivSystemDto? = null,
+    val arkivSystem: DokumentArkivSystemDto? = null
 )
 
 data class DokumentMalDetaljer(

@@ -19,7 +19,6 @@ private val log = KotlinLogging.logger {}
 @Component
 class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
-
     fun hentDokument(forsendelseId: Long, dokumentreferanse: String): ByteArray {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
             ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
@@ -50,7 +49,6 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste) {
 
         return listOf(mapTilDokumentMetadata(dokument))
     }
-
 
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {

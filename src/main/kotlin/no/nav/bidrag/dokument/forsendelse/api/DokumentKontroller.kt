@@ -19,7 +19,7 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
     @GetMapping("/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}")
     @Operation(
         summary = "Hent fysisk dokument som byte",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     fun hentDokument(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @PathVariable dokumentreferanse: String): ByteArray {
         return fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
@@ -31,7 +31,7 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
     )
     @Operation(
         summary = "Hent metadata om dokument",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     fun hentDokumentMetadata(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,

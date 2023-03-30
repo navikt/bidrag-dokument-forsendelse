@@ -29,7 +29,6 @@ class DistribusjonService(
 ) {
 
     fun harDistribuert(forsendelse: Forsendelse): Boolean {
-
         return forsendelse.status == ForsendelseStatus.DISTRIBUERT || forsendelse.status == ForsendelseStatus.DISTRIBUERT_LOKALT
     }
 
@@ -62,8 +61,11 @@ class DistribusjonService(
             forsendelse = oppdaterForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
         }
 
-        return if (distribuerLokalt) bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
-        else bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
+        return if (distribuerLokalt) {
+            bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
+        } else {
+            bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
+        }
     }
 
     private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse, batchId: String?): DistribuerJournalpostResponse {

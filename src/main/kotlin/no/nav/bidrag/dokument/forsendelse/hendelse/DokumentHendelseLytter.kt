@@ -61,7 +61,6 @@ class DokumentHendelseLytter(
 
         sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
         ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
-
     }
 
     private fun sendJournalposthendelseHvisKlarForDistribusjon(dokumenter: List<Dokument>) {
@@ -83,9 +82,7 @@ class DokumentHendelseLytter(
                 }
             }
         }
-
     }
-
 
     private fun tilDokumentHendelseObjekt(melding: ConsumerRecord<String, String>): DokumentHendelse {
         try {

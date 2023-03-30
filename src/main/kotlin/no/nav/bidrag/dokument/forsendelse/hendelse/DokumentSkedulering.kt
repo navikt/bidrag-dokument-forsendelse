@@ -15,7 +15,6 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, private val bestillingLytter: DokumentBestillingLytter) {
 
-
     @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.MINUTES, initialDelay = 10)
     @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
     fun bestillFeiledeDokumenterPåNyttSkeduler() {
@@ -23,7 +22,6 @@ class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, privat
     }
 
     fun bestillFeiledeDokumenterPåNytt() {
-
         val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
         LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. Prøver å bestille dokumentene på nytt." }
 
