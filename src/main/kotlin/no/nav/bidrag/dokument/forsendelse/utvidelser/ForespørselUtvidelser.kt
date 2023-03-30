@@ -37,7 +37,8 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     }
 
     feilmeldinger.validerErSann(
-        this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()), "Dokumentdato kan ikke bli satt til fram i tid"
+        this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
+        "Dokumentdato kan ikke bli satt til fram i tid"
     )
 
     if (feilmeldinger.isNotEmpty()) {

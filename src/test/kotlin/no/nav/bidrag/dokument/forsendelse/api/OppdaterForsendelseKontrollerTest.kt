@@ -301,7 +301,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal ikke oppdatere dokumentdato på utgående`() {
-
         val dokdatoNotat = LocalDateTime.parse("2020-01-01T01:02:03")
         val dokdatoUtgående = LocalDateTime.parse("2021-01-01T01:02:03")
         val dokdatoUtgående2 = LocalDateTime.parse("2021-01-01T01:02:03")
@@ -348,7 +347,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         )
 
         utførOppdaterForsendelseForespørsel(
-            forsendelseNotat.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+            forsendelseNotat.forsendelseIdMedPrefix,
+            OppdaterForsendelseForespørsel(
                 dokumenter = listOf(
                     OppdaterDokumentForespørsel(
                         tittel = "Ny tittel notat",
@@ -359,7 +359,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         ).statusCode shouldBe HttpStatus.OK
 
         utførOppdaterForsendelseForespørsel(
-            forsendelseUtgående.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+            forsendelseUtgående.forsendelseIdMedPrefix,
+            OppdaterForsendelseForespørsel(
                 dokumenter = listOf(
                     OppdaterDokumentForespørsel(
                         tittel = "Ny tittel utgående",
@@ -370,7 +371,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         ).statusCode shouldBe HttpStatus.OK
 
         utførOppdaterForsendelseForespørsel(
-            forsendelseUtgåendeMedDokdatoIForespørsel.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+            forsendelseUtgåendeMedDokdatoIForespørsel.forsendelseIdMedPrefix,
+            OppdaterForsendelseForespørsel(
                 dokumentDato = dokdatoOppdater,
                 dokumenter = listOf(
                     OppdaterDokumentForespørsel(
@@ -397,7 +399,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal oppdatere dokumentdato på notat`() {
-
         val originalDato = LocalDateTime.parse("2020-01-01T01:02:03")
         val oppdatertDato = LocalDateTime.parse("2022-01-05T01:02:03")
         val forsendelse = testDataManager.lagreForsendelse(

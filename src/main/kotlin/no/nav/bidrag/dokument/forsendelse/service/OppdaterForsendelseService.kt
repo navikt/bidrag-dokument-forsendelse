@@ -108,14 +108,18 @@ class OppdaterForsendelseService(
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
-            avsenderMottaker = if (!forsendelse.erNotat) AvsenderMottakerDto(
-                ident = forsendelse.mottaker!!.ident,
-                navn = forsendelse.mottaker.navn,
-                type = when (forsendelse.mottaker.identType) {
-                    MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
-                    else -> AvsenderMottakerDtoIdType.FNR
-                }
-            ) else null,
+            avsenderMottaker = if (!forsendelse.erNotat) {
+                AvsenderMottakerDto(
+                    ident = forsendelse.mottaker!!.ident,
+                    navn = forsendelse.mottaker.navn,
+                    type = when (forsendelse.mottaker.identType) {
+                        MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
+                        else -> AvsenderMottakerDtoIdType.FNR
+                    }
+                )
+            } else {
+                null
+            },
             referanseId = "BIF_${forsendelse.forsendelseId}",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
@@ -173,14 +177,18 @@ class OppdaterForsendelseService(
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
-        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(
-            dokument.forsendelse.forsendelseId!!,
-            dokument.dokumentreferanse
-        )
-        else bidragDokumentConsumer.hentDokument(
-            dokument.journalpostId
-                ?: dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse
-        )!!
+        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) {
+            fysiskDokumentService.hentDokument(
+                dokument.forsendelse.forsendelseId!!,
+                dokument.dokumentreferanse
+            )
+        } else {
+            bidragDokumentConsumer.hentDokument(
+                dokument.journalpostId
+                    ?: dokument.forsendelseIdMedPrefix,
+                dokument.dokumentreferanse
+            )!!
+        }
     }
 
     fun fjernDokumentFraForsendelse(
@@ -194,7 +202,7 @@ class OppdaterForsendelseService(
             .filter { it.dokumentreferanse != dokumentreferanse || it.dokumentreferanseOriginal == null }
             .map {
                 it.copy(
-                    slettetTidspunkt = if (it.dokumentreferanse == dokumentreferanse) LocalDate.now() else null,
+                    slettetTidspunkt = if (it.dokumentreferanse == dokumentreferanse) LocalDate.now() else null
                 )
             }
 
@@ -216,7 +224,6 @@ class OppdaterForsendelseService(
             }
         )
     }
-
 
     fun knyttDokumentTilForsendelse(
         forsendelseId: Long,
@@ -256,7 +263,6 @@ class OppdaterForsendelseService(
         dokumentreferanse: String,
         forespørsel: OppdaterDokumentForespørsel
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 if (it.dokumentreferanse == dokumentreferanse) {
@@ -264,8 +270,9 @@ class OppdaterForsendelseService(
                         tittel = forespørsel.tittel ?: it.tittel,
                         dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato
                     )
-                } else it
-
+                } else {
+                    it
+                }
             }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
@@ -308,8 +315,12 @@ class OppdaterForsendelseService(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks,
                     metadata = it.metadata ?: eksisterendeDokument.metadata,
-                    dokumentDato = if (indeks == 0 && forsendelse.erNotat) forespørsel.dokumentDato
-                        ?: eksisterendeDokument.dokumentDato else eksisterendeDokument.dokumentDato
+                    dokumentDato = if (indeks == 0 && forsendelse.erNotat) {
+                        forespørsel.dokumentDato
+                            ?: eksisterendeDokument.dokumentDato
+                    } else {
+                        eksisterendeDokument.dokumentDato
+                    }
                 ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
             } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
 
