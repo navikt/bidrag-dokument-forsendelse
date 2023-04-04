@@ -4,8 +4,8 @@ import no.nav.bidrag.commons.cache.BrukerCacheable
 import no.nav.bidrag.commons.web.client.AbstractRestClient
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.PERSON_CACHE
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.PERSON_SPRAAK_CACHE
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonInfoRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
+import no.nav.bidrag.domain.ident.PersonIdent
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -30,7 +30,7 @@ class BidragPersonConsumer(
     @BrukerCacheable(PERSON_CACHE)
     fun hentPerson(personId: String): HentPersonResponse? {
         return try {
-            postForEntity(createUri("/informasjon"), HentPersonInfoRequest(personId))
+            postForEntity(createUri("/informasjon"), PersonIdent(personId))
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.NOT_FOUND) {
                 return null
@@ -43,7 +43,7 @@ class BidragPersonConsumer(
     @BrukerCacheable(PERSON_SPRAAK_CACHE)
     fun hentPersonSpråk(personId: String): String? {
         return try {
-            postForEntity(createUri("/spraak"), HentPersonInfoRequest(personId))
+            postForEntity(createUri("/spraak"), PersonIdent(personId))
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.NOT_FOUND) {
                 return null
