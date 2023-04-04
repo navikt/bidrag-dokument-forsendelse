@@ -2,7 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.consumer.dto
 
 import java.time.LocalDate
 data class HentPersonInfoRequest(
-    var ident: String
+    var ident: String,
+    val verdi: String = ident
 )
 data class HentPersonResponse(
     val ident: String,
