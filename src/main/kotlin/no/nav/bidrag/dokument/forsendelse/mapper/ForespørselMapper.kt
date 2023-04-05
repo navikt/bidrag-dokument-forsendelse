@@ -40,11 +40,8 @@ object ForespørselMapper {
     )
 
     fun PersonIdent.tilIdentType() =
-        if (this.erSamhandler()) {
-            MottakerIdentType.SAMHANDLER
-        } else {
-            MottakerIdentType.FNR
-        }
+        if (this.erSamhandler()) MottakerIdentType.SAMHANDLER
+        else MottakerIdentType.FNR
 
     fun MottakerAdresseTo.tilAdresseDo() = Adresse(
         adresselinje1 = this.adresselinje1,
@@ -72,21 +69,16 @@ object ForespørselMapper {
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
         this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
 
-    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (bestillDokument && this.erBestillingAvNyttDokument()) {
-        DokumentStatus.IKKE_BESTILT
-    } else if (this.erBestillingAvNyttDokument()) {
-        DokumentStatus.UNDER_PRODUKSJON
-    } else {
-        when (this.status) {
-            DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
-            DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
-            DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT
-            DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
-            DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
-            DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
-            DokumentStatusTo.MÅ_KONTROLLERES -> DokumentStatus.MÅ_KONTROLLERES
-            DokumentStatusTo.KONTROLLERT -> DokumentStatus.KONTROLLERT
-        }
+    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (bestillDokument && this.erBestillingAvNyttDokument())
+        DokumentStatus.IKKE_BESTILT else if (this.erBestillingAvNyttDokument()) DokumentStatus.UNDER_PRODUKSJON else when (this.status) {
+        DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
+        DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
+        DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT
+        DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
+        DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
+        DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
+        DokumentStatusTo.MÅ_KONTROLLERES -> DokumentStatus.MÅ_KONTROLLERES
+        DokumentStatusTo.KONTROLLERT -> DokumentStatus.KONTROLLERT
     }
 
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
@@ -99,8 +91,7 @@ object ForespørselMapper {
         dokumentDato = this.dokumentDato ?: LocalDateTime.now(),
         journalpostIdOriginal = this.journalpostId?.utenPrefiks,
         dokumentmalId = this.dokumentmalId,
-        metadata = this.metadata ?: emptyMap(),
-        rekkefølgeIndeks = indeks
+        rekkefølgeIndeks = indeks,
     )
 
     fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel() = OpprettDokumentForespørsel(
@@ -110,7 +101,6 @@ object ForespørselMapper {
         dokumentmalId = dokumentmalId,
         journalpostId = journalpostId,
         dokumentDato = dokumentDato,
-        arkivsystem = arkivsystem,
-        metadata = metadata
+        arkivsystem = arkivsystem
     )
 }

@@ -19,16 +19,10 @@ typealias JournalpostId = String
 val JournalpostId.utenPrefiks get() = this.replace("\\D".toRegex(), "")
 val JournalpostId.harArkivPrefiks get() = this.contains("-")
 val JournalpostId.arkivsystem
-    get(): DokumentArkivSystemDto? = if (!harArkivPrefiks) {
-        null
-    } else if (this.startsWith(
+    get(): DokumentArkivSystemDto? = if (!harArkivPrefiks) null else if (this.startsWith(
             "JOARK"
         )
-    ) {
-        DokumentArkivSystemDto.JOARK
-    } else {
-        DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
-    }
+    ) DokumentArkivSystemDto.JOARK else DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
 
 @Schema(description = "Metadata til en respons etter dokumenter i forsendelse ble opprettet")
 data class DokumentRespons(
@@ -37,7 +31,7 @@ data class DokumentRespons(
     val dokumentDato: LocalDateTime,
     val journalpostId: String? = null,
     val dokumentmalId: String? = null,
-    val metadata: Map<String, String> = emptyMap(),
+    val redigeringMetadata: String? = null,
     val status: DokumentStatusTo? = null,
     val arkivsystem: DokumentArkivSystemDto? = null
 )
@@ -51,12 +45,11 @@ sealed class DokumentForespørsel(
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
     @Schema(description = "Arkivsystem hvor dokument er lagret") open val arkivsystem: DokumentArkivSystemDto? = null,
-    @Schema(description = "Dokument metadata") open val metadata: Map<String, String>? = null
-
 ) {
     override fun toString(): String {
         return this.toStringByReflection(mask = listOf("fysiskDokument"))
     }
+
 }
 
 data class MottakerTo(
@@ -75,7 +68,7 @@ data class MottakerAdresseTo(
     @Schema(description = "Lankode må være i ISO 3166-1 alpha-2 format") val landkode: String? = null,
     @Schema(description = "Lankode må være i ISO 3166-1 alpha-3 format") val landkode3: String? = null,
     val postnummer: String? = null,
-    val poststed: String? = null
+    val poststed: String? = null,
 )
 
 enum class MottakerIdentTypeTo {
@@ -91,7 +84,7 @@ enum class DokumentStatusTo {
     UNDER_REDIGERING,
     FERDIGSTILT,
     MÅ_KONTROLLERES,
-    KONTROLLERT
+    KONTROLLERT,
 }
 
 enum class ForsendelseTypeTo {

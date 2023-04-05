@@ -3,7 +3,12 @@ management:
     web:
       exposure:
         include: "prometheus,health"
-
+#spring:
+#  jpa:
+#    properties:
+#      hibernate:
+#        format_sql: true
+#    show-sql: true
 springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
 spring.main.banner-mode: off
 #springfox.documentation.swagger-ui.base-url: /

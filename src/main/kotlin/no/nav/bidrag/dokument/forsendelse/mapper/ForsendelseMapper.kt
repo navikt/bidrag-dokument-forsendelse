@@ -46,6 +46,17 @@ fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
     DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
 }
 
+fun Dokument.tilDokumeentStatusTo() = when (dokumentStatus) {
+    DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusTo.MÅ_KONTROLLERES
+    DokumentStatus.KONTROLLERT -> DokumentStatusTo.KONTROLLERT
+    DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
+    DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
+    DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT
+    DokumentStatus.IKKE_BESTILT -> DokumentStatusTo.IKKE_BESTILT
+    DokumentStatus.BESTILLING_FEILET -> DokumentStatusTo.BESTILLING_FEILET
+    DokumentStatus.AVBRUTT -> DokumentStatusTo.AVBRUTT
+}
+
 fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
     DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
@@ -141,6 +152,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     },
     gjelderIdent = this.gjelderIdent,
     tittel = this.dokumenter.hoveddokument?.tittel,
+    tema = this.tema.name,
     saksnummer = this.saksnummer,
     forsendelseType = when (this.forsendelseType) {
         ForsendelseType.NOTAT -> ForsendelseTypeTo.NOTAT
@@ -166,18 +178,9 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,
             arkivsystem = it.tilArkivSystemDto(),
-            metadata = it.metadata,
+            redigeringMetadata = it.metadata.hentRedigeringmetadata(),
             dokumentDato = it.dokumentDato,
-            status = when (it.dokumentStatus) {
-                DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusTo.MÅ_KONTROLLERES
-                DokumentStatus.KONTROLLERT -> DokumentStatusTo.KONTROLLERT
-                DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
-                DokumentStatus.UNDER_PRODUKSJON -> DokumentStatusTo.UNDER_PRODUKSJON
-                DokumentStatus.FERDIGSTILT -> DokumentStatusTo.FERDIGSTILT
-                DokumentStatus.IKKE_BESTILT -> DokumentStatusTo.IKKE_BESTILT
-                DokumentStatus.BESTILLING_FEILET -> DokumentStatusTo.BESTILLING_FEILET
-                DokumentStatus.AVBRUTT -> DokumentStatusTo.AVBRUTT
-            }
+            status = it.tilDokumeentStatusTo()
         )
     }
 )
