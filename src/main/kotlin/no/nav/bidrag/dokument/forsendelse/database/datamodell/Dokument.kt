@@ -1,16 +1,28 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.vladmihalcea.hibernate.type.ImmutableType
+import com.vladmihalcea.hibernate.type.util.Configuration
+import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
 import no.nav.bidrag.dokument.forsendelse.database.model.*
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import org.hibernate.engine.spi.SharedSessionContractImplementor
+import org.hibernate.type.spi.TypeBootstrapContext
+import org.springframework.data.util.ProxyUtils
+import java.io.Serializable
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.Types
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
+private val log = KotlinLogging.logger {}
 
 @Entity(name = "dokument")
 @Table(
@@ -18,7 +30,7 @@ import javax.persistence.*
         UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
     ]
 )
-@TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType::class)
+@TypeDef(name = "hstore", typeClass = DokumentMetadataDoConverter::class)
 data class Dokument(
     @Id
     @GeneratedValue(generator = "sequence-generator")
@@ -55,7 +67,7 @@ data class Dokument(
 
     @Type(type = "hstore")
     @Column(columnDefinition = "hstore", name = "metadata")
-    private val _metadata: Map<String, String> = mapOf(),
+    val metadata: DokumentMetadataDo = DokumentMetadataDo(),
 
     @ManyToOne
     @JoinColumn(name = "forsendelse_id")
@@ -65,13 +77,6 @@ data class Dokument(
     override fun toString(): String {
         return this.toStringByReflection(listOf("forsendelse"))
     }
-
-    val metadata
-        get(): DokumentMetadata {
-            val map = DokumentMetadata()
-            _metadata.let { map.putAll(_metadata) }
-            return map
-        }
 
     val erFraAnnenKilde get() = !(dokumentreferanseOriginal == null && journalpostIdOriginal == null)
     val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
@@ -92,9 +97,19 @@ data class Dokument(
 
 }
 
-class DokumentMetadata : MutableMap<String, String> by mutableMapOf() {
+class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
+
+    companion object {
+        fun from(initValue: Map<String, String> = hashMapOf()): DokumentMetadataDo {
+            val dokmap = DokumentMetadataDo()
+            dokmap.putAll(initValue)
+            return dokmap
+        }
+    }
 
     private val REDIGERING_METADATA_KEY = "redigering_metadata"
+    private val DOKUMENT_DETALJER_KEY = "dokument_detaljer"
+    private val objectMapper = ObjectMapper().findAndRegisterModules()
 
     fun lagreRedigeringmetadata(data: String) {
         remove(REDIGERING_METADATA_KEY)
@@ -104,18 +119,63 @@ class DokumentMetadata : MutableMap<String, String> by mutableMapOf() {
     fun hentRedigeringmetadata(): String? {
         return get(REDIGERING_METADATA_KEY)
     }
+
+    fun lagreDokumentDetaljer(data: DokumentDetaljer) {
+        remove(DOKUMENT_DETALJER_KEY)
+        put(DOKUMENT_DETALJER_KEY, objectMapper.writeValueAsString(data))
+    }
+
+    fun hentDokumentDetaljer(): DokumentDetaljer? {
+        return get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, DokumentDetaljer::class.java) }
+    }
+
+
+    fun copy(): DokumentMetadataDo {
+        return from(this)
+    }
 }
 
 
-class DokumentMetadataConvert : AttributeConverter<DokumentMetadata, HashMap<String, String>> {
-    override fun convertToEntityAttribute(dbData: HashMap<String, String>?): DokumentMetadata {
-        val map = DokumentMetadata()
-        dbData?.let { map.putAll(it) }
-        return map
+class DokumentMetadataDoConverter(typeBootstrapContext: TypeBootstrapContext) : ImmutableType<DokumentMetadataDo>(
+    DokumentMetadataDo::class.java,
+    Configuration(typeBootstrapContext.configurationSettings)
+) {
+    override fun sqlTypes(): IntArray {
+        return intArrayOf(Types.OTHER)
     }
 
-    override fun convertToDatabaseColumn(dbData: DokumentMetadata?): HashMap<String, String> {
-        return dbData?.let { HashMap(it) } ?: hashMapOf()
+    override fun get(rs: ResultSet, names: Array<out String>?, session: SharedSessionContractImplementor?, owner: Any): DokumentMetadataDo {
+        val map = names?.let { rs.getObject(names[0]) as Map<String, String>? } ?: emptyMap()
+        return DokumentMetadataDo.from(map)
     }
 
+    override fun set(st: PreparedStatement, value: DokumentMetadataDo?, index: Int, session: SharedSessionContractImplementor) {
+        st.setObject(index, value?.toMap())
+    }
+}
+
+@MappedSuperclass
+abstract class BaseEntity<T : Serializable> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: T? = null
+
+    override fun equals(other: Any?): Boolean {
+        other ?: return false
+
+        if (this === other) return true
+
+        if (javaClass != ProxyUtils.getUserClass(other)) return false
+
+        other as BaseEntity<*>
+
+        return this.id != null && this.id == other.id
+    }
+
+    override fun hashCode() = 25
+
+    override fun toString(): String {
+        return "${this.javaClass.simpleName}(id=$id)"
+    }
 }

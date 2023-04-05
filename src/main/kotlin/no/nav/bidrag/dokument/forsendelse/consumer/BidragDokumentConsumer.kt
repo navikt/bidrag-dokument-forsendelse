@@ -27,6 +27,15 @@ class BidragDokumentConsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun hentDokumentMetadata(journalpostId: String, dokumentId: String?): List<DokumentMetadata> {
+        return optionsForEntity(
+            UriComponentsBuilder.fromUri(url)
+                .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}")
+                .build().toUri()
+        ) ?: emptyList()
+    }
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
         return getForEntity(
             UriComponentsBuilder.fromUri(url)

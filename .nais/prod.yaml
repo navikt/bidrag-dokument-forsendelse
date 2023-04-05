@@ -1,4 +1,5 @@
 name: bidrag-dokument-forsendelse
+bucket_name: bidrag-dokument-forsendelse-prod
 ingresses:
   - https://bidrag-dokument-forsendelse.intern.nav.no
 env:

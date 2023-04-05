@@ -1,4 +1,5 @@
 name: bidrag-dokument-forsendelse-feature
+bucket_name: bidrag-dokument-forsendelse-feature
 ingresses:
   - https://bidrag-dokument-forsendelse-feature.dev.intern.nav.no
   - https://bidrag-dokument-forsendelse-feature.intern.dev.nav.no

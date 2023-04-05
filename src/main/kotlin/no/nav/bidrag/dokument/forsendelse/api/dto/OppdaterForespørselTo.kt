@@ -26,6 +26,5 @@ data class OppdaterDokumentForespørsel(
     override val dokumentmalId: String? = null,
     override val dokumentreferanse: String? = null,
     override val tittel: String? = null,
-    override val redigeringMetadata: String? = null,
     val fjernTilknytning: Boolean? = false,
 ) : DokumentForespørsel()

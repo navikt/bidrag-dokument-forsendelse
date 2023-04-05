@@ -101,7 +101,6 @@ object ForespørselMapper {
         dokumentmalId = dokumentmalId,
         journalpostId = journalpostId,
         dokumentDato = dokumentDato,
-        arkivsystem = arkivsystem,
-        metadata = metadata
+        arkivsystem = arkivsystem
     )
 }

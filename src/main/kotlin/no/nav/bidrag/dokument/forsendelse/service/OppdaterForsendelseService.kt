@@ -96,7 +96,7 @@ class OppdaterForsendelseService(
                     else -> AvsenderMottakerDtoIdType.FNR
                 }
             ) else null,
-            referanseId = "BIF_${forsendelse.forsendelseId}_lokal",
+            referanseId = "BIF_${forsendelse.forsendelseId}",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
             journalposttype = when (forsendelse.forsendelseType) {
@@ -108,7 +108,7 @@ class OppdaterForsendelseService(
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,
                     tittel = it.tittel,
-                    fysiskDokument = hentFysiskDokument(it)
+                    fysiskDokument = fysiskDokumentService.hentFysiskDokument(it)
                 )
             },
             tilknyttSaker = listOf(forsendelse.saksnummer),
@@ -140,20 +140,6 @@ class OppdaterForsendelseService(
 
         return respons
 
-    }
-
-    fun hentFysiskDokument(dokument: Dokument): ByteArray {
-        val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
-
-        return if (dokument.erFraAnnenKilde) bidragDokumentConsumer.hentDokument(
-            dokument.journalpostId!!, dokument.dokumentreferanseOriginal
-        )!!
-        else if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) fysiskDokumentService.hentDokument(
-            dokument.forsendelse.forsendelseId!!,
-            dokument.dokumentreferanse
-        ) else bidragDokumentConsumer.hentDokument(
-            dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse
-        )!!
     }
 
     fun fjernDokumentFraForsendelse(
@@ -279,11 +265,11 @@ class OppdaterForsendelseService(
                     it.copy(
                         tittel = forespørsel.tittel ?: it.tittel,
                         dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato,
-                        _metadata = forespørsel.redigeringMetadata?.let { rd ->
-                            val metadata = it.metadata
-                            metadata.lagreRedigeringmetadata(rd)
-                            metadata.toMap()
-                        } ?: it.metadata,
+//                        metadata = forespørsel.redigeringMetadata?.let { rd ->
+//                            val metadata = it.metadata
+//                            metadata.lagreRedigeringmetadata(rd)
+//                            metadata.toMap()
+//                        } ?: it.metadata,
                     )
                 } else it
 
@@ -330,11 +316,11 @@ class OppdaterForsendelseService(
                 eksisterendeDokument?.copy(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks,
-                    _metadata = it.redigeringMetadata?.let {
-                        val metadata = eksisterendeDokument.metadata
-                        metadata.lagreRedigeringmetadata(it)
-                        metadata
-                    } ?: eksisterendeDokument.metadata,
+//                    _metadata = it.redigeringMetadata?.let {
+//                        val metadata = eksisterendeDokument.metadata
+//                        metadata.lagreRedigeringmetadata(it)
+//                        metadata
+//                    } ?: eksisterendeDokument.metadata,
                     dokumentDato = if (indeks == 0 && forsendelse.erNotat) forespørsel.dokumentDato
                         ?: eksisterendeDokument.dokumentDato else eksisterendeDokument.dokumentDato
                 ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())

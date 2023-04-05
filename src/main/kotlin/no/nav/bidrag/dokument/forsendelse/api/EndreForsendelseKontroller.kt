@@ -99,7 +99,7 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
 
     @PatchMapping("/{forsendelseIdMedPrefix}/dokument/{dokumentreferanse}/opphevFerdigstill")
     @Operation(
-        summary = "Ferdigstill dokument i en forsendelse",
+        summary = "Opphev ferdigstilling av dokument i en forsendelse",
         security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
