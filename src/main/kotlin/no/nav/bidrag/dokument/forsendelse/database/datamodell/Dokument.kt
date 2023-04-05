@@ -5,7 +5,9 @@ import com.vladmihalcea.hibernate.type.ImmutableType
 import com.vladmihalcea.hibernate.type.util.Configuration
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
-import no.nav.bidrag.dokument.forsendelse.database.model.*
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
@@ -13,21 +15,29 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.engine.spi.SharedSessionContractImplementor
 import org.hibernate.type.spi.TypeBootstrapContext
-import org.springframework.data.util.ProxyUtils
-import java.io.Serializable
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 
 private val log = KotlinLogging.logger {}
 
 @Entity(name = "dokument")
 @Table(
-    name = "dokument", uniqueConstraints = [
-        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
+    name = "dokument",
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"])
     ]
 )
 @TypeDef(name = "hstore", typeClass = DokumentMetadataDoConverter::class)
@@ -84,17 +94,20 @@ data class Dokument(
 
     val journalpostId
         get() = run {
-            if (journalpostIdOriginal.isNullOrEmpty()) null
-            else if (harJournalpostIdArkivPrefiks()) journalpostIdOriginal
-            else when (arkivsystem) {
-                DokumentArkivSystem.JOARK -> "JOARK-$journalpostIdOriginal"
-                DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostIdOriginal"
-                else -> journalpostIdOriginal
+            if (journalpostIdOriginal.isNullOrEmpty()) {
+                null
+            } else if (harJournalpostIdArkivPrefiks()) {
+                journalpostIdOriginal
+            } else {
+                when (arkivsystem) {
+                    DokumentArkivSystem.JOARK -> "JOARK-$journalpostIdOriginal"
+                    DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostIdOriginal"
+                    else -> journalpostIdOriginal
+                }
             }
         }
 
     private fun harJournalpostIdArkivPrefiks(): Boolean = journalpostIdOriginal?.contains("-") == true
-
 }
 
 class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
@@ -129,12 +142,10 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
         return get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, DokumentDetaljer::class.java) }
     }
 
-
     fun copy(): DokumentMetadataDo {
         return from(this)
     }
 }
-
 
 class DokumentMetadataDoConverter(typeBootstrapContext: TypeBootstrapContext) : ImmutableType<DokumentMetadataDo>(
     DokumentMetadataDo::class.java,
@@ -151,31 +162,5 @@ class DokumentMetadataDoConverter(typeBootstrapContext: TypeBootstrapContext) : 
 
     override fun set(st: PreparedStatement, value: DokumentMetadataDo?, index: Int, session: SharedSessionContractImplementor) {
         st.setObject(index, value?.toMap())
-    }
-}
-
-@MappedSuperclass
-abstract class BaseEntity<T : Serializable> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: T? = null
-
-    override fun equals(other: Any?): Boolean {
-        other ?: return false
-
-        if (this === other) return true
-
-        if (javaClass != ProxyUtils.getUserClass(other)) return false
-
-        other as BaseEntity<*>
-
-        return this.id != null && this.id == other.id
-    }
-
-    override fun hashCode() = 25
-
-    override fun toString(): String {
-        return "${this.javaClass.simpleName}(id=$id)"
     }
 }

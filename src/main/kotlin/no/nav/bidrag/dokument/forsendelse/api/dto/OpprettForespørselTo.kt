@@ -14,7 +14,8 @@ data class OpprettForsendelseForespørsel(
         description = """
     Dokumenter som skal knyttes til journalpost. 
     En journalpost må minst ha et dokument. 
-    Det første dokument i meldingen blir tilknyttet som hoveddokument på journalposten.""", required = true
+    Det første dokument i meldingen blir tilknyttet som hoveddokument på journalposten.""",
+        required = true
     )
     val dokumenter: List<OpprettDokumentForespørsel> = emptyList(),
     @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String,
@@ -22,14 +23,14 @@ data class OpprettForsendelseForespørsel(
     @Schema(description = "Identifikator til batch kjøring forsendelsen ble opprettet av") val batchId: String? = null,
     @Schema(description = "Tema forsendelsen skal opprettes med") val tema: JournalTema? = null,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
-    @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null,
+    @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null
 )
 
 @Schema(description = "Metadata til en respons etter forsendelse ble opprettet")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettForsendelseRespons(
     @Schema(description = "ForsendelseId på forsendelse som ble opprettet") val forsendelseId: Long? = null,
-    @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList(),
+    @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList()
 )
 
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")

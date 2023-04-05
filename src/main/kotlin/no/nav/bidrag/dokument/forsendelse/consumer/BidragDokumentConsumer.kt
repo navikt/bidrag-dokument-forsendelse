@@ -5,6 +5,7 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
 import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty

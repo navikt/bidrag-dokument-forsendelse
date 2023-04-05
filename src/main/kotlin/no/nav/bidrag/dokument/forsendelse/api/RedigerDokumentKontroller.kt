@@ -24,12 +24,12 @@ class RedigerDokumentKontroller(
     @PatchMapping("/{forsendelseIdMedPrefix}/{dokumentreferanse}")
     @Operation(
         summary = "Oppdater dokument redigeringdata",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Redigering metadata oppdatert"),
-            ApiResponse(responseCode = "404", description = "Fant ingen dokument med forsendelseId og dokumentreferanse i forespørsel"),
+            ApiResponse(responseCode = "404", description = "Fant ingen dokument med forsendelseId og dokumentreferanse i forespørsel")
         ]
     )
     fun oppdaterDokumentRedigeringmetadata(
@@ -44,20 +44,19 @@ class RedigerDokumentKontroller(
     @GetMapping("/{forsendelseIdMedPrefix}/{dokumentreferanse}")
     @Operation(
         summary = "Hent dokument redigering metadata",
-        security = [SecurityRequirement(name = "bearer-key")],
+        security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Redigering metadata hentet"),
-            ApiResponse(responseCode = "404", description = "Fant ingen dokument med forsendelseId og dokumentreferanse i forespørsel"),
+            ApiResponse(responseCode = "404", description = "Fant ingen dokument med forsendelseId og dokumentreferanse i forespørsel")
         ]
     )
     fun hentDokumentRedigeringMetadata(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-        @PathVariable dokumentreferanse: String,
+        @PathVariable dokumentreferanse: String
     ): DokumentRedigeringMetadataResponsDto {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return redigerDokumentService.hentDokumentredigeringMetadata(forsendelseId, dokumentreferanse)
     }
-
 }

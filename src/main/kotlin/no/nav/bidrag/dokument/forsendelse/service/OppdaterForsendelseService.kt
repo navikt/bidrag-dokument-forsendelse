@@ -1,7 +1,13 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.*
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
+import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
+import no.nav.bidrag.dokument.dto.JournalpostType
+import no.nav.bidrag.dokument.dto.MottakUtsendingKanal
+import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
+import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
@@ -10,7 +16,11 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.*
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumeentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
@@ -21,7 +31,15 @@ import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValider
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanLeggeTilDokument
-import no.nav.bidrag.dokument.forsendelse.utvidelser.*
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumenterIkkeSlettet
+import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumenterLogiskSlettet
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.skalDokumentSlettes
+import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.validerGyldigEndring
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -56,7 +74,6 @@ class OppdaterForsendelseService(
             )
         )
 
-
         return OppdaterForsendelseResponse(
             forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
             dokumenter = oppdatertForsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
@@ -88,14 +105,18 @@ class OppdaterForsendelseService(
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
-            avsenderMottaker = if (!forsendelse.erNotat) AvsenderMottakerDto(
-                ident = forsendelse.mottaker!!.ident,
-                navn = forsendelse.mottaker.navn,
-                type = when (forsendelse.mottaker.identType) {
-                    MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
-                    else -> AvsenderMottakerDtoIdType.FNR
-                }
-            ) else null,
+            avsenderMottaker = if (!forsendelse.erNotat) {
+                AvsenderMottakerDto(
+                    ident = forsendelse.mottaker!!.ident,
+                    navn = forsendelse.mottaker.navn,
+                    type = when (forsendelse.mottaker.identType) {
+                        MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
+                        else -> AvsenderMottakerDtoIdType.FNR
+                    }
+                )
+            } else {
+                null
+            },
             referanseId = "BIF_${forsendelse.forsendelseId}",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
@@ -139,7 +160,6 @@ class OppdaterForsendelseService(
         log.info { "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. Opprettet journalpostId=${respons.journalpostId}." }
 
         return respons
-
     }
 
     fun fjernDokumentFraForsendelse(
@@ -153,7 +173,7 @@ class OppdaterForsendelseService(
             .filter { it.dokumentreferanse != dokumentreferanse || it.dokumentreferanseOriginal == null }
             .map {
                 it.copy(
-                    slettetTidspunkt = if (it.dokumentreferanse == dokumentreferanse) LocalDate.now() else null,
+                    slettetTidspunkt = if (it.dokumentreferanse == dokumentreferanse) LocalDate.now() else null
                 )
             }
 
@@ -175,7 +195,6 @@ class OppdaterForsendelseService(
             }
         )
     }
-
 
     fun knyttDokumentTilForsendelse(
         forsendelseId: Long,
@@ -212,9 +231,8 @@ class OppdaterForsendelseService(
 
     fun opphevFerdigstillDokument(
         forsendelse: Forsendelse,
-        dokumentreferanse: String,
+        dokumentreferanse: String
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 if (it.dokumentreferanse == dokumentreferanse) {
@@ -224,8 +242,9 @@ class OppdaterForsendelseService(
                             else -> it.dokumentStatus
                         }
                     )
-                } else it
-
+                } else {
+                    it
+                }
             }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
@@ -233,9 +252,8 @@ class OppdaterForsendelseService(
 
     fun ferdigstillDokument(
         forsendelse: Forsendelse,
-        dokumentreferanse: String,
+        dokumentreferanse: String
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 if (it.dokumentreferanse == dokumentreferanse) {
@@ -246,8 +264,9 @@ class OppdaterForsendelseService(
                             else -> it.dokumentStatus
                         }
                     )
-                } else it
-
+                } else {
+                    it
+                }
             }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
@@ -258,21 +277,21 @@ class OppdaterForsendelseService(
         dokumentreferanse: String,
         forespørsel: OppdaterDokumentForespørsel
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 if (it.dokumentreferanse == dokumentreferanse) {
                     it.copy(
                         tittel = forespørsel.tittel ?: it.tittel,
-                        dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato,
+                        dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato
 //                        metadata = forespørsel.redigeringMetadata?.let { rd ->
 //                            val metadata = it.metadata
 //                            metadata.lagreRedigeringmetadata(rd)
 //                            metadata.toMap()
 //                        } ?: it.metadata,
                     )
-                } else it
-
+                } else {
+                    it
+                }
             }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
@@ -282,7 +301,6 @@ class OppdaterForsendelseService(
         forsendelse: Forsendelse,
         forespørsel: OppdaterForsendelseForespørsel
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .mapIndexed { i, it ->
                 val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)
@@ -301,7 +319,6 @@ class OppdaterForsendelseService(
         forsendelse: Forsendelse,
         forespørsel: OppdaterForsendelseForespørsel
     ): List<Dokument> {
-
         val logiskSlettetDokumenterFraForespørsel =
             forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde }
                 .map {
@@ -321,8 +338,12 @@ class OppdaterForsendelseService(
 //                        metadata.lagreRedigeringmetadata(it)
 //                        metadata
 //                    } ?: eksisterendeDokument.metadata,
-                    dokumentDato = if (indeks == 0 && forsendelse.erNotat) forespørsel.dokumentDato
-                        ?: eksisterendeDokument.dokumentDato else eksisterendeDokument.dokumentDato
+                    dokumentDato = if (indeks == 0 && forsendelse.erNotat) {
+                        forespørsel.dokumentDato
+                            ?: eksisterendeDokument.dokumentDato
+                    } else {
+                        eksisterendeDokument.dokumentDato
+                    }
                 ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
             } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
 

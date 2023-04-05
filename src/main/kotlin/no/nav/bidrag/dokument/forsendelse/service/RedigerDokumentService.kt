@@ -30,7 +30,6 @@ class RedigerDokumentService(
     private val fysiskDokumentService: FysiskDokumentService
 ) {
 
-
     fun oppdaterDokumentRedigeringMetadata(forsendelseId: Long, dokumentreferanse: String, redigeringMetadata: String) {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
             ?: fantIkkeForsendelse(forsendelseId)
@@ -70,15 +69,17 @@ class RedigerDokumentService(
     }
 
     private fun hentDokumentDetaljer(dokument: Dokument, dokumentMetadata: DokumentMetadata) {
-
     }
 
     private fun hentDokumentMetadata(dokument: Dokument, forsendelseId: Long): List<DokumentMetadata> {
-        return if (dokument.erFraAnnenKilde) bidragDokumentConsumer.hentDokumentMetadata(
-            dokument.journalpostId!!,
-            dokument.dokumentreferanseOriginal
-        )
-        else fysiskDokumentService.hentDokumentMetadata(forsendelseId, dokumentreferanse = dokument.dokumentreferanse)
+        return if (dokument.erFraAnnenKilde) {
+            bidragDokumentConsumer.hentDokumentMetadata(
+                dokument.journalpostId!!,
+                dokument.dokumentreferanseOriginal
+            )
+        } else {
+            fysiskDokumentService.hentDokumentMetadata(forsendelseId, dokumentreferanse = dokument.dokumentreferanse)
+        }
     }
 
     private fun oppdaterDokumentRedigeringMetadata(
@@ -86,7 +87,6 @@ class RedigerDokumentService(
         dokumentreferanse: String,
         redigeringMetadata: String
     ): List<Dokument> {
-
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 if (it.dokumentreferanse == dokumentreferanse) {
@@ -95,10 +95,11 @@ class RedigerDokumentService(
                             val metadata = it.metadata
                             metadata.lagreRedigeringmetadata(rd)
                             metadata.copy()
-                        },
+                        }
                     )
-                } else it
-
+                } else {
+                    it
+                }
             }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge

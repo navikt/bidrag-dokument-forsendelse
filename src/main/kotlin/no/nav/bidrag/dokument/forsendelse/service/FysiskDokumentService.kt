@@ -41,15 +41,22 @@ class FysiskDokumentService(val forsendelseTjeneste: ForsendelseTjeneste, val bi
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
 
-        return if (dokument.erFraAnnenKilde) bidragDokumentConsumer.hentDokument(
-            dokument.journalpostId!!, dokument.dokumentreferanseOriginal
-        )!!
-        else if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) hentDokument(
-            dokument.forsendelse.forsendelseId!!,
-            dokument.dokumentreferanse
-        ) else bidragDokumentConsumer.hentDokument(
-            dokument.forsendelseIdMedPrefix, dokument.dokumentreferanse
-        )!!
+        return if (dokument.erFraAnnenKilde) {
+            bidragDokumentConsumer.hentDokument(
+                dokument.journalpostId!!,
+                dokument.dokumentreferanseOriginal
+            )!!
+        } else if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG) {
+            hentDokument(
+                dokument.forsendelse.forsendelseId!!,
+                dokument.dokumentreferanse
+            )
+        } else {
+            bidragDokumentConsumer.hentDokument(
+                dokument.forsendelseIdMedPrefix,
+                dokument.dokumentreferanse
+            )!!
+        }
     }
 
     fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String?): List<DokumentMetadata> {
