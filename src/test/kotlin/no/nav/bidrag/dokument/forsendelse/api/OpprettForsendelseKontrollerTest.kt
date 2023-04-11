@@ -11,12 +11,12 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
@@ -121,17 +121,17 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtaksId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtaksId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"}"
                 )
             }
         }

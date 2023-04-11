@@ -30,6 +30,8 @@
     <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
     <testcontainers.version>1.17.6</testcontainers.version>
     <shedlock.version>5.1.0</shedlock.version>
+    <google-api-extention.version>2.24.0</google-api-extention.version>
+    <google-cloud-storage.version>2.20.2</google-cloud-storage.version>
   </properties>
 
   <repositories>
@@ -43,10 +45,10 @@
       <name>Confluent kafka</name>
       <url>https://packages.confluent.io/maven/</url>
     </repository>
-      <repository>
-        <id>github-commons</id>
-        <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
-      </repository>
+    <repository>
+      <id>github-commons</id>
+      <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -122,6 +124,16 @@
       <version>${shedlock.version}</version>
     </dependency>
     <!-- Database -->
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage</artifactId>
+      <version>${google-cloud-storage.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api</groupId>
+      <artifactId>gax</artifactId>
+      <version>${google-api-extention.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.vladmihalcea</groupId>
       <artifactId>hibernate-types-55</artifactId>
@@ -361,54 +373,54 @@
           </dependency>
         </dependencies>
       </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>ktlint</id>
-                        <phase>verify</phase>
-                        <configuration>
-                            <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
-                                      classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
-                                    <arg value="src/**/*.kt"/>
-                                </java>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>ktlint-format</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
-                                      classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
-                                    <jvmarg value="--add-opens"/>
-                                    <jvmarg value="java.base/java.lang=ALL-UNNAMED"/>
-                                    <arg value="-F"/>
-                                    <arg value="src/**/*.kt"/>
-                                </java>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.pinterest</groupId>
-                        <artifactId>ktlint</artifactId>
-                        <version>0.47.1</version>
-                    </dependency>
-                    <!-- additional 3rd party ruleset(s) can be specified here -->
-                </dependencies>
-            </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>ktlint</id>
+            <phase>verify</phase>
+            <configuration>
+              <target name="ktlint">
+                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                  classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
+                  <arg value="src/**/*.kt"/>
+                </java>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>ktlint-format</id>
+            <phase>validate</phase>
+            <configuration>
+              <target name="ktlint">
+                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                  classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
+                  <jvmarg value="--add-opens"/>
+                  <jvmarg value="java.base/java.lang=ALL-UNNAMED"/>
+                  <arg value="-F"/>
+                  <arg value="src/**/*.kt"/>
+                </java>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.pinterest</groupId>
+            <artifactId>ktlint</artifactId>
+            <version>0.47.1</version>
+          </dependency>
+          <!-- additional 3rd party ruleset(s) can be specified here -->
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
 </project>

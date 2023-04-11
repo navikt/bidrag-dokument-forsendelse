@@ -1,4 +1,4 @@
-package no.nav.bidrag.dokument.forsendelse.database.model
+package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
 enum class ForsendelseTema(val beskrivelse: String) {
     BID("Bidrag"),

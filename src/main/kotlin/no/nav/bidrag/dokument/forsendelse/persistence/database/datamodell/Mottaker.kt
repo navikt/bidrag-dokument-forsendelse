@@ -1,6 +1,6 @@
-package no.nav.bidrag.dokument.forsendelse.database.datamodell
+package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
-import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.EnumType

@@ -1,9 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 
 val Forsendelse.dokumentDato get() = dokumenter.hoveddokument?.dokumentDato
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT

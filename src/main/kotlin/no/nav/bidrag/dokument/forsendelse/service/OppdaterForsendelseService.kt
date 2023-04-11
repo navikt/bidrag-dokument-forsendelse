@@ -14,17 +14,17 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumeentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
@@ -333,11 +333,6 @@ class OppdaterForsendelseService(
                 eksisterendeDokument?.copy(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks,
-//                    _metadata = it.redigeringMetadata?.let {
-//                        val metadata = eksisterendeDokument.metadata
-//                        metadata.lagreRedigeringmetadata(it)
-//                        metadata
-//                    } ?: eksisterendeDokument.metadata,
                     dokumentDato = if (indeks == 0 && forsendelse.erNotat) {
                         forespørsel.dokumentDato
                             ?: eksisterendeDokument.dokumentDato

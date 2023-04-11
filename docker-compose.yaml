@@ -35,7 +35,16 @@ services:
       POSTGRES_DB: bidrag-dokument-forsendelse
     volumes:
       - db:/var/lib/postgresql/data
+  bucket:
+    image: fsouza/fake-gcs-server:latest
+    command: [ "-scheme", "http" ]
+    ports:
+      - "4443:4443"
+    volumes:
+      - ${PWD}/src/test/resources/bucket:/data
 
 volumes:
   db:
+    driver: local
+  storage:
     driver: local

@@ -2,11 +2,11 @@ package no.nav.bidrag.dokument.forsendelse.service.dao
 
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentDo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component

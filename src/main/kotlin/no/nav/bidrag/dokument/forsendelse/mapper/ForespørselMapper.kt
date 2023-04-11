@@ -11,18 +11,18 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Adresse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.service.KodeverkService
 import java.time.LocalDateTime
 

@@ -1,14 +1,14 @@
-package no.nav.bidrag.dokument.forsendelse.database.datamodell
+package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vladmihalcea.hibernate.type.ImmutableType
 import com.vladmihalcea.hibernate.type.util.Configuration
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
@@ -92,6 +92,7 @@ data class Dokument(
     val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
     val dokumentreferanse get() = dokumentreferanseOriginal ?: "BIF$dokumentId"
 
+    val filnavn get() = "${forsendelse.forsendelseId}_$dokumentreferanse"
     val journalpostId
         get() = run {
             if (journalpostIdOriginal.isNullOrEmpty()) {

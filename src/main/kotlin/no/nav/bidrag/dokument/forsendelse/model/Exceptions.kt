@@ -24,6 +24,9 @@ fun kanIkkeDistribuereForsendelse(forsendelseId: Long, begrunnelse: String): Not
 fun distribusjonFeilet(forsendelseId: Long): Nothing =
     throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved bestilling av distribusjon av forsendelse $forsendelseId")
 
+fun fantIkkeDokumentfil(forsendelseId: Long, dokumentreferanse: String): Nothing =
+    throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Finnes ingen dokumentfil i bucket for $dokumentreferanse i forsendelse $forsendelseId")
+
 fun fantIkkeDokument(forsendelseId: Long, dokumentreferanse: String): Nothing =
     throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Finnes ingen dokument $dokumentreferanse i forsendelse $forsendelseId")
 

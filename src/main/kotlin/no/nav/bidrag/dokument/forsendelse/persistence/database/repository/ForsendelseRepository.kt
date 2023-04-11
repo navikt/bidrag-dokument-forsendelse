@@ -1,6 +1,6 @@
-package no.nav.bidrag.dokument.forsendelse.database.repository
+package no.nav.bidrag.dokument.forsendelse.persistence.database.repository
 
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

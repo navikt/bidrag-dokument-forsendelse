@@ -1,8 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 
 val Dokument.forsendelseIdMedPrefix get() = this.forsendelse.forsendelseIdMedPrefix
 fun List<Dokument>.hentDokument(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }

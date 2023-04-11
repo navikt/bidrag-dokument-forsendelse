@@ -8,6 +8,8 @@ KODEVERK_URL: https://kodeverk.dev.adeo.no
 #DB_USERNAME=ugur.alpay.cenar@nav.no
 #DB_PASSWORD=asdsadsadasd
 
+BUCKET_NAME: bidrag-dokument-forsendelse-local
+GCP_HOST: http://0.0.0.0:4443
 spring:
   flyway:
     enabled: true

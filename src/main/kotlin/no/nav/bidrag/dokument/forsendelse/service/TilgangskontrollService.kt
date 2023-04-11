@@ -2,8 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import no.nav.bidrag.commons.security.SikkerhetsKontekst
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragTIlgangskontrollConsumer
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ingenTilgang
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import org.springframework.stereotype.Service
 
 @Service

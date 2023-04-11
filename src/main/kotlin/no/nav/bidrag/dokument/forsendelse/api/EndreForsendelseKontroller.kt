@@ -82,25 +82,6 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
         return oppdaterForsendelseService.oppdaterDokument(forsendelseId, dokumentreferanse, forespørsel)
     }
 
-    @PatchMapping("/{forsendelseIdMedPrefix}/dokument/{dokumentreferanse}/ferdigstill")
-    @Operation(
-        summary = "Ferdigstill dokument i en forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")]
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Dokument ferdigstilt"),
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id")
-        ]
-    )
-    fun ferdigstillDokument(
-        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-        @PathVariable dokumentreferanse: String
-    ): DokumentRespons {
-        val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return oppdaterForsendelseService.ferdigstillDokument(forsendelseId, dokumentreferanse)
-    }
-
     @PatchMapping("/{forsendelseIdMedPrefix}/dokument/{dokumentreferanse}/opphevFerdigstill")
     @Operation(
         summary = "Opphev ferdigstilling av dokument i en forsendelse",
