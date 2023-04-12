@@ -19,7 +19,7 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 class GcpCloudStorage(
     @Value("\${BUCKET_NAME}") private val bucketNavn: String,
-    @Value("\${GCP_DOCUMENT_ENCRYPTION_KEY}") private val encryptionKey: String,
+    @Value("\${GCP_BUCKET_DOCUMENT_KMS_KEY_PATH}") private val kmsKeyPath: String,
     @Value("\${GCP_HOST:#{null}}") private val host: String? = null
 ) {
 
@@ -42,7 +42,7 @@ class GcpCloudStorage(
     fun hentFil(filnavn: String): ByteArray {
         LOGGER.info("Henter fil ${lagBlobinfo(filnavn).blobId} fra bucket $bucketNavn")
         try {
-            return storage.readAllBytes(lagBlobinfo(filnavn).blobId, Storage.BlobSourceOption.decryptionKey(encryptionKey))
+            return storage.readAllBytes(lagBlobinfo(filnavn).blobId)
         } catch (e: StorageException) {
             throw HttpClientErrorException(
                 HttpStatus.NOT_FOUND,
@@ -52,7 +52,7 @@ class GcpCloudStorage(
     }
 
     private fun hentWriteChannel(filnavn: String): WriteChannel {
-        return storage.writer(lagBlobinfo(filnavn), Storage.BlobWriteOption.encryptionKey(encryptionKey), createObjectUploadPrecondition(filnavn))
+        return storage.writer(lagBlobinfo(filnavn), Storage.BlobWriteOption.kmsKeyName(kmsKeyPath), createObjectUploadPrecondition(filnavn))
     }
 
     private fun createObjectUploadPrecondition(filnavn: String): Storage.BlobWriteOption {
