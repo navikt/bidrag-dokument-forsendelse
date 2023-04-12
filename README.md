@@ -85,3 +85,13 @@ og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-dokument
 ```
 docker run -v $(pwd)/.nais:/nais navikt/deployment:v1 ./deploy --dry-run --print-payload --resource /nais/nais.yaml --vars /nais/feature.yaml
 ```
+
+#### Create GCP bucket encryption key secret
+
+Bidrag-ui bruker redis for session lagring. For å kjøre bidrag-ui på NAIS må en redis secret bli opprettet. Redis secret brukes for sikker
+kommunikasjon med redis instansen.
+Kjør følgende kommando for å opprette secret på namespace bidrag
+
+``
+kubectl create secret generic bidrag-dokument-forsendelse-encryption-key --from-literal=GCP_DOCUMENT_ENCRYPTION_KEY=$(cat /dev/urandom | env LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1) -n=bidrag
+``

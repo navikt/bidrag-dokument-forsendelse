@@ -17,6 +17,7 @@ KAFKA_BROKERS: localhost:9093
 KAFKA_MAX_RETRY: 0
 BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
+GCP_DOCUMENT_ENCRYPTION_KEY: 3123
 no.nav.security.jwt:
   client:
     registration:

@@ -10,6 +10,7 @@ KODEVERK_URL: https://kodeverk.dev.adeo.no
 
 BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
+GCP_DOCUMENT_ENCRYPTION_KEY: asdsadasd3123asdcxccsdcd
 spring:
   flyway:
     enabled: true
