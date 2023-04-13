@@ -16,7 +16,6 @@ import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
@@ -26,6 +25,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettJournalpostResponse
+import no.nav.bidrag.domain.ident.PersonIdent
+import no.nav.bidrag.domain.string.FulltNavn
+import no.nav.bidrag.transport.person.PersonDto
 import org.junit.Assert
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -43,7 +45,10 @@ class StubUtils {
         }
     }
 
-    fun stubHentPerson(fnr: String? = null, personResponse: HentPersonResponse = HentPersonResponse(MOTTAKER_IDENT, MOTTAKER_NAVN)) {
+    fun stubHentPerson(
+        fnr: String? = null,
+        personResponse: PersonDto = PersonDto(PersonIdent(MOTTAKER_IDENT), FulltNavn(MOTTAKER_NAVN))
+    ) {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/person/informasjon"))
                 .withRequestBody(if (fnr.isNullOrEmpty()) AnythingPattern() else ContainsPattern(fnr)).willReturn(
