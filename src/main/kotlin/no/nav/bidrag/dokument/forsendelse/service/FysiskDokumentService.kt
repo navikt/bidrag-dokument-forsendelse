@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
 import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
@@ -8,6 +9,7 @@ import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeDokument
+import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -38,6 +40,22 @@ class FysiskDokumentService(
 
         val arkivSystem = dokument.arkivsystem
         throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
+    }
+
+    fun hentFysiskDokument(dokumentMetadata: DokumentMetadata): ByteArray {
+
+        return if (dokumentMetadata.arkivsystem == DokumentArkivSystemDto.BIDRAG) {
+            hentDokument(
+                dokumentMetadata.journalpostId!!.numerisk,
+                dokumentMetadata.dokumentreferanse!!
+            )
+        } else {
+            bidragDokumentConsumer.hentDokument(
+                dokumentMetadata.journalpostId!!,
+                dokumentMetadata.dokumentreferanse
+            )!!
+        }
+
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {

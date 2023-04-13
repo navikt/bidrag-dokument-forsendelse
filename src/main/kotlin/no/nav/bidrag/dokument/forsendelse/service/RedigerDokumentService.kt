@@ -16,7 +16,9 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokume
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.pdf.PDFDokumentDetails
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
@@ -32,6 +34,7 @@ class RedigerDokumentService(
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val dokumentStorageService: DokumentStorageService,
+    private val dokumenttjeneste: DokumentTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
     private val fysiskDokumentService: FysiskDokumentService
 ) {
@@ -162,22 +165,37 @@ class RedigerDokumentService(
 
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse) ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
 
-        val dokumentMetadataList = hentDokumentMetadata(dokument, forsendelseId)
-
         return DokumentRedigeringMetadataResponsDto(
             tittel = dokument.tittel,
             redigeringMetadata = dokument.metadata.hentRedigeringmetadata(),
-            dokumenter = dokumentMetadataList.map {
-                DokumentDetaljer(
-                    tittel = it.tittel ?: it.dokumentreferanse ?: "",
-                    dokumentreferanse = it.dokumentreferanse,
-                    antallSider = 0
-                )
-            }
+            dokumenter = hentAlleDokumentDetaljer(dokument, forsendelseId)
         )
     }
 
-    private fun hentDokumentDetaljer(dokument: Dokument, dokumentMetadata: DokumentMetadata) {
+    private fun hentAlleDokumentDetaljer(dokument: Dokument, forsendelseId: Long): List<DokumentDetaljer> {
+        val existing = dokument.metadata.hentDokumentDetaljer()
+        if (existing != null) return existing
+
+        val dokumentMetadataList = hentDokumentMetadata(dokument, forsendelseId)
+        val dokumentDetaljer = dokumentMetadataList.map { hentDokumentDetaljer(it) }
+        val metadata = dokument.metadata
+        metadata.lagreDokumentDetaljer(dokumentDetaljer)
+        dokumenttjeneste.lagreDokument(
+            dokument.copy(
+                metadata = metadata.copy()
+            )
+        )
+        return dokumentDetaljer
+    }
+
+    private fun hentDokumentDetaljer(dokumentMetadata: DokumentMetadata): DokumentDetaljer {
+        val dokumentFil = fysiskDokumentService.hentFysiskDokument(dokumentMetadata)
+        val numerOfPages = PDFDokumentDetails().getNumberOfPages(dokumentFil)
+        return DokumentDetaljer(
+            tittel = dokumentMetadata.tittel ?: dokumentMetadata.dokumentreferanse ?: "",
+            dokumentreferanse = dokumentMetadata.dokumentreferanse,
+            antallSider = numerOfPages
+        )
     }
 
     private fun hentDokumentMetadata(dokument: Dokument, forsendelseId: Long): List<DokumentMetadata> {

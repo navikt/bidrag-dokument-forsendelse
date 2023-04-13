@@ -52,7 +52,7 @@ class GcpCloudStorage(
     }
 
     private fun hentWriteChannel(filnavn: String): WriteChannel {
-        return storage.writer(lagBlobinfo(filnavn), Storage.BlobWriteOption.kmsKeyName(kmsKeyPath), createObjectUploadPrecondition(filnavn))
+        return storage.writer(lagBlobinfo(filnavn), createObjectUploadPrecondition(filnavn))
     }
 
     private fun createObjectUploadPrecondition(filnavn: String): Storage.BlobWriteOption {

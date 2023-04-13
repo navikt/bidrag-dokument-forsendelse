@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vladmihalcea.hibernate.type.ImmutableType
 import com.vladmihalcea.hibernate.type.util.Configuration
@@ -134,13 +135,13 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
         return get(REDIGERING_METADATA_KEY)
     }
 
-    fun lagreDokumentDetaljer(data: DokumentDetaljer) {
+    fun lagreDokumentDetaljer(data: List<DokumentDetaljer>) {
         remove(DOKUMENT_DETALJER_KEY)
         put(DOKUMENT_DETALJER_KEY, objectMapper.writeValueAsString(data))
     }
 
-    fun hentDokumentDetaljer(): DokumentDetaljer? {
-        return get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, DokumentDetaljer::class.java) }
+    fun hentDokumentDetaljer(): List<DokumentDetaljer>? {
+        return get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, object : TypeReference<List<DokumentDetaljer>?>() {}) }
     }
 
     fun copy(): DokumentMetadataDo {
