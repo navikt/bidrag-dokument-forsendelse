@@ -18,7 +18,7 @@ fun OppdaterForsendelseForespørsel.hentDokument(dokumentreferanse: String?) = d
 internal fun List<OpprettDokumentForespørsel>.harFlereDokumenterMedSammeJournalpostIdOgReferanse(dokument: DokumentForespørsel) = this
     .filter { it.journalpostId.isNotNullOrEmpty() || it.dokumentreferanse.isNotNullOrEmpty() }
     .filter { it.journalpostId == dokument.journalpostId || it.arkivsystem == dokument.arkivsystem }
-    .filter { it.dokumentreferanse == dokument.dokumentreferanse }.size > 1
+    .filter { it.dokumentreferanse.isNotNullOrEmpty() && dokument.dokumentreferanse.isNotNullOrEmpty() && it.dokumentreferanse == dokument.dokumentreferanse }.size > 1
 
 fun List<OpprettDokumentForespørsel>.harNotat(dokumentmalDetaljer: Map<String, DokumentMalDetaljer>) =
     this.any { dokumentmalDetaljer[it.dokumentmalId]?.type == DokumentMalType.NOTAT }

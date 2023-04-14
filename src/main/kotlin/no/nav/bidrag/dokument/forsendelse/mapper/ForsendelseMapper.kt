@@ -46,7 +46,7 @@ fun Dokument.tilDokumentStatusDto() = when (dokumentStatus) {
     DokumentStatus.AVBRUTT -> DokumentStatusDto.AVBRUTT
 }
 
-fun Dokument.tilDokumeentStatusTo() = when (dokumentStatus) {
+fun Dokument.tilDokumentStatusTo() = when (dokumentStatus) {
     DokumentStatus.MÅ_KONTROLLERES -> DokumentStatusTo.MÅ_KONTROLLERES
     DokumentStatus.KONTROLLERT -> DokumentStatusTo.KONTROLLERT
     DokumentStatus.UNDER_REDIGERING -> DokumentStatusTo.UNDER_REDIGERING
@@ -132,6 +132,14 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     opprettetAvIdent = this.opprettetAvIdent
 )
 
+fun Forsendelse.tilForsendelseStatusTo() = when (this.status) {
+    ForsendelseStatus.UNDER_PRODUKSJON -> ForsendelseStatusTo.UNDER_PRODUKSJON
+    ForsendelseStatus.DISTRIBUERT -> ForsendelseStatusTo.DISTRIBUERT
+    ForsendelseStatus.DISTRIBUERT_LOKALT -> ForsendelseStatusTo.DISTRIBUERT_LOKALT
+    ForsendelseStatus.SLETTET, ForsendelseStatus.AVBRUTT -> ForsendelseStatusTo.SLETTET
+    ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
+}
+
 fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     mottaker = this.mottaker?.let {
         MottakerTo(
@@ -158,13 +166,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
         ForsendelseType.NOTAT -> ForsendelseTypeTo.NOTAT
         ForsendelseType.UTGÅENDE -> ForsendelseTypeTo.UTGÅENDE
     },
-    status = when (this.status) {
-        ForsendelseStatus.UNDER_PRODUKSJON -> ForsendelseStatusTo.UNDER_PRODUKSJON
-        ForsendelseStatus.DISTRIBUERT -> ForsendelseStatusTo.DISTRIBUERT
-        ForsendelseStatus.DISTRIBUERT_LOKALT -> ForsendelseStatusTo.DISTRIBUERT_LOKALT
-        ForsendelseStatus.SLETTET, ForsendelseStatus.AVBRUTT -> ForsendelseStatusTo.SLETTET
-        ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
-    },
+    status = this.tilForsendelseStatusTo(),
     opprettetDato = this.opprettetTidspunkt.toLocalDate(),
     dokumentDato = this.dokumentDato?.toLocalDate(),
     distribuertDato = this.distribuertTidspunkt?.toLocalDate(),
@@ -180,7 +182,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             arkivsystem = it.tilArkivSystemDto(),
             redigeringMetadata = it.metadata.hentRedigeringmetadata(),
             dokumentDato = it.dokumentDato,
-            status = it.tilDokumeentStatusTo()
+            status = it.tilDokumentStatusTo()
         )
     }
 )

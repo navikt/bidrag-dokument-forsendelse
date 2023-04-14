@@ -96,8 +96,16 @@ class FysiskDokumentService(
 
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
-        if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {
-            return DokumentMetadata(
+        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT)
+            DokumentMetadata(
+                journalpostId = dokument.forsendelseIdMedPrefix,
+                dokumentreferanse = dokument.dokumentreferanse,
+                format = DokumentFormatDto.PDF,
+                status = dokument.tilDokumentStatusDto(),
+                arkivsystem = DokumentArkivSystemDto.BIDRAG
+            )
+        else if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER)
+            DokumentMetadata(
                 journalpostId = dokument.journalpostId,
                 dokumentreferanse = dokumentreferanse,
                 format = when (dokument.dokumentStatus) {
@@ -107,19 +115,14 @@ class FysiskDokumentService(
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = dokument.tilArkivSystemDto()
             )
-        }
-
-        if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) {
-            return DokumentMetadata(
-                journalpostId = dokument.journalpostId,
-                dokumentreferanse = dokumentreferanse,
-                format = DokumentFormatDto.MBDOK,
-                status = dokument.tilDokumentStatusDto(),
-                arkivsystem = dokument.tilArkivSystemDto()
-            )
-        }
-
-        return DokumentMetadata(
+        else if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) DokumentMetadata(
+            journalpostId = dokument.journalpostId,
+            dokumentreferanse = dokumentreferanse,
+            format = DokumentFormatDto.MBDOK,
+            status = dokument.tilDokumentStatusDto(),
+            arkivsystem = dokument.tilArkivSystemDto()
+        )
+        else DokumentMetadata(
             journalpostId = dokument.journalpostId,
             dokumentreferanse = dokumentreferanse,
             format = DokumentFormatDto.PDF,

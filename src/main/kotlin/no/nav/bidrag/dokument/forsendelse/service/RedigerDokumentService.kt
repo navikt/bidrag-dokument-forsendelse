@@ -7,7 +7,8 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResp
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
-import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumeentStatusTo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.bytesIntoHumanReadable
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -61,7 +62,7 @@ class RedigerDokumentService(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
             dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumeentStatusTo()
+            status = oppdatertDokument.tilDokumentStatusTo()
         )
     }
 
@@ -91,7 +92,7 @@ class RedigerDokumentService(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
             dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumeentStatusTo()
+            status = oppdatertDokument.tilDokumentStatusTo()
         )
     }
 
@@ -167,6 +168,8 @@ class RedigerDokumentService(
 
         return DokumentRedigeringMetadataResponsDto(
             tittel = dokument.tittel,
+            forsendelseStatus = forsendelse.tilForsendelseStatusTo(),
+            status = dokument.tilDokumentStatusTo(),
             redigeringMetadata = dokument.metadata.hentRedigeringmetadata(),
             dokumenter = hentAlleDokumentDetaljer(dokument, forsendelseId)
         )

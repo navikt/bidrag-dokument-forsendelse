@@ -15,7 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumeentStatusTo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
@@ -364,7 +364,7 @@ class OppdaterForsendelseService(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
             dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumeentStatusTo()
+            status = oppdatertDokument.tilDokumentStatusTo()
         )
     }
 
@@ -386,7 +386,7 @@ class OppdaterForsendelseService(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
             dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumeentStatusTo()
+            status = oppdatertDokument.tilDokumentStatusTo()
         )
     }
 
