@@ -120,7 +120,7 @@ class OppdaterForsendelseService(
             } else {
                 null
             },
-            referanseId = "BIF_${forsendelse.forsendelseId}",
+            referanseId = if (forsendelse.forsendelseId == 1000027583L) "BIF_${forsendelse.forsendelseId}_2" else "BIF_${forsendelse.forsendelseId}",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
             journalposttype = when (forsendelse.forsendelseType) {
