@@ -14,7 +14,7 @@ class SaksbehandlerInfoManager(private val bidragOrganisasjonConsumer: BidragOrg
         val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null
         return try {
             val saksbehandlerNavn = bidragOrganisasjonConsumer.hentSaksbehandlerInfo(saksbehandlerIdent)?.navn
-            Saksbehandler(saksbehandlerIdent, saksbehandlerNavn)
+            Saksbehandler(saksbehandlerIdent, saksbehandlerNavn?.verdi)
         } catch (e: Exception) {
             Saksbehandler(saksbehandlerIdent, saksbehandlerIdent)
         }

@@ -16,7 +16,6 @@ import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENT_FIL
@@ -26,7 +25,10 @@ import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettJournalpostResponse
 import no.nav.bidrag.domain.ident.PersonIdent
+import no.nav.bidrag.domain.ident.SaksbehandlerId
 import no.nav.bidrag.domain.string.FulltNavn
+import no.nav.bidrag.domain.string.Navn
+import no.nav.bidrag.organisasjon.dto.SaksbehandlerDto
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.Assert
 import org.springframework.http.HttpHeaders
@@ -154,7 +156,7 @@ class StubUtils {
             WireMock.get(WireMock.urlMatching("/organisasjon/saksbehandler/info/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withBody(jsonToString(SaksbehandlerInfoResponse(SAKSBEHANDLER_IDENT, SAKSBEHANDLER_NAVN)))
+                    .withBody(jsonToString(SaksbehandlerDto(SaksbehandlerId(SAKSBEHANDLER_IDENT), Navn(SAKSBEHANDLER_NAVN))))
             )
         )
     }

@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.web.client.AbstractRestClient
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.SAKSBEHANDLERINFO_CACHE
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
+import no.nav.bidrag.organisasjon.dto.SaksbehandlerDto
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -20,7 +20,7 @@ class BidragOrganisasjonConsumer(
         .path(path ?: "").build().toUri()
 
     @Cacheable(SAKSBEHANDLERINFO_CACHE)
-    fun hentSaksbehandlerInfo(saksbehandlerIdent: String): SaksbehandlerInfoResponse? {
+    fun hentSaksbehandlerInfo(saksbehandlerIdent: String): SaksbehandlerDto? {
         return getForEntity(createUri("/saksbehandler/info/$saksbehandlerIdent"))
     }
 }
