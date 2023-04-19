@@ -18,6 +18,7 @@ KAFKA_MAX_RETRY: 0
 BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
 GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
+GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://path/to/kms/key
 no.nav.security.jwt:
   client:
     registration:
