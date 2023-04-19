@@ -93,7 +93,7 @@ data class Dokument(
     val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
     val dokumentreferanse get() = dokumentreferanseOriginal ?: "BIF$dokumentId"
 
-    val filnavn get() = "${forsendelse.forsendelseId}_$dokumentreferanse"
+    val filsti get() = "forsendelse_${forsendelse.forsendelseId}/dokument_$dokumentreferanse.pdf"
     val journalpostId
         get() = run {
             if (journalpostIdOriginal.isNullOrEmpty()) {

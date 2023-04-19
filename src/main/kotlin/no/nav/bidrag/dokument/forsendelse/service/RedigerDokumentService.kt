@@ -110,7 +110,7 @@ class RedigerDokumentService(
             }
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
-        dokumentStorageService.slettFil(dokument.filnavn)
+        dokumentStorageService.slettFil(dokument.filsti)
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
@@ -137,7 +137,7 @@ class RedigerDokumentService(
             }
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
-        dokumentStorageService.lagreFil(dokument.filnavn, fysiskDokument)
+        dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }

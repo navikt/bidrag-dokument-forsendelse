@@ -35,6 +35,7 @@ env:
   OPPDATER_DIST_STATUS_ENABLED: true
   KAFKA_MAX_RETRY: 5
   GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/bucket-dokument-encryption
+  GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/clientside_document_encryption
 database:
   dbname: bidrag-dokument-forsendelse-feature
   autoResize: false

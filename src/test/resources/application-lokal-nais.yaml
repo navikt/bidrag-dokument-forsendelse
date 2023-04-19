@@ -8,11 +8,12 @@ KODEVERK_URL: https://kodeverk.dev.adeo.no
 #DB_USERNAME=ugur.alpay.cenar@nav.no
 #DB_PASSWORD=asdsadsadasd
 
-#BUCKET_NAME: bidrag-dokument-forsendelse-feature
 BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
 GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
-#GOOGLE_APPLICATION_CREDENTIALS: /Users/uguralpaycenar/Projects/bidrag-dokument-forsendelse/bidrag-dev-45a9-e0d603bcbd3c.json
+GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://path/to/kms/key
+DISABLE_CLIENTSIDE_ENCRYPTION: true
+
 spring:
   flyway:
     enabled: true

@@ -29,7 +29,7 @@
     <flyway.version>9.11.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
     <testcontainers.version>1.17.6</testcontainers.version>
-    <shedlock.version>5.1.0</shedlock.version>
+    <shedlock.version>5.2.0</shedlock.version>
     <google-api-extention.version>2.24.0</google-api-extention.version>
     <google-cloud-storage.version>2.20.2</google-cloud-storage.version>
   </properties>
@@ -129,7 +129,18 @@
       <artifactId>shedlock-provider-jdbc-template</artifactId>
       <version>${shedlock.version}</version>
     </dependency>
-    <!-- Database -->
+
+    <!--  Google GCP -->
+    <dependency>
+      <groupId>com.google.crypto.tink</groupId>
+      <artifactId>tink</artifactId>
+      <version>1.8.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.crypto.tink</groupId>
+      <artifactId>tink-gcpkms</artifactId>
+      <version>1.8.0</version>
+    </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
@@ -140,6 +151,8 @@
       <artifactId>gax</artifactId>
       <version>${google-api-extention.version}</version>
     </dependency>
+
+    <!-- Database -->
     <dependency>
       <groupId>com.vladmihalcea</groupId>
       <artifactId>hibernate-types-55</artifactId>

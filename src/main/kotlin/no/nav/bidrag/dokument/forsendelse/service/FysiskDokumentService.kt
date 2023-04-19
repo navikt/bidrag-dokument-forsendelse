@@ -35,7 +35,7 @@ class FysiskDokumentService(
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)!!
 
         if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
-            return dokumentStorageService.hentFil(dokument.filnavn)
+            return dokumentStorageService.hentFil(dokument.filsti)
         }
 
         val arkivSystem = dokument.arkivsystem
