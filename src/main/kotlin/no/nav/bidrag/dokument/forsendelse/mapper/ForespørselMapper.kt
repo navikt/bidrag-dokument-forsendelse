@@ -10,7 +10,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
@@ -24,11 +23,12 @@ import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.service.KodeverkService
+import no.nav.bidrag.transport.person.PersonDto
 import java.time.LocalDateTime
 
 object ForespørselMapper {
-    fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String) = Mottaker(
-        navn = this.navn ?: person?.navn,
+    fun MottakerTo.tilMottakerDo(person: PersonDto?, språk: String) = Mottaker(
+        navn = this.navn ?: person?.navn?.verdi,
         ident = this.ident,
         språk = språk.uppercase(),
         identType = when (this.identType) {
