@@ -19,6 +19,7 @@ BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
 GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
 GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://path/to/kms/key
+GCP_CREDENTIALS_PATH: fake_service_account.json
 no.nav.security.jwt:
   client:
     registration:

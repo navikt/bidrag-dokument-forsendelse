@@ -18,6 +18,7 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON
 import org.springframework.context.annotation.Scope
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
@@ -35,12 +36,16 @@ class GcpCloudStorage(
     @Value("\${GCP_BUCKET_DOCUMENT_KMS_KEY_PATH}") private val kmsKeyPath: String,
     @Value("\${GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH}") private val kmsClientsideFilename: String,
     @Value("\${GCP_HOST:#{null}}") private val host: String? = null,
+    @Value("\${GCP_CREDENTIALS_PATH:#{null}}") private val credentialsPath: String? = null,
     @Value("\${DISABLE_CLIENTSIDE_ENCRYPTION:false}") private val disableClientsideEncryption: Boolean // Only use when running application locally
 ) {
 
     init {
         AeadConfig.register()
-        GcpKmsClient.register(Optional.of(kmsClientsideFilename), Optional.empty())
+        GcpKmsClient.register(
+            Optional.of(kmsClientsideFilename),
+            Optional.ofNullable(credentialsPath?.let { ClassPathResource(credentialsPath).file.absolutePath })
+        )
     }
 
     private val tinkClient = initTinkClient()
