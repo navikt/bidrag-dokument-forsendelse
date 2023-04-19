@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 @Service
 class DokumentStorageService(private val gcpCloudStorage: GcpCloudStorage) {
 
-    private val FOLDER_NAME = "dokument"
+    private val FOLDER_NAME = "dokumenter"
 
     fun slettFil(filnavn: String) {
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn

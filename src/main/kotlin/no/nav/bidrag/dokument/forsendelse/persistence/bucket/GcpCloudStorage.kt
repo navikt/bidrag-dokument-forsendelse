@@ -33,7 +33,6 @@ private val LOGGER = KotlinLogging.logger {}
 @Scope(SCOPE_SINGLETON)
 class GcpCloudStorage(
     @Value("\${BUCKET_NAME}") private val bucketNavn: String,
-    @Value("\${GCP_BUCKET_DOCUMENT_KMS_KEY_PATH}") private val kmsKeyPath: String,
     @Value("\${GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH}") private val kmsClientsideFilename: String,
     @Value("\${GCP_HOST:#{null}}") private val host: String? = null,
     @Value("\${GCP_CREDENTIALS_PATH:#{null}}") private val credentialsPath: String? = null,
@@ -83,7 +82,7 @@ class GcpCloudStorage(
         } catch (e: StorageException) {
             throw HttpClientErrorException(
                 HttpStatus.NOT_FOUND,
-                "Finnes ingen dokumentfil i bucket $bucketNavn med filnavn ${lagBlobinfo(filnavn).blobId}"
+                "Finnes ingen dokumentfil i bucket $bucketNavn med filsti ${lagBlobinfo(filnavn).blobId}"
             )
         }
     }
