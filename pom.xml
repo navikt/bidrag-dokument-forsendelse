@@ -18,7 +18,7 @@
     <bidrag-dokument-dto.version>1.6.30</bidrag-dokument-dto.version>
     <kotlin.version>1.8.0</kotlin.version>
     <bidrag-commons.version>0.7.43</bidrag-commons.version>
-    <bidrag-transport.version>20230419135113_530f60c</bidrag-transport.version>
+    <bidrag-transport.version>20230420100825_db5a095</bidrag-transport.version>
     <logback-encoder.version>7.2</logback-encoder.version>
     <token-support.version>2.1.9</token-support.version>
     <springdoc.version>1.6.14</springdoc.version>
