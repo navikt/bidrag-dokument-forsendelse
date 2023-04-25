@@ -7,6 +7,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
@@ -43,6 +44,7 @@ class OpprettForsendelseService(
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
             forsendelseId = forsendelse.forsendelseId,
+            forsendelseType = forsendelse.tilForsendelseType(),
             dokumenter = dokumenter.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,

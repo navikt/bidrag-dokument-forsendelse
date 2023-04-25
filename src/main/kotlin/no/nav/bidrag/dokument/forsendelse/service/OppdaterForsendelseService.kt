@@ -283,11 +283,6 @@ class OppdaterForsendelseService(
                     it.copy(
                         tittel = forespørsel.tittel ?: it.tittel,
                         dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato
-//                        metadata = forespørsel.redigeringMetadata?.let { rd ->
-//                            val metadata = it.metadata
-//                            metadata.lagreRedigeringmetadata(rd)
-//                            metadata.toMap()
-//                        } ?: it.metadata,
                     )
                 } else {
                     it

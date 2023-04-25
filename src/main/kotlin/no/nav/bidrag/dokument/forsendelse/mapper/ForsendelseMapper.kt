@@ -140,6 +140,11 @@ fun Forsendelse.tilForsendelseStatusTo() = when (this.status) {
     ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
 }
 
+fun Forsendelse.tilForsendelseType() = when (this.forsendelseType) {
+    ForsendelseType.NOTAT -> ForsendelseTypeTo.NOTAT
+    ForsendelseType.UTGÅENDE -> ForsendelseTypeTo.UTGÅENDE
+}
+
 fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     mottaker = this.mottaker?.let {
         MottakerTo(

@@ -30,6 +30,7 @@ data class OpprettForsendelseForespørsel(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettForsendelseRespons(
     @Schema(description = "ForsendelseId på forsendelse som ble opprettet") val forsendelseId: Long? = null,
+    @Schema(description = "Type på forsendelse. Kan være NOTAT eller UTGÅENDE") val forsendelseType: ForsendelseTypeTo? = null,
     @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList()
 )
 

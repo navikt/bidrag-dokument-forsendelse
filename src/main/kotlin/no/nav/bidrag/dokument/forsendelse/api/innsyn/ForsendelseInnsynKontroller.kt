@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
@@ -61,5 +62,11 @@ class ForsendelseInnsynKontroller(
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun støttedeDokumentmaler(): List<String> {
         return bidragDokumentBestillingConsumer.støttedeDokumentmaler()
+    }
+
+    @RequestMapping("/dokumentmaler/detaljer", method = [RequestMethod.OPTIONS])
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun støttedeDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
+        return bidragDokumentBestillingConsumer.dokumentmalDetaljer()
     }
 }
