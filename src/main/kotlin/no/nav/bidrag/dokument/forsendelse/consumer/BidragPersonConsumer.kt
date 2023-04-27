@@ -44,7 +44,7 @@ class BidragPersonConsumer(
     @BrukerCacheable(PERSON_SPRAAK_CACHE)
     fun hentPersonSpråk(personId: String): String? {
         return try {
-            postForEntity(createUri("/spraak"), PersonIdent(personId))
+            postForEntity(createUri("/spraak"), PersonRequest(PersonIdent(personId)))
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.NOT_FOUND) {
                 return null
