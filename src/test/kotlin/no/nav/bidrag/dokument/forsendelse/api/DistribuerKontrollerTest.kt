@@ -146,7 +146,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider()
-                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
+                .hentDokumentKalt(
+                    forsendelse.dokumenter.hoveddokument?.journalpostId!!,
+                    forsendelse.dokumenter.hoveddokument?.dokumentreferanseOriginal!!
+                )
         }
     }
 
@@ -207,7 +210,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider()
-                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
+                .hentDokumentKalt(
+                    forsendelse.dokumenter.hoveddokument?.journalpostId!!,
+                    forsendelse.dokumenter.hoveddokument?.dokumentreferanseOriginal!!
+                )
         }
     }
 
@@ -299,7 +305,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", batchId = batchId)
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider()
-                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
+                .hentDokumentKalt(
+                    forsendelse.dokumenter.hoveddokument?.journalpostId!!,
+                    forsendelse.dokumenter.hoveddokument?.dokumentreferanseOriginal!!
+                )
         }
     }
 
@@ -366,7 +375,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
             stubUtils.Valider()
-                .hentDokumentKalt(forsendelse.dokumenter.hoveddokument?.journalpostId!!, forsendelse.dokumenter.hoveddokument?.dokumentreferanse!!)
+                .hentDokumentKalt(
+                    forsendelse.dokumenter.hoveddokument?.journalpostId!!,
+                    forsendelse.dokumenter.hoveddokument?.dokumentreferanseOriginal!!
+                )
         }
     }
 }

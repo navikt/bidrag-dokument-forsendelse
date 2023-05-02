@@ -42,10 +42,20 @@ class BidragDokumentConsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
+    fun hentDokument(journalpostId: String?, dokumentId: String?): ByteArray? {
+        if (journalpostId.isNullOrEmpty()) return hentDokument(dokumentId)
         return getForEntity(
             UriComponentsBuilder.fromUri(url)
                 .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}").queryParam("optimizeForPrint", "false")
+                .build().toUri()
+        )
+    }
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun hentDokument(dokumentId: String?): ByteArray? {
+        return getForEntity(
+            UriComponentsBuilder.fromUri(url)
+                .path("/dokumentreferanse/$dokumentId").queryParam("optimizeForPrint", "false")
                 .build().toUri()
         )
     }

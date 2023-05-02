@@ -51,7 +51,7 @@ class FysiskDokumentService(
             )
         } else {
             bidragDokumentConsumer.hentDokument(
-                dokumentMetadata.journalpostId!!,
+                dokumentMetadata.journalpostId,
                 dokumentMetadata.dokumentreferanse
             )!!
         }
@@ -61,22 +61,21 @@ class FysiskDokumentService(
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
 
-        return if (dokument.erFraAnnenKilde && dokument.dokumentStatus == DokumentStatus.FERDIGSTILT) {
-            bidragDokumentConsumer.hentDokument(
-                dokument.journalpostId!!,
-                dokument.dokumentreferanseOriginal
-            )!!
-        } else if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
+        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT)
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
                 dokument.dokumentreferanse
             )
-        } else {
+        else if (dokument.erFraAnnenKilde)
             bidragDokumentConsumer.hentDokument(
-                dokument.forsendelseIdMedPrefix,
-                dokument.dokumentreferanse
+                dokument.journalpostId,
+                dokument.dokumentreferanseOriginal
             )!!
-        }
+        else bidragDokumentConsumer.hentDokument(
+            dokument.forsendelseIdMedPrefix,
+            dokument.dokumentreferanse
+        )!!
+
 
     }
 
