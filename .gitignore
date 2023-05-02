@@ -34,3 +34,4 @@ build/
 application-lokal-nais-secrets*
 application-lokal-db-nais-secrets*
 bidrag-dev*
+script/

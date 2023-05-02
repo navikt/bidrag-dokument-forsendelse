@@ -25,9 +25,9 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
     }
 
     fun hentDokumentMalListe(
-        behandlingType: BehandlingType,
-        soknadType: SoknadType,
-        soknadFra: SoknadFra,
+        behandlingType: BehandlingType? = null,
+        soknadType: SoknadType? = null,
+        soknadFra: SoknadFra? = null,
         erVedtakFattet: Boolean,
         manuelBeregning: Boolean,
         klage: Boolean
@@ -37,9 +37,9 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
             detaljListe?.detaljer?.any {
                 (it.klage == null || it.klage == klage) &&
                         (it.fattetVedtak == null || it.fattetVedtak == erVedtakFattet)
-                        && it.behandlingType.contains(behandlingType)
-                        && it.soknadType == soknadType
-                        && it.soknadFra.contains(soknadFra)
+                        && (behandlingType == null || it.behandlingType.contains(behandlingType))
+                        && (soknadType == null || it.soknadType == soknadType)
+                        && (soknadFra == null || it.soknadFra.contains(soknadFra))
                         && (it.manuelBeregning == null || it.manuelBeregning == manuelBeregning)
             } == true
         }

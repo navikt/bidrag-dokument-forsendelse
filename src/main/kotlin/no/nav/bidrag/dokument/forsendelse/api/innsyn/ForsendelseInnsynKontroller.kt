@@ -78,9 +78,9 @@ class ForsendelseInnsynKontroller(
     @GetMapping("/dokumentvalg")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValg(
-        @RequestParam behandlingType: BehandlingType,
-        @RequestParam soknadType: SoknadType,
-        @RequestParam soknadFra: SoknadFra,
+        @RequestParam(required = false) behandlingType: BehandlingType? = null,
+        @RequestParam(required = false) soknadType: SoknadType? = null,
+        @RequestParam(required = false) soknadFra: SoknadFra? = null,
         @RequestParam(required = false) klage: Boolean = false,
         @RequestParam(required = false) erVedtakFattet: Boolean = false,
         @RequestParam(required = false) manuelBeregning: Boolean = false
