@@ -1,7 +1,6 @@
 name: bidrag-dokument-forsendelse
 bucket_name: bidrag-dokument-forsendelse-main
 ingresses:
-  - https://bidrag-dokument-forsendelse.dev.intern.nav.no
   - https://bidrag-dokument-forsendelse.intern.dev.nav.no
 env:
   BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon.dev-fss-pub.nais.io/bidrag-organisasjon
