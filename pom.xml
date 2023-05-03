@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.6</version>
+    <version>3.0.6</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav</groupId>
@@ -15,22 +15,22 @@
   <name>bidrag-dokument-forsendelse</name>
   <properties>
     <java.version>17</java.version>
-    <bidrag-dokument-dto.version>1.6.30</bidrag-dokument-dto.version>
-    <kotlin.version>1.8.0</kotlin.version>
-    <bidrag-commons.version>0.7.43</bidrag-commons.version>
-    <bidrag-transport.version>20230413080727_14a3c1b</bidrag-transport.version>
-    <logback-encoder.version>7.2</logback-encoder.version>
-    <token-support.version>2.1.9</token-support.version>
-    <springdoc.version>1.6.14</springdoc.version>
-    <springframework-cloud.version>3.1.5</springframework-cloud.version>
-    <bidrag-commons-test.version>0.2.2</bidrag-commons-test.version>
-    <kotest.version>5.5.4</kotest.version>
+    <bidrag-dokument-dto.version>1.6.31</bidrag-dokument-dto.version>
+    <kotlin.version>1.8.21</kotlin.version>
+    <bidrag-commons.version>20230427084654_4121ef0</bidrag-commons.version>
+    <bidrag-transport.version>20230426154133_0fd52b3</bidrag-transport.version>
+    <logback-encoder.version>7.3</logback-encoder.version>
+    <token-support.version>3.0.11</token-support.version>
+    <springdoc-openapi-ui.version>2.1.0</springdoc-openapi-ui.version>
+    <springframework-cloud.version>4.0.2</springframework-cloud.version>
+    <bidrag-commons-test.version>1.20230217164307_1ec9d3f</bidrag-commons-test.version>
+    <kotest.version>5.6.1</kotest.version>
     <mockk.version>4.0.2</mockk.version>
     <testcontainers.version>1.17.6</testcontainers.version>
-    <flyway.version>9.11.0</flyway.version>
-    <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
-    <testcontainers.version>1.17.6</testcontainers.version>
-    <shedlock.version>5.1.0</shedlock.version>
+    <flyway.version>9.17.0</flyway.version>
+    <kotlin-logging-jvm.version>4.0.0-beta-2</kotlin-logging-jvm.version>
+    <testcontainers.version>1.18.0</testcontainers.version>
+    <shedlock.version>5.2.0</shedlock.version>
   </properties>
 
   <repositories>
@@ -148,16 +148,11 @@
       <artifactId>flyway-core</artifactId>
       <version>${flyway.version}</version>
     </dependency>
-    <!--SpringDoc-->
+    <!-- swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-kotlin</artifactId>
-      <version>${springdoc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
-      <version>${springdoc.version}</version>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc-openapi-ui.version}</version>
     </dependency>
     <!--		<dependency>-->
     <!--			<groupId>org.springdoc</groupId>-->

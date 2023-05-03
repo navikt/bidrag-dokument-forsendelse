@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
@@ -16,7 +16,7 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 private val log = KotlinLogging.logger {}
 

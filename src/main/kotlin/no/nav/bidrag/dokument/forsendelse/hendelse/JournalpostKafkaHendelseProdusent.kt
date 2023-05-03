@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.dokument.dto.HendelseType
 import no.nav.bidrag.dokument.dto.JournalpostHendelse

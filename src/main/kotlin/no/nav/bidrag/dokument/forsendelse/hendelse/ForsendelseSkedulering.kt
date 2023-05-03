@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 private val LOGGER = KotlinLogging.logger {}
 

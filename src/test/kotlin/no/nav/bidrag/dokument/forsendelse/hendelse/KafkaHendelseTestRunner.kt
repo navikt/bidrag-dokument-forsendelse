@@ -3,7 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldNotBe
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.JournalpostHendelse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner

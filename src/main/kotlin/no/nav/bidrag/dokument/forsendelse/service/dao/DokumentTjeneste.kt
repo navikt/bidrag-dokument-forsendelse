@@ -10,7 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentD
 import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @Component
 class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingService: DokumentBestillingService) {

@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
 import no.nav.bidrag.dokument.dto.JournalpostType
@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 private val log = KotlinLogging.logger {}
 

@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.consumer
 
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.web.HttpHeaderRestTemplate
 import no.nav.bidrag.dokument.forsendelse.database.model.KodeverkResponse
@@ -10,7 +10,7 @@ import org.springframework.cache.CacheManager
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 
 private val log = KotlinLogging.logger {}
 

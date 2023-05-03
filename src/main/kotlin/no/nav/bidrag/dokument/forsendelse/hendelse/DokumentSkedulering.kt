@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus

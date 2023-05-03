@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
 import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument

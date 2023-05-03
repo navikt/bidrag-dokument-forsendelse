@@ -11,7 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.service.OpprettForsendelseService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import javax.validation.Valid
+import jakarta.validation.Valid
 
 @ForsendelseApiKontroller
 @Timed

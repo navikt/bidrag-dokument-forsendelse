@@ -4,7 +4,7 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @Component
 class TestDataManager(val forsendelseRepository: ForsendelseRepository, val dokumentRepository: DokumentRepository) {
