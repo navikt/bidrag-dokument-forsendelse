@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.dto.Sporingsdata
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
@@ -61,12 +62,15 @@ class JournalpostKafkaHendelseProdusent(
                     ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT.name
                     ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR.name
                     ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT.name
-                    ForsendelseStatus.FERDIGSTILT -> if (forsendelse.erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
-                    ForsendelseStatus.UNDER_PRODUKSJON -> if (forsendelse.dokumenter.erAlleFerdigstilt) {
-                        if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
-                    } else {
-                        JournalpostStatus.UNDER_PRODUKSJON.name
-                    }
+                    ForsendelseStatus.FERDIGSTILT -> if (forsendelse.distribusjonKanal == DistribusjonKanal.INGEN_DISTRIBUSJON) ForsendelseStatus.DISTRIBUERT.name
+                    else if (forsendelse.erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name
+                    else JournalpostStatus.FERDIGSTILT.name
+
+                    ForsendelseStatus.UNDER_PRODUKSJON ->
+                        if (forsendelse.dokumenter.erAlleFerdigstilt)
+                            if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
+                        else JournalpostStatus.UNDER_PRODUKSJON.name
+
                 }
             )
         )
