@@ -250,6 +250,52 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     }
 
     @Test
+    fun `skal oppdatere distribusjon for journalpost med kanal INGEN_DISTRIBUSJON`() {
+        val forsendelse = opprettForsendelseFerdigstiltIkkeDistribuert()
+
+        val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
+
+        stubUtils.stubHentDistribusjonInfo(
+            forsendelse.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
+                bestillingId = null,
+                kanal = DistribusjonKanal.INGEN_DISTRIBUSJON.name,
+                distribuertDato = null,
+                journalstatus = JournalpostStatus.FERDIGSTILT,
+                distribuertAvIdent = "Z999999"
+            )
+        )
+        transactionTemplate.executeWithoutResult {
+            skedulering.oppdaterDistribusjonstatus()
+        }
+
+        stubUtils.Valider().hentDistribusjonInfoKalt(1)
+
+        val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
+        assertSoftly {
+            forsendelseEtter!!.distribusjonKanal shouldBe DistribusjonKanal.INGEN_DISTRIBUSJON
+            forsendelseEtter.distribusjonBestillingsId shouldBe null
+            forsendelseEtter.distribuertTidspunkt!! shouldHaveSameDayAs distribuertDato
+            forsendelseEtter.status shouldBe ForsendelseStatus.FERDIGSTILT
+            forsendelseEtter.endretAvIdent shouldBe BIDRAG_DOKUMENT_FORSENDELSE_APP_ID
+
+            verify(exactly = 1) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
+        }
+
+        val alleHendelser = readAllFromJournalpostTopic()
+        val hendelse = alleHendelser.find { it.journalpostId == forsendelse!!.forsendelseIdMedPrefix }
+        hendelse shouldNotBe null
+        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelse.journalpostId shouldBe forsendelseEtter!!.forsendelseIdMedPrefix
+        hendelse.tema shouldBe forsendelseEtter.tema.name
+        hendelse.enhet shouldBe forsendelseEtter.enhet
+        hendelse.tittel shouldBe forsendelseEtter.dokumenter.hoveddokument?.tittel
+        hendelse.fnr shouldBe forsendelseEtter.gjelderIdent
+        hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
+        hendelse.sakstilknytninger!! shouldContain forsendelseEtter.saksnummer
+    }
+
+    @Test
     fun `skal oppdatere distribusjon for journalpost med status ekspedert`() {
         val forsendelse = opprettForsendelseFerdigstiltIkkeDistribuert()
 
