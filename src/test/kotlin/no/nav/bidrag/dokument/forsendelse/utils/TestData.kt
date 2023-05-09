@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Mottaker
+import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
@@ -151,6 +152,7 @@ fun opprettForsendelse2(
     distribusjonsTidspunkt: LocalDateTime? = null,
     status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON,
     arkivJournalpostId: String? = null,
+    kanal: DistribusjonKanal? = null,
     tema: ForsendelseTema = ForsendelseTema.BID,
     saksnummer: String = SAKSNUMMER,
     gjelderIdent: String = GJELDER_IDENT,
@@ -172,7 +174,8 @@ fun opprettForsendelse2(
         dokumenter = dokumenter,
         journalpostIdFagarkiv = arkivJournalpostId,
         distribusjonBestillingsId = distribusjonBestillingsId,
-        distribuertTidspunkt = distribusjonsTidspunkt
+        distribuertTidspunkt = distribusjonsTidspunkt,
+        distribusjonKanal = kanal
     )
 
     dokumenter.forEach { it.forsendelse = forsendelse }

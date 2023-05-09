@@ -252,7 +252,23 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     @Test
     fun `skal oppdatere distribusjon for journalpost med kanal INGEN_DISTRIBUSJON`() {
         val forsendelse = opprettForsendelseFerdigstiltIkkeDistribuert()
-
+        testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                status = ForsendelseStatus.FERDIGSTILT,
+                arkivJournalpostId = (10000..20000).random().toString(),
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentreferanseOriginal = null,
+                        journalpostId = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.JOARK,
+                        dokumentMalId = "MAL1"
+                    )
+                ),
+                kanal = DistribusjonKanal.INGEN_DISTRIBUSJON
+            )
+        )
         val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
 
         stubUtils.stubHentDistribusjonInfo(
