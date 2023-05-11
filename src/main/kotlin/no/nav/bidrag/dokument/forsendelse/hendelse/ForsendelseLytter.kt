@@ -1,12 +1,12 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
-import mu.two.KotlinLogging
+import jakarta.transaction.Transactional
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseHendelseBestilling
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
-import jakarta.transaction.Transactional
 
 private val LOGGER = KotlinLogging.logger {}
 

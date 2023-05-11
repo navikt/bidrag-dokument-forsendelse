@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import mu.two.KotlinLogging
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo

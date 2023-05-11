@@ -3,7 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldNotBe
-import mu.two.KotlinLogging
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.JournalpostHendelse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
@@ -23,6 +23,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.KafkaTestUtils
+import java.time.Duration
 
 private val log = KotlinLogging.logger {}
 
@@ -54,7 +55,7 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     fun readFromJournalpostTopic(journalpostId: String? = null): JournalpostHendelse? {
         val consumer = configureConsumer(topicJournalpost)
         return try {
-            val result = KafkaTestUtils.getRecords(consumer, 4000)
+            val result = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(4000))
             result shouldNotBe null
             val records = result.records(topicJournalpost)
             val hendelser = records
@@ -76,7 +77,7 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     fun readAllFromJournalpostTopic(): List<JournalpostHendelse> {
         val consumer = configureConsumer(topicJournalpost)
         return try {
-            val result = KafkaTestUtils.getRecords(consumer, 4000)
+            val result = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(4000))
             result shouldNotBe null
             val records = result.records(topicJournalpost)
             return records.map { ObjectMapper().findAndRegisterModules().readValue(it.value(), JournalpostHendelse::class.java) }

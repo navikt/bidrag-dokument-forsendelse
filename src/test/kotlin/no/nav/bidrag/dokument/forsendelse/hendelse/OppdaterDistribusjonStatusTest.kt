@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.support.TransactionTemplate
@@ -300,11 +299,9 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null
     ): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange(
+        return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
-            HttpMethod.POST,
-            forespørsel?.let { HttpEntity(it) },
-            DistribuerJournalpostResponse::class.java
+            forespørsel?.let { HttpEntity(it) }
         )
     }
 

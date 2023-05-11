@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
-import mu.two.KotlinLogging
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument

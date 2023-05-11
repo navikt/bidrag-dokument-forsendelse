@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
-import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -10,6 +9,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToOne
+import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
 
 @Entity(name = "mottaker")
 data class Mottaker(

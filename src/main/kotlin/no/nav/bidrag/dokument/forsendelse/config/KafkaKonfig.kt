@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
-import mu.two.KotlinLogging
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse

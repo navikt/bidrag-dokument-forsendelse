@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import mu.two.KotlinLogging
+import jakarta.transaction.Transactional
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
@@ -16,7 +17,6 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.validerKanDistribuere
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import jakarta.transaction.Transactional
 
 private val log = KotlinLogging.logger {}
 

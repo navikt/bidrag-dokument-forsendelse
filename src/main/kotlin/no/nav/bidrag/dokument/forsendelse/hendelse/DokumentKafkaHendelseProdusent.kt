@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import mu.two.KotlinLogging
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import org.springframework.beans.factory.annotation.Value

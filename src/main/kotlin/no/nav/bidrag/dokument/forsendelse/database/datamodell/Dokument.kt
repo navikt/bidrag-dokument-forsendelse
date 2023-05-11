@@ -1,16 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.database.datamodell
 
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
-import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
-import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Parameter
-import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
-import java.time.LocalDate
-import java.time.LocalDateTime
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -21,8 +11,15 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
-import org.hibernate.annotations.JavaType
-import org.hibernate.annotations.JdbcType
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
+import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.Parameter
+import org.hibernate.annotations.Type
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity(name = "dokument")
 @Table(
@@ -31,7 +28,6 @@ import org.hibernate.annotations.JdbcType
         UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"])
     ]
 )
-@TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType::class)
 data class Dokument(
     @Id
     @GeneratedValue(generator = "sequence-generator")
@@ -66,7 +62,7 @@ data class Dokument(
 
     val rekkefølgeIndeks: Int,
 
-    @Type(type = "hstore")
+    @Type(PostgreSQLHStoreType::class)
     @Column(columnDefinition = "hstore")
     val metadata: Map<String, String> = mapOf(),
 
