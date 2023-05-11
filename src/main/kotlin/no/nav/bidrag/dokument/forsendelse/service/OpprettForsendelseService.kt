@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
+import no.nav.bidrag.dokument.forsendelse.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
@@ -70,6 +71,7 @@ class OpprettForsendelseService(
             batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
+            behandlingInfo = forespørsel.behandlingInfo?.let { BehandlingInfo(behandlingId = it.behandlingId, vedtakId = it.vedtakId) },
             enhet = forespørsel.enhet,
             språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",

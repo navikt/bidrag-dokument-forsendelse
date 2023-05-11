@@ -73,6 +73,8 @@ class DokumentBestillingLytter(
             tittel = dokument.tittel,
             gjelderId = forsendelse.gjelderIdent,
             enhet = forsendelse.enhet,
+            vedtakId = forsendelse.behandlingInfo?.vedtakId,
+            behandlingId = forsendelse.behandlingInfo?.behandlingId,
             språk = dokument.språk ?: forsendelse.språk,
             saksbehandler = saksbehandlerIdent?.let { Saksbehandler(it) },
             mottaker = forsendelse.mottaker?.let { mottaker ->

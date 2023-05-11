@@ -61,6 +61,9 @@ data class Forsendelse(
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val mottaker: Mottaker? = null,
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val behandlingInfo: BehandlingInfo? = null,
+
     @OneToMany(mappedBy = "forsendelse", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val dokumenter: List<Dokument> = emptyList()
 )

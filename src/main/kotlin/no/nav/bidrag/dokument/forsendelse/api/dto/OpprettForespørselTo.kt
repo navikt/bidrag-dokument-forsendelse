@@ -20,10 +20,17 @@ data class OpprettForsendelseForespørsel(
     val dokumenter: List<OpprettDokumentForespørsel> = emptyList(),
     @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String,
+    @Schema(description = "Detaljer om behandling hvis forsendelsen inneholder brev for en behandling eller vedtak") val behandlingInfo: BehandlingInfo? = null,
     @Schema(description = "Identifikator til batch kjøring forsendelsen ble opprettet av") val batchId: String? = null,
     @Schema(description = "Tema forsendelsen skal opprettes med") val tema: JournalTema? = null,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
     @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null
+)
+
+data class BehandlingInfo(
+    val vedtakId: String? = null,
+    val behandlingId: String? = null,
+    val roller: List<String> = emptyList()
 )
 
 @Schema(description = "Metadata til en respons etter forsendelse ble opprettet")
