@@ -27,7 +27,7 @@
     <kotest.version>5.6.2</kotest.version>
     <mockk.version>4.0.2</mockk.version>
     <testcontainers.version>1.17.6</testcontainers.version>
-    <flyway.version>9.17.0</flyway.version>
+    <flyway.version>9.18.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.18.1</testcontainers.version>
     <shedlock.version>5.2.0</shedlock.version>
