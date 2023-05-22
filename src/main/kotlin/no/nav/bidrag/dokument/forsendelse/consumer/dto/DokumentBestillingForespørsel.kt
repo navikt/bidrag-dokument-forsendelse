@@ -8,12 +8,14 @@ data class DokumentBestillingForespørsel(
     val saksbehandler: Saksbehandler? = null,
     val gjelderId: String? = null,
     val saksnummer: String,
-    val vedtaksId: String? = null,
+    val vedtakId: String? = null,
+    val behandlingId: String? = null,
     val dokumentreferanse: String? = null,
     val tittel: String? = null,
     val enhet: String? = null,
     val språk: String? = null
 )
+
 data class MottakerTo(
     val ident: String? = null,
     val navn: String? = null,
