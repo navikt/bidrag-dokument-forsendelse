@@ -1,8 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
 
 //@Entity(name = "behandling_detaljer")
 data class BehandlingDetaljer(

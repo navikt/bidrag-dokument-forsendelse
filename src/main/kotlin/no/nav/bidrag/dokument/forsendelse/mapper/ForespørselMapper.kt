@@ -10,7 +10,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentPersonResponse
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.model.erSamhandler

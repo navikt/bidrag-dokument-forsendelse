@@ -2,8 +2,18 @@ package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vladmihalcea.hibernate.type.ImmutableType
-import com.vladmihalcea.hibernate.type.util.Configuration
+import io.hypersistence.utils.hibernate.type.ImmutableType
+import io.hypersistence.utils.hibernate.type.util.Configuration
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
@@ -13,7 +23,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTil
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import org.hibernate.engine.spi.SharedSessionContractImplementor
 import org.hibernate.type.spi.TypeBootstrapContext
 import java.sql.PreparedStatement
@@ -21,16 +30,6 @@ import java.sql.ResultSet
 import java.sql.Types
 import java.time.LocalDate
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Table
-import javax.persistence.UniqueConstraint
 
 private val log = KotlinLogging.logger {}
 
@@ -41,7 +40,6 @@ private val log = KotlinLogging.logger {}
         UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"])
     ]
 )
-@TypeDef(name = "hstore", typeClass = DokumentMetadataDoConverter::class)
 data class Dokument(
     @Id
     @GeneratedValue(generator = "sequence-generator")
@@ -76,7 +74,7 @@ data class Dokument(
 
     val rekkefølgeIndeks: Int,
 
-    @Type(type = "hstore")
+    @Type(DokumentMetadataDoConverter::class)
     @Column(columnDefinition = "hstore", name = "metadata")
     val metadata: DokumentMetadataDo = DokumentMetadataDo(),
 
@@ -153,16 +151,17 @@ class DokumentMetadataDoConverter(typeBootstrapContext: TypeBootstrapContext) : 
     DokumentMetadataDo::class.java,
     Configuration(typeBootstrapContext.configurationSettings)
 ) {
-    override fun sqlTypes(): IntArray {
-        return intArrayOf(Types.OTHER)
-    }
 
-    override fun get(rs: ResultSet, names: Array<out String>?, session: SharedSessionContractImplementor?, owner: Any): DokumentMetadataDo {
-        val map = names?.let { rs.getObject(names[0]) as Map<String, String>? } ?: emptyMap()
+    override fun get(rs: ResultSet, p1: Int, session: SharedSessionContractImplementor?, owner: Any?): DokumentMetadataDo {
+        val map = rs.getObject(p1) as Map<String, String>
         return DokumentMetadataDo.from(map)
     }
 
     override fun set(st: PreparedStatement, value: DokumentMetadataDo?, index: Int, session: SharedSessionContractImplementor) {
         st.setObject(index, value?.toMap())
+    }
+
+    override fun getSqlType(): Int {
+        return Types.OTHER
     }
 }

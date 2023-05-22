@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
@@ -25,7 +26,6 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import javax.transaction.Transactional
 
 private val log = KotlinLogging.logger {}
 

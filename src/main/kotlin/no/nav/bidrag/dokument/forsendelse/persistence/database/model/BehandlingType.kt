@@ -66,7 +66,7 @@ enum class SoknadFra(private val kode: String) {
     BIDRAGSPLIKTIG("PL"),
     UTENLANDSKE_MYNDIGH("UM"),
     VERGE("VE"),
-    TRYGDEETATEN_INNKREVING("TI"),
+    TI("TI"), //TRYGDEETATEN_INNKREVING
     KLAGE_ENHET("FK"); // FTK
 
 }
