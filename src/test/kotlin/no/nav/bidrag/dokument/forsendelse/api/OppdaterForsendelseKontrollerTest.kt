@@ -606,7 +606,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             )
             val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
             responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST
-            responseNyDokument.headers["Warning"]!![0] shouldBe "Forespørselen inneholder ugyldig data: Forsendelse $forsendelseId har allerede tilknyttet dokument med dokumentreferanse 123213213"
+            responseNyDokument.headers["Warning"]!![0] shouldBe "Forespørselen inneholder ugyldig data: Forsendelse $forsendelseId har allerede tilknyttet dokument med dokumentreferanse ${dokument.dokumentreferanse}"
         }
     }
 }
