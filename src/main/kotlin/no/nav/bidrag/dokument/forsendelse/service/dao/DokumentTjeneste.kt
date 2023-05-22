@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service.dao
 
+import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
@@ -10,7 +11,6 @@ import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentD
 import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingService: DokumentBestillingService) {

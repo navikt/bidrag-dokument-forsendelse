@@ -27,8 +27,6 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import org.junit.jupiter.api.Test
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -255,11 +253,8 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
         }
 
-        val response = httpHeaderTestRestTemplate.exchange(
-            "${rootUri()}/sak/${forsendelse1.saksnummer}/journal?fagomrade=BID",
-            HttpMethod.GET,
-            null,
-            object : ParameterizedTypeReference<List<JournalpostDto>>() {}
+        val response = httpHeaderTestRestTemplate.getForEntity<List<JournalpostDto>>(
+            "${rootUri()}/sak/${forsendelse1.saksnummer}/journal?fagomrade=BID"
         )
 
         response.statusCode shouldBe HttpStatus.OK

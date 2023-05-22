@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
@@ -20,7 +21,6 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
-import javax.transaction.Transactional
 
 private val LOGGER = KotlinLogging.logger {}
 

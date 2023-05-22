@@ -1,10 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.utils
 
+import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 @Component
 class TestDataManager(val forsendelseRepository: ForsendelseRepository, val dokumentRepository: DokumentRepository) {
