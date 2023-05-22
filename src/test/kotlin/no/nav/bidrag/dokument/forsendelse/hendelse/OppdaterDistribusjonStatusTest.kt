@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.support.TransactionTemplate
@@ -250,6 +249,68 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     }
 
     @Test
+    fun `skal oppdatere distribusjon for journalpost med kanal INGEN_DISTRIBUSJON`() {
+        val forsendelse = opprettForsendelseFerdigstiltIkkeDistribuert()
+        testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                status = ForsendelseStatus.FERDIGSTILT,
+                arkivJournalpostId = (10000..20000).random().toString(),
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentreferanseOriginal = null,
+                        journalpostId = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.JOARK,
+                        dokumentMalId = "MAL1"
+                    )
+                ),
+                kanal = DistribusjonKanal.INGEN_DISTRIBUSJON
+            )
+        )
+        val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
+
+        stubUtils.stubHentDistribusjonInfo(
+            forsendelse.journalpostIdFagarkiv,
+            DistribusjonInfoDto(
+                bestillingId = null,
+                kanal = DistribusjonKanal.INGEN_DISTRIBUSJON.name,
+                distribuertDato = null,
+                journalstatus = JournalpostStatus.FERDIGSTILT,
+                distribuertAvIdent = "Z999999"
+            )
+        )
+        transactionTemplate.executeWithoutResult {
+            skedulering.oppdaterDistribusjonstatus()
+        }
+
+        stubUtils.Valider().hentDistribusjonInfoKalt(1)
+
+        val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
+        assertSoftly {
+            forsendelseEtter!!.distribusjonKanal shouldBe DistribusjonKanal.INGEN_DISTRIBUSJON
+            forsendelseEtter.distribusjonBestillingsId shouldBe null
+            forsendelseEtter.distribuertTidspunkt!! shouldHaveSameDayAs distribuertDato
+            forsendelseEtter.status shouldBe ForsendelseStatus.FERDIGSTILT
+            forsendelseEtter.endretAvIdent shouldBe BIDRAG_DOKUMENT_FORSENDELSE_APP_ID
+
+            verify(exactly = 1) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
+        }
+
+        val alleHendelser = readAllFromJournalpostTopic()
+        val hendelse = alleHendelser.find { it.journalpostId == forsendelse!!.forsendelseIdMedPrefix }
+        hendelse shouldNotBe null
+        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelse.journalpostId shouldBe forsendelseEtter!!.forsendelseIdMedPrefix
+        hendelse.tema shouldBe forsendelseEtter.tema.name
+        hendelse.enhet shouldBe forsendelseEtter.enhet
+        hendelse.tittel shouldBe forsendelseEtter.dokumenter.hoveddokument?.tittel
+        hendelse.fnr shouldBe forsendelseEtter.gjelderIdent
+        hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
+        hendelse.sakstilknytninger!! shouldContain forsendelseEtter.saksnummer
+    }
+
+    @Test
     fun `skal oppdatere distribusjon for journalpost med status ekspedert`() {
         val forsendelse = opprettForsendelseFerdigstiltIkkeDistribuert()
 
@@ -300,11 +361,9 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null
     ): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange(
+        return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
-            HttpMethod.POST,
-            forespørsel?.let { HttpEntity(it) },
-            DistribuerJournalpostResponse::class.java
+            forespørsel?.let { HttpEntity(it) }
         )
     }
 

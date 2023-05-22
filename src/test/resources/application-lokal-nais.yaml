@@ -34,7 +34,8 @@ springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
 
 PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
 BIDRAG_ORGANISASJON_URL: https://bidrag-person-feature.dev.adeo.no
-BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling-feature.intern.dev.nav.no
+BIDRAG_DOKUMENT_BESTILLING_UR2L: https://bidrag-dokument-bestilling-feature.intern.dev.nav.no
+BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:8998
 BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.intern.dev.nav.no
 BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling-feature
 BIDRAG_PERSON_URL: https://bidrag-person-feature.dev.adeo.no

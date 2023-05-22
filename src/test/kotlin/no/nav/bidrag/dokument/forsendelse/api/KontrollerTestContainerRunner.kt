@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 
 abstract class KontrollerTestContainerRunner : TestContainerRunner() {
@@ -37,11 +36,9 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     }
 
     protected fun utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel: OpprettForsendelseForespørsel): ResponseEntity<OpprettForsendelseRespons> {
-        return httpHeaderTestRestTemplate.exchange(
+        return httpHeaderTestRestTemplate.postForEntity<OpprettForsendelseRespons>(
             rootUri(),
-            HttpMethod.POST,
-            HttpEntity(opprettForsendelseForespørsel),
-            OpprettForsendelseRespons::class.java
+            HttpEntity(opprettForsendelseForespørsel)
         )
     }
 
@@ -49,15 +46,13 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         forsendelseId: String,
         oppdaterForespørsel: OppdaterForsendelseForespørsel
     ): ResponseEntity<OppdaterForsendelseResponse> {
-        return httpHeaderTestRestTemplate.exchange(
+        return httpHeaderTestRestTemplate.patchForEntity<OppdaterForsendelseResponse>(
             "${rootUri()}/$forsendelseId",
-            HttpMethod.PATCH,
-            HttpEntity(oppdaterForespørsel),
-            OppdaterForsendelseResponse::class.java
+            HttpEntity(oppdaterForespørsel)
         )
     }
 
     protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/$forsendelseId", HttpMethod.GET, null, JournalpostResponse::class.java)
+        return httpHeaderTestRestTemplate.getForEntity<JournalpostResponse>("${rootUri()}/journal/$forsendelseId")
     }
 }

@@ -20,14 +20,13 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
 class DistribuerKontrollerTest : KontrollerTestRunner() {
-    protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Void> {
-        return httpHeaderTestRestTemplate.exchange("${rootUri()}/journal/distribuer/$forsendelseId/enabled", HttpMethod.GET, null, Void::class.java)
+    protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Unit> {
+        return httpHeaderTestRestTemplate.getForEntity<Unit>("${rootUri()}/journal/distribuer/$forsendelseId/enabled")
     }
 
     protected fun utførDistribuerForsendelse(
@@ -35,11 +34,9 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null
     ): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.exchange(
+        return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
-            HttpMethod.POST,
-            forespørsel?.let { HttpEntity(it) },
-            DistribuerJournalpostResponse::class.java
+            forespørsel?.let { HttpEntity(it) }
         )
     }
 

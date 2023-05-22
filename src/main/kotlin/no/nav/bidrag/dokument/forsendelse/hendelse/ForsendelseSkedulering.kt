@@ -1,12 +1,14 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.dokument.dto.JournalpostStatus
+import no.nav.bidrag.dokument.dto.Kanal
+import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
+import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.model.BIDRAG_DOKUMENT_FORSENDELSE_APP_ID
-import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.DistribusjonService
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseHendelseBestillingService
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -14,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import javax.transaction.Transactional
 
 private val LOGGER = KotlinLogging.logger {}
 
@@ -53,7 +54,7 @@ class ForsendelseSkedulering(
         try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
-                    ?.takeIf { it.journalstatus == JournalpostStatus.DISTRIBUERT || it.journalstatus == JournalpostStatus.EKSPEDERT }
+                    ?.takeIf { it.journalstatus == JournalpostStatus.DISTRIBUERT || it.journalstatus == JournalpostStatus.EKSPEDERT || it.kanal == Kanal.INGEN_DISTRIBUSJON.name }
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
@@ -68,7 +69,9 @@ class ForsendelseSkedulering(
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
                             forsendelse.copy(
-                                status = if (kanal == DistribusjonKanal.LOKAL_UTSKRIFT) ForsendelseStatus.DISTRIBUERT_LOKALT else ForsendelseStatus.DISTRIBUERT,
+                                status = if (kanal == DistribusjonKanal.LOKAL_UTSKRIFT) ForsendelseStatus.DISTRIBUERT_LOKALT
+                                else if (kanal == DistribusjonKanal.INGEN_DISTRIBUSJON) ForsendelseStatus.FERDIGSTILT
+                                else ForsendelseStatus.DISTRIBUERT,
                                 distribuertTidspunkt = distInfo.distribuertDato ?: LocalDateTime.now(),
                                 distribuertAvIdent = distInfo.distribuertAvIdent ?: forsendelse.distribuertAvIdent,
                                 distribusjonBestillingsId = distInfo.bestillingId ?: forsendelse.distribusjonBestillingsId,

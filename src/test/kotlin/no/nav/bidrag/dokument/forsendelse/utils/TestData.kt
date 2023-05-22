@@ -151,6 +151,7 @@ fun opprettForsendelse2(
     distribusjonsTidspunkt: LocalDateTime? = null,
     status: ForsendelseStatus = ForsendelseStatus.UNDER_PRODUKSJON,
     arkivJournalpostId: String? = null,
+    kanal: DistribusjonKanal? = null,
     tema: ForsendelseTema = ForsendelseTema.BID,
     saksnummer: String = SAKSNUMMER,
     gjelderIdent: String = GJELDER_IDENT,
@@ -172,7 +173,8 @@ fun opprettForsendelse2(
         dokumenter = dokumenter,
         journalpostIdFagarkiv = arkivJournalpostId,
         distribusjonBestillingsId = distribusjonBestillingsId,
-        distribuertTidspunkt = distribusjonsTidspunkt
+        distribuertTidspunkt = distribusjonsTidspunkt,
+        distribusjonKanal = kanal
     )
 
     dokumenter.forEach { it.forsendelse = forsendelse }

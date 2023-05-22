@@ -24,11 +24,12 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.service.KodeverkService
+import no.nav.bidrag.transport.person.PersonDto
 import java.time.LocalDateTime
 
 object ForespørselMapper {
-    fun MottakerTo.tilMottakerDo(person: HentPersonResponse?, språk: String) = Mottaker(
-        navn = this.navn ?: person?.navn,
+    fun MottakerTo.tilMottakerDo(person: PersonDto?, språk: String) = Mottaker(
+        navn = this.navn ?: person?.navn?.verdi,
         ident = this.ident,
         språk = språk.uppercase(),
         identType = when (this.identType) {

@@ -41,7 +41,7 @@ class BidragDokumentConsumer(
         ) ?: emptyList()
     }
 
-    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 300, maxDelay = 2000, multiplier = 2.0))
     fun hentDokument(journalpostId: String?, dokumentId: String?): ByteArray? {
         if (journalpostId.isNullOrEmpty()) return hentDokument(dokumentId)
         return getForEntity(
