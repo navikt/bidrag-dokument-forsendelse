@@ -127,7 +127,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                             "\"saksbehandler\":null," +
                             "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
                             "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                            "\"vedtaksId\":null," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
                             "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
                             "\"tittel\":\"${hoveddokument.tittel}\"," +
                             "\"enhet\":\"${forsendelse.enhet}\"," +
