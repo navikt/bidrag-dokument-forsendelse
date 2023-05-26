@@ -38,7 +38,7 @@
   <repositories>
     <repository>
       <id>github</id>
-        <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
+      <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
     </repository>
   </repositories>
 
@@ -267,6 +267,12 @@
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-serialization-json</artifactId>
       <version>1.5.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>no.nav.bidrag</groupId>
+      <artifactId>bidrag-behandling-felles</artifactId>
+      <version>0.0.84</version>
     </dependency>
 
     <!--Test-->

@@ -2,7 +2,12 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
+import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
+import no.nav.bidrag.behandling.felles.enums.StonadType
+import no.nav.bidrag.behandling.felles.enums.VedtakKilde
+import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import java.time.LocalDateTime
 
 @Schema(description = "Metadata for opprettelse av forsendelse")
@@ -30,6 +35,11 @@ data class OpprettForsendelseForespørsel(
 data class BehandlingInfoDto(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
+    val engangsBelopType: EngangsbelopType? = null,
+    val stonadType: StonadType? = null,
+    val vedtakType: VedtakType? = null,
+    val vedtakKilde: VedtakKilde? = null,
+    val soknadFra: SoknadFra? = null,
     val roller: List<String> = emptyList()
 )
 

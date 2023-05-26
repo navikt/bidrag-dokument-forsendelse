@@ -71,7 +71,17 @@ class OpprettForsendelseService(
             batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
-            behandlingInfo = forespørsel.behandlingInfo?.let { BehandlingInfo(behandlingId = it.behandlingId, vedtakId = it.vedtakId) },
+            behandlingInfo = forespørsel.behandlingInfo?.let {
+                BehandlingInfo(
+                    behandlingId = it.behandlingId,
+                    vedtakId = it.vedtakId,
+                    engangsBelopType = it.engangsBelopType,
+                    vedtakType = it.vedtakType,
+                    stonadType = it.stonadType,
+                    soknadFra = it.soknadFra,
+                    vedtakKilde = it.vedtakKilde
+                )
+            },
             enhet = forespørsel.enhet,
             språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",

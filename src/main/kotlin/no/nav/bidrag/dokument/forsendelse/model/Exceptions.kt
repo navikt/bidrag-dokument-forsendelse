@@ -33,6 +33,9 @@ fun fantIkkeDokument(forsendelseId: Long, dokumentreferanse: String): Nothing =
 fun fantIkkeForsendelse(forsendelseId: Long): Nothing =
     throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke forsendelse med id $forsendelseId")
 
+fun forsendelseHarIngenBehandlingInfo(forsendelseId: Long): Nothing =
+    throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Forsendelse med id $forsendelseId har ingen behandlinginfo. Kan ikke hente dokumentvalg")
+
 fun fantIkkeForsendelse(forsendelseId: Long, saksnummer: String): Nothing =
     throw HttpClientErrorException(HttpStatus.NOT_FOUND, "Fant ikke forsendelse med id $forsendelseId og saksnummer $saksnummer")
 

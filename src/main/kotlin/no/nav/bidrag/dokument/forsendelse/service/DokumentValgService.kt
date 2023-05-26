@@ -3,13 +3,17 @@ package no.nav.bidrag.dokument.forsendelse.service
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandling
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forvaltning
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.VedtakStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isEqual
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import java.io.IOException
@@ -18,43 +22,44 @@ import java.nio.charset.StandardCharsets
 @Component
 class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsumer) {
 
-    val dokumentValgMap: Map<String, DokumentBehandling>
+    val dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
+
+    val standardBrevkoder = listOf("BI01S02", "BI01S10", "BI01S67")
+    val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
 
     init {
         dokumentValgMap = fetchDokumentValgMapFromFile()
     }
 
     fun hentDokumentMalListe(
+        vedtakType: VedtakType? = null,
         behandlingType: BehandlingType? = null,
-        soknadType: SoknadType? = null,
         soknadFra: SoknadFra? = null,
-        erVedtakFattet: Boolean,
-        manuelBeregning: Boolean,
-        klage: Boolean
+        vedtakStatus: VedtakStatus? = null,
+        forvaltning: Forvaltning? = null,
     ): Map<String, DokumentMalDetaljer> {
-        val malIder = dokumentValgMap.keys.filter { malId ->
-            val detaljListe = dokumentValgMap[malId]
-            detaljListe?.detaljer?.any {
-                (it.klage == null || it.klage == klage) &&
-                        (it.fattetVedtak == null || it.fattetVedtak == erVedtakFattet)
-                        && (behandlingType == null || it.behandlingType.contains(behandlingType))
-                        && (soknadType == null || it.soknadType == soknadType)
-                        && (soknadFra == null || it.soknadFra.contains(soknadFra))
-                        && (it.manuelBeregning == null || it.manuelBeregning == manuelBeregning)
-            } == true
+        val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
+        if (behandlingType == null) return (standardBrevkoder + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
+        val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
+            it.soknadFra.contains(soknadFra) &&
+                    it.vedtakType.contains(vedtakType) &&
+                    it.vedtakStatus.isEqual(vedtakStatus) &&
+                    it.forvaltning.isEqual(forvaltning)
         }
-        return malIder.associateWith { mapToMalDetaljer(it) }
+        return dokumentValg?.brevkoder?.associateWith { mapToMalDetaljer(it) }
+            ?: (standardBrevkoder + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
     }
+
 
     fun mapToMalDetaljer(malId: String): DokumentMalDetaljer {
         val dokumentDetaljer = bestillingConsumer.dokumentmalDetaljer()
         val malInfo = dokumentDetaljer[malId]
-        val tittel = malInfo?.beskrivelse ?: dokumentValgMap[malId]?.tittel ?: "Ukjent"
+        val tittel = malInfo?.beskrivelse ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
         return DokumentMalDetaljer(tittel, malType)
     }
 
-    private fun fetchDokumentValgMapFromFile(): Map<String, DokumentBehandling> {
+    private fun fetchDokumentValgMapFromFile(): Map<BehandlingType, List<DokumentBehandlingDetaljer>> {
         return try {
             val objectMapper = ObjectMapper(YAMLFactory())
             objectMapper.findAndRegisterModules()
@@ -62,13 +67,13 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
             val text = String(inputstream.readAllBytes(), StandardCharsets.UTF_8)
             val listType: JavaType = objectMapper.typeFactory.constructParametricType(
                 MutableList::class.java,
-                DokumentBehandling::class.java
+                DokumentBehandlingDetaljer::class.java
             )
             val stringType = objectMapper.typeFactory.constructType(String::class.java)
             val dokbehtyp = objectMapper.typeFactory.constructType(DokumentBehandling::class.java)
             objectMapper.readValue(
                 text, objectMapper.typeFactory.constructMapType(
-                    MutableMap::class.java, stringType, dokbehtyp
+                    MutableMap::class.java, stringType, listType
                 )
             )
         } catch (e: IOException) {
