@@ -73,7 +73,7 @@ class ForsendelseInnsynTjeneste(
                 it.vedtakType,
                 it.toBehandlingType(),
                 it.soknadFra,
-                it.vedtakKilde,
+                it.erFattetBeregnet,
                 forsendelse.enhet
             )
         } ?: forsendelseHarIngenBehandlingInfo(forsendelseId)

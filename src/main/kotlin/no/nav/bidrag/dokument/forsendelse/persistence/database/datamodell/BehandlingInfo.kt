@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 
@@ -28,8 +27,7 @@ data class BehandlingInfo(
     val stonadType: StonadType? = null,
     @Enumerated(EnumType.STRING)
     val vedtakType: VedtakType? = null,
-    @Enumerated(EnumType.STRING)
-    val vedtakKilde: VedtakKilde? = null,
+    val erFattetBeregnet: Boolean? = null,
     @Enumerated(EnumType.STRING)
     val soknadFra: SoknadFra? = null,
 

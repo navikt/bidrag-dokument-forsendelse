@@ -82,7 +82,7 @@ class OpprettForsendelseService(
                     vedtakType = it.vedtakType,
                     stonadType = it.stonadType,
                     soknadFra = it.soknadFra,
-                    vedtakKilde = it.vedtakKilde
+                    erFattetBeregnet = it.erFattetBeregnet
                 )
             },
             enhet = forespørsel.enhet,

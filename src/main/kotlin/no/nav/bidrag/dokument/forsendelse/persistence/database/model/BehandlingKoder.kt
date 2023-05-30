@@ -2,7 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET_KODER
 
@@ -100,33 +99,28 @@ fun Forvaltning.isValid(enhet: String? = null): Boolean {
     return true
 }
 
-enum class VedtakStatus {
+enum class BehandlingStatus {
     IKKE_RELEVANT,
     FATTET,
     FATTET_MANUELT,
-    FATTET_AUTOMATISK,
+    FATTET_BEREGNET,
     IKKE_FATTET;
 }
 
-fun VedtakStatus.isValid(kilde: VedtakKilde? = null): Boolean {
-    return if (kilde == null) this == VedtakStatus.IKKE_RELEVANT || this == VedtakStatus.IKKE_FATTET
-    else if (this == VedtakStatus.FATTET) {
-        kilde == VedtakKilde.AUTOMATISK || kilde == VedtakKilde.MANUELT
-    } else if (this == VedtakStatus.FATTET_AUTOMATISK) kilde == VedtakKilde.AUTOMATISK
-    else if (this == VedtakStatus.FATTET_MANUELT) kilde == VedtakKilde.MANUELT
-    else false
+fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
+    return if (erFattetBeregnet == null) this == BehandlingStatus.IKKE_RELEVANT || this == BehandlingStatus.IKKE_FATTET
+    else if (this == BehandlingStatus.FATTET_BEREGNET) erFattetBeregnet == true
+    else if (this == BehandlingStatus.FATTET_MANUELT) erFattetBeregnet == false
+    else this == BehandlingStatus.FATTET
 }
 
 data class DokumentBehandlingDetaljer(
-    val soknadGruppe: SoknadGruppe,
-    val soknadType: List<SoknadType>,
-
     val stonadType: StonadType? = null,
     val engangsbelopType: EngangsbelopType? = null,
     val vedtakType: List<VedtakType>,
     val soknadFra: List<SoknadFra>,
     val forvaltning: Forvaltning,
-    val vedtakStatus: VedtakStatus,
+    val behandlingStatus: BehandlingStatus,
     val brevkoder: List<String>
 )
 

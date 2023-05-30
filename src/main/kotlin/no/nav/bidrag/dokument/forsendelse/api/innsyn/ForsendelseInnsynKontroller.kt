@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -90,10 +89,10 @@ class ForsendelseInnsynKontroller(
         @RequestParam(required = false) vedtakType: VedtakType? = null,
         @RequestParam(required = false) behandlingType: BehandlingType? = null,
         @RequestParam(required = false) soknadFra: SoknadFra? = null,
-        @RequestParam(required = false) vedtakKilde: VedtakKilde? = null,
+        @RequestParam(required = false) erFattetBeregnet: Boolean? = null,
         @RequestParam(required = false) enhet: String? = null,
     ): Map<String, DokumentMalDetaljer> {
-        return dokumentValgService.hentDokumentMalListe(vedtakType, behandlingType, soknadFra, vedtakKilde, enhet)
+        return dokumentValgService.hentDokumentMalListe(vedtakType, behandlingType, soknadFra, erFattetBeregnet, enhet)
     }
 
     @GetMapping("/dokumentvalg/notat")

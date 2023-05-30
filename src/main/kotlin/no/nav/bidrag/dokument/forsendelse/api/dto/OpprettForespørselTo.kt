@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
@@ -38,7 +37,7 @@ data class BehandlingInfoDto(
     val engangsBelopType: EngangsbelopType? = null,
     val stonadType: StonadType? = null,
     val vedtakType: VedtakType? = null,
-    val vedtakKilde: VedtakKilde? = null,
+    val erFattetBeregnet: Boolean? = null,
     val soknadFra: SoknadFra? = null,
     val roller: List<String> = emptyList()
 )

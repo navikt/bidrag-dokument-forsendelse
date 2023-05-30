@@ -3,7 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
@@ -24,6 +23,8 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
     val dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
 
     val standardBrevkoder = listOf("BI01S02", "BI01S10", "BI01S67")
+    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10")
+    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
 
     init {
@@ -38,7 +39,7 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         vedtakType: VedtakType? = null,
         behandlingType: BehandlingType? = null,
         soknadFra: SoknadFra? = null,
-        vedtakKilde: VedtakKilde? = null,
+        erFattetBeregnet: Boolean? = null,
         enhet: String? = null,
     ): Map<String, DokumentMalDetaljer> {
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
@@ -46,11 +47,13 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
                     it.vedtakType.contains(vedtakType) &&
-                    it.vedtakStatus.isValid(vedtakKilde) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
                     it.forvaltning.isValid(enhet)
         }
-        return dokumentValg?.brevkoder?.associateWith { mapToMalDetaljer(it) }?.filter { it.value.type != DokumentMalType.NOTAT }
-            ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+        val brevkoder =
+            dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
+                ?: ekstraBrevkoderVedtakIkkeFattet
+        return brevkoder.associateWith { mapToMalDetaljer(it) }.filter { it.value.type != DokumentMalType.NOTAT }
     }
 
 
