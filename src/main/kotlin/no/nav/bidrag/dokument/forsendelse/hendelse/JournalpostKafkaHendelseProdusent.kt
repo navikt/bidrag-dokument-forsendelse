@@ -71,6 +71,7 @@ class JournalpostKafkaHendelseProdusent(
                             if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
                         else JournalpostStatus.UNDER_PRODUKSJON.name
 
+                    ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_PRODUKSJON.name
                 }
             )
         )

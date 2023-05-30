@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.validerErSann
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import java.time.LocalDateTime
 
 val List<OppdaterDokumentForespørsel>.dokumenterIkkeSlettet get() = this.filter { it.fjernTilknytning == false }
@@ -40,6 +41,13 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
         this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
         "Dokumentdato kan ikke bli satt til fram i tid"
     )
+
+    if (eksisterendeForsendelse.status != ForsendelseStatus.UNDER_OPPRETTELSE) {
+        if (mottaker != null) feilmeldinger.add("Kan bare oppdatere mottaker hvis status er ${ForsendelseStatus.UNDER_OPPRETTELSE.name}")
+        if (gjelderIdent != null) feilmeldinger.add("Kan bare oppdatere gjelder ident hvis status er ${ForsendelseStatus.UNDER_OPPRETTELSE.name}")
+        if (språk != null) feilmeldinger.add("Kan bare oppdatere språk hvis status er ${ForsendelseStatus.UNDER_OPPRETTELSE.name}")
+        if (tema != null) feilmeldinger.add("Kan bare oppdatere tema hvis status er ${ForsendelseStatus.UNDER_OPPRETTELSE.name}")
+    }
 
     if (feilmeldinger.isNotEmpty()) {
         throw UgyldigForespørsel(feilmeldinger.joinToString(", "))

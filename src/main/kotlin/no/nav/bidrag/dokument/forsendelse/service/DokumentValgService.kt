@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
@@ -10,10 +11,8 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forvaltning
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.VedtakStatus
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isEqual
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import java.io.IOException
@@ -31,20 +30,24 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         dokumentValgMap = fetchDokumentValgMapFromFile()
     }
 
+    fun hentNotatListe(): Map<String, DokumentMalDetaljer> {
+        return notaterBrevkoder.associateWith { mapToMalDetaljer(it) }
+    }
+
     fun hentDokumentMalListe(
         vedtakType: VedtakType? = null,
         behandlingType: BehandlingType? = null,
         soknadFra: SoknadFra? = null,
-        vedtakStatus: VedtakStatus? = null,
-        forvaltning: Forvaltning? = null,
+        vedtakKilde: VedtakKilde? = null,
+        enhet: String? = null,
     ): Map<String, DokumentMalDetaljer> {
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         if (behandlingType == null) return (standardBrevkoder + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
                     it.vedtakType.contains(vedtakType) &&
-                    it.vedtakStatus.isEqual(vedtakStatus) &&
-                    it.forvaltning.isEqual(forvaltning)
+                    it.vedtakStatus.isValid(vedtakKilde) &&
+                    it.forvaltning.isValid(enhet)
         }
         return dokumentValg?.brevkoder?.associateWith { mapToMalDetaljer(it) }
             ?: (standardBrevkoder + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }

@@ -8,9 +8,11 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
@@ -44,6 +46,7 @@ class OpprettForsendelseService(
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
             forsendelseId = forsendelse.forsendelseId,
+            forsendelseType = forsendelse.tilForsendelseType(),
             dokumenter = dokumenter.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
@@ -88,6 +91,7 @@ class OpprettForsendelseService(
             endretAvIdent = bruker?.ident ?: "UKJENT",
             opprettetAvNavn = bruker?.navn,
             mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
+            status = if (forespørsel.dokumenter.isEmpty()) ForsendelseStatus.UNDER_OPPRETTELSE else ForsendelseStatus.UNDER_PRODUKSJON,
             tema = when (forespørsel.tema) {
                 JournalTema.FAR -> ForsendelseTema.FAR
                 else -> ForsendelseTema.BID

@@ -1,7 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -9,14 +8,10 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
-import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET_KODER
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.forsendelseHarIngenBehandlingInfo
-import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forvaltning
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.VedtakStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import org.springframework.stereotype.Component
 
@@ -78,21 +73,9 @@ class ForsendelseInnsynTjeneste(
                 it.vedtakType,
                 it.toBehandlingType(),
                 it.soknadFra,
-                it.toVedtakStatus(),
-                forsendelse.toForvaltning()
+                it.vedtakKilde,
+                forsendelse.enhet
             )
         } ?: forsendelseHarIngenBehandlingInfo(forsendelseId)
-    }
-
-    private fun Forsendelse.toForvaltning(): Forvaltning {
-        return if (KLAGE_ANKE_ENHET_KODER.contains(enhet)) Forvaltning.KLAGE_ANKE else Forvaltning.BIDRAG
-    }
-
-    private fun BehandlingInfo.toVedtakStatus(): VedtakStatus {
-        return when (this.vedtakKilde) {
-            VedtakKilde.MANUELT -> VedtakStatus.FATTET_MANUELT
-            VedtakKilde.AUTOMATISK -> VedtakStatus.FATTET_AUTOMATISK
-            else -> VedtakStatus.IKKE_FATTET
-        }
     }
 }

@@ -2,7 +2,9 @@ package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
+import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
+import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET_KODER
 
 // T_SOKNAD.SOKN_GR_KODE
 enum class SoknadGruppe(private val kode: String) {
@@ -88,14 +90,14 @@ enum class Forvaltning {
     BIDRAG;
 }
 
-fun Forvaltning.isEqual(other: Forvaltning? = null): Boolean {
-    if (other == null) {
+fun Forvaltning.isValid(enhet: String? = null): Boolean {
+    if (enhet == null) {
         return this == Forvaltning.BEGGE || this == Forvaltning.BIDRAG
     }
-    if (this == Forvaltning.BEGGE) {
-        return other == Forvaltning.KLAGE_ANKE || other == Forvaltning.BIDRAG
+    if (this == Forvaltning.KLAGE_ANKE) {
+        return KLAGE_ANKE_ENHET_KODER.contains(enhet)
     }
-    return this == other
+    return true
 }
 
 enum class VedtakStatus {
@@ -106,14 +108,13 @@ enum class VedtakStatus {
     IKKE_FATTET;
 }
 
-fun VedtakStatus.isEqual(other: VedtakStatus? = null): Boolean {
-    if (other == null) {
-        return this == VedtakStatus.IKKE_RELEVANT
-    }
-    if (this == VedtakStatus.FATTET) {
-        return other == VedtakStatus.FATTET_MANUELT || other == VedtakStatus.FATTET_AUTOMATISK
-    }
-    return this == other
+fun VedtakStatus.isValid(kilde: VedtakKilde? = null): Boolean {
+    return if (kilde == null) this == VedtakStatus.IKKE_RELEVANT || this == VedtakStatus.IKKE_FATTET
+    else if (this == VedtakStatus.FATTET) {
+        kilde == VedtakKilde.AUTOMATISK || kilde == VedtakKilde.MANUELT
+    } else if (this == VedtakStatus.FATTET_AUTOMATISK) kilde == VedtakKilde.AUTOMATISK
+    else if (this == VedtakStatus.FATTET_MANUELT) kilde == VedtakKilde.MANUELT
+    else this == VedtakStatus.IKKE_RELEVANT || this == VedtakStatus.IKKE_FATTET
 }
 
 data class DokumentBehandlingDetaljer(

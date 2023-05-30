@@ -15,7 +15,10 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
+import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.toForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -53,6 +56,7 @@ class OppdaterForsendelseService(
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val dokumentTjeneste: DokumentTjeneste,
+    private val personConsumer: BidragPersonConsumer,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
     private val fysiskDokumentService: FysiskDokumentService
 ) {
@@ -68,7 +72,25 @@ class OppdaterForsendelseService(
 
         log.info { "Oppdaterer forsendelse $forsendelseId" }
 
-        val oppdatertForsendelse = forsendelseTjeneste.lagre(
+        val oppdatertForsendelse = if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) {
+            val mottaker = forespørsel.mottaker?.let {
+                val mottakerIdent = it.ident
+                val mottakerInfo = mottakerIdent?.let { personConsumer.hentPerson(mottakerIdent) }
+                val mottakerSpråk = forespørsel.språk ?: mottakerIdent?.let { personConsumer.hentPersonSpråk(mottakerIdent) } ?: forsendelse.språk
+                forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk)
+            }
+
+            forsendelseTjeneste.lagre(
+                forsendelse.copy(
+                    mottaker = mottaker ?: forsendelse.mottaker,
+                    språk = forespørsel.språk ?: forsendelse.språk,
+                    enhet = forespørsel.enhet ?: forsendelse.enhet,
+                    tema = forespørsel.tema?.toForsendelseTema() ?: forsendelse.tema,
+                    status = ForsendelseStatus.UNDER_PRODUKSJON,
+                    dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel)
+                )
+            )
+        } else forsendelseTjeneste.lagre(
             forsendelse.copy(
                 dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel)
             )

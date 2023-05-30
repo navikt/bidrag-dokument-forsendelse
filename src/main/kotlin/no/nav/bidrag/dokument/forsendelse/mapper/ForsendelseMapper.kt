@@ -111,6 +111,8 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         } else {
             Journalstatus.UNDER_PRODUKSJON
         }
+
+        ForsendelseStatus.UNDER_OPPRETTELSE -> Journalstatus.UNDER_PRODUKSJON
     },
     journalpostId = forsendelseIdMedPrefix,
     dokumentDato = if (erNotat) this.dokumentDato?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate() else this.opprettetTidspunkt.toLocalDate(),
@@ -138,6 +140,7 @@ fun Forsendelse.tilForsendelseStatusTo() = when (this.status) {
     ForsendelseStatus.DISTRIBUERT_LOKALT -> ForsendelseStatusTo.DISTRIBUERT_LOKALT
     ForsendelseStatus.SLETTET, ForsendelseStatus.AVBRUTT -> ForsendelseStatusTo.SLETTET
     ForsendelseStatus.FERDIGSTILT -> ForsendelseStatusTo.FERDIGSTILT
+    ForsendelseStatus.UNDER_OPPRETTELSE -> ForsendelseStatusTo.UNDER_OPPRETTELSE
 }
 
 fun Forsendelse.tilForsendelseType() = when (this.forsendelseType) {

@@ -132,7 +132,7 @@ object ForespørselValidering {
     }
 
     fun Forsendelse.validerKanEndreForsendelse() {
-        if (this.status != ForsendelseStatus.UNDER_PRODUKSJON) {
+        if (this.status != ForsendelseStatus.UNDER_PRODUKSJON && this.status != ForsendelseStatus.UNDER_OPPRETTELSE) {
             throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres")
         }
     }
