@@ -114,7 +114,7 @@ fun VedtakStatus.isValid(kilde: VedtakKilde? = null): Boolean {
         kilde == VedtakKilde.AUTOMATISK || kilde == VedtakKilde.MANUELT
     } else if (this == VedtakStatus.FATTET_AUTOMATISK) kilde == VedtakKilde.AUTOMATISK
     else if (this == VedtakStatus.FATTET_MANUELT) kilde == VedtakKilde.MANUELT
-    else this == VedtakStatus.IKKE_RELEVANT || this == VedtakStatus.IKKE_FATTET
+    else false
 }
 
 data class DokumentBehandlingDetaljer(
