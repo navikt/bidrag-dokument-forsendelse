@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -68,7 +69,7 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
     private fun fetchDokumentValgMapFromFile(): Map<BehandlingType, List<DokumentBehandlingDetaljer>> {
         return try {
             val objectMapper = ObjectMapper(YAMLFactory())
-            objectMapper.findAndRegisterModules()
+            objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             val inputstream = ClassPathResource("files/dokument_valg.json").inputStream
             val text = String(inputstream.readAllBytes(), StandardCharsets.UTF_8)
             val listType: JavaType = objectMapper.typeFactory.constructParametricType(

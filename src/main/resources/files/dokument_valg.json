@@ -49,7 +49,8 @@
       "vedtakType": [
         "ENDRING",
         "FASTSETTELSE",
-        "OPPHØR"
+        "OPPHØR",
+        "REVURDERING"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
       "forvaltning": "BEGGE",
@@ -74,7 +75,8 @@
         "INDEKSREGULERING",
         "INNKREVING",
         "KLAGE",
-        "OPPHØR"
+        "OPPHØR",
+        "REVURDERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BEGGE",
@@ -149,7 +151,6 @@
       ],
       "stonadType": "FORSKUDD",
       "vedtakType": [
-        "ENDRING",
         "KLAGE",
         "REVURDERING"
       ],
@@ -295,7 +296,6 @@
       ],
       "stonadType": "FORSKUDD",
       "vedtakType": [
-        "ENDRING",
         "KLAGE",
         "OPPHØR",
         "REVURDERING"
@@ -312,7 +312,6 @@
       ],
       "stonadType": "FORSKUDD",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -330,7 +329,6 @@
       ],
       "stonadType": "FORSKUDD",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -392,7 +390,6 @@
       ],
       "stonadType": "FORSKUDD",
       "vedtakType": [
-        "ENDRING",
         "OPPHØR",
         "REVURDERING"
       ],
@@ -410,7 +407,6 @@
       ],
       "stonadType": "FORSKUDD",
       "vedtakType": [
-        "ENDRING",
         "OPPHØR",
         "REVURDERING"
       ],
@@ -939,7 +935,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -955,7 +950,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "IKKE_RELEVANT",
@@ -986,7 +980,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -1003,7 +996,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -1067,7 +1059,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -1083,7 +1074,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -1098,7 +1088,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -1200,7 +1189,7 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING"
+        "REVURDERING"
       ],
       "behandlingStatus": "IKKE_RELEVANT",
       "forvaltning": "BIDRAG",
@@ -1228,7 +1217,6 @@
       ],
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "IKKE_RELEVANT",
@@ -2349,7 +2337,6 @@
       ],
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",
@@ -2364,7 +2351,6 @@
       ],
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -3323,8 +3309,8 @@
       ],
       "engangsbelopType": "TILBAKEKREVING",
       "vedtakType": [
-        "ENDRING",
-        "FASTSETTELSE"
+        "FASTSETTELSE",
+        "REVURDERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BEGGE",
@@ -3338,8 +3324,8 @@
       ],
       "engangsbelopType": "TILBAKEKREVING",
       "vedtakType": [
-        "ENDRING",
-        "FASTSETTELSE"
+        "FASTSETTELSE",
+        "REVURDERING"
       ],
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BEGGE",
