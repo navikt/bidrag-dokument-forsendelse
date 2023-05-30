@@ -42,15 +42,15 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         enhet: String? = null,
     ): Map<String, DokumentMalDetaljer> {
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
-        if (behandlingType == null) return (standardBrevkoder + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
+        if (behandlingType == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
                     it.vedtakType.contains(vedtakType) &&
                     it.vedtakStatus.isValid(vedtakKilde) &&
                     it.forvaltning.isValid(enhet)
         }
-        return dokumentValg?.brevkoder?.associateWith { mapToMalDetaljer(it) }
-            ?: (standardBrevkoder + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
+        return dokumentValg?.brevkoder?.associateWith { mapToMalDetaljer(it) }?.filter { it.value.type != DokumentMalType.NOTAT }
+            ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
     }
 
 
