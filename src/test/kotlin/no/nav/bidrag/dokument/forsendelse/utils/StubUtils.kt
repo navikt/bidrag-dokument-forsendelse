@@ -167,8 +167,9 @@ class StubUtils {
                     .withBody(
                         jsonToString(
                             mapOf(
-                                DOKUMENTMAL_NOTAT to DokumentMalDetaljer("Notat", DokumentMalType.NOTAT),
-                                DOKUMENTMAL_UTGÅENDE to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE)
+                                DOKUMENTMAL_NOTAT to DokumentMalDetaljer("Notat", DokumentMalType.NOTAT, true),
+                                DOKUMENTMAL_UTGÅENDE to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
+                                "AAA" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
                             )
                         )
                     )
