@@ -2,7 +2,10 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
+import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.dto.DokumentHendelse
+import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
@@ -29,6 +32,7 @@ class DokumentBestillingLytter(
     val dokumentBestillingKonsumer: BidragDokumentBestillingConsumer,
     val forsendelseRepository: ForsendelseRepository,
     val dokumentTjeneste: DokumentTjeneste,
+    val dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent,
     val saksbehandlerInfoManager: SaksbehandlerInfoManager
 ) {
 
@@ -42,15 +46,11 @@ class DokumentBestillingLytter(
             ?: throw KunneIkkBestilleDokument("Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}")
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 
-        val bestilling = tilForespørsel(forsendelse, dokument)
-
         try {
-            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
-            LOGGER.info { "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}" }
-
+            val arkivSystem = sendBestilling(forsendelse, dokument)
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
-                    arkivsystem = when (respons?.arkivSystem) {
+                    arkivsystem = when (arkivSystem) {
                         DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
                         else -> DokumentArkivSystem.UKJENT
                     },
@@ -63,6 +63,33 @@ class DokumentBestillingLytter(
             )
             LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }
         }
+    }
+
+    private fun sendBestilling(forsendelse: Forsendelse, dokument: Dokument): DokumentArkivSystemDto? {
+        val dokumentMalId = dokument.dokumentmalId!!
+        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
+            val bestilling = tilForespørsel(forsendelse, dokument)
+            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
+            LOGGER.info { "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}" }
+            return respons?.arkivSystem
+        } else {
+            // Bisys lytter på melding og bestiller brev
+            dokumentKafkaHendelseProdusent.publiser(tilKafkaMelding(forsendelse, dokument))
+        }
+        return null
+    }
+
+    private fun tilKafkaMelding(forsendelse: Forsendelse, dokument: Dokument): DokumentHendelse {
+        return DokumentHendelse(
+            hendelseType = DokumentHendelseType.BESTILLING,
+            forsendelseId = forsendelse.forsendelseId.toString(),
+            dokumentreferanse = dokument.dokumentreferanse,
+            sporingId = CorrelationId.fetchCorrelationIdForThread()
+        )
+    }
+
+    private fun kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
+        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.kanBestilles ?: false
     }
 
     private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel {

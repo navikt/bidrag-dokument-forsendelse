@@ -9,9 +9,11 @@ import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.DokumentType
 import no.nav.bidrag.dokument.dto.Fagomrade
 import no.nav.bidrag.dokument.dto.JournalpostDto
+import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.Journalstatus
 import no.nav.bidrag.dokument.dto.KodeDto
 import no.nav.bidrag.dokument.dto.MottakerAdresseTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoResponseDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -91,7 +93,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
     brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
-    innhold = this.dokumenter.hoveddokument?.tittel ?: "Forsendelse $forsendelseId",
+    innhold = this.dokumenter.hoveddokument?.tittel ?: this.behandlingInfo?.toBehandlingType() ?: "Forsendelse $forsendelseId",
     fagomrade = when (tema) {
         ForsendelseTema.FAR -> Fagomrade.FARSKAP
         else -> Fagomrade.BIDRAG
@@ -112,7 +114,20 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             Journalstatus.UNDER_PRODUKSJON
         }
 
-        ForsendelseStatus.UNDER_OPPRETTELSE -> Journalstatus.UNDER_PRODUKSJON
+        ForsendelseStatus.UNDER_OPPRETTELSE -> Journalstatus.UNDER_OPPRETTELSE
+    },
+    status = when (this.status) {
+        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
+        ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
+        ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
+        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
+        ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt) {
+            if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
+        } else {
+            JournalpostStatus.UNDER_PRODUKSJON
+        }
+
+        ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_OPPRETTELSE
     },
     journalpostId = forsendelseIdMedPrefix,
     dokumentDato = if (erNotat) this.dokumentDato?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate() else this.opprettetTidspunkt.toLocalDate(),
@@ -164,6 +179,13 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
                     landkode = adresse.landkode
                 )
             }
+        )
+    },
+    behandlingInfo = this.behandlingInfo?.let {
+        BehandlingInfoResponseDto(
+            vedtakId = it.vedtakId,
+            behandlingId = it.behandlingId,
+            soknadId = it.soknadId,
         )
     },
     gjelderIdent = this.gjelderIdent,

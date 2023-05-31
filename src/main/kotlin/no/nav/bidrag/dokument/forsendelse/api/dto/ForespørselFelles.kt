@@ -76,6 +76,7 @@ data class MottakerAdresseTo(
     val poststed: String? = null
 )
 
+
 enum class MottakerIdentTypeTo {
     FNR,
     SAMHANDLER

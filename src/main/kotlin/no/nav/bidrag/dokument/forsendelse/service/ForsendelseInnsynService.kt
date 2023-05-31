@@ -66,6 +66,7 @@ class ForsendelseInnsynTjeneste(
         return forsendelse.tilForsendelseRespons()
     }
 
+
     fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         return forsendelse.behandlingInfo?.let {

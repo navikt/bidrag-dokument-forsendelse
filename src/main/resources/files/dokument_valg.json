@@ -1,6 +1,11 @@
 {
   "FORSKUDD": [
     {
+      "soknadType": [
+        "ENDRING",
+        "OPPHOR",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -17,6 +22,16 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -36,6 +51,12 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "OPPHOR",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -59,6 +80,17 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -85,6 +117,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -101,6 +137,15 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "PRIVAT_AVTALE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -120,6 +165,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -146,6 +194,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "KLAGE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -161,6 +215,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -183,6 +240,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -205,6 +265,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "KLAGE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -226,6 +291,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -245,6 +314,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "KLAGE",
+        "OMGJORING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -261,6 +337,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -276,6 +356,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -291,6 +375,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "UTENLANDSKE_MYNDIGH"
       ],
@@ -307,6 +398,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -323,6 +419,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "BIDRAGSMOTTAKER"
@@ -340,6 +441,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -362,6 +467,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -384,6 +493,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "OPPHOR",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -402,6 +517,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "OPPHOR",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "UTENLANDSKE_MYNDIGH"
       ],
@@ -419,6 +540,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -433,6 +557,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -450,6 +577,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -468,6 +598,11 @@
   ],
   "BIDRAG": [
     {
+      "soknadType": [
+        "ENDRING",
+        "OPPHOR",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -487,6 +622,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -508,6 +646,13 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "INNKREVINGSGRUNNL",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -529,6 +674,11 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "OPPHOR",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -551,6 +701,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG"
       ],
@@ -568,6 +721,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "KLAGE_ENHET",
@@ -591,6 +753,14 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "KLAGE_ENHET",
@@ -626,6 +796,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "KLAGE_ENHET",
@@ -648,6 +827,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "KLAGE_ENHET",
@@ -674,6 +862,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -691,6 +886,12 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -721,6 +922,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -737,6 +945,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -757,6 +972,13 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "TRYGDEETATEN_INNKREVING"
       ],
@@ -788,6 +1010,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -811,6 +1037,13 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -830,6 +1063,13 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -855,6 +1095,12 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BM_I_ANNEN_SAK"
@@ -872,6 +1118,12 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BM_I_ANNEN_SAK"
@@ -895,6 +1147,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "KLAGE"
+      ],
       "soknadFra": [
         "TRYGDEETATEN_INNKREVING"
       ],
@@ -913,6 +1169,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "KLAGE"
+      ],
       "soknadFra": [
         "TRYGDEETATEN_INNKREVING"
       ],
@@ -928,6 +1188,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -945,6 +1209,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -973,6 +1241,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -989,6 +1261,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -1009,6 +1285,9 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -1033,6 +1312,9 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -1054,6 +1336,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1069,6 +1356,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1083,6 +1375,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1101,6 +1398,12 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -1117,6 +1420,12 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -1139,6 +1448,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -1158,6 +1472,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -1183,6 +1502,9 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -1212,6 +1534,10 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1240,6 +1566,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -1263,6 +1593,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "KLAGE_ENHET",
@@ -1282,6 +1616,11 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "OPPHOR",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1298,6 +1637,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1312,6 +1654,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1331,6 +1676,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1350,6 +1698,11 @@
   ],
   "SAERTILSKUDD": [
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -1366,6 +1719,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -1383,6 +1741,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -1401,6 +1764,14 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "UTENLANDSKE_MYNDIGH"
@@ -1419,6 +1790,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -1437,6 +1814,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -1456,6 +1839,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -1476,6 +1865,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -1499,6 +1897,14 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -1517,6 +1923,14 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -1536,6 +1950,14 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -1556,6 +1978,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "OMGJORING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -1573,6 +2004,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -1592,6 +2032,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -1612,6 +2061,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -1633,6 +2091,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1650,6 +2115,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1668,6 +2140,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1687,6 +2166,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -1708,6 +2192,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -1725,6 +2214,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -1742,6 +2236,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1760,6 +2258,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1774,6 +2276,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -1788,6 +2294,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -1811,6 +2321,9 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL"
+      ],
       "soknadFra": [
         "FYLKESNEMDA"
       ],
@@ -1825,6 +2338,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INDEKSREG",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -1849,6 +2366,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -1867,6 +2387,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -1881,6 +2404,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -1897,6 +2423,9 @@
   ],
   "null": [
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1914,6 +2443,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1932,6 +2464,10 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1950,6 +2486,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1965,6 +2504,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BARN_18"
       ],
@@ -1980,6 +2522,15 @@
   ],
   "BIDRAG18AAR": [
     {
+      "soknadType": [
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -1997,6 +2548,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2018,6 +2572,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -2038,6 +2598,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2057,6 +2621,16 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -2076,6 +2650,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -2099,6 +2678,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2116,6 +2702,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2134,6 +2727,13 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2155,6 +2755,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -2175,6 +2781,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -2196,6 +2808,12 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -2220,6 +2838,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -2236,6 +2859,11 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -2253,6 +2881,9 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2272,6 +2903,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2296,6 +2932,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2316,6 +2957,14 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BM_I_ANNEN_SAK"
       ],
@@ -2332,6 +2981,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -2346,6 +2999,10 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -2361,6 +3018,9 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -2377,6 +3037,9 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -2394,6 +3057,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KORRIGERING",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2414,6 +3082,13 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2430,6 +3105,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KORRIGERING",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2446,6 +3126,10 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -2469,6 +3153,13 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -2488,6 +3179,10 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KORRIGERING"
+      ],
       "soknadFra": [
         "KLAGE_ENHET",
         "NORSKE_MYNDIGH",
@@ -2507,6 +3202,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -2530,6 +3229,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -2554,6 +3257,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -2577,6 +3283,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -2600,6 +3309,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -2625,6 +3337,11 @@
   ],
   "GEBYR_SKYLDNER": [
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2649,6 +3366,11 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSMOTTAKER",
@@ -2671,6 +3393,12 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2688,6 +3416,12 @@
       ]
     },
     {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "OMGJORING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2705,6 +3439,10 @@
   ],
   "EKTEFELLEBIDRAG": [
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2723,6 +3461,12 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "INNKREVINGSGRUNNL",
+        "OPPHOR",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2742,6 +3486,12 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "INNKREVINGSGRUNNL",
+        "OPPHOR",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2761,6 +3511,21 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BM_I_ANNEN_SAK",
@@ -2784,6 +3549,21 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -2803,6 +3583,17 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "UTENLANDSKE_MYNDIGH"
       ],
@@ -2821,6 +3612,20 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "NORSKE_MYNDIGH"
       ],
@@ -2841,6 +3646,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2862,6 +3671,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2881,6 +3693,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2898,6 +3713,15 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2917,6 +3741,9 @@
       ]
     },
     {
+      "soknadType": [
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -2935,6 +3762,9 @@
       ]
     },
     {
+      "soknadType": [
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "NORSKE_MYNDIGH",
@@ -2952,6 +3782,10 @@
       ]
     },
     {
+      "soknadType": [
+        "INNKREVINGSGRUNNL",
+        "PRIVAT_AVTALE"
+      ],
       "soknadFra": [
         "UTENLANDSKE_MYNDIGH"
       ],
@@ -2967,6 +3801,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -2986,6 +3823,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -3001,6 +3841,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "UTENLANDSKE_MYNDIGH"
@@ -3018,6 +3861,9 @@
   ],
   "ETTERGIVELSE": [
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -3036,6 +3882,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -3051,6 +3900,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -3065,6 +3917,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -3085,6 +3941,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -3102,6 +3962,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -3118,6 +3982,21 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BM_I_ANNEN_SAK",
@@ -3143,6 +4022,22 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -3163,6 +4058,19 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -3182,6 +4090,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -3200,6 +4111,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
@@ -3216,6 +4130,18 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -3238,6 +4164,19 @@
   ],
   "TILBAKEKREVING": [
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -3258,6 +4197,21 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -3284,6 +4238,20 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "VERGE"
       ],
@@ -3304,6 +4272,10 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -3319,6 +4291,10 @@
       ]
     },
     {
+      "soknadType": [
+        "EGET_TILTAK",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -3339,6 +4315,20 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -3358,6 +4348,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "VERGE"
@@ -3375,6 +4368,21 @@
   ],
   "ETTERGIVELSE_TILBAKEKREVING": [
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSPLIKTIG",
@@ -3401,6 +4409,22 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSENHET"
       ],
@@ -3421,6 +4445,19 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "VERGE"
@@ -3441,6 +4478,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER",
         "VERGE"
@@ -3458,6 +4498,19 @@
   ],
   "MOTREGNING": [
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BIDRAGSMOTTAKER"
       ],
@@ -3478,6 +4531,21 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "BARN_18",
         "BIDRAGSENHET",
@@ -3504,6 +4572,20 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "VERGE"
       ],
@@ -3523,6 +4605,18 @@
       ]
     },
     {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG"
       ],
@@ -3544,6 +4638,10 @@
   ],
   "OPPFOSTRINGSBIDRAG": [
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KOMMUNE"
       ],
@@ -3559,6 +4657,9 @@
       ]
     },
     {
+      "soknadType": [
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KOMMUNE"
       ],
@@ -3578,6 +4679,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KOMMUNE"
       ],
@@ -3594,6 +4699,10 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
       "soknadFra": [
         "KOMMUNE"
       ],
@@ -3612,6 +4721,9 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "KOMMUNE"
@@ -3632,6 +4744,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "BIDRAGSPLIKTIG",
@@ -3648,6 +4763,9 @@
       ]
     },
     {
+      "soknadType": [
+        "OPPHOR"
+      ],
       "soknadFra": [
         "BIDRAGSENHET",
         "BIDRAGSPLIKTIG",
@@ -3664,6 +4782,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "KOMMUNE"
@@ -3680,6 +4801,9 @@
       ]
     },
     {
+      "soknadType": [
+        "KLAGE"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG",
         "KOMMUNE"
@@ -3702,6 +4826,9 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG"
       ],
@@ -3716,6 +4843,9 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG"
       ],
@@ -3731,6 +4861,9 @@
       ]
     },
     {
+      "soknadType": [
+        "ENDRING"
+      ],
       "soknadFra": [
         "BIDRAGSPLIKTIG"
       ],

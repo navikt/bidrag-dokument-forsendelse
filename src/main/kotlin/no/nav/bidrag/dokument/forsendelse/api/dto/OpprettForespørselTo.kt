@@ -34,6 +34,7 @@ data class OpprettForsendelseForespørsel(
 data class BehandlingInfoDto(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
+    val soknadId: String? = null,
     val engangsBelopType: EngangsbelopType? = null,
     val stonadType: StonadType? = null,
     val vedtakType: VedtakType? = null,

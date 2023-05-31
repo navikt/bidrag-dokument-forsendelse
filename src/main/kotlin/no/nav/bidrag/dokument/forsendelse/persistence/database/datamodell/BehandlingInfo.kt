@@ -20,6 +20,8 @@ data class BehandlingInfo(
 
     val vedtakId: String? = null,
     val behandlingId: String? = null,
+    val soknadId: String? = null,
+    val erFattetBeregnet: Boolean? = null,
 
     @Enumerated(EnumType.STRING)
     val engangsBelopType: EngangsbelopType? = null,
@@ -27,7 +29,6 @@ data class BehandlingInfo(
     val stonadType: StonadType? = null,
     @Enumerated(EnumType.STRING)
     val vedtakType: VedtakType? = null,
-    val erFattetBeregnet: Boolean? = null,
     @Enumerated(EnumType.STRING)
     val soknadFra: SoknadFra? = null,
 
