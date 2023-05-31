@@ -169,7 +169,9 @@ class StubUtils {
                             mapOf(
                                 DOKUMENTMAL_NOTAT to DokumentMalDetaljer("Notat", DokumentMalType.NOTAT, true),
                                 DOKUMENTMAL_UTGÅENDE to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
-                                "AAA" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
+                                "AAA" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
+                                "MAL1" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
+                                "MAL2" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
                             )
                         )
                     )
