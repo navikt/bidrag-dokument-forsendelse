@@ -24,9 +24,12 @@ data class OpprettForsendelseForespørsel(
     val dokumenter: List<OpprettDokumentForespørsel> = emptyList(),
     @Schema(description = "Bidragsak som forsendelse skal tilknyttes") val saksnummer: String,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String,
-    @Schema(description = "Detaljer om behandling hvis forsendelsen inneholder brev for en behandling eller vedtak") val behandlingInfo: BehandlingInfoDto? = null,
+    @Schema(
+        description = "Detaljer om behandling hvis forsendelsen inneholder brev for en behandling eller vedtak",
+        enumAsRef = true
+    ) val behandlingInfo: BehandlingInfoDto? = null,
     @Schema(description = "Identifikator til batch kjøring forsendelsen ble opprettet av") val batchId: String? = null,
-    @Schema(description = "Tema forsendelsen skal opprettes med") val tema: JournalTema? = null,
+    @Schema(description = "Tema forsendelsen skal opprettes med", enumAsRef = true) val tema: JournalTema? = null,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
     @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null
 )
@@ -47,7 +50,7 @@ data class BehandlingInfoDto(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettForsendelseRespons(
     @Schema(description = "ForsendelseId på forsendelse som ble opprettet") val forsendelseId: Long? = null,
-    @Schema(description = "Type på forsendelse. Kan være NOTAT eller UTGÅENDE") val forsendelseType: ForsendelseTypeTo? = null,
+    val forsendelseType: ForsendelseTypeTo? = null,
     @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList()
 )
 
@@ -56,11 +59,11 @@ data class OpprettForsendelseRespons(
 data class OpprettDokumentForespørsel(
     @Schema(description = "Dokumentets tittel") override val tittel: String = "",
     @Schema(description = "Språket på inneholdet i dokumentet.") val språk: String? = null,
-    @Schema(description = "Arkivsystem hvor dokument er lagret") override val arkivsystem: DokumentArkivSystemDto? = null,
+    @Schema(description = "Arkivsystem hvor dokument er lagret", enumAsRef = true) override val arkivsystem: DokumentArkivSystemDto? = null,
     @Schema(description = "Dato dokument ble opprettet") override val dokumentDato: LocalDateTime? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") override val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") override val journalpostId: JournalpostId? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") override val dokumentmalId: String? = null,
-    @Schema(description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT") val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
+    val status: DokumentStatusTo = DokumentStatusTo.FERDIGSTILT,
     @Schema(description = "Om dokumentet med dokumentmalId skal bestilles. Hvis dette er satt til false så antas det at kallende system bestiller dokumentet selv.") val bestillDokument: Boolean = true
 ) : DokumentForespørsel()

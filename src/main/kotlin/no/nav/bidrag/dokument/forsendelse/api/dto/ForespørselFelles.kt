@@ -39,7 +39,7 @@ data class DokumentRespons(
     val dokumentmalId: String? = null,
     val redigeringMetadata: String? = null,
     val status: DokumentStatusTo? = null,
-    val arkivsystem: DokumentArkivSystemDto? = null
+    @Schema(enumAsRef = true) val arkivsystem: DokumentArkivSystemDto? = null
 )
 
 @Schema(description = "Metadata for dokument som skal knyttes til forsendelsen. Første dokument i listen blir automatisk satt som hoveddokument i forsendelsen")
@@ -50,7 +50,7 @@ sealed class DokumentForespørsel(
     @Schema(description = "Dato dokument ble opprettet") open val dokumentDato: LocalDateTime? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") open val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") open val journalpostId: JournalpostId? = null,
-    @Schema(description = "Arkivsystem hvor dokument er lagret") open val arkivsystem: DokumentArkivSystemDto? = null
+    @Schema(description = "Arkivsystem hvor dokument er lagret", enumAsRef = true) open val arkivsystem: DokumentArkivSystemDto? = null
 ) {
     override fun toString(): String {
         return this.toStringByReflection(mask = listOf("fysiskDokument"))
@@ -76,12 +76,16 @@ data class MottakerAdresseTo(
     val poststed: String? = null
 )
 
-
+@Schema(enumAsRef = true)
 enum class MottakerIdentTypeTo {
     FNR,
     SAMHANDLER
 }
 
+@Schema(
+    description = "Dette skal være UNDER_PRODUKSJON for redigerbare dokumenter som ikke er ferdigprodusert. Ellers settes det til FERDIGSTILT",
+    enumAsRef = true
+)
 enum class DokumentStatusTo {
     IKKE_BESTILT,
     BESTILLING_FEILET,
@@ -93,11 +97,13 @@ enum class DokumentStatusTo {
     KONTROLLERT
 }
 
+@Schema(description = "Type på forsendelse. Kan være NOTAT eller UTGÅENDE", enumAsRef = true)
 enum class ForsendelseTypeTo {
     UTGÅENDE,
     NOTAT
 }
 
+@Schema(description = "Status på forsendelsen", enumAsRef = true)
 enum class ForsendelseStatusTo {
     UNDER_OPPRETTELSE,
     UNDER_PRODUKSJON,

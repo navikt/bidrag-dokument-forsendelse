@@ -5,19 +5,19 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.service.DokumentValgService
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -83,16 +83,12 @@ class ForsendelseInnsynKontroller(
         return forsendelseInnsynTjeneste.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
     }
 
-    @GetMapping("/dokumentvalg")
+    @PostMapping("/dokumentvalg")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValg(
-        @RequestParam(required = false) vedtakType: VedtakType? = null,
-        @RequestParam(required = false) behandlingType: BehandlingType? = null,
-        @RequestParam(required = false) soknadFra: SoknadFra? = null,
-        @RequestParam(required = false) erFattetBeregnet: Boolean? = null,
-        @RequestParam(required = false) enhet: String? = null,
+        @RequestBody(required = false) request: HentDokumentValgRequest? = null,
     ): Map<String, DokumentMalDetaljer> {
-        return dokumentValgService.hentDokumentMalListe(vedtakType, behandlingType, soknadFra, erFattetBeregnet, enhet)
+        return dokumentValgService.hentDokumentMalListe(request)
     }
 
     @GetMapping("/dokumentvalg/notat")

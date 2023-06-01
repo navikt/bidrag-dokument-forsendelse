@@ -32,15 +32,19 @@ spring:
 
 springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
 
+BIDRAG_PERSON_URL: https://bidrag-person-feature.dev.adeo.no
 PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
-BIDRAG_ORGANISASJON_URL: https://bidrag-person-feature.dev.adeo.no
-BIDRAG_DOKUMENT_BESTILLING_URL2: https://bidrag-dokument-bestilling.intern.dev.nav.no
-BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:8998
+
+BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.intern.dev.nav.no
+BIDRAG_DOKUMENT_BESTILLING_URL2: http://localhost:8998
 BIDRAG_DOKUMENT_URL: http://localhost:8099/bidrag-dokument
 
 BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll.intern.dev.nav.no
 BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling
-BIDRAG_PERSON_URL: https://bidrag-person-feature.dev.adeo.no
+
+BIDRAG_VEDTAK_URL: https://bidrag-vedtak.intern.dev.nav.no
+BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak
+
 AZURE_APP_TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851
 AZURE_APP_CLIENT_ID: <app_client_id>
 AZURE_APP_CLIENT_SECRET: unset

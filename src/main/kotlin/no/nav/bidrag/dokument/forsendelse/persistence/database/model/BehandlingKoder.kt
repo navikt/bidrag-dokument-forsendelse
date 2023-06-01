@@ -60,19 +60,19 @@ enum class SoknadType(private val kode: String) {
 // T_BLANKETT.SOKN_FRA_KODE
 enum class SoknadFra(private val kode: String) {
     BM_I_ANNEN_SAK("AS"),
-    BARN_18("BB"),
-    BIDRAGSENHET("ET"), // TK
+    BARN_18_AAR("BB"),
+    NAV_BIDRAG("ET"), // TK
     FYLKESNEMDA("FN"),
     NAV_INTERNASJONALT("IN"),
     KOMMUNE("KU"),
-    KONVERTERING("KV"),
+    KONVERTERING("KV"), // Trenger vi dette?
     BIDRAGSMOTTAKER("MO"),
-    NORSKE_MYNDIGH("NM"),
+    NORSKE_MYNDIGHET("NM"),
     BIDRAGSPLIKTIG("PL"),
-    UTENLANDSKE_MYNDIGH("UM"),
+    UTENLANDSKE_MYNDIGHET("UM"),
     VERGE("VE"),
     TRYGDEETATEN_INNKREVING("TI"),
-    KLAGE_ENHET("FK"); // FTK
+    KLAGE_ANKE("FK"); // FTK
 
 }
 

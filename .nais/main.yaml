@@ -21,6 +21,9 @@ env:
   BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
   BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
 
+  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak
+  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak
+
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
@@ -42,6 +45,7 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
+   - bidrag-vedtak
 outbound-access-hosts:
    - bidrag-dokument.dev-fss-pub.nais.io
    - bidrag-person.dev-fss-pub.nais.io

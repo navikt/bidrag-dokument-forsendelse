@@ -13,7 +13,7 @@ data class OppdaterForsendelseForespørsel(
     @Schema(description = "Ident til brukeren som journalposten gjelder. Kan bare oppdateres hvis status = UNDER_OPPRETTELSE") val gjelderIdent: String? = null,
     val mottaker: MottakerTo? = null,
     @Schema(description = "NAV-enheten som oppretter forsendelsen. Kan bare oppdateres hvis status = UNDER_OPPRETTELSE") val enhet: String? = null,
-    @Schema(description = "Tema forsendelsen skal opprettes med") val tema: JournalTema? = null,
+    @Schema(description = "Tema forsendelsen skal opprettes med", enumAsRef = true) val tema: JournalTema? = null,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null
 )
 

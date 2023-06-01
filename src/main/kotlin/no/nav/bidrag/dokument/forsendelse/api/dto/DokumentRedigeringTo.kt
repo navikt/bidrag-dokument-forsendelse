@@ -1,9 +1,11 @@
 package no.nav.bidrag.dokument.forsendelse.api.dto
 
+import io.swagger.v3.oas.annotations.media.Schema
+
 data class DokumentRedigeringMetadataResponsDto(
     val tittel: String,
-    val status: DokumentStatusTo,
-    val forsendelseStatus: ForsendelseStatusTo,
+    @Schema(enumAsRef = true) val status: DokumentStatusTo,
+    @Schema(enumAsRef = true) val forsendelseStatus: ForsendelseStatusTo,
     val redigeringMetadata: String?,
     val dokumenter: List<DokumentDetaljer> = emptyList()
 )

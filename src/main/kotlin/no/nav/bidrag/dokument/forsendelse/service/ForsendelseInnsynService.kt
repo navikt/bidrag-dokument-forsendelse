@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
@@ -71,12 +72,17 @@ class ForsendelseInnsynTjeneste(
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         return forsendelse.behandlingInfo?.let {
             dokumentValgService.hentDokumentMalListe(
-                it.vedtakType,
-                it.toBehandlingType(),
-                it.soknadFra,
-                it.erFattetBeregnet,
-                forsendelse.enhet
-            )
+                HentDokumentValgRequest(
+                    vedtakId = it.vedtakId,
+                    behandlingId = it.behandlingId,
+                    vedtakType = it.vedtakType,
+                    behandlingType = it.toBehandlingType(),
+                    soknadFra = it.soknadFra,
+                    erFattetBeregnet = it.erFattetBeregnet,
+                    enhet = forsendelse.enhet
+                ),
+
+                )
         } ?: forsendelseHarIngenBehandlingInfo(forsendelseId)
     }
 }
