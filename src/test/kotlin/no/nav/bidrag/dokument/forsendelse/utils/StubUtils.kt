@@ -171,7 +171,8 @@ class StubUtils {
                                 DOKUMENTMAL_UTGÅENDE to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
                                 "AAA" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
                                 "MAL1" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
-                                "MAL2" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
+                                "MAL2" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true),
+                                "BI00133" to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
                             )
                         )
                     )
