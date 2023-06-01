@@ -38,11 +38,11 @@ data class BehandlingInfoDto(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val soknadId: String? = null,
-    val engangsBelopType: EngangsbelopType? = null,
-    val stonadType: StonadType? = null,
-    val vedtakType: VedtakType? = null,
+    @Schema(enumAsRef = true) val engangsBelopType: EngangsbelopType? = null,
+    @Schema(enumAsRef = true) val stonadType: StonadType? = null,
+    @Schema(enumAsRef = true) val vedtakType: VedtakType? = null,
     val erFattetBeregnet: Boolean? = null,
-    val soknadFra: SoknadFra? = null,
+    @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
     val roller: List<String> = emptyList()
 )
 

@@ -78,6 +78,7 @@ class OpprettForsendelseService(
                 BehandlingInfo(
                     behandlingId = it.behandlingId,
                     vedtakId = it.vedtakId,
+                    soknadId = it.soknadId,
                     engangsBelopType = it.engangsBelopType,
                     vedtakType = it.vedtakType,
                     stonadType = it.stonadType,
