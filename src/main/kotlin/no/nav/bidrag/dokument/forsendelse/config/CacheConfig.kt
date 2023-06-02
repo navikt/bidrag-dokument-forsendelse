@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 class CacheConfig {
     companion object {
         const val PERSON_CACHE = "PERSON_CACHE"
+        const val SAK_CACHE = "SAK_CACHE"
         const val PERSON_SPRAAK_CACHE = "PERSON_SPRAAK_CACHE"
         const val DOKUMENTMALER_CACHE = "DOKUMENTMALER_CACHE"
         const val DOKUMENTMADETALJER_CACHE = "DOKUMENTMADETALJER_CACHE"
@@ -41,6 +42,7 @@ class CacheConfig {
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(VEDTAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         return caffeineCacheManager
     }
 }

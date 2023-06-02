@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import no.nav.bidrag.behandling.felles.enums.GrunnlagType
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
@@ -46,7 +47,8 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
             return bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let {
                 val behandlingType =
                     if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
-                return hentDokumentMalListe(behandlingType, it.type, request.soknadFra, it.grunnlagListe.isNotEmpty(), request.enhet ?: it.enhetId)
+                val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == GrunnlagType.SLUTTBEREGNING_BBM }
+                return hentDokumentMalListe(behandlingType, it.type, request.soknadFra, erFattetBeregnet, request.enhet ?: it.enhetId)
             } ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
         val (vedtakType, behandlingType, soknadFra, erFattetBeregnet, _, _, enhet) = request

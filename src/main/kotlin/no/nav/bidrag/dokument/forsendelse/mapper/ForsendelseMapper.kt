@@ -93,7 +93,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
     brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
-    innhold = this.dokumenter.hoveddokument?.tittel ?: this.behandlingInfo?.toBehandlingType() ?: "Forsendelse $forsendelseId",
+    innhold = this.dokumenter.hoveddokument?.tittel,
     fagomrade = when (tema) {
         ForsendelseTema.FAR -> Fagomrade.FARSKAP
         else -> Fagomrade.BIDRAG

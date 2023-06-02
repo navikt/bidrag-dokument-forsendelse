@@ -95,3 +95,6 @@ Kjør følgende kommando for å opprette secret på namespace bidrag
 ``
 kubectl create secret generic bidrag-dokument-forsendelse-encryption-key --from-literal=GCP_DOCUMENT_ENCRYPTION_KEY=$(cat /dev/urandom | env LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1) -n=bidrag
 ``
+
+#### Connect to aiven kafka instance
+

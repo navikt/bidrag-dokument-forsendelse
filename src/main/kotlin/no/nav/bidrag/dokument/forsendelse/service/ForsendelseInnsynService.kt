@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.model.forsendelseHarIngenBehandlingInf
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -25,7 +26,8 @@ val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert
 class ForsendelseInnsynTjeneste(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val tilgangskontrollService: TilgangskontrollService,
-    private val dokumentValgService: DokumentValgService
+    private val dokumentValgService: DokumentValgService,
+    private val sakService: SakService
 ) {
 
     fun hentForsendelseForSakJournal(saksnummer: String, temaListe: List<JournalTema> = listOf(JournalTema.BID)): List<JournalpostDto> {
@@ -33,10 +35,22 @@ class ForsendelseInnsynTjeneste(
         val forsendelserFiltrert = forsendelser.filtrerIkkeFerdigstiltEllerArkivert
             .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
             .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-            .map(Forsendelse::tilJournalpostDto)
+            .map { tilJournalpostDto(it) }
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
         return forsendelserFiltrert
+    }
+
+    private fun tilJournalpostDto(forsendelse: Forsendelse): JournalpostDto {
+
+        val journalpost = forsendelse.tilJournalpostDto()
+        if (journalpost.innhold.isNullOrEmpty()) {
+            val sak = sakService.hentSak(forsendelse.saksnummer)
+            val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
+            journalpost.innhold = forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type) ?: "Forsendelse ${forsendelse.forsendelseId}"
+        }
+
+        return journalpost
     }
 
     fun hentForsendelseJournal(forsendelseId: Long, saksnummer: String? = null): JournalpostResponse {
@@ -48,13 +62,20 @@ class ForsendelseInnsynTjeneste(
         log.debug { "Hentet forsendelse $forsendelseId med saksnummer ${forsendelse.saksnummer}" }
 
         return JournalpostResponse(
-            journalpost = forsendelse.tilJournalpostDto(),
+            journalpost = tilJournalpostDto(forsendelse),
             sakstilknytninger = listOf(forsendelse.saksnummer)
         )
     }
 
     fun hentForsendelseForSak(saksnummer: String): List<ForsendelseResponsTo> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
+
+        return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
+            .map(Forsendelse::tilForsendelseRespons)
+    }
+
+    fun hentForsendelseForSoknad(soknadId: String): List<ForsendelseResponsTo> {
+        val forsendelser = forsendelseTjeneste.hentAlleMedSoknadId(soknadId)
 
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
             .map(Forsendelse::tilForsendelseRespons)
