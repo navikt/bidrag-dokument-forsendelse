@@ -88,10 +88,13 @@ data class Dokument(
     }
 
     val erFraAnnenKilde get() = !(dokumentreferanseOriginal == null && journalpostIdOriginal == null)
+    val erLenkeTilEnAnnenForsendelse get() = erFraAnnenKilde && arkivsystem == DokumentArkivSystem.FORSENDELSE
     val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
     val dokumentreferanse get() = "BIF$dokumentId"
-
     val filsti get() = "forsendelse_${forsendelse.forsendelseId}/dokument_$dokumentreferanse.pdf"
+
+    val forsendelseId get() = if (arkivsystem == DokumentArkivSystem.FORSENDELSE && !journalpostIdOriginal.isNullOrEmpty()) journalpostIdOriginal.toLong() else forsendelse.forsendelseId
+    val lenkeTilDokumentreferanse get() = if (arkivsystem == DokumentArkivSystem.FORSENDELSE && !dokumentreferanseOriginal.isNullOrEmpty()) dokumentreferanseOriginal else null
     val journalpostId
         get() = run {
             if (journalpostIdOriginal.isNullOrEmpty()) {

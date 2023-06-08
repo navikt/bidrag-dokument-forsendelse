@@ -14,16 +14,21 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.toForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
@@ -314,24 +319,6 @@ class OppdaterForsendelseService(
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 
-    private fun oppdaterDokumenter(
-        forsendelse: Forsendelse,
-        forespørsel: OppdaterForsendelseForespørsel
-    ): List<Dokument> {
-        val oppdaterteDokumenter = forsendelse.dokumenter
-            .mapIndexed { i, it ->
-                val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)
-                val indeks = forespørsel.dokumenter.indexOf(oppdaterDokument)
-                it.copy(
-                    tittel = oppdaterDokument?.tittel ?: it.tittel,
-                    rekkefølgeIndeks = indeks,
-                    dokumentDato = if (indeks == 0) forespørsel.dokumentDato ?: it.dokumentDato else it.dokumentDato
-                )
-            }
-
-        return oppdaterteDokumenter.sortertEtterRekkefølge
-    }
-
     private fun oppdaterOgOpprettDokumenter(
         forsendelse: Forsendelse,
         forespørsel: OppdaterForsendelseForespørsel
@@ -343,9 +330,11 @@ class OppdaterForsendelseService(
                         slettetTidspunkt = LocalDate.now()
                     )
                 }
+
+
         val oppdaterteDokumenter = forespørsel.dokumenter
             .filter { it.fjernTilknytning == false }
-            .mapIndexed { indeks, it ->
+            .flatMapIndexed { indeks, it ->
                 val eksisterendeDokument = forsendelse.dokumenter.hentDokument(it.dokumentreferanse)
                 eksisterendeDokument?.copy(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
@@ -356,34 +345,95 @@ class OppdaterForsendelseService(
                     } else {
                         eksisterendeDokument.dokumentDato
                     }
-                ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
+                )?.let { listOf(it) } ?: it.konverterTilOpprettDokumentForespørsel().map { knyttDokumentTilForsendelse(forsendelse, it) }
             } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
 
         if (oppdaterteDokumenter.dokumenterIkkeSlettet.isEmpty()) throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
+
+        val fysiskSlettetDokumenter =
+            forespørsel.dokumenter.filter { it.fjernTilknytning == true }.mapNotNull { forsendelse.dokumenter.hentDokument(it.dokumentreferanse) }
+
+        val slettetDokumenter = logiskSlettetDokumenterFraForespørsel + fysiskSlettetDokumenter
+        flyttLenkeTilNyDokumentHvisOriginalDokumentErSlettet(slettetDokumenter)
+        validerIkkeLagtTilDuplikatDokument(oppdaterteDokumenter)
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 
-    fun ferdigstillDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
-        forsendelse.validerKanEndreForsendelse()
-
-        log.info { "Ferdgistiller dokument $dokumentreferanse i forsendelse $forsendelseId" }
-
-        val oppdatertForsendelse = forsendelseTjeneste.lagre(
-            forsendelse.copy(
-                dokumenter = ferdigstillDokument(forsendelse, dokumentreferanse)
-            )
-        )
-
-        val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
-        return DokumentRespons(
-            dokumentreferanse = oppdatertDokument.dokumentreferanse,
-            tittel = oppdatertDokument.tittel,
-            dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumentStatusTo()
-        )
+    private fun validerIkkeLagtTilDuplikatDokument(oppdaterteDokumenter: List<Dokument>) {
+        oppdaterteDokumenter.forEach { oppdatertDokument ->
+            val originalDokument = dokumentTjeneste.hentOriginalDokument(oppdatertDokument)
+            oppdaterteDokumenter.filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
+                .any {
+                    it.erFraAnnenKilde &&
+                            it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
+                }
+                .ifTrue {
+                    throw UgyldigForespørsel(
+                        "Kan ikke legge til samme dokument flere ganger til forsendelse." +
+                                " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
+                    )
+                }
+        }
     }
+
+    private fun flyttLenkeTilNyDokumentHvisOriginalDokumentErSlettet(slettetDokumenter: List<Dokument>) {
+        slettetDokumenter.forEach {
+            val lenketDokumenter =
+                dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse).filter { l -> l.dokumentreferanse != it.dokumentreferanse }
+            val erLenketAvAndreDokumenter = lenketDokumenter.isNotEmpty()
+            if (erLenketAvAndreDokumenter) {
+                flyttLenkeTilNyDokumentHvisOriginalDokumentErSlettet(lenketDokumenter, it)
+            }
+
+        }
+    }
+
+    private fun flyttLenkeTilNyDokumentHvisOriginalDokumentErSlettet(lenketDokumenter: List<Dokument>, slettetDokument: Dokument) {
+        val nyOriginalDokument = lenketDokumenter[0].copy(
+            dokumentreferanseOriginal = slettetDokument.dokumentreferanseOriginal,
+            journalpostIdOriginal = slettetDokument.journalpostIdOriginal,
+            arkivsystem = slettetDokument.arkivsystem
+        )
+        val oppdatertLenketDokumenter = lenketDokumenter.slice(1 until lenketDokumenter.size).map { lenketDokument ->
+            lenketDokument.copy(
+                dokumentreferanseOriginal = nyOriginalDokument.dokumentreferanse,
+                journalpostIdOriginal = nyOriginalDokument.forsendelseId.toString(),
+                arkivsystem = DokumentArkivSystem.FORSENDELSE
+            )
+        }
+        dokumentTjeneste.lagreDokumenter(listOf(nyOriginalDokument) + oppdatertLenketDokumenter)
+    }
+
+    private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørsel(): List<OpprettDokumentForespørsel> {
+        return if (this.journalpostId?.erForsendelse == true) this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
+        else listOf(this.tilOpprettDokumentForespørsel())
+    }
+
+    private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
+        val dokumentForsendelse =
+            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
+                ?: return listOf(this.tilOpprettDokumentForespørsel())
+
+        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+        else {
+            val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
+            listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
+        }
+
+    }
+
+    private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumentTjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
+
+    private fun Dokument.tilOpprettDokumentForespørsel() =
+        OpprettDokumentForespørsel(
+            tittel = tittel,
+            dokumentreferanse = dokumentreferanse,
+            status = this.tilDokumentStatusTo(),
+            dokumentmalId = dokumentmalId,
+            journalpostId = forsendelseId.toString(),
+            dokumentDato = dokumentDato,
+            arkivsystem = this.tilArkivSystemDto()
+        )
 
     fun opphevFerdigstillingAvDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
@@ -447,4 +497,45 @@ class OppdaterForsendelseService(
 //        if (eksisterendeAdresse == null) return oppdatertAdresse.tilAdresseDo()
 //        return oppdatertAdresse.tilAdresseDo().copy(id = eksisterendeAdresse.id)
 //    }
+
+    private fun oppdaterDokumenter(
+        forsendelse: Forsendelse,
+        forespørsel: OppdaterForsendelseForespørsel
+    ): List<Dokument> {
+        val oppdaterteDokumenter = forsendelse.dokumenter
+            .mapIndexed { i, it ->
+                val oppdaterDokument = forespørsel.hentDokument(it.dokumentreferanse)
+                val indeks = forespørsel.dokumenter.indexOf(oppdaterDokument)
+                it.copy(
+                    tittel = oppdaterDokument?.tittel ?: it.tittel,
+                    rekkefølgeIndeks = indeks,
+                    dokumentDato = if (indeks == 0) forespørsel.dokumentDato ?: it.dokumentDato else it.dokumentDato
+                )
+            }
+
+        return oppdaterteDokumenter.sortertEtterRekkefølge
+    }
+
+
+    fun ferdigstillDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
+            ?: fantIkkeForsendelse(forsendelseId)
+        forsendelse.validerKanEndreForsendelse()
+
+        log.info { "Ferdgistiller dokument $dokumentreferanse i forsendelse $forsendelseId" }
+
+        val oppdatertForsendelse = forsendelseTjeneste.lagre(
+            forsendelse.copy(
+                dokumenter = ferdigstillDokument(forsendelse, dokumentreferanse)
+            )
+        )
+
+        val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
+        return DokumentRespons(
+            dokumentreferanse = oppdatertDokument.dokumentreferanse,
+            tittel = oppdatertDokument.tittel,
+            dokumentDato = oppdatertDokument.dokumentDato,
+            status = oppdatertDokument.tilDokumentStatusTo()
+        )
+    }
 }

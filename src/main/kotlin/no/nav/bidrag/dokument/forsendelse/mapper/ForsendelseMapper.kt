@@ -60,12 +60,13 @@ fun Dokument.tilDokumentStatusTo() = when (dokumentStatus) {
 }
 
 fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
+    DokumentArkivSystem.BIDRAG -> DokumentArkivSystemDto.BIDRAG
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
     DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
     else -> DokumentArkivSystemDto.UKJENT
 }
 
-fun Forsendelse.tilJournalpostDto() = JournalpostDto(
+fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {
         AvsenderMottakerDto(
             navn = it.navn,
@@ -139,7 +140,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
             dokumentreferanse = dokument.dokumentreferanse,
             journalpostId = dokument.journalpostId,
             arkivSystem = dokument.tilArkivSystemDto(),
-            metadata = dokument.metadata,
+            metadata = dokumenterMetadata?.get(dokument.dokumentreferanse)?.toMap() ?: emptyMap(),
             tittel = dokument.tittel,
             dokumentmalId = dokument.dokumentmalId,
             status = dokument.tilDokumentStatusDto()
@@ -148,6 +149,42 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
     sakstilknytninger = listOf(saksnummer),
     opprettetAvIdent = this.opprettetAvIdent
 )
+
+class DokumentDtoMetadata : MutableMap<String, String> by hashMapOf() {
+
+    companion object {
+        fun from(initValue: Map<String, String> = hashMapOf()): DokumentDtoMetadata {
+            val dokmap = DokumentDtoMetadata()
+            dokmap.putAll(initValue)
+            return dokmap
+        }
+    }
+
+    private val ORIGINAL_JOURNALPOST_ID = "originalJournalpostId"
+    private val ORIGINAL_DOKUMENTREFERANSE = "originalDokumentreferanse"
+
+    fun oppdaterOriginalJournalpostId(originalJournalpostid: String?) {
+        remove(ORIGINAL_JOURNALPOST_ID)
+        originalJournalpostid?.let { put(ORIGINAL_JOURNALPOST_ID, originalJournalpostid) }
+    }
+
+    fun hentOriginalJournalpostId(): String? {
+        return get(ORIGINAL_JOURNALPOST_ID)
+    }
+
+    fun oppdaterOriginalDokumentreferanse(originalDokumentreferanse: String?) {
+        remove(ORIGINAL_DOKUMENTREFERANSE)
+        originalDokumentreferanse?.let { put(ORIGINAL_DOKUMENTREFERANSE, originalDokumentreferanse) }
+    }
+
+    fun hentOriginalDokumentreferanse(): String? {
+        return get(ORIGINAL_DOKUMENTREFERANSE)
+    }
+
+    fun copy(): DokumentDtoMetadata {
+        return from(this)
+    }
+}
 
 fun Forsendelse.tilForsendelseStatusTo() = when (this.status) {
     ForsendelseStatus.UNDER_PRODUKSJON -> ForsendelseStatusTo.UNDER_PRODUKSJON
@@ -186,6 +223,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
             vedtakId = it.vedtakId,
             behandlingId = it.behandlingId,
             soknadId = it.soknadId,
+            behandlingType = it.toBehandlingType()
         )
     },
     gjelderIdent = this.gjelderIdent,
@@ -206,6 +244,8 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
         DokumentRespons(
             dokumentreferanse = it.dokumentreferanse,
+            originalDokumentreferanse = it.lenkeTilDokumentreferanse,
+            forsendelseId = it.forsendelseId.toString(),
             tittel = it.tittel,
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,

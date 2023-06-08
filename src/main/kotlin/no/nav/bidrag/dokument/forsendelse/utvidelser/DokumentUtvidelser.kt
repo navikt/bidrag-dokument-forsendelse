@@ -1,11 +1,14 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
+import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 
 val Dokument.forsendelseIdMedPrefix get() = this.forsendelse.forsendelseIdMedPrefix
-fun List<Dokument>.hentDokument(dokumentreferanse: String?) = dokumenterIkkeSlettet.find { it.dokumentreferanse == dokumentreferanse }
+fun List<Dokument>.hentDokument(dokumentreferanse: String?) =
+    dokumenterIkkeSlettet.find { dokumentreferanse.isNotNullOrEmpty() && it.dokumentreferanseOriginal == dokumentreferanse || it.dokumentreferanse == dokumentreferanse }
+
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.isNotEmpty() && dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT || it.dokumentStatus == DokumentStatus.KONTROLLERT }
 val List<Dokument>.ikkeSlettetSortertEtterRekkefølge get() = dokumenterIkkeSlettet.sortedBy { it.rekkefølgeIndeks }
 val List<Dokument>.hoveddokument get() = dokumenterIkkeSlettet.find { it.tilknyttetSom == DokumentTilknyttetSom.HOVEDDOKUMENT }

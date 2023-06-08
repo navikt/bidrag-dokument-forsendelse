@@ -7,12 +7,15 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.forsendelseHarIngenBehandlingInfo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import org.springframework.stereotype.Component
@@ -27,6 +30,7 @@ class ForsendelseInnsynTjeneste(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
+    private val dokumentTjeneste: DokumentTjeneste,
     private val sakService: SakService
 ) {
 
@@ -43,7 +47,8 @@ class ForsendelseInnsynTjeneste(
 
     private fun tilJournalpostDto(forsendelse: Forsendelse): JournalpostDto {
 
-        val journalpost = forsendelse.tilJournalpostDto()
+        val dokumenterMetadata = tilDokumenterMetadata(forsendelse.dokumenter)
+        val journalpost = forsendelse.tilJournalpostDto(dokumenterMetadata)
         if (journalpost.innhold.isNullOrEmpty()) {
             val sak = sakService.hentSak(forsendelse.saksnummer)
             val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
@@ -51,6 +56,20 @@ class ForsendelseInnsynTjeneste(
         }
 
         return journalpost
+    }
+
+    private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> {
+        return dokumenter.associate {
+            it.dokumentreferanse to run {
+                val metadata = DokumentDtoMetadata()
+                if (it.erLenkeTilEnAnnenForsendelse) {
+                    val originalDokument = dokumentTjeneste.hentOriginalDokument(it)
+                    metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanseOriginal)
+                    metadata.oppdaterOriginalJournalpostId(originalDokument.journalpostIdOriginal)
+                }
+                metadata
+            }
+        }
     }
 
     fun hentForsendelseJournal(forsendelseId: Long, saksnummer: String? = null): JournalpostResponse {

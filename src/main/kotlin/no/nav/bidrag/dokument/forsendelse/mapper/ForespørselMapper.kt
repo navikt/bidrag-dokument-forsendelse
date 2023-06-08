@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
+import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
@@ -64,17 +65,12 @@ object ForespørselMapper {
         poststed = this.poststed ?: KodeverkService.hentNorskPoststed(this.postnummer, this.landkode ?: this.landkode3)
     )
 
-    fun JournalpostId.tilArkivSystemDo() = when (this.arkivsystem) {
-        DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-        DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
-        else -> null
-    }
+    fun JournalpostId.tilArkivSystemDo() = this.arkivsystem?.let { DokumentArkivSystem.valueOf(it.name) }
 
-    fun OpprettDokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem = when (this.arkivsystem) {
-        DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-        DokumentArkivSystemDto.JOARK -> DokumentArkivSystem.JOARK
-        else -> this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
-    }
+    fun OpprettDokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem =
+        if (this.journalpostId?.erForsendelse == true) DokumentArkivSystem.FORSENDELSE else
+            this.arkivsystem?.let { DokumentArkivSystem.valueOf(it.name) } ?: this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
+
 
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
         this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
@@ -109,13 +105,14 @@ object ForespørselMapper {
         rekkefølgeIndeks = indeks
     )
 
-    fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel() = OpprettDokumentForespørsel(
-        tittel = tittel!!,
-        dokumentreferanse = dokumentreferanse,
-        status = DokumentStatusTo.MÅ_KONTROLLERES,
-        dokumentmalId = dokumentmalId,
-        journalpostId = journalpostId,
-        dokumentDato = dokumentDato,
-        arkivsystem = arkivsystem
-    )
+    fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel(status: DokumentStatusTo? = null, arkivSystem: DokumentArkivSystemDto? = null) =
+        OpprettDokumentForespørsel(
+            tittel = tittel!!,
+            dokumentreferanse = dokumentreferanse,
+            status = status ?: DokumentStatusTo.MÅ_KONTROLLERES,
+            dokumentmalId = dokumentmalId,
+            journalpostId = journalpostId,
+            dokumentDato = dokumentDato,
+            arkivsystem = arkivSystem ?: this.arkivsystem
+        )
 }

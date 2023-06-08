@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import java.time.LocalDate
 
 @Schema(description = "Metadata om forsendelse")
@@ -31,4 +32,5 @@ data class BehandlingInfoResponseDto(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val soknadId: String? = null,
+    val behandlingType: BehandlingType? = null
 )

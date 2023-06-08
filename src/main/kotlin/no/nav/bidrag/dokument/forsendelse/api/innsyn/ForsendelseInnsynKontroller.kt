@@ -63,6 +63,20 @@ class ForsendelseInnsynKontroller(
         return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)
     }
 
+    @GetMapping("/soknad/{soknadId}")
+    @Operation(description = "Hent alle forsendelse med søknadId")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for søknad funnet."
+            )
+        ]
+    )
+    fun hentJournalSoknad(@PathVariable soknadId: String): List<ForsendelseResponsTo> {
+        return forsendelseInnsynTjeneste.hentForsendelseForSoknad(soknadId)
+    }
+
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun støttedeDokumentmaler(): List<String> {

@@ -4,16 +4,23 @@ import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentDo
+import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
 
 @Component
-class DokumentTjeneste(private val dokumentRepository: DokumentRepository, private val dokumentBestillingService: DokumentBestillingService) {
+class DokumentTjeneste(
+    private val dokumentRepository: DokumentRepository,
+    private val dokumentBestillingService: DokumentBestillingService,
+    private val forsendelseTjeneste: ForsendelseTjeneste
+) {
     fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel, indeks: Int? = null): Dokument {
         val nyDokument = forespørsel.tilDokumentDo(forsendelse, indeks ?: forsendelse.dokumenter.size)
 
@@ -52,5 +59,13 @@ class DokumentTjeneste(private val dokumentRepository: DokumentRepository, priva
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT) {
             dokumentBestillingService.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
         }
+    }
+
+    fun hentOriginalDokument(dokument: Dokument): Dokument {
+        if (dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) return dokument
+        val forsendelse = forsendelseTjeneste.medForsendelseId(dokument.forsendelseId!!) ?: fantIkkeForsendelse(dokument.forsendelseId!!)
+        val referertDokument = forsendelse.dokumenter.hentDokument(dokument.lenkeTilDokumentreferanse)
+        if (referertDokument?.erFraAnnenKilde == false || referertDokument?.arkivsystem != DokumentArkivSystem.FORSENDELSE) return referertDokument!!
+        return hentOriginalDokument(dokument)
     }
 }

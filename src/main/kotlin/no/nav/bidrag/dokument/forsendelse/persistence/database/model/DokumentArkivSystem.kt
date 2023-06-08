@@ -4,5 +4,6 @@ enum class DokumentArkivSystem {
     JOARK,
     MIDLERTIDLIG_BREVLAGER,
     UKJENT,
-    BIDRAG
+    BIDRAG,
+    FORSENDELSE // Dokumentet er en symlink til et dokument i en annen forsendelse
 }

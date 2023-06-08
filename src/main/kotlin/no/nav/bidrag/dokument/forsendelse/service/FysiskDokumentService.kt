@@ -9,10 +9,12 @@ import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeDokument
+import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
@@ -25,6 +27,7 @@ private val log = KotlinLogging.logger {}
 class FysiskDokumentService(
     val forsendelseTjeneste: ForsendelseTjeneste,
     val bidragDokumentConsumer: BidragDokumentConsumer,
+    val dokumentTjeneste: DokumentTjeneste,
     val dokumentStorageService: DokumentStorageService
 ) {
 
@@ -64,7 +67,7 @@ class FysiskDokumentService(
         return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT)
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
-                dokument.dokumentreferanse
+                dokumentreferanse!!
             )
         else if (dokument.erFraAnnenKilde)
             bidragDokumentConsumer.hentDokument(
@@ -79,9 +82,9 @@ class FysiskDokumentService(
 
     }
 
-    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String?): List<DokumentMetadata> {
+    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String? = null): List<DokumentMetadata> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: throw FantIkkeDokument("Fant ikke forsendelse med forsendelseId=$forsendelseId")
+            ?: fantIkkeForsendelse(forsendelseId)
 
         if (dokumentreferanse.isNullOrEmpty()) {
             return forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { mapTilDokumentMetadata(it) }
@@ -89,6 +92,11 @@ class FysiskDokumentService(
 
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)
             ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
+
+        if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+            log.info { "Dokument $dokumentreferanse i forsendelse $forsendelseId og er symlink til dokument ${dokument.dokumentreferanseOriginal} i forsendelse ${dokument.journalpostIdOriginal}" }
+            return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal)
+        }
 
         return listOf(mapTilDokumentMetadata(dokument))
     }
@@ -120,8 +128,7 @@ class FysiskDokumentService(
             format = DokumentFormatDto.MBDOK,
             status = dokument.tilDokumentStatusDto(),
             arkivsystem = dokument.tilArkivSystemDto()
-        )
-        else DokumentMetadata(
+        ) else DokumentMetadata(
             journalpostId = dokument.journalpostId,
             dokumentreferanse = dokumentreferanse,
             format = DokumentFormatDto.PDF,

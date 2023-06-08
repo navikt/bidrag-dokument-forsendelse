@@ -17,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -56,6 +57,7 @@ class RedigerDokumentService(
         )
 
         val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
+        oppdaterStatusTilAlleDokumenter(dokumentreferanse, oppdatertDokument.dokumentStatus)
 
         log.info { "Opphevet ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId" }
         return DokumentRespons(
@@ -86,6 +88,8 @@ class RedigerDokumentService(
         )
 
         val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
+
+        oppdaterStatusTilAlleDokumenter(dokumentreferanse, oppdatertDokument.dokumentStatus)
 
         log.info { "Ferdigstilt dokument $dokumentreferanse i forsendelse $forsendelseId" }
         return DokumentRespons(
@@ -127,19 +131,30 @@ class RedigerDokumentService(
                     it.copy(
                         metadata = redigeringMetadata?.let { rd -> oppdaterDokumentRedigeringMetadata(it, rd) }
                             ?: it.metadata,
-                        dokumentStatus = when (it.dokumentStatus) {
-                            DokumentStatus.MÅ_KONTROLLERES, DokumentStatus.KONTROLLERT -> DokumentStatus.KONTROLLERT
-                            DokumentStatus.UNDER_REDIGERING, DokumentStatus.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
-                            else -> it.dokumentStatus
-                        }
+                        dokumentStatus = it.hentStatusFerdigstilt()
                     )
                 } ?: it
             }
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
         dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
-
         return oppdaterteDokumenter.sortertEtterRekkefølge
+    }
+
+    private fun Dokument.hentStatusFerdigstilt() = when (dokumentStatus) {
+        DokumentStatus.MÅ_KONTROLLERES -> DokumentStatus.KONTROLLERT
+        DokumentStatus.UNDER_REDIGERING -> DokumentStatus.FERDIGSTILT
+        else -> dokumentStatus
+    }
+
+    private fun oppdaterStatusTilAlleDokumenter(dokumentreferanse: String, status: DokumentStatus) {
+        dokumenttjeneste.hentDokumenterMedReferanse(dokumentreferanse).forEach {
+            dokumenttjeneste.lagreDokument(
+                it.copy(
+                    dokumentStatus = status
+                )
+            )
+        }
     }
 
 
@@ -171,15 +186,15 @@ class RedigerDokumentService(
             forsendelseStatus = forsendelse.tilForsendelseStatusTo(),
             status = dokument.tilDokumentStatusTo(),
             redigeringMetadata = dokument.metadata.hentRedigeringmetadata(),
-            dokumenter = hentAlleDokumentDetaljer(dokument, forsendelseId)
+            dokumenter = hentEllerInitialiserAlleDokumentDetaljer(dokument)
         )
     }
 
-    private fun hentAlleDokumentDetaljer(dokument: Dokument, forsendelseId: Long): List<DokumentDetaljer> {
+    private fun hentEllerInitialiserAlleDokumentDetaljer(dokument: Dokument): List<DokumentDetaljer> {
         val existing = dokument.metadata.hentDokumentDetaljer()
         if (existing != null) return existing
 
-        val dokumentMetadataList = hentDokumentMetadata(dokument, forsendelseId)
+        val dokumentMetadataList = hentDokumentMetadata(dokument)
         val dokumentDetaljer = dokumentMetadataList.map { hentDokumentDetaljer(it) }
         val metadata = dokument.metadata
         metadata.lagreDokumentDetaljer(dokumentDetaljer)
@@ -201,14 +216,16 @@ class RedigerDokumentService(
         )
     }
 
-    private fun hentDokumentMetadata(dokument: Dokument, forsendelseId: Long): List<DokumentMetadata> {
-        return if (dokument.erFraAnnenKilde) {
+    private fun hentDokumentMetadata(dokument: Dokument): List<DokumentMetadata> {
+        return if (dokument.erFraAnnenKilde && dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) {
             bidragDokumentConsumer.hentDokumentMetadata(
                 dokument.journalpostId!!,
                 dokument.dokumentreferanseOriginal
             )
+        } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+            fysiskDokumentService.hentDokumentMetadata(dokument.forsendelseId!!, dokument.lenkeTilDokumentreferanse)
         } else {
-            fysiskDokumentService.hentDokumentMetadata(forsendelseId, dokumentreferanse = dokument.dokumentreferanse)
+            fysiskDokumentService.hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanse)
         }
     }
 
