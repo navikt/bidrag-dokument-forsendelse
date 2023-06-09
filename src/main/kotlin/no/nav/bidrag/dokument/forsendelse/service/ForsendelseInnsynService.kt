@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
@@ -31,7 +32,8 @@ class ForsendelseInnsynTjeneste(
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
     private val dokumentTjeneste: DokumentTjeneste,
-    private val sakService: SakService
+    private val sakService: SakService,
+    private val vedtakConsumer: BidragVedtakConsumer
 ) {
 
     fun hentForsendelseForSakJournal(saksnummer: String, temaListe: List<JournalTema> = listOf(JournalTema.BID)): List<JournalpostDto> {
@@ -51,11 +53,27 @@ class ForsendelseInnsynTjeneste(
         val journalpost = forsendelse.tilJournalpostDto(dokumenterMetadata)
         if (journalpost.innhold.isNullOrEmpty()) {
             val sak = sakService.hentSak(forsendelse.saksnummer)
+            val vedtak = forsendelse.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
             val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
-            journalpost.innhold = forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type) ?: "Forsendelse ${forsendelse.forsendelseId}"
+            journalpost.innhold = forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type, vedtak)
+                ?: journalpost.hentHoveddokument()?.tittel ?: "Forsendelse ${forsendelse.forsendelseId}"
         }
 
         return journalpost
+    }
+
+    private fun tilForsendelseRespons(forsendelse: Forsendelse): ForsendelseResponsTo {
+        val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+        if (forsendelseRespons.tittel.isNullOrEmpty()) {
+            val sak = sakService.hentSak(forsendelse.saksnummer)
+            val vedtak = forsendelse.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
+            val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
+            return forsendelseRespons.copy(
+                tittel = forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type, vedtak)
+                    ?: forsendelseRespons.hentHoveddokument()?.tittel ?: "Forsendelse ${forsendelse.forsendelseId}"
+            )
+        }
+        return forsendelseRespons
     }
 
     private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> {
@@ -66,6 +84,9 @@ class ForsendelseInnsynTjeneste(
                     val originalDokument = dokumentTjeneste.hentOriginalDokument(it)
                     metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanseOriginal)
                     metadata.oppdaterOriginalJournalpostId(originalDokument.journalpostIdOriginal)
+                } else {
+                    metadata.oppdaterOriginalDokumentreferanse(it.dokumentreferanseOriginal)
+                    metadata.oppdaterOriginalJournalpostId(it.journalpostIdOriginal)
                 }
                 metadata
             }
@@ -90,23 +111,22 @@ class ForsendelseInnsynTjeneste(
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
 
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map(Forsendelse::tilForsendelseRespons)
+            .map { tilForsendelseRespons(it) }
     }
 
     fun hentForsendelseForSoknad(soknadId: String): List<ForsendelseResponsTo> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSoknadId(soknadId)
 
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map(Forsendelse::tilForsendelseRespons)
+            .map { tilForsendelseRespons(it) }
     }
 
     fun hentForsendelse(forsendelseId: Long, saksnummer: String? = null): ForsendelseResponsTo {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
-        return forsendelse.tilForsendelseRespons()
+        return tilForsendelseRespons(forsendelse)
     }
-
 
     fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)

@@ -46,6 +46,7 @@ data class Forsendelse(
     val gjelderIdent: String,
     val opprettetAvIdent: String,
     val endretAvIdent: String,
+    val tittel: String? = null,
     val batchId: String? = null,
     val opprettetAvNavn: String? = null,
     val avbruttAvIdent: String? = null,

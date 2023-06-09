@@ -13,3 +13,7 @@ alter table behandling_info
 -- Legacy data fra Bisys for opprettelse av brev via Bisys
 alter table behandling_info
     add column if not exists soknad_id text;
+
+CREATE INDEX if not exists idx_beh_info_soknad_id ON behandling_info (soknad_id);
+CREATE INDEX if not exists idx_beh_info_vedtak_id ON behandling_info (vedtak_id);
+CREATE INDEX if not exists idx_beh_info_behandling_id ON behandling_info (behandling_id);

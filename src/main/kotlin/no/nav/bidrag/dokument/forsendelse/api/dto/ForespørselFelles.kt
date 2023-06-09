@@ -36,7 +36,9 @@ val JournalpostId.arkivsystem
 @Schema(description = "Metadata til en respons etter dokumenter i forsendelse ble opprettet")
 data class DokumentRespons(
     val dokumentreferanse: String,
-    val originalDokumentreferanse: String? = null,
+    @Schema(description = "Dokumentreferanse hvis dokumentet er lenke til et dokument i annen forsendelse") val lenkeTilDokumentreferanse: String? = null,
+    @Schema(description = "Originale dokumentreferanse hvis er kopi av en ekstern dokument (feks fra JOARK)") val originalDokumentreferanse: String? = null,
+    @Schema(description = "Originale journalpostid hvis er kopi av en ekstern dokument (feks fra JOARK)") val originalJournalpostId: String? = null,
     val forsendelseId: String? = null,
     val tittel: String,
     val dokumentDato: LocalDateTime,

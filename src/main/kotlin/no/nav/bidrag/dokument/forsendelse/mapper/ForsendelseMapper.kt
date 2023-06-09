@@ -94,7 +94,7 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
     brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
-    innhold = this.dokumenter.hoveddokument?.tittel,
+    innhold = tittel, //this.dokumenter.hoveddokument?.tittel,
     fagomrade = when (tema) {
         ForsendelseTema.FAR -> Fagomrade.FARSKAP
         else -> Fagomrade.BIDRAG
@@ -138,7 +138,7 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { dokument ->
         DokumentDto(
             dokumentreferanse = dokument.dokumentreferanse,
-            journalpostId = dokument.journalpostId,
+            journalpostId = dokument.forsendelseId.toString(),
             arkivSystem = dokument.tilArkivSystemDto(),
             metadata = dokumenterMetadata?.get(dokument.dokumentreferanse)?.toMap() ?: emptyMap(),
             tittel = dokument.tittel,
@@ -200,7 +200,7 @@ fun Forsendelse.tilForsendelseType() = when (this.forsendelseType) {
     ForsendelseType.UTGÅENDE -> ForsendelseTypeTo.UTGÅENDE
 }
 
-fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
+fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) = ForsendelseResponsTo(
     mottaker = this.mottaker?.let {
         MottakerTo(
             ident = it.ident,
@@ -227,7 +227,7 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
         )
     },
     gjelderIdent = this.gjelderIdent,
-    tittel = this.dokumenter.hoveddokument?.tittel,
+    tittel = tittel, // ?: this.dokumenter.hoveddokument?.tittel,
     tema = this.tema.name,
     saksnummer = this.saksnummer,
     forsendelseType = when (this.forsendelseType) {
@@ -244,7 +244,10 @@ fun Forsendelse.tilForsendelseRespons() = ForsendelseResponsTo(
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
         DokumentRespons(
             dokumentreferanse = it.dokumentreferanse,
-            originalDokumentreferanse = it.lenkeTilDokumentreferanse,
+            lenkeTilDokumentreferanse = it.lenkeTilDokumentreferanse,
+            originalDokumentreferanse = dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalDokumentreferanse()
+                ?: it.dokumentreferanseOriginal,
+            originalJournalpostId = dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalJournalpostId() ?: it.journalpostIdOriginal,
             forsendelseId = it.forsendelseId.toString(),
             tittel = it.tittel,
             journalpostId = it.journalpostId,

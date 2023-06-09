@@ -21,6 +21,7 @@ data class OppdaterForsendelseForespørsel(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OppdaterForsendelseResponse(
     @Schema(description = "ForsendelseId på forsendelse som ble opprettet") val forsendelseId: String? = null,
+    @Schema(description = "Tittel på forsendelsen") val tittel: String? = null,
     @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList()
 )
 

@@ -37,6 +37,15 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
         feilmeldinger.add("Alle dokumenter må sendes i forespørsel ved endring")
     }
 
+    val harReferanseTilSammeDokument =
+        eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet
+            .any { forsendelseDok ->
+                this.dokumenter.filter { it.dokumentreferanse.isNullOrEmpty() }
+                    .any { it.journalpostId == forsendelseDok.journalpostIdOriginal || it.dokumentreferanse == forsendelseDok.dokumentreferanseOriginal }
+            }
+    if (harReferanseTilSammeDokument) {
+        feilmeldinger.add("Kan ikke legge til flere dokumenter som peker til samme dokument")
+    }
     feilmeldinger.validerErSann(
         this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
         "Dokumentdato kan ikke bli satt til fram i tid"

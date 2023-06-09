@@ -7,7 +7,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTil
 
 val Dokument.forsendelseIdMedPrefix get() = this.forsendelse.forsendelseIdMedPrefix
 fun List<Dokument>.hentDokument(dokumentreferanse: String?) =
-    dokumenterIkkeSlettet.find { dokumentreferanse.isNotNullOrEmpty() && it.dokumentreferanseOriginal == dokumentreferanse || it.dokumentreferanse == dokumentreferanse }
+    dokumenterIkkeSlettet.find { dokumentreferanse.isNotNullOrEmpty() && (it.dokumentreferanseOriginal == dokumentreferanse || it.dokumentreferanse == dokumentreferanse) }
 
 val List<Dokument>.erAlleFerdigstilt get() = dokumenterIkkeSlettet.isNotEmpty() && dokumenterIkkeSlettet.all { it.dokumentStatus == DokumentStatus.FERDIGSTILT || it.dokumentStatus == DokumentStatus.KONTROLLERT }
 val List<Dokument>.ikkeSlettetSortertEtterRekkefølge get() = dokumenterIkkeSlettet.sortedBy { it.rekkefølgeIndeks }

@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
+import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
@@ -49,7 +50,7 @@ fun Rolletype.toName(): String? {
     }
 }
 
-fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?): String {
+fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null): String {
     val behandlingType = when (stonadType) {
         StonadType.FORSKUDD -> "Forskudd"
         StonadType.BIDRAG -> "Bidrag"
@@ -68,6 +69,7 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?): String {
             else -> null
         }
     }
+        ?: vedtak?.let { if (vedtak.stonadsendringListe.isNotEmpty()) vedtak.stonadsendringListe[0].type.name else vedtak.engangsbelopListe[0].type.name }
 
     val stringBuilder = mutableListOf<String>()
     if (vedtakId.isNotNullOrEmpty() || erFattetBeregnet != null) {
