@@ -40,7 +40,8 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     val harReferanseTilSammeDokument =
         eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet
             .any { forsendelseDok ->
-                this.dokumenter.filter { it.dokumentreferanse.isNullOrEmpty() }
+
+                this.dokumenter.filter { !forespørselDokumentreferanser.contains(it.dokumentreferanse) }
                     .any { it.journalpostId == forsendelseDok.journalpostIdOriginal || it.dokumentreferanse == forsendelseDok.dokumentreferanseOriginal }
             }
     if (harReferanseTilSammeDokument) {

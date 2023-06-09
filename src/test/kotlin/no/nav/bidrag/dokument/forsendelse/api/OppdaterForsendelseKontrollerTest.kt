@@ -103,7 +103,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                 ),
                 OppdaterDokumentForespørsel(
                     tittel = "Ny dokument 1",
-                    dokumentreferanse = "1123213213",
+                    dokumentreferanse = "11232132313",
                     journalpostId = "JOARK-123123123"
                 ),
                 OppdaterDokumentForespørsel(

@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
+import no.nav.bidrag.dokument.dto.numeric
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
@@ -78,7 +79,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             val hoveddokument = forsendelseResponse.dokumenter[0]
             hoveddokument.tittel shouldBe TITTEL_HOVEDDOKUMENT
             hoveddokument.arkivSystem shouldBe DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
-            hoveddokument.journalpostId shouldBe "BID-123123"
+            hoveddokument.journalpostId shouldBe forsendelseResponse.journalpostId?.numeric.toString()
             hoveddokument.dokumentmalId shouldBe HOVEDDOKUMENT_DOKUMENTMAL
             hoveddokument.dokumentreferanse shouldBe forsendelse.dokumenter[0].dokumentreferanse
         }
