@@ -4,13 +4,18 @@ import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
+import no.nav.bidrag.dokument.forsendelse.mapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
@@ -19,6 +24,7 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -41,7 +47,8 @@ class OpprettForsendelseService(
         forespørsel.valider(forsendelseType)
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)
 
-        val dokumenter = dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
+        val dokumenter =
+            dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter.konverterTilOpprettDokumentForespørselMedLenketDokument())
 
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
@@ -55,6 +62,30 @@ class OpprettForsendelseService(
                 )
             }
         )
+    }
+
+    private fun List<OpprettDokumentForespørsel>.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
+        return this.flatMap { it.konverterTilOpprettDokumentForespørselMedLenketDokument() }
+    }
+
+    private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
+        return if (this.journalpostId?.erForsendelse == true) this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
+        else listOf(this)
+    }
+
+    private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumenttjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
+
+    private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
+        val dokumentForsendelse =
+            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
+                ?: return listOf(this)
+
+        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+        else {
+            val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
+            listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
+        }
+
     }
 
     private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType {

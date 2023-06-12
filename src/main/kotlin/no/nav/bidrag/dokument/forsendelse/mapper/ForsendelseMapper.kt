@@ -20,6 +20,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -65,6 +66,17 @@ fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
     DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
     else -> DokumentArkivSystemDto.UKJENT
 }
+
+fun Dokument.tilOpprettDokumentForespørsel() =
+    OpprettDokumentForespørsel(
+        tittel = tittel,
+        dokumentreferanse = dokumentreferanse,
+        status = this.tilDokumentStatusTo(),
+        dokumentmalId = dokumentmalId,
+        journalpostId = forsendelseId.toString(),
+        dokumentDato = dokumentDato,
+        arkivsystem = this.tilArkivSystemDto()
+    )
 
 fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {

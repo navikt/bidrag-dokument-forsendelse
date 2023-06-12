@@ -20,8 +20,8 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.toForsendelseTema
-import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
@@ -88,6 +88,7 @@ class OppdaterForsendelseService(
             forsendelseTjeneste.lagre(
                 forsendelse.copy(
                     mottaker = mottaker ?: forsendelse.mottaker,
+                    tittel = forespørsel.tittel ?: forsendelse.tittel,
                     språk = forespørsel.språk ?: forsendelse.språk,
                     enhet = forespørsel.enhet ?: forsendelse.enhet,
                     tema = forespørsel.tema?.toForsendelseTema() ?: forsendelse.tema,
@@ -97,12 +98,14 @@ class OppdaterForsendelseService(
             )
         } else forsendelseTjeneste.lagre(
             forsendelse.copy(
-                dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel)
+                dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel),
+                tittel = forespørsel.tittel ?: forsendelse.tittel,
             )
         )
 
         return OppdaterForsendelseResponse(
             forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
+            tittel = oppdatertForsendelse.tittel,
             dokumenter = oppdatertForsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
@@ -323,6 +326,7 @@ class OppdaterForsendelseService(
         forsendelse: Forsendelse,
         forespørsel: OppdaterForsendelseForespørsel
     ): List<Dokument> {
+        if (forespørsel.dokumenter.isEmpty()) return forsendelse.dokumenter
         val logiskSlettetDokumenterFraForespørsel =
             forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde }
                 .map {
@@ -423,17 +427,6 @@ class OppdaterForsendelseService(
     }
 
     private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumentTjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
-
-    private fun Dokument.tilOpprettDokumentForespørsel() =
-        OpprettDokumentForespørsel(
-            tittel = tittel,
-            dokumentreferanse = dokumentreferanse,
-            status = this.tilDokumentStatusTo(),
-            dokumentmalId = dokumentmalId,
-            journalpostId = forsendelseId.toString(),
-            dokumentDato = dokumentDato,
-            arkivsystem = this.tilArkivSystemDto()
-        )
 
     fun opphevFerdigstillingAvDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)

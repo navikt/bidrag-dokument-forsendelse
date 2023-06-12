@@ -29,24 +29,27 @@ fun OppdaterForsendelseForespørsel.skalDokumentSlettes(dokumentreferanse: Strin
 
 fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse: Forsendelse) {
     val feilmeldinger = mutableListOf<String>()
-    val forsendelseDokumentreferanse = eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet.map { it.dokumentreferanse }.toSet()
-    val forespørselDokumentreferanser = this.dokumenter.map { it.dokumentreferanse }.toSet()
-    val forsendelseHarAlleDokumenterSomSkalEndres = forespørselDokumentreferanser.containsAll(forsendelseDokumentreferanse)
+    if (dokumenter.isNotEmpty()) {
+        val forsendelseDokumentreferanse = eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet.map { it.dokumentreferanse }.toSet()
+        val forespørselDokumentreferanser = this.dokumenter.map { it.dokumentreferanse }.toSet()
+        val forsendelseHarAlleDokumenterSomSkalEndres = forespørselDokumentreferanser.containsAll(forsendelseDokumentreferanse)
 
-    if (!forsendelseHarAlleDokumenterSomSkalEndres) {
-        feilmeldinger.add("Alle dokumenter må sendes i forespørsel ved endring")
+        if (!forsendelseHarAlleDokumenterSomSkalEndres) {
+            feilmeldinger.add("Alle dokumenter må sendes i forespørsel ved endring")
+        }
+
+        val harReferanseTilSammeDokument =
+            eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet
+                .any { forsendelseDok ->
+
+                    this.dokumenter.filter { !forespørselDokumentreferanser.contains(it.dokumentreferanse) }
+                        .any { it.journalpostId == forsendelseDok.journalpostIdOriginal || it.dokumentreferanse == forsendelseDok.dokumentreferanseOriginal }
+                }
+        if (harReferanseTilSammeDokument) {
+            feilmeldinger.add("Kan ikke legge til flere dokumenter som peker til samme dokument")
+        }
     }
 
-    val harReferanseTilSammeDokument =
-        eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet
-            .any { forsendelseDok ->
-
-                this.dokumenter.filter { !forespørselDokumentreferanser.contains(it.dokumentreferanse) }
-                    .any { it.journalpostId == forsendelseDok.journalpostIdOriginal || it.dokumentreferanse == forsendelseDok.dokumentreferanseOriginal }
-            }
-    if (harReferanseTilSammeDokument) {
-        feilmeldinger.add("Kan ikke legge til flere dokumenter som peker til samme dokument")
-    }
     feilmeldinger.validerErSann(
         this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
         "Dokumentdato kan ikke bli satt til fram i tid"
