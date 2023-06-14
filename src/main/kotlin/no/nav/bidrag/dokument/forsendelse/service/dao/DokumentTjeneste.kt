@@ -2,9 +2,13 @@ package no.nav.bidrag.dokument.forsendelse.service.dao
 
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
 import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentDo
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
+import no.nav.bidrag.dokument.forsendelse.model.numerisk
+import no.nav.bidrag.dokument.forsendelse.model.ugyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -22,13 +26,13 @@ class DokumentTjeneste(
     private val forsendelseTjeneste: ForsendelseTjeneste
 ) {
     fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel, indeks: Int? = null): Dokument {
-        val nyDokument = forespørsel.tilDokumentDo(forsendelse, indeks ?: forsendelse.dokumenter.size)
+        val nyDokument = forespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse, indeks ?: forsendelse.dokumenter.size)
 
         return lagreDokument(nyDokument)
     }
 
     fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
-        val nyeDokumenter = forespørsel.mapIndexed { i, it -> it.tilDokumentDo(forsendelse, i) }
+        val nyeDokumenter = forespørsel.mapIndexed { i, it -> it.tilDokumentDoMedOriginalLenketDokument(forsendelse, i) }
         return lagreDokumenter(nyeDokumenter.sortertEtterRekkefølge)
     }
 
@@ -67,5 +71,33 @@ class DokumentTjeneste(
         val referertDokument = forsendelse.dokumenter.hentDokument(dokument.lenkeTilDokumentreferanse)
         if (referertDokument?.erFraAnnenKilde == false || referertDokument?.arkivsystem != DokumentArkivSystem.FORSENDELSE) return referertDokument!!
         return hentOriginalDokument(dokument)
+    }
+
+    private fun Dokument.tilOriginalDokument() = hentOriginalDokument(this)
+
+    private fun OpprettDokumentForespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse: Forsendelse, indeks: Int): Dokument {
+        val dokumentForsendelse =
+            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
+                ?: return this.tilDokumentDo(forsendelse, indeks)
+
+        if (this.dokumentreferanse.isNullOrEmpty()) ugyldigEndringAvForsendelse("Dokumentreferanse må settes når en dokument opprettes fra en annen forsendelse. Kan ikke knytte en hel forsendelse til en annen forsendelse.")
+//        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+        val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!.tilOriginalDokument()
+        val erFraAnnenKilde = dokumentLenket.erFraAnnenKilde
+        return Dokument(
+            forsendelse = forsendelse,
+            tittel = this.tittel.fjernKontrollTegn(),
+            språk = this.språk ?: forsendelse.språk,
+            arkivsystem = if (erFraAnnenKilde) dokumentLenket.arkivsystem else DokumentArkivSystem.FORSENDELSE,
+            dokumentStatus = if (erFraAnnenKilde) DokumentStatus.MÅ_KONTROLLERES else dokumentLenket.dokumentStatus,
+            dokumentreferanseOriginal = if (erFraAnnenKilde) dokumentLenket.dokumentreferanseOriginal else dokumentLenket.dokumentreferanse,
+            dokumentDato = this.dokumentDato ?: dokumentLenket.dokumentDato,
+            journalpostIdOriginal = if (erFraAnnenKilde) dokumentLenket.journalpostIdOriginal else dokumentLenket.forsendelseId.toString(),
+            dokumentmalId = this.dokumentmalId ?: dokumentLenket.dokumentmalId,
+            metadata = dokumentLenket.metadata,
+            rekkefølgeIndeks = indeks
+        )
+
+
     }
 }

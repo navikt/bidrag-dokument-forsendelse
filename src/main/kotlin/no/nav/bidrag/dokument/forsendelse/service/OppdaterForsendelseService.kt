@@ -338,7 +338,7 @@ class OppdaterForsendelseService(
 
         val oppdaterteDokumenter = forespørsel.dokumenter
             .filter { it.fjernTilknytning == false }
-            .flatMapIndexed { indeks, it ->
+            .mapIndexed { indeks, it ->
                 val eksisterendeDokument = forsendelse.dokumenter.hentDokument(it.dokumentreferanse)
                 eksisterendeDokument?.copy(
                     tittel = it.tittel ?: eksisterendeDokument.tittel,
@@ -349,7 +349,8 @@ class OppdaterForsendelseService(
                     } else {
                         eksisterendeDokument.dokumentDato
                     }
-                )?.let { listOf(it) } ?: it.konverterTilOpprettDokumentForespørsel().map { knyttDokumentTilForsendelse(forsendelse, it) }
+                ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
+//                )?.let { listOf(it) } ?: it.konverterTilOpprettDokumentForespørsel().map { knyttDokumentTilForsendelse(forsendelse, it) }
             } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
 
         if (oppdaterteDokumenter.dokumenterIkkeSlettet.isEmpty()) throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")

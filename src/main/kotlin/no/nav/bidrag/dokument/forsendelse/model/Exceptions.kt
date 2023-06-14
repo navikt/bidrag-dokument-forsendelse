@@ -16,6 +16,7 @@ class HentVedtakFeiletException(melding: String, throwable: Throwable) : Runtime
 class KunneIkkeFerdigstilleForsendelse(forsendelseId: Long) :
     HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved ferdigstilling av forsendelse $forsendelseId")
 
+fun ugyldigEndringAvForsendelse(melding: String): Nothing = throw UgyldigEndringAvForsendelse(melding)
 fun hentSakFeilet(saksnummer: String): Nothing =
     throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "Kunne ikke hente sak $saksnummer")
 

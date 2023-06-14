@@ -48,7 +48,7 @@ class OpprettForsendelseService(
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)
 
         val dokumenter =
-            dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter.konverterTilOpprettDokumentForespørselMedLenketDokument())
+            dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
 
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
@@ -62,30 +62,6 @@ class OpprettForsendelseService(
                 )
             }
         )
-    }
-
-    private fun List<OpprettDokumentForespørsel>.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
-        return this.flatMap { it.konverterTilOpprettDokumentForespørselMedLenketDokument() }
-    }
-
-    private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
-        return if (this.journalpostId?.erForsendelse == true) this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
-        else listOf(this)
-    }
-
-    private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumenttjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
-
-    private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
-        val dokumentForsendelse =
-            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
-                ?: return listOf(this)
-
-        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
-        else {
-            val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
-            listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
-        }
-
     }
 
     private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType {
@@ -131,5 +107,30 @@ class OpprettForsendelseService(
         )
 
         return forsendelseTjeneste.lagre(forsendelse)
+    }
+
+    // Lenke dokumenter mellom forsendelser
+    private fun List<OpprettDokumentForespørsel>.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
+        return this.flatMap { it.konverterTilOpprettDokumentForespørselMedLenketDokument() }
+    }
+
+    private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
+        return if (this.journalpostId?.erForsendelse == true) this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
+        else listOf(this)
+    }
+
+    private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumenttjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
+
+    private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
+        val dokumentForsendelse =
+            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
+                ?: return listOf(this)
+
+        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+        else {
+            val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
+            listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
+        }
+
     }
 }
