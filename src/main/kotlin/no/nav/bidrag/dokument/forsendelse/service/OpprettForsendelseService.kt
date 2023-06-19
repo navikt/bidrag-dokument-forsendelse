@@ -73,9 +73,9 @@ class OpprettForsendelseService(
 
     private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse {
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
-        val mottakerIdent = forespørsel.mottaker!!.ident!!
-        val mottakerInfo = personConsumer.hentPerson(mottakerIdent)
-        val mottakerSpråk = forespørsel.språk ?: personConsumer.hentPersonSpråk(mottakerIdent) ?: "NB"
+        val mottakerIdent = forespørsel.mottaker!!.ident
+        val mottakerInfo = mottakerIdent?.let { personConsumer.hentPerson(mottakerIdent) }
+        val mottakerSpråk = forespørsel.språk ?: mottakerIdent?.let { personConsumer.hentPersonSpråk(mottakerIdent) } ?: "NB"
         val forsendelse = Forsendelse(
             saksnummer = forespørsel.saksnummer,
             batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,

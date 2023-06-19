@@ -230,7 +230,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     }
 
     @ParameterizedTest
-    @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON"], mode = EnumSource.Mode.EXCLUDE)
+    @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON", "UNDER_OPPRETTELSE"], mode = EnumSource.Mode.EXCLUDE)
     fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus) {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status status
