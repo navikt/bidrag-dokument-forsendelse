@@ -22,5 +22,8 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     fun hentDistribuerteForsendelseUtenKanal(pageable: Pageable, olderThan: LocalDateTime): List<Forsendelse>
 
     @Query("select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE' and f.distribusjonKanal is null")
-    fun hentFerdigstilteIkkeDistribuert(): List<Forsendelse>
+    fun hentFerdigstilteArkivertIJoarkIkkeDistribuert(): List<Forsendelse>
+
+    @Query("select f from forsendelse f where f.status = 'UNDER_PRODUKSJON' and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date")
+    fun hentUnderProduksjonOpprettetFørDagensDato(): List<Forsendelse>
 }

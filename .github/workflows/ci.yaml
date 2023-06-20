@@ -36,9 +36,27 @@ jobs:
     outputs:
       image: ${{ steps.docker-push.outputs.image }}
 
-  deploy:
+  deploy-feature:
     runs-on: ubuntu-latest
-    name: Deploy docker image to dev
+    name: Deploy docker image to feature
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: deploy
+      - name: Deploy feature to dev-gcp
+        if: github.ref != 'refs/heads/main'
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: deploy/.nais/nais.yaml
+          VARS: deploy/.nais/feature.yaml
+          IMAGE: ${{ needs.build.outputs.image }}
+
+  deploy-main:
+    runs-on: ubuntu-latest
+    name: Deploy docker image to main
     needs: build
     steps:
       - uses: actions/checkout@v3
@@ -52,20 +70,11 @@ jobs:
           RESOURCE: deploy/.nais/nais.yaml
           VARS: deploy/.nais/main.yaml
           IMAGE: ${{ needs.build.outputs.image }}
-      - name: Deploy feature to dev-gcp
-        if: github.ref != 'refs/heads/main'
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: deploy/.nais/nais.yaml
-          VARS: deploy/.nais/feature.yaml
-          IMAGE: ${{ needs.build.outputs.image }}
 
   run-tests-for-opprett-oppgave:
     runs-on: ubuntu-latest
     name: "Run tests: opprett-forsendelse"
-    needs: deploy
+    needs: [ deploy-main, deploy-feature ]
 
     env:
       INGRESS_DOKUMENT_FORSENDELSE: https://bidrag-dokument-forsendelse.dev.intern.nav.no
