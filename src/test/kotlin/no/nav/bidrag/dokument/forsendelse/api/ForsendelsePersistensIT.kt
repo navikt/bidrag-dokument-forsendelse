@@ -1,23 +1,29 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import java.time.Duration
+import java.time.LocalDateTime
 
 class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
@@ -106,6 +112,57 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             oppdatertForsendelse.dokumenter.hoveddokument!!.tilknyttetSom shouldBe DokumentTilknyttetSom.HOVEDDOKUMENT
             oppdatertForsendelse.dokumenter.vedlegger[0].tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
             oppdatertForsendelse.dokumenter.vedlegger[1].tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
+        }
+    }
+
+    @Test
+    fun `Skal hente liste over forsendelser ikke distribuert`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+        val forsendelse2 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+        val forsendelse3 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+                    )
+                )
+            )
+        )
+        testDataManager.lagreForsendelse(forsendelse.copy(opprettetTidspunkt = LocalDateTime.now().minusDays(1)))
+        testDataManager.lagreForsendelse(forsendelse2.copy(opprettetTidspunkt = LocalDateTime.now().minusDays(1)))
+        val response: ResponseEntity<List<ForsendelseIkkeDistribuertResponsTo>> =
+            httpHeaderTestRestTemplate.getForEntity("${rootUri()}/journal/ikkedistribuert")
+
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val journalpostListe = response.body!!
+        assertSoftly {
+            journalpostListe shouldHaveSize 2
+            val forsendelseResponse1 = journalpostListe[0]
+            forsendelseResponse1.forsendelseId shouldBe forsendelse.forsendelseIdMedPrefix
+            forsendelseResponse1.saksnummer shouldBe forsendelse.saksnummer
+            forsendelseResponse1.enhet shouldBe forsendelse.enhet
+            forsendelseResponse1.tittel shouldBe forsendelse.dokumenter.hoveddokument!!.tittel
         }
     }
 }

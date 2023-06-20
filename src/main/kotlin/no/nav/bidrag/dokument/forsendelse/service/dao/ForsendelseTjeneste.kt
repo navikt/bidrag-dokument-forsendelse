@@ -4,6 +4,7 @@ import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.TilgangskontrollService
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -31,7 +32,12 @@ class ForsendelseTjeneste(
     }
 
     fun hentFerdigstilteIkkeDistribuert(): List<Forsendelse> {
-        return forsendelseRepository.hentFerdigstilteIkkeDistribuert()
+        return forsendelseRepository.hentFerdigstilteArkivertIJoarkIkkeDistribuert()
+    }
+
+    fun hentForsendelserOpprettetFørDagensDatoIkkeDistribuert(): List<Forsendelse> {
+        val forsendelser = forsendelseRepository.hentUnderProduksjonOpprettetFørDagensDato()
+        return forsendelser.filter { it.dokumenter.erAlleFerdigstilt }
     }
 
     fun lagre(forsendelse: Forsendelse): Forsendelse {

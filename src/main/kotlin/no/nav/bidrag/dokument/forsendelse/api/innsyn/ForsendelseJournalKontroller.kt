@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
@@ -63,6 +64,22 @@ class ForsendelseJournalKontroller(
         @RequestParam(name = "fagomrade") temaListe: List<JournalTema> = emptyList()
     ): List<JournalpostDto> {
         return forsendelseInnsynTjeneste.hentForsendelseForSakJournal(saksnummer, temaListe)
+    }
+
+    @GetMapping("/journal/ikkedistribuert")
+    @Operation(
+        description = "Hent alle forsendelse som er opprettet før dagens dato og ikke er distribuert"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser funnet."
+            )
+        ]
+    )
+    fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
+        return forsendelseInnsynTjeneste.hentForsendelserIkkeDistribuert()
     }
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
