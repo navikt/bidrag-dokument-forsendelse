@@ -40,7 +40,7 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
     }
 
     fun hentDokumentMalListe(
-        request: HentDokumentValgRequest? = null,
+        request: HentDokumentValgRequest? = null
     ): Map<String, DokumentMalDetaljer> {
         if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         if (request.vedtakId != null) {
@@ -66,16 +66,15 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                    it.vedtakType.contains(vedtakType) &&
-                    it.behandlingStatus.isValid(erFattetBeregnet) &&
-                    it.forvaltning.isValid(enhet)
+                it.vedtakType.contains(vedtakType) &&
+                it.behandlingStatus.isValid(erFattetBeregnet) &&
+                it.forvaltning.isValid(enhet)
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
                 ?: ekstraBrevkoderVedtakIkkeFattet
         return brevkoder.associateWith { mapToMalDetaljer(it) }.filter { it.value.type != DokumentMalType.NOTAT }
     }
-
 
     fun mapToMalDetaljer(malId: String): DokumentMalDetaljer {
         val dokumentDetaljer = bestillingConsumer.dokumentmalDetaljer()
@@ -88,7 +87,7 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
     private fun fetchDokumentValgMapFromFile(): Map<BehandlingType, List<DokumentBehandlingDetaljer>> {
         return try {
             val objectMapper = ObjectMapper(YAMLFactory())
-            objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             val inputstream = ClassPathResource("files/dokument_valg.json").inputStream
             val text = String(inputstream.readAllBytes(), StandardCharsets.UTF_8)
             val listType: JavaType = objectMapper.typeFactory.constructParametricType(
@@ -98,8 +97,11 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
             val stringType = objectMapper.typeFactory.constructType(String::class.java)
             val dokbehtyp = objectMapper.typeFactory.constructType(DokumentBehandling::class.java)
             objectMapper.readValue(
-                text, objectMapper.typeFactory.constructMapType(
-                    MutableMap::class.java, stringType, listType
+                text,
+                objectMapper.typeFactory.constructMapType(
+                    MutableMap::class.java,
+                    stringType,
+                    listType
                 )
             )
         } catch (e: IOException) {

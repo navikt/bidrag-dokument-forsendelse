@@ -96,12 +96,14 @@ class OppdaterForsendelseService(
                     dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel)
                 )
             )
-        } else forsendelseTjeneste.lagre(
-            forsendelse.copy(
-                dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel),
-                tittel = forespørsel.tittel ?: forsendelse.tittel,
+        } else {
+            forsendelseTjeneste.lagre(
+                forsendelse.copy(
+                    dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel),
+                    tittel = forespørsel.tittel ?: forsendelse.tittel
+                )
             )
-        )
+        }
 
         return OppdaterForsendelseResponse(
             forsendelseId = oppdatertForsendelse.forsendelseId.toString(),
@@ -335,7 +337,6 @@ class OppdaterForsendelseService(
                     )
                 }
 
-
         val oppdaterteDokumenter = forespørsel.dokumenter
             .filter { it.fjernTilknytning == false }
             .mapIndexed { indeks, it ->
@@ -370,12 +371,12 @@ class OppdaterForsendelseService(
             oppdaterteDokumenter.filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
                 .any {
                     it.erFraAnnenKilde &&
-                            it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
+                        it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
                 }
                 .ifTrue {
                     throw UgyldigForespørsel(
                         "Kan ikke legge til samme dokument flere ganger til forsendelse." +
-                                " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
+                            " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
                     )
                 }
         }
@@ -389,7 +390,6 @@ class OppdaterForsendelseService(
             if (erLenketAvAndreDokumenter) {
                 flyttLenkeTilNyDokumentHvisOriginalDokumentErSlettet(lenketDokumenter, it)
             }
-
         }
     }
 
@@ -410,8 +410,11 @@ class OppdaterForsendelseService(
     }
 
     private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørsel(): List<OpprettDokumentForespørsel> {
-        return if (this.journalpostId?.erForsendelse == true) this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
-        else listOf(this.tilOpprettDokumentForespørsel())
+        return if (this.journalpostId?.erForsendelse == true) {
+            this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
+        } else {
+            listOf(this.tilOpprettDokumentForespørsel())
+        }
     }
 
     private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
@@ -419,12 +422,12 @@ class OppdaterForsendelseService(
             this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
                 ?: return listOf(this.tilOpprettDokumentForespørsel())
 
-        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
-        else {
+        return if (this.dokumentreferanse.isNullOrEmpty()) {
+            dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+        } else {
             val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
             listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
         }
-
     }
 
     private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumentTjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
@@ -509,7 +512,6 @@ class OppdaterForsendelseService(
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
-
 
     fun ferdigstillDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)

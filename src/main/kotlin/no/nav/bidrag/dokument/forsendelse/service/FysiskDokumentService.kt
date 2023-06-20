@@ -46,7 +46,6 @@ class FysiskDokumentService(
     }
 
     fun hentFysiskDokument(dokumentMetadata: DokumentMetadata): ByteArray {
-
         return if (dokumentMetadata.arkivsystem == DokumentArkivSystemDto.BIDRAG) {
             hentDokument(
                 dokumentMetadata.journalpostId!!.numerisk,
@@ -58,28 +57,27 @@ class FysiskDokumentService(
                 dokumentMetadata.dokumentreferanse
             )!!
         }
-
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
 
-        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT)
+        return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
                 dokumentreferanse!!
             )
-        else if (dokument.erFraAnnenKilde)
+        } else if (dokument.erFraAnnenKilde) {
             bidragDokumentConsumer.hentDokument(
                 dokument.journalpostId,
                 dokument.dokumentreferanseOriginal
             )!!
-        else bidragDokumentConsumer.hentDokument(
-            dokument.forsendelseIdMedPrefix,
-            dokument.dokumentreferanse
-        )!!
-
-
+        } else {
+            bidragDokumentConsumer.hentDokument(
+                dokument.forsendelseIdMedPrefix,
+                dokument.dokumentreferanse
+            )!!
+        }
     }
 
     fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String? = null): List<DokumentMetadata> {
@@ -103,7 +101,7 @@ class FysiskDokumentService(
 
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
-        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT)
+        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
             DokumentMetadata(
                 journalpostId = dokument.forsendelseIdMedPrefix,
                 dokumentreferanse = dokument.dokumentreferanse,
@@ -111,7 +109,7 @@ class FysiskDokumentService(
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = DokumentArkivSystemDto.BIDRAG
             )
-        else if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER)
+        } else if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {
             DokumentMetadata(
                 journalpostId = dokument.journalpostId,
                 dokumentreferanse = dokumentreferanse,
@@ -122,18 +120,22 @@ class FysiskDokumentService(
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = dokument.tilArkivSystemDto()
             )
-        else if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) DokumentMetadata(
-            journalpostId = dokument.journalpostId,
-            dokumentreferanse = dokumentreferanse,
-            format = DokumentFormatDto.MBDOK,
-            status = dokument.tilDokumentStatusDto(),
-            arkivsystem = dokument.tilArkivSystemDto()
-        ) else DokumentMetadata(
-            journalpostId = dokument.journalpostId,
-            dokumentreferanse = dokumentreferanse,
-            format = DokumentFormatDto.PDF,
-            status = dokument.tilDokumentStatusDto(),
-            arkivsystem = dokument.tilArkivSystemDto()
-        )
+        } else if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) {
+            DokumentMetadata(
+                journalpostId = dokument.journalpostId,
+                dokumentreferanse = dokumentreferanse,
+                format = DokumentFormatDto.MBDOK,
+                status = dokument.tilDokumentStatusDto(),
+                arkivsystem = dokument.tilArkivSystemDto()
+            )
+        } else {
+            DokumentMetadata(
+                journalpostId = dokument.journalpostId,
+                dokumentreferanse = dokumentreferanse,
+                format = DokumentFormatDto.PDF,
+                status = dokument.tilDokumentStatusDto(),
+                arkivsystem = dokument.tilArkivSystemDto()
+            )
+        }
     }
 }

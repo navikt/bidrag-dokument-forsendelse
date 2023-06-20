@@ -48,7 +48,6 @@ class ForsendelseInnsynTjeneste(
     }
 
     private fun tilJournalpostDto(forsendelse: Forsendelse): JournalpostDto {
-
         val dokumenterMetadata = tilDokumenterMetadata(forsendelse.dokumenter)
         val journalpost = forsendelse.tilJournalpostDto(dokumenterMetadata)
         if (journalpost.innhold.isNullOrEmpty()) {
@@ -140,9 +139,9 @@ class ForsendelseInnsynTjeneste(
                     soknadFra = it.soknadFra,
                     erFattetBeregnet = it.erFattetBeregnet,
                     enhet = forsendelse.enhet
-                ),
-
                 )
+
+            )
         } ?: forsendelseHarIngenBehandlingInfo(forsendelseId)
     }
 }

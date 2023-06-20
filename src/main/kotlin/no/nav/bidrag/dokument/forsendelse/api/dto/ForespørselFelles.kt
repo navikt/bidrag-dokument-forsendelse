@@ -9,7 +9,6 @@ import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import java.time.LocalDateTime
 
-
 enum class JournalTema {
     BID,
     FAR

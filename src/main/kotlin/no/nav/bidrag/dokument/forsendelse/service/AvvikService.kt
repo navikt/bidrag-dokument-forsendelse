@@ -32,7 +32,9 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
                 AvvikType.SLETT_JOURNALPOST,
                 AvvikType.ENDRE_FAGOMRADE
             )
-        } else if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) listOf(AvvikType.SLETT_JOURNALPOST) else {
+        } else if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) {
+            listOf(AvvikType.SLETT_JOURNALPOST)
+        } else {
             emptyList()
         }
     }

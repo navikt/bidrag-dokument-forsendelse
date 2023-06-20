@@ -68,9 +68,11 @@ object ForespørselMapper {
     fun JournalpostId.tilArkivSystemDo() = this.arkivsystem?.let { DokumentArkivSystem.valueOf(it.name) }
 
     fun OpprettDokumentForespørsel.tilArkivsystemDo(): DokumentArkivSystem =
-        if (this.journalpostId?.erForsendelse == true) DokumentArkivSystem.FORSENDELSE else
+        if (this.journalpostId?.erForsendelse == true) {
+            DokumentArkivSystem.FORSENDELSE
+        } else {
             this.arkivsystem?.let { DokumentArkivSystem.valueOf(it.name) } ?: this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
-
+        }
 
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
         this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()

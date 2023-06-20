@@ -97,7 +97,5 @@ class DokumentTjeneste(
             metadata = dokumentLenket.metadata,
             rekkefølgeIndeks = indeks
         )
-
-
     }
 }

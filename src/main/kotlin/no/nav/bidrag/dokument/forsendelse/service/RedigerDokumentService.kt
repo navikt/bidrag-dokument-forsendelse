@@ -74,9 +74,9 @@ class RedigerDokumentService(
         forsendelse.validerKanEndreForsendelse()
         log.info {
             "Ferdigstiller dokument $dokumentreferanse i forsendelse $forsendelseId med dokumentstørrelse ${
-                bytesIntoHumanReadable(
-                    ferdigstillDokumentRequest.fysiskDokument.size.toLong()
-                )
+            bytesIntoHumanReadable(
+                ferdigstillDokumentRequest.fysiskDokument.size.toLong()
+            )
             }"
         }
         val oppdatertForsendelse = forsendelseTjeneste.lagre(
@@ -156,7 +156,6 @@ class RedigerDokumentService(
             )
         }
     }
-
 
     fun oppdaterDokumentRedigeringMetadata(forsendelseId: Long, dokumentreferanse: String, redigeringMetadata: String) {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
@@ -252,6 +251,5 @@ class RedigerDokumentService(
             metadata.lagreRedigeringmetadata(rd)
             metadata.copy()
         }
-
     }
 }

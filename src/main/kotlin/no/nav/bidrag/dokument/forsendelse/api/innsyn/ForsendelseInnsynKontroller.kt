@@ -92,7 +92,7 @@ class ForsendelseInnsynKontroller(
     @GetMapping("/dokumentvalg/forsendelse/{forsendelseIdMedPrefix}")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValgForForsendelse(
-        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId
     ): Map<String, DokumentMalDetaljer> {
         return forsendelseInnsynTjeneste.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
     }
@@ -100,7 +100,7 @@ class ForsendelseInnsynKontroller(
     @PostMapping("/dokumentvalg")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValg(
-        @RequestBody(required = false) request: HentDokumentValgRequest? = null,
+        @RequestBody(required = false) request: HentDokumentValgRequest? = null
     ): Map<String, DokumentMalDetaljer> {
         return dokumentValgService.hentDokumentMalListe(request)
     }
@@ -110,6 +110,4 @@ class ForsendelseInnsynKontroller(
     fun hentDokumentValgNotater(): Map<String, DokumentMalDetaljer> {
         return dokumentValgService.hentNotatListe()
     }
-
-
 }

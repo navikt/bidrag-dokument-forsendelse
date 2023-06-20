@@ -115,8 +115,11 @@ class OpprettForsendelseService(
     }
 
     private fun OpprettDokumentForespørsel.konverterTilOpprettDokumentForespørselMedLenketDokument(): List<OpprettDokumentForespørsel> {
-        return if (this.journalpostId?.erForsendelse == true) this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
-        else listOf(this)
+        return if (this.journalpostId?.erForsendelse == true) {
+            this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
+        } else {
+            listOf(this)
+        }
     }
 
     private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumenttjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
@@ -126,11 +129,11 @@ class OpprettForsendelseService(
             this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
                 ?: return listOf(this)
 
-        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
-        else {
+        return if (this.dokumentreferanse.isNullOrEmpty()) {
+            dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+        } else {
             val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
             listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
         }
-
     }
 }

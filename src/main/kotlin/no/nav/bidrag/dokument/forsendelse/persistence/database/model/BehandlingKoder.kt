@@ -56,7 +56,6 @@ enum class SoknadType(private val kode: String) {
     KORRIGERING("KR");
 }
 
-
 // T_BLANKETT.SOKN_FRA_KODE
 enum class SoknadFra(private val kode: String) {
     BM_I_ANNEN_SAK("AS"),
@@ -73,7 +72,6 @@ enum class SoknadFra(private val kode: String) {
     VERGE("VE"),
     TRYGDEETATEN_INNKREVING("TI"),
     KLAGE_ANKE("FK"); // FTK
-
 }
 
 typealias BehandlingType = String
@@ -108,10 +106,15 @@ enum class BehandlingStatus {
 }
 
 fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
-    return if (erFattetBeregnet == null) this == BehandlingStatus.IKKE_RELEVANT || this == BehandlingStatus.IKKE_FATTET
-    else if (this == BehandlingStatus.FATTET_BEREGNET) erFattetBeregnet == true
-    else if (this == BehandlingStatus.FATTET_MANUELT) erFattetBeregnet == false
-    else this == BehandlingStatus.FATTET
+    return if (erFattetBeregnet == null) {
+        this == BehandlingStatus.IKKE_RELEVANT || this == BehandlingStatus.IKKE_FATTET
+    } else if (this == BehandlingStatus.FATTET_BEREGNET) {
+        erFattetBeregnet == true
+    } else if (this == BehandlingStatus.FATTET_MANUELT) {
+        erFattetBeregnet == false
+    } else {
+        this == BehandlingStatus.FATTET
+    }
 }
 
 data class DokumentBehandlingDetaljer(
@@ -123,7 +126,6 @@ data class DokumentBehandlingDetaljer(
     val behandlingStatus: BehandlingStatus,
     val brevkoder: List<String>
 )
-
 
 fun SoknadType.tilPrefiks(): String {
     return when (this) {
@@ -137,5 +139,5 @@ val ENHET_KLAGE = listOf(
     "4292", // Klage og anke Midt-Norge
     "4293", // Klage og anke Øst
     "4294", // Klage og anke Vest
-    "4295", // Klage og anke Nord
+    "4295" // Klage og anke Nord
 )

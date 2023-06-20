@@ -32,7 +32,7 @@ enum class KLAGE_ANKE_ENHET(val kode: String) {
     ENHET_KLANKE_VEST("4294"),
     ENHET_KLANKE_OST("4293"),
     ENHET_KLANKE_MIDT_NORGE("4292"),
-    ENHET_KLANKE_NORD("4295"),
+    ENHET_KLANKE_NORD("4295")
 }
 
 val KLAGE_ANKE_ENHET_KODER = KLAGE_ANKE_ENHET.values().map { it.kode }

@@ -121,17 +121,17 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                            "\"mottaker\":" +
-                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                            "\"saksbehandler\":null," +
-                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                            "\"vedtakId\":null,\"behandlingId\":null," +
-                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                            "\"tittel\":\"${hoveddokument.tittel}\"," +
-                            "\"enhet\":\"${forsendelse.enhet}\"," +
-                            "\"språk\":\"${forsendelse.språk}\"}"
+                        "\"mottaker\":" +
+                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                        "\"saksbehandler\":null," +
+                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                        "\"vedtakId\":null,\"behandlingId\":null," +
+                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                        "\"tittel\":\"${hoveddokument.tittel}\"," +
+                        "\"enhet\":\"${forsendelse.enhet}\"," +
+                        "\"språk\":\"${forsendelse.språk}\"}"
                 )
             }
         }

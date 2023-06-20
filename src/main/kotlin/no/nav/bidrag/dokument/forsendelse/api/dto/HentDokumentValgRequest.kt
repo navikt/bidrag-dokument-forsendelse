@@ -12,5 +12,5 @@ data class HentDokumentValgRequest(
     val erFattetBeregnet: Boolean? = null,
     val vedtakId: String? = null,
     val behandlingId: String? = null,
-    val enhet: String? = null,
+    val enhet: String? = null
 )

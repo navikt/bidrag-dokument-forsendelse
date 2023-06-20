@@ -106,7 +106,7 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
     gjelderIdent = this.gjelderIdent,
     gjelderAktor = AktorDto(this.gjelderIdent),
     brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
-    innhold = tittel, //this.dokumenter.hoveddokument?.tittel,
+    innhold = tittel, // this.dokumenter.hoveddokument?.tittel,
     fagomrade = when (tema) {
         ForsendelseTema.FAR -> Fagomrade.FARSKAP
         else -> Fagomrade.BIDRAG
