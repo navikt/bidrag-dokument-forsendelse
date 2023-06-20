@@ -74,7 +74,7 @@ jobs:
   run-tests-for-opprett-oppgave:
     runs-on: ubuntu-latest
     name: "Run tests: opprett-forsendelse"
-    needs: deploy
+    needs: [ deploy-main, deploy-feature ]
 
     env:
       INGRESS_DOKUMENT_FORSENDELSE: https://bidrag-dokument-forsendelse.dev.intern.nav.no
