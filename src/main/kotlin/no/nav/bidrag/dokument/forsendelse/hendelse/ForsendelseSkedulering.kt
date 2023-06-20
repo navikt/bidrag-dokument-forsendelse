@@ -58,7 +58,7 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
-                                    "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                                "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
                         }
                         if (!forsendelseDistStatusEnabled) {
                             LOGGER.info {
@@ -69,9 +69,13 @@ class ForsendelseSkedulering(
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
                             forsendelse.copy(
-                                status = if (kanal == DistribusjonKanal.LOKAL_UTSKRIFT) ForsendelseStatus.DISTRIBUERT_LOKALT
-                                else if (kanal == DistribusjonKanal.INGEN_DISTRIBUSJON) ForsendelseStatus.FERDIGSTILT
-                                else ForsendelseStatus.DISTRIBUERT,
+                                status = if (kanal == DistribusjonKanal.LOKAL_UTSKRIFT) {
+                                    ForsendelseStatus.DISTRIBUERT_LOKALT
+                                } else if (kanal == DistribusjonKanal.INGEN_DISTRIBUSJON) {
+                                    ForsendelseStatus.FERDIGSTILT
+                                } else {
+                                    ForsendelseStatus.DISTRIBUERT
+                                },
                                 distribuertTidspunkt = distInfo.distribuertDato ?: LocalDateTime.now(),
                                 distribuertAvIdent = distInfo.distribuertAvIdent ?: forsendelse.distribuertAvIdent,
                                 distribusjonBestillingsId = distInfo.bestillingId ?: forsendelse.distribusjonBestillingsId,
@@ -102,9 +106,9 @@ class ForsendelseSkedulering(
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)?.let { distInfo ->
                     LOGGER.info {
                         "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
-                                "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
-                                "${forsendelse.dokumenter.size} dokumenter, " +
-                                "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
+                            "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
+                            "${forsendelse.dokumenter.size} dokumenter, " +
+                            "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
                     }
                     forsendelseTjeneste.lagre(
                         forsendelse.copy(

@@ -152,7 +152,6 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         val response: ResponseEntity<List<ForsendelseIkkeDistribuertResponsTo>> =
             httpHeaderTestRestTemplate.getForEntity("${rootUri()}/journal/ikkedistribuert")
 
-
         response.statusCode shouldBe HttpStatus.OK
 
         val journalpostListe = response.body!!

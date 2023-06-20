@@ -21,6 +21,6 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     @Query("select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE' and f.distribusjonKanal is null")
     fun hentFerdigstilteArkivertIJoarkIkkeDistribuert(): List<Forsendelse>
 
-    @Query("select f from forsendelse f where f.status = 'UNDER_PRODUKSJON'  and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date")
+    @Query("select f from forsendelse f where f.status = 'UNDER_PRODUKSJON' and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date")
     fun hentUnderProduksjonOpprettetFørDagensDato(): List<Forsendelse>
 }

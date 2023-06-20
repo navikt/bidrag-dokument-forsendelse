@@ -25,7 +25,6 @@ data class ForsendelseResponsTo(
     @Schema(description = "Dato forsendelsen ble distribuert") val distribuertDato: LocalDate? = null
 )
 
-
 @Schema(description = "Metadata om forsendelse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ForsendelseIkkeDistribuertResponsTo(
@@ -33,5 +32,5 @@ data class ForsendelseIkkeDistribuertResponsTo(
     @Schema(description = "Bidragsak som forsendelsen er knyttet til") val saksnummer: String? = null,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
     @Schema(description = "Tittel på hoveddokumentet i forsendelsen") val tittel: String? = null,
-    @Schema(description = "Dato forsendelsen ble opprettet") val opprettetDato: LocalDateTime? = null,
+    @Schema(description = "Dato forsendelsen ble opprettet") val opprettetDato: LocalDateTime? = null
 )
