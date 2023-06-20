@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Schema(description = "Metadata om forsendelse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -22,4 +23,14 @@ data class ForsendelseResponsTo(
     @Schema(description = "Dato forsendelsen ble opprettet") val opprettetDato: LocalDate? = null,
     @Schema(description = "Dato på hoveddokumentet i forsendelsen") val dokumentDato: LocalDate? = null,
     @Schema(description = "Dato forsendelsen ble distribuert") val distribuertDato: LocalDate? = null
+)
+
+@Schema(description = "Metadata om forsendelse")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class ForsendelseIkkeDistribuertResponsTo(
+    @Schema(description = "Forsendelseid med BIF- prefiks") val forsendelseId: String? = null,
+    @Schema(description = "Bidragsak som forsendelsen er knyttet til") val saksnummer: String? = null,
+    @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
+    @Schema(description = "Tittel på hoveddokumentet i forsendelsen") val tittel: String? = null,
+    @Schema(description = "Dato forsendelsen ble opprettet") val opprettetDato: LocalDateTime? = null
 )

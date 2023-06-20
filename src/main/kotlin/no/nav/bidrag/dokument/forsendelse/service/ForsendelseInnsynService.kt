@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
@@ -11,6 +12,8 @@ import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -20,6 +23,22 @@ val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert
 
 @Component
 class ForsendelseInnsynTjeneste(private val forsendelseTjeneste: ForsendelseTjeneste, private val tilgangskontrollService: TilgangskontrollService) {
+
+    fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
+        val journalpostDtoer = forsendelseTjeneste.hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
+            .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
+            .map {
+                ForsendelseIkkeDistribuertResponsTo(
+                    enhet = it.enhet,
+                    forsendelseId = it.forsendelseIdMedPrefix,
+                    saksnummer = it.saksnummer,
+                    opprettetDato = it.opprettetTidspunkt,
+                    tittel = it.dokumenter.hoveddokument?.tittel
+                )
+            }
+        log.info { "Hentet ${journalpostDtoer.size} utgående forsendelser som ikke er distribuert" }
+        return journalpostDtoer
+    }
 
     fun hentForsendelseForSakJournal(saksnummer: String, temaListe: List<JournalTema> = listOf(JournalTema.BID)): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
