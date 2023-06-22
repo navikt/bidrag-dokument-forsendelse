@@ -65,7 +65,7 @@ class FysiskDokumentService(
         return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
-                dokumentreferanse!!
+                dokument.dokumentreferanse
             )
         } else if (dokument.erFraAnnenKilde) {
             bidragDokumentConsumer.hentDokument(
