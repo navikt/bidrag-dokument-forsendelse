@@ -15,10 +15,9 @@
   <name>bidrag-dokument-forsendelse</name>
   <properties>
     <java.version>17</java.version>
-    <bidrag-dokument-dto.version>1.6.33</bidrag-dokument-dto.version>
     <kotlin.version>1.8.21</kotlin.version>
     <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
-    <bidrag-transport.version>20230508100903_0aa6729</bidrag-transport.version>
+    <bidrag-transport.version>1.0-SNAPSHOT</bidrag-transport.version>
     <logback-encoder.version>7.3</logback-encoder.version>
     <token-support.version>3.0.12</token-support.version>
     <springdoc-openapi-ui.version>2.1.0</springdoc-openapi-ui.version>
@@ -187,11 +186,6 @@
       <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-transport</artifactId>
       <version>${bidrag-transport.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>no.nav.bidrag.dokument</groupId>
-      <artifactId>bidrag-dokument-dto</artifactId>
-      <version>${bidrag-dokument-dto.version}</version>
     </dependency>
 
     <!--Diverse-->

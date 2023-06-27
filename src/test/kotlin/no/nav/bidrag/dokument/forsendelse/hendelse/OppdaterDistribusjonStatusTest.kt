@@ -9,12 +9,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
-import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
-import no.nav.bidrag.dokument.dto.JournalpostStatus
-import no.nav.bidrag.dokument.dto.JournalpostType
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
@@ -25,6 +19,12 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostRequest
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
+import no.nav.bidrag.transport.dokument.DistribusjonInfoDto
+import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.JournalpostType
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -189,17 +189,17 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val alleHendelser = readAllFromJournalpostTopic()
         val hendelse = alleHendelser.find { it.journalpostId == forsendelse1Etter!!.forsendelseIdMedPrefix }
         hendelse shouldNotBe null
-        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT
         hendelse.journalpostId shouldBe forsendelse1Etter!!.forsendelseIdMedPrefix
         hendelse.tema shouldBe forsendelse1Etter.tema.name
         hendelse.enhet shouldBe forsendelse1Etter.enhet
         hendelse.tittel shouldBe forsendelse1Etter.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe forsendelse1Etter.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain forsendelse1Etter.saksnummer
+        hendelse.sakstilknytninger shouldContain forsendelse1Etter.saksnummer
 
         val hendelseLokalUtskrift = alleHendelser.find { it.journalpostId == forsendelse2Etter!!.forsendelseIdMedPrefix }
-        hendelseLokalUtskrift!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelseLokalUtskrift!!.status shouldBe JournalpostStatus.DISTRIBUERT
     }
 
     @Test
@@ -236,16 +236,16 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         }
 
         val alleHendelser = readAllFromJournalpostTopic()
-        val hendelse = alleHendelser.find { it.journalpostId == forsendelse!!.forsendelseIdMedPrefix }
+        val hendelse = alleHendelser.find { it.journalpostId == forsendelse.forsendelseIdMedPrefix }
         hendelse shouldNotBe null
-        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT
         hendelse.journalpostId shouldBe forsendelseEtter!!.forsendelseIdMedPrefix
         hendelse.tema shouldBe forsendelseEtter.tema.name
         hendelse.enhet shouldBe forsendelseEtter.enhet
         hendelse.tittel shouldBe forsendelseEtter.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe forsendelseEtter.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain forsendelseEtter.saksnummer
+        hendelse.sakstilknytninger shouldContain forsendelseEtter.saksnummer
     }
 
     @Test
@@ -298,16 +298,16 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         }
 
         val alleHendelser = readAllFromJournalpostTopic()
-        val hendelse = alleHendelser.find { it.journalpostId == forsendelse!!.forsendelseIdMedPrefix }
+        val hendelse = alleHendelser.find { it.journalpostId == forsendelse.forsendelseIdMedPrefix }
         hendelse shouldNotBe null
-        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT
         hendelse.journalpostId shouldBe forsendelseEtter!!.forsendelseIdMedPrefix
         hendelse.tema shouldBe forsendelseEtter.tema.name
         hendelse.enhet shouldBe forsendelseEtter.enhet
         hendelse.tittel shouldBe forsendelseEtter.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe forsendelseEtter.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain forsendelseEtter.saksnummer
+        hendelse.sakstilknytninger shouldContain forsendelseEtter.saksnummer
     }
 
     @Test
@@ -344,16 +344,16 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         }
 
         val alleHendelser = readAllFromJournalpostTopic()
-        val hendelse = alleHendelser.find { it.journalpostId == forsendelse!!.forsendelseIdMedPrefix }
+        val hendelse = alleHendelser.find { it.journalpostId == forsendelse.forsendelseIdMedPrefix }
         hendelse shouldNotBe null
-        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT.name
+        hendelse!!.status shouldBe JournalpostStatus.DISTRIBUERT
         hendelse.journalpostId shouldBe forsendelseEtter!!.forsendelseIdMedPrefix
         hendelse.tema shouldBe forsendelseEtter.tema.name
         hendelse.enhet shouldBe forsendelseEtter.enhet
         hendelse.tittel shouldBe forsendelseEtter.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe forsendelseEtter.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain forsendelseEtter.saksnummer
+        hendelse.sakstilknytninger shouldContain forsendelseEtter.saksnummer
     }
 
     protected fun utførDistribuerForsendelse(
@@ -417,7 +417,7 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         hendelse.tittel shouldBe oppdatertForsendelse.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe oppdatertForsendelse.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain oppdatertForsendelse.saksnummer
+        hendelse.sakstilknytninger shouldContain oppdatertForsendelse.saksnummer
     }
 
     @Test
@@ -470,6 +470,6 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         hendelse.tittel shouldBe oppdatertForsendelse.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe oppdatertForsendelse.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain oppdatertForsendelse.saksnummer
+        hendelse.sakstilknytninger shouldContain oppdatertForsendelse.saksnummer
     }
 }

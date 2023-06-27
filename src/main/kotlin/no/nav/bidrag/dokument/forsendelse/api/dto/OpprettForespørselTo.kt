@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import java.time.LocalDateTime
 
 @Schema(description = "Metadata for opprettelse av forsendelse")

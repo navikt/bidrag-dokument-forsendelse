@@ -7,12 +7,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.dto.JournalpostStatus
-import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
@@ -22,6 +16,12 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentHendelse
+import no.nav.bidrag.transport.dokument.DokumentHendelseType
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.JournalpostType
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -148,14 +148,14 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
         val hendelse = readFromJournalpostTopic()
         hendelse shouldNotBe null
-        hendelse!!.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name
+        hendelse!!.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON
         hendelse.journalpostId shouldBe forsendelse1.forsendelseIdMedPrefix
         hendelse.tema shouldBe forsendelse1.tema.name
         hendelse.enhet shouldBe forsendelse1.enhet
         hendelse.tittel shouldBe forsendelse1.dokumenter.hoveddokument?.tittel
         hendelse.fnr shouldBe forsendelse1.gjelderIdent
         hendelse.journalposttype shouldBe JournalpostType.UTGÅENDE.name
-        hendelse.sakstilknytninger!! shouldContain forsendelse1.saksnummer
+        hendelse.sakstilknytninger shouldContain forsendelse1.saksnummer
     }
 
     @Test

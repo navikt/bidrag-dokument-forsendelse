@@ -2,9 +2,9 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import org.apache.commons.lang3.Range
 import java.time.LocalDateTime
 

@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalpostId
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
@@ -23,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.service.KodeverkService
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.person.PersonDto
 import java.time.LocalDateTime
 

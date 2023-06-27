@@ -5,14 +5,14 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import no.nav.bidrag.dokument.dto.AvvikType
-import no.nav.bidrag.dokument.dto.Fagomrade
-import no.nav.bidrag.dokument.dto.Journalstatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.transport.dokument.AvvikType
+import no.nav.bidrag.transport.dokument.Fagomrade
+import no.nav.bidrag.transport.dokument.JournalpostStatus
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -79,7 +79,7 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
         forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
         forsendelseListeEtter.body!! shouldHaveSize 2
 
-        forsendelseListeEtter.body!!.filter { it.journalstatus == Journalstatus.FEILREGISTRERT } shouldHaveSize 1
+        forsendelseListeEtter.body!!.filter { it.status == JournalpostStatus.FEILREGISTRERT } shouldHaveSize 1
     }
 
     @Test

@@ -5,11 +5,6 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.dto.AktorDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
@@ -26,6 +21,12 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.transport.dokument.AktorDto
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.JournalpostDto
+import no.nav.bidrag.transport.dokument.JournalpostStatus
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
@@ -63,7 +64,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             )
             forsendelseResponse.brevkode?.kode shouldBe HOVEDDOKUMENT_DOKUMENTMAL
             forsendelseResponse.journalpostId shouldBe "BIF-${forsendelse.forsendelseId}"
-            forsendelseResponse.journalstatus shouldBe "D"
+            forsendelseResponse.status shouldBe JournalpostStatus.UNDER_PRODUKSJON
             forsendelseResponse.dokumentType shouldBe "U"
             forsendelseResponse.journalforendeEnhet shouldBe JOURNALFØRENDE_ENHET
             forsendelseResponse.sakstilknytninger shouldContain SAKSNUMMER
@@ -106,7 +107,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
         assertSoftly {
             forsendelseResponse.dokumentDato!! shouldBe dokumentdato.toLocalDate()
-            forsendelseResponse.journalstatus shouldBe "D"
+            forsendelseResponse.status shouldBe JournalpostStatus.UNDER_PRODUKSJON
             forsendelseResponse.dokumentType shouldBe "X"
             forsendelseResponse.innhold shouldBe TITTEL_HOVEDDOKUMENT
             forsendelseResponse.gjelderIdent shouldBe GJELDER_IDENT
@@ -143,7 +144,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal returnere forsendelse med status F hvis forsendels er avbrutt`() {
+    fun `Skal returnere forsendelse med status FEILREGISTRERT hvis forsendels er avbrutt`() {
         val forsendelse = testDataManager.opprettOgLagreForsendelse {
             med status ForsendelseStatus.AVBRUTT
             +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
@@ -152,7 +153,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
         response.statusCode shouldBe HttpStatus.OK
 
-        response.body!!.journalpost!!.journalstatus shouldBe "F"
+        response.body!!.journalpost!!.status shouldBe JournalpostStatus.FEILREGISTRERT
         response.body!!.journalpost!!.feilfort shouldBe true
     }
 
@@ -223,7 +224,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         val forsendelseResponse = response.body!!.journalpost!!
 
         assertSoftly {
-            forsendelseResponse.journalstatus shouldBe "KP"
+            forsendelseResponse.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON
 
             forsendelseResponse.dokumenter shouldHaveSize 2
             val hoveddokumentForsendelse2 = forsendelseResponse.dokumenter[0]
