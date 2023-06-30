@@ -132,6 +132,7 @@ class OppdaterForsendelseService(
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,
                     tittel = it.tittel,
+                    dokument = hentFysiskDokument(it).toString(),
                     fysiskDokument = hentFysiskDokument(it)
                 )
             },

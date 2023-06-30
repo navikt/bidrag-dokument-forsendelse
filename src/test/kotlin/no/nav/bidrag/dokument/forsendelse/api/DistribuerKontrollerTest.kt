@@ -130,10 +130,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "\"skalFerdigstilles\":true," +
                     "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
                     "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"dokumenter\":[",
+                "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokument\":",
+                "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"dokument\":",
+                "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                     "\"tema\":\"FAR\"," +
                     "\"journalposttype\":\"UTGÅENDE\"," +
                     "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
@@ -191,10 +191,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "\"skalFerdigstilles\":true," +
                     "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
                     "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"dokumenter\":[",
+                "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokument\":",
+                "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"dokument\":",
+                "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                     "\"tema\":\"BID\"," +
                     "\"journalposttype\":\"UTGÅENDE\"," +
                     "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
@@ -283,10 +283,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "\"skalFerdigstilles\":true," +
                     "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
                     "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"dokumenter\":[",
+                "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokument\":",
+                "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"dokument\":",
+                "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                     "\"tema\":\"BID\"," +
                     "\"journalposttype\":\"UTGÅENDE\"," +
                     "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
@@ -349,10 +349,10 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "\"skalFerdigstilles\":true," +
                     "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
                     "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"dokumenter\":[",
+                "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokument\":",
+                "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"dokument\":",
+                "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                     "\"kanal\":\"LOKAL_UTSKRIFT\"," +
                     "\"tema\":\"BID\"," +
                     "\"journalposttype\":\"UTGÅENDE\"," +

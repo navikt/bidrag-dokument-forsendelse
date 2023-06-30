@@ -53,6 +53,7 @@ fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
 }
 
 fun Forsendelse.tilJournalpostDto() = JournalpostDto(
+    avsenderNavn = this.mottaker?.navn,
     avsenderMottaker = this.mottaker?.let {
         AvsenderMottakerDto(
             navn = it.navn,
@@ -90,6 +91,7 @@ fun Forsendelse.tilJournalpostDto() = JournalpostDto(
         ForsendelseType.UTGÅENDE -> DokumentType.UTGÅENDE
     },
     journalfortAv = if (opprettetAvIdent == "bisys") "Bisys (Automatisk jobb)" else opprettetAvIdent,
+    journalstatus = this.status.name,
     status = when (this.status) {
         ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
         ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
