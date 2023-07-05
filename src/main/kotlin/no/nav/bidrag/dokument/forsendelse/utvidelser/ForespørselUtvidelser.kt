@@ -4,11 +4,13 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.validerErSann
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import java.time.LocalDateTime
@@ -65,4 +67,18 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     if (feilmeldinger.isNotEmpty()) {
         throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
     }
+}
+
+
+fun OpprettForsendelseForespørsel.tilBehandlingInfo() = this.behandlingInfo?.let {
+    BehandlingInfo(
+        behandlingId = it.behandlingId,
+        vedtakId = it.vedtakId,
+        soknadId = it.soknadId,
+        engangsBelopType = it.engangsBelopType,
+        vedtakType = it.vedtakType,
+        stonadType = it.stonadType,
+        soknadFra = it.soknadFra,
+        erFattetBeregnet = it.erFattetBeregnet
+    )
 }

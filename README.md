@@ -43,7 +43,7 @@ Deretter kjør følgende kommando for å importere secrets. Viktig at filen som 
 committes til git
 
 ```bash
-kubectl exec --tty deployment/bidrag-dokument-forsendelse printenv | grep -E 'AZURE_|_URL|SCOPE' | grep -v -e 'BIDRAG_TILGANGSKONTROLL_URL' -e 'BIDRAG_DOKUMENT_BESTILLING_URL' > src/test/resources/application-lokal-nais-secrets.properties
+kubectl exec --tty deployment/bidrag-dokument-forsendelse printenv | grep -E 'AZURE_|_URL|SCOPE' | grep -v -e 'BIDRAG_TILGANGSKONTROLL_URL' -e 'BIDRAG_DOKUMENT_BESTILLING_URL' -e 'BIDRAG_VEDTAK_URL' > src/test/resources/application-lokal-nais-secrets.properties
 ```
 
 Start opp applikasjonen ved å

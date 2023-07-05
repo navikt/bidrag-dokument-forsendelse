@@ -74,6 +74,7 @@ class DokumentBestillingLytter(
             return respons?.arkivSystem
         } else {
             // Bisys lytter på melding og bestiller brev
+            LOGGER.info { "Sender bestilling av nytt dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} for dokumentreferanse ${dokument.dokumentreferanse} som Kafka melding. Venter på at Bisys oppretter brevet og kvittering sendt for produkjson av brev." }
             dokumentKafkaHendelseProdusent.publiser(tilKafkaMelding(forsendelse, dokument))
         }
         return null

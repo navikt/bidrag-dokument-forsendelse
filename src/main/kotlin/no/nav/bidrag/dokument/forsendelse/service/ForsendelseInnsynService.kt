@@ -7,7 +7,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResp
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
-import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
@@ -19,7 +18,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsen
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
-import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.springframework.stereotype.Component
@@ -35,8 +33,7 @@ class ForsendelseInnsynTjeneste(
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
     private val dokumentTjeneste: DokumentTjeneste,
-    private val sakService: SakService,
-    private val vedtakConsumer: BidragVedtakConsumer
+    private val forsendelseTittelService: ForsendelseTittelService
 ) {
 
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
@@ -70,11 +67,7 @@ class ForsendelseInnsynTjeneste(
         val dokumenterMetadata = tilDokumenterMetadata(forsendelse.dokumenter)
         val journalpost = forsendelse.tilJournalpostDto(dokumenterMetadata)
         if (journalpost.innhold.isNullOrEmpty()) {
-            val sak = sakService.hentSak(forsendelse.saksnummer)
-            val vedtak = forsendelse.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
-            val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
-            journalpost.innhold = forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type, vedtak)
-                ?: journalpost.hentHoveddokument()?.tittel ?: "Forsendelse ${forsendelse.forsendelseId}"
+            journalpost.innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
         }
 
         return journalpost
@@ -83,12 +76,8 @@ class ForsendelseInnsynTjeneste(
     private fun tilForsendelseRespons(forsendelse: Forsendelse): ForsendelseResponsTo {
         val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
         if (forsendelseRespons.tittel.isNullOrEmpty()) {
-            val sak = sakService.hentSak(forsendelse.saksnummer)
-            val vedtak = forsendelse.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
-            val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
             return forsendelseRespons.copy(
-                tittel = forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type, vedtak)
-                    ?: forsendelseRespons.hentHoveddokument()?.tittel ?: "Forsendelse ${forsendelse.forsendelseId}"
+                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
             )
         }
         return forsendelseRespons

@@ -14,7 +14,6 @@ import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
 import no.nav.bidrag.dokument.forsendelse.mapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -25,6 +24,7 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -36,7 +36,8 @@ class OpprettForsendelseService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val personConsumer: BidragPersonConsumer,
     private val dokumenttjeneste: DokumentTjeneste,
-    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    private val forsendelseTittelService: ForsendelseTittelService
 ) {
 
     @Transactional
@@ -81,19 +82,9 @@ class OpprettForsendelseService(
             batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
-            behandlingInfo = forespørsel.behandlingInfo?.let {
-                BehandlingInfo(
-                    behandlingId = it.behandlingId,
-                    vedtakId = it.vedtakId,
-                    soknadId = it.soknadId,
-                    engangsBelopType = it.engangsBelopType,
-                    vedtakType = it.vedtakType,
-                    stonadType = it.stonadType,
-                    soknadFra = it.soknadFra,
-                    erFattetBeregnet = it.erFattetBeregnet
-                )
-            },
+            behandlingInfo = forespørsel.tilBehandlingInfo(),
             enhet = forespørsel.enhet,
+            tittel = forsendelseTittelService.opprettForsendelseTittel(forespørsel),
             språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
             endretAvIdent = bruker?.ident ?: "UKJENT",

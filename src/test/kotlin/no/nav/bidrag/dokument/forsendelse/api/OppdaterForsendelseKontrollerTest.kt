@@ -82,10 +82,14 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal oppdatere og opprette dokumenter i forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
-            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
-        }
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
+                )
+            )
+        )
 
         val forsendelseId = forsendelse.forsendelseId!!
         val hoveddokument = forsendelse.dokumenter.hoveddokument!!
