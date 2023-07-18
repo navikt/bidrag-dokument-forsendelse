@@ -59,6 +59,10 @@ class DokumentTjeneste(
         return dokumentRepository.hentDokumenterSomHarStatusBestillingFeilet()
     }
 
+    fun hentDokumenterSomHarStatusUnderProduksjon(): List<Dokument> {
+        return dokumentRepository.hentDokumenterSomHarStatusUnderProduksjon()
+    }
+
     private fun bestillDokumentHvisNødvendig(dokument: Dokument) {
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT) {
             dokumentBestillingService.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
@@ -86,7 +90,7 @@ class DokumentTjeneste(
         val erFraAnnenKilde = dokumentLenket.erFraAnnenKilde
         return Dokument(
             forsendelse = forsendelse,
-            tittel = this.tittel.fjernKontrollTegn(),
+            tittel = this.tittel.fjernKontrollTegn().ifEmpty { dokumentLenket.tittel },
             språk = this.språk ?: forsendelse.språk,
             arkivsystem = if (erFraAnnenKilde) dokumentLenket.arkivsystem else DokumentArkivSystem.FORSENDELSE,
             dokumentStatus = if (erFraAnnenKilde) DokumentStatus.MÅ_KONTROLLERES else dokumentLenket.dokumentStatus,

@@ -21,12 +21,6 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentAlleMedSaksnummer(saksnummer)
     }
 
-    fun hentAlleMedSoknadId(soknadId: String): List<Forsendelse> {
-        val forsendelser = forsendelseRepository.hentAlleMedSoknadId(soknadId)
-        forsendelser.forEach { tilgangskontrollService.sjekkTilgangForsendelse(it) }
-        return forsendelser
-    }
-
     fun medForsendelseId(forsendelseId: Long): Forsendelse? {
         val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId)
         forsendelse?.let { tilgangskontrollService.sjekkTilgangForsendelse(it) }

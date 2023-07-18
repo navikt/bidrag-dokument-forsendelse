@@ -52,7 +52,7 @@ class RedigerDokumentService(
             forsendelse.copy(
                 dokumenter = opphevFerdigstillDokument(forsendelse, dokumentreferanse),
                 endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent
+                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
             )
         )
 
@@ -74,9 +74,9 @@ class RedigerDokumentService(
         forsendelse.validerKanEndreForsendelse()
         log.info {
             "Ferdigstiller dokument $dokumentreferanse i forsendelse $forsendelseId med dokumentstørrelse ${
-            bytesIntoHumanReadable(
-                ferdigstillDokumentRequest.fysiskDokument.size.toLong()
-            )
+                bytesIntoHumanReadable(
+                    ferdigstillDokumentRequest.fysiskDokument.size.toLong()
+                )
             }"
         }
         val oppdatertForsendelse = forsendelseTjeneste.lagre(
@@ -108,7 +108,15 @@ class RedigerDokumentService(
             .map {
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {
                     it.copy(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES
+                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                        metadata = run {
+                            val metadata = it.metadata
+                            metadata.lagreGcpKrypteringnøkkelVersjon(null)
+                            metadata.lagreGcpFilsti(null)
+                            metadata.copy()
+                        },
+                        ferdigstiltAvIdent = null,
+                        ferdigstiltTidspunkt = null
                     )
                 } ?: it
             }
@@ -131,14 +139,33 @@ class RedigerDokumentService(
                     it.copy(
                         metadata = redigeringMetadata?.let { rd -> oppdaterDokumentRedigeringMetadata(it, rd) }
                             ?: it.metadata,
-                        dokumentStatus = it.hentStatusFerdigstilt()
+                        dokumentStatus = it.hentStatusFerdigstilt(),
+                        ferdigstiltTidspunkt = LocalDateTime.now(),
+                        ferdigstiltAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
+
                     )
                 } ?: it
             }
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
-        dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
-        return oppdaterteDokumenter.sortertEtterRekkefølge
+        val keyVersion = dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
+        return lagreKryptreringnøkkelVersjon(oppdaterteDokumenter, dokumentreferanse, keyVersion).sortertEtterRekkefølge
+    }
+
+    private fun lagreKryptreringnøkkelVersjon(dokumenter: List<Dokument>, dokumentreferanse: String, versjon: String): List<Dokument> {
+        return dokumenter
+            .map {
+                (it.dokumentreferanse == dokumentreferanse).ifTrue {
+                    it.copy(
+                        metadata = run {
+                            val metadata = it.metadata
+                            metadata.lagreGcpKrypteringnøkkelVersjon(versjon)
+                            metadata.lagreGcpFilsti(it.filsti)
+                            metadata.copy()
+                        }
+                    )
+                } ?: it
+            }
     }
 
     private fun Dokument.hentStatusFerdigstilt() = when (dokumentStatus) {

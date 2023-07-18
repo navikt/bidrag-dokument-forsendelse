@@ -121,13 +121,6 @@ class ForsendelseInnsynTjeneste(
             .map { tilForsendelseRespons(it) }
     }
 
-    fun hentForsendelseForSoknad(soknadId: String): List<ForsendelseResponsTo> {
-        val forsendelser = forsendelseTjeneste.hentAlleMedSoknadId(soknadId)
-
-        return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map { tilForsendelseRespons(it) }
-    }
-
     fun hentForsendelse(forsendelseId: Long, saksnummer: String? = null): ForsendelseResponsTo {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)

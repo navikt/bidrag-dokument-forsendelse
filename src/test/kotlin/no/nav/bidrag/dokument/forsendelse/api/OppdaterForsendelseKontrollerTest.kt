@@ -5,12 +5,24 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
+import io.mockk.Ordering
+import io.mockk.verify
+import no.nav.bidrag.dokument.dto.DokumentHendelseType
+import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
@@ -32,11 +44,16 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
-            +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
-        }
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(rekkefølgeIndeks = 1),
+                    nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
+                )
+            )
+        )
+
 
         val forsendelseId = forsendelse.forsendelseId!!
         val hoveddokument = forsendelse.dokumenter.hoveddokument!!
@@ -77,6 +94,54 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.hoveddokument!!.tilknyttetSom shouldBe DokumentTilknyttetSom.HOVEDDOKUMENT
             oppdatertForsendelse.dokumenter.vedlegger[0].tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
             oppdatertForsendelse.dokumenter.vedlegger[1].tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
+        }
+    }
+
+    @Test
+    fun `Skal oppdatere forsendelse som er under opprettelse`() {
+        val mottakerId = "123123213213"
+        val mottakerNavn = "Hans Navnsen"
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = emptyList(),
+                status = ForsendelseStatus.UNDER_OPPRETTELSE
+            )
+        )
+
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+            mottaker = MottakerTo(
+                ident = mottakerId,
+                navn = mottakerNavn
+            ),
+            tema = JournalTema.FAR,
+            enhet = "4888",
+            tittel = "Ny tittel forsendelse",
+            språk = "EN",
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    tittel = "Vedtak om barnebidrag",
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE
+                )
+            )
+        )
+        val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+        respons.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.tittel shouldBe "Ny tittel forsendelse"
+            oppdatertForsendelse.enhet shouldBe "4888"
+            oppdatertForsendelse.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
+            oppdatertForsendelse.mottaker!!.ident shouldBe mottakerId
+            oppdatertForsendelse.mottaker!!.navn shouldBe mottakerNavn
+            oppdatertForsendelse.mottaker!!.språk shouldBe "EN"
+            oppdatertForsendelse.dokumenter.size shouldBe 1
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe "Vedtak om barnebidrag"
+
         }
     }
 
@@ -129,6 +194,112 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             dokumenter[2].tittel shouldBe "Ny dokument 2 bestilt"
 
             stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+        }
+    }
+
+    @Test
+    fun `Skal oppdatere og opprette dokumenter via bestilling og kafka (bisys som produserer dokument)`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        rekkefølgeIndeks = 0,
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING
+                    ),
+                    nyttDokument(
+                        journalpostId = "BID-123123213",
+                        dokumentreferanseOriginal = "12312321333",
+                        rekkefølgeIndeks = 1,
+                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES
+                    )
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+        val vedlegg1 = forsendelse.dokumenter.vedlegger[0]
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = vedlegg1.dokumentreferanse,
+                    fjernTilknytning = true
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny tittel hoveddok",
+                    dokumentreferanse = hoveddokument.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny tittel dok bestilt med kafka melding",
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny tittel dok 2 bestilt med kafka melding",
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny dokument 1 ekstern kilde",
+                    dokumentreferanse = "11232132313",
+                    journalpostId = "JOARK-123123123"
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Ny dokument 2 bestilt via bidrag-dokument-bestilling",
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE
+                )
+            )
+        )
+        val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+        respons.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 5
+            val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
+            dokumenter[0].tittel shouldBe "Ny tittel hoveddok"
+            dokumenter[1].tittel shouldBe "Ny tittel dok bestilt med kafka melding"
+            dokumenter[2].tittel shouldBe "Ny tittel dok 2 bestilt med kafka melding"
+            dokumenter[3].tittel shouldBe "Ny dokument 1 ekstern kilde"
+            dokumenter[4].tittel shouldBe "Ny dokument 2 bestilt via bidrag-dokument-bestilling"
+
+            dokumenter[0].dokumentStatus shouldBe DokumentStatus.UNDER_REDIGERING
+            dokumenter[1].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            dokumenter[2].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            dokumenter[3].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
+            dokumenter[4].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+
+            dokumenter[1].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
+            dokumenter[2].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
+            dokumenter[3].metadata.hentDokumentBestiltAntallGanger() shouldBe 0
+            dokumenter[4].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
+            dokumenter[1].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
+            dokumenter[2].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
+            dokumenter[3].metadata.hentBestiltTidspunkt() shouldBe null
+            dokumenter[4].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
+
+            dokumenter[1].arkivsystem shouldBe DokumentArkivSystem.UKJENT
+            dokumenter[2].arkivsystem shouldBe DokumentArkivSystem.UKJENT
+            dokumenter[3].arkivsystem shouldBe DokumentArkivSystem.JOARK
+            dokumenter[4].arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+
+            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
+            verify(ordering = Ordering.SEQUENCE) {
+                dokumentKafkaHendelseProdusent.publiser(withArg {
+                    it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
+                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                    it.dokumentreferanse shouldBe dokumenter[1].dokumentreferanse
+                })
+                dokumentKafkaHendelseProdusent.publiser(withArg {
+                    it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
+                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                    it.dokumentreferanse shouldBe dokumenter[2].dokumentreferanse
+                })
+            }
         }
     }
 
@@ -287,7 +458,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = TITTEL_VEDLEGG_1,
-            dokumentmalId = "AAA"
+            dokumentmalId = DOKUMENTMAL_UTGÅENDE_2
         )
 
         val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
@@ -299,7 +470,197 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.size shouldBe 2
             oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
             oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
-            stubUtils.Valider().bestillDokumentKaltMed("AAA")
+            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE_2)
+        }
+    }
+
+    @Test
+    fun `Skal legge til en ekstern dokument fra annen forsendelse`() {
+        val originalForsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = "64443434",
+                        dokumentreferanseOriginal = "12313213",
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
+
+        val originalDokument = originalForsendelse.dokumenter[1]
+        val originalForsendelseId = originalForsendelse.forsendelseId!!
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = forsendelse.dokumenter[0].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel knyttet dokument",
+                    journalpostId = "BIF-$originalForsendelseId",
+                    dokumentreferanse = originalDokument.dokumentreferanse
+                )
+            )
+        )
+
+        val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            val vedlegg = oppdatertForsendelse.dokumenter.vedlegger[0]
+            vedlegg.tittel shouldBe "Tittel knyttet dokument"
+            vedlegg.journalpostIdOriginal shouldBe originalDokument.journalpostIdOriginal
+            vedlegg.dokumentreferanseOriginal shouldBe originalDokument.dokumentreferanseOriginal
+        }
+    }
+
+
+    @Test
+    fun `Skal koble til dokument under produksjon som tilhører annen forsendelse`() {
+        val originalForsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = "64443434",
+                        dokumentreferanseOriginal = "12313213",
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
+
+        val originalDokument = originalForsendelse.dokumenter[0]
+        val originalForsendelseId = originalForsendelse.forsendelseId!!
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = forsendelse.dokumenter[0].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel knyttet dokument",
+                    journalpostId = "BIF-$originalForsendelseId",
+                    dokumentreferanse = originalDokument.dokumentreferanse
+                )
+            )
+        )
+
+        val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            val vedlegg = oppdatertForsendelse.dokumenter.vedlegger[0]
+            vedlegg.tittel shouldBe "Tittel knyttet dokument"
+            vedlegg.journalpostIdOriginal shouldBe originalForsendelseId.toString()
+            vedlegg.dokumentreferanseOriginal shouldBe originalDokument.dokumentreferanse
+        }
+    }
+
+    @Test
+    fun `Skal oppdatere kobling til dokument under produksjon som tilhører annen forsendelse hvis original dokument blir slettet`() {
+        val originalForsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = "64443434",
+                        dokumentreferanseOriginal = "12313213",
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+
+
+        val originalDokument = originalForsendelse.dokumenter[0]
+        val originalForsendelseId = originalForsendelse.forsendelseId!!
+
+        val forsendelseKoblet1 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = originalForsendelseId.toString(),
+                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = originalForsendelseId.toString(),
+                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+        val dokumentForsendelse1 = forsendelseKoblet1.dokumenter[1]
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = originalForsendelse.dokumenter[1].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = originalDokument.dokumentreferanse,
+                    fjernTilknytning = true
+                )
+            )
+        )
+
+        val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$originalForsendelseId", oppdaterForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            val vedlegg = oppdatertForsendelse.dokumenter.vedlegger[0]
+            vedlegg.journalpostIdOriginal shouldBe forsendelseKoblet1.forsendelseId.toString()
+            vedlegg.dokumentreferanseOriginal shouldBe dokumentForsendelse1.dokumentreferanse
         }
     }
 
@@ -444,7 +805,73 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Nested
-    inner class OppdaterForsendelseErrorHandling {
+    inner class OppdaterForsendelseFeilhåndtering {
+        @Test
+        fun `Skal feile hvis samme dokument blir lagt til flere ganger fra ulike forsendelser`() {
+            val originalForsendelse = testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter = listOf(
+                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                        nyttDokument(
+                            journalpostId = "64443434",
+                            dokumentreferanseOriginal = "12313213",
+                            rekkefølgeIndeks = 1,
+                            tittel = "Skjermet dokument"
+                        )
+                    )
+                )
+            )
+            val originalForsendelse2 = testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter = listOf(
+                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                        nyttDokument(
+                            journalpostId = "64443434",
+                            dokumentreferanseOriginal = "12313213",
+                            rekkefølgeIndeks = 1,
+                            tittel = "Skjermet dokument"
+                        )
+                    )
+                )
+            )
+            val forsendelse = testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter = listOf(
+                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                    )
+                )
+            )
+
+            val originalDokument = originalForsendelse.dokumenter[1]
+            val originalDokument2 = originalForsendelse2.dokumenter[1]
+            val originalForsendelseId = originalForsendelse.forsendelseId!!
+            val originalForsendelseId2 = originalForsendelse2.forsendelseId!!
+            val forsendelseId = forsendelse.forsendelseId!!
+
+            val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+                dokumenter = listOf(
+                    OppdaterDokumentForespørsel(
+                        dokumentreferanse = forsendelse.dokumenter[0].dokumentreferanse
+                    ),
+                    OppdaterDokumentForespørsel(
+                        tittel = "Tittel knyttet dokument",
+                        journalpostId = "BIF-$originalForsendelseId",
+                        dokumentreferanse = originalDokument.dokumentreferanse
+                    ),
+                    OppdaterDokumentForespørsel(
+                        tittel = "Tittel knyttet dokument 2",
+                        journalpostId = "BIF-$originalForsendelseId2",
+                        dokumentreferanse = originalDokument2.dokumentreferanse
+                    )
+                )
+            )
+
+            val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
+            responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST
+            responseNyDokument.headers["Warning"]!![0] shouldContain "Kan ikke legge til samme dokument flere ganger til forsendelse"
+        }
+
         @Test
         fun `Skal feile hvis dokumentdato på notat settes fram i tid`() {
             val originalDato = LocalDateTime.parse("2020-01-01T01:02:03")

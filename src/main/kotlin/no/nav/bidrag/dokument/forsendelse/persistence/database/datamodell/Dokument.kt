@@ -61,6 +61,8 @@ data class Dokument(
     val språk: String? = null,
     val dokumentmalId: String? = null,
     val dokumentreferanseFagarkiv: String? = null,
+    val ferdigstiltAvIdent: String? = null,
+    val ferdigstiltTidspunkt: LocalDateTime? = null,
 
     val slettetTidspunkt: LocalDate? = null,
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
@@ -123,26 +125,40 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
         }
     }
 
+    private val GCP_FILE_PATH_KEY = "gcp_file_path"
+    private val GCP_CLIENTSIDE_ENCRYPTION_KEY_VERSION = "gcp_clientside_encryption_key_version"
     private val REDIGERING_METADATA_KEY = "redigering_metadata"
     private val DOKUMENT_DETALJER_KEY = "dokument_detaljer"
+    private val DOKUMENT_BESTILT_TIDSPUNKT = "dokument_bestilt_tidspunkt"
+    private val DOKUMENT_BESTILT_ANTALL_GANGER = "dokument_bestilt_antall_ganger"
     private val objectMapper = ObjectMapper().findAndRegisterModules()
 
-    fun lagreRedigeringmetadata(data: String) {
-        remove(REDIGERING_METADATA_KEY)
-        put(REDIGERING_METADATA_KEY, data)
+    fun inkrementerBestiltAntallGanger() {
+        val antallGanger = hentDokumentBestiltAntallGanger()
+        update(DOKUMENT_BESTILT_ANTALL_GANGER, (antallGanger + 1).toString())
     }
 
-    fun hentRedigeringmetadata(): String? {
-        return get(REDIGERING_METADATA_KEY)
-    }
+    fun hentDokumentBestiltAntallGanger(): Int = get(DOKUMENT_BESTILT_ANTALL_GANGER)?.toInt() ?: 0
+    fun lagreBestiltTidspunkt(tidspunkt: LocalDateTime?) = update(DOKUMENT_BESTILT_TIDSPUNKT, tidspunkt.toString())
+    fun hentBestiltTidspunkt(): LocalDateTime? = get(DOKUMENT_BESTILT_TIDSPUNKT)?.let { LocalDateTime.parse(it) }
+    fun lagreGcpFilsti(filsti: String?) = update(GCP_FILE_PATH_KEY, filsti)
+    fun hentGcpFilsti(): String? = get(GCP_FILE_PATH_KEY)
+    fun lagreGcpKrypteringnøkkelVersjon(versjon: String?) = update(GCP_CLIENTSIDE_ENCRYPTION_KEY_VERSION, versjon)
 
-    fun lagreDokumentDetaljer(data: List<DokumentDetaljer>) {
-        remove(DOKUMENT_DETALJER_KEY)
-        put(DOKUMENT_DETALJER_KEY, objectMapper.writeValueAsString(data))
-    }
+    fun hentGcpKrypteringnøkkelVersjon(): String? = get(GCP_CLIENTSIDE_ENCRYPTION_KEY_VERSION)
 
-    fun hentDokumentDetaljer(): List<DokumentDetaljer>? {
-        return get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, object : TypeReference<List<DokumentDetaljer>?>() {}) }
+    fun lagreRedigeringmetadata(data: String) = update(REDIGERING_METADATA_KEY, data)
+
+    fun hentRedigeringmetadata(): String? = get(REDIGERING_METADATA_KEY)
+
+    fun lagreDokumentDetaljer(data: List<DokumentDetaljer>) = update(DOKUMENT_DETALJER_KEY, objectMapper.writeValueAsString(data))
+
+    fun hentDokumentDetaljer(): List<DokumentDetaljer>? =
+        get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, object : TypeReference<List<DokumentDetaljer>?>() {}) }
+
+    private fun update(key: String, value: String?) {
+        remove(key)
+        value?.let { put(key, value) }
     }
 
     fun copy(): DokumentMetadataDo {

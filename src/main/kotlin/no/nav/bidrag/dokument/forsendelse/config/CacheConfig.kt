@@ -21,7 +21,7 @@ class CacheConfig {
         const val SAK_CACHE = "SAK_CACHE"
         const val PERSON_SPRAAK_CACHE = "PERSON_SPRAAK_CACHE"
         const val DOKUMENTMALER_CACHE = "DOKUMENTMALER_CACHE"
-        const val DOKUMENTMADETALJER_CACHE = "DOKUMENTMADETALJER_CACHE"
+        const val DOKUMENTMALDETALJER_CACHE = "DOKUMENTMALDETALJER_CACHE"
         const val SAKSBEHANDLERINFO_CACHE = "SAKSBEHANDLERINFO_CACHE"
         const val TILGANG_SAK_CACHE = "TILGANG_SAK_CACHE"
         const val VEDTAK_CACHE = "VEDTAK_CACHE"
@@ -37,7 +37,7 @@ class CacheConfig {
             Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
         )
         caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
-        caffeineCacheManager.registerCustomCache(DOKUMENTMADETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(DOKUMENTMALDETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_TEMA_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())

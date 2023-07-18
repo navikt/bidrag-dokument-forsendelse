@@ -4,6 +4,8 @@ AZURE_APP_CLIENT_ID: asdasd-sadas-ddas-qwe
 AZURE_APP_CLIENT_SECRET: asdasdsad214123sadas
 LAGRE_DIST_INFO_CRON: "0 * * * * *"
 OPPDATER_DIST_STATUS_CRON: "0 * * * * *"
+REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
+REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 * * * * *"
 NAIS_APP_NAME: bidrag-dokument-forsendelse
 TOPIC_DOKUMENT: bidrag.dokument
 TOPIC_JOURNALPOST: bidrag.journalpost
@@ -19,8 +21,9 @@ KAFKA_MAX_RETRY: 0
 BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
 GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
-GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://path/to/kms/key
+GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-local/locations/localhost/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 GCP_CREDENTIALS_PATH: fake_service_account.json
+DISABLE_CLIENTSIDE_ENCRYPTION: true
 no.nav.security.jwt:
   client:
     registration:

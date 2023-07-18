@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokume
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
@@ -19,6 +20,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
 
@@ -53,7 +55,9 @@ class DokumentHendelseLytter(
                         DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
                         DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
                         else -> it.dokumentStatus
-                    }
+                    },
+                    ferdigstiltTidspunkt = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) LocalDateTime.now() else null,
+                    ferdigstiltAvIdent = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) FORSENDELSE_APP_ID else null
 
                 )
             )

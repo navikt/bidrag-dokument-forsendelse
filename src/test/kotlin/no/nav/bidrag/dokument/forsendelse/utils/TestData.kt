@@ -1,5 +1,18 @@
 package no.nav.bidrag.dokument.forsendelse.utils
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.bidrag.behandling.felles.dto.vedtak.GrunnlagDto
+import no.nav.bidrag.behandling.felles.dto.vedtak.StonadsendringDto
+import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
+import no.nav.bidrag.behandling.felles.enums.GrunnlagType
+import no.nav.bidrag.behandling.felles.enums.Innkreving
+import no.nav.bidrag.behandling.felles.enums.StonadType
+import no.nav.bidrag.behandling.felles.enums.VedtakKilde
+import no.nav.bidrag.behandling.felles.enums.VedtakType
+import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.dto.DokumentFormatDto
+import no.nav.bidrag.dokument.dto.DokumentMetadata
+import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
@@ -9,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
@@ -20,10 +34,17 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+val VALID_PDF_BASE64 =
+    "JVBERi0xLjIgCjkgMCBvYmoKPDwKPj4Kc3RyZWFtCkJULyAzMiBUZiggIFlPVVIgVEVYVCBIRVJFICAgKScgRVQKZW5kc3RyZWFtCmVuZG9iago0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgNSAwIFIKL0NvbnRlbnRzIDkgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9LaWRzIFs0IDAgUiBdCi9Db3VudCAxCi9UeXBlIC9QYWdlcwovTWVkaWFCb3ggWyAwIDAgMjUwIDUwIF0KPj4KZW5kb2JqCjMgMCBvYmoKPDwKL1BhZ2VzIDUgMCBSCi9UeXBlIC9DYXRhbG9nCj4+CmVuZG9iagp0cmFpbGVyCjw8Ci9Sb290IDMgMCBSCj4+CiUlRU9G"
+
 val DOKUMENT_FIL = "JVBERi0xLjcgQmFzZTY0IGVuY29kZXQgZnlzaXNrIGRva3VtZW50"
 
 val DOKUMENTMAL_NOTAT = "BI090"
 val DOKUMENTMAL_UTGÅENDE = "BI091"
+val DOKUMENTMAL_UTGÅENDE_2 = "MAL1"
+val DOKUMENTMAL_UTGÅENDE_3 = "MAL2"
+val DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES = "MAL4_KAN_IKKE_BESTILLES"
+val DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2 = "MAL5_KAN_IKKE_BESTILLES"
 
 val SAKSBEHANDLER_IDENT = "Z999444"
 val SAKSBEHANDLER_NAVN = "Saksbehandlersen, Saksbehandler"
@@ -156,6 +177,7 @@ fun opprettForsendelse2(
     tema: ForsendelseTema = ForsendelseTema.BID,
     saksnummer: String = SAKSNUMMER,
     gjelderIdent: String = GJELDER_IDENT,
+    tittel: String? = null,
     mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN),
     dokumenter: List<Dokument> = listOf()
 ): Forsendelse {
@@ -163,6 +185,7 @@ fun opprettForsendelse2(
         forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
         enhet = journalførendeenhet,
         status = status,
+        tittel = tittel,
         språk = "NB",
         saksnummer = saksnummer,
         gjelderIdent = gjelderIdent,
@@ -192,10 +215,12 @@ fun nyttDokument(
     arkivsystem: DokumentArkivSystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
     rekkefølgeIndeks: Int = 0,
     slettet: Boolean = false,
-    dokumentDato: LocalDateTime = LocalDateTime.now()
+    dokumentDato: LocalDateTime = LocalDateTime.now(),
+    metadata: DokumentMetadataDo = DokumentMetadataDo()
 ): Dokument {
     val forsendelse = opprettForsendelse2()
     return Dokument(
+        metadata = metadata,
         arkivsystem = arkivsystem,
         tittel = tittel,
         journalpostIdOriginal = journalpostId,
@@ -255,3 +280,57 @@ fun nyOpprettJournalpostResponse(
         journalpostId = journalpostId
     )
 }
+
+fun opprettDokumentMetadata(journalpostId: String, dokumentreferanse: String? = null): DokumentMetadata {
+    return DokumentMetadata(
+        journalpostId = journalpostId,
+        dokumentreferanse = dokumentreferanse,
+        tittel = "Tittel på dokument",
+        status = DokumentStatusDto.UNDER_REDIGERING,
+        arkivsystem = DokumentArkivSystemDto.JOARK,
+        format = DokumentFormatDto.PDF
+    )
+}
+
+fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> {
+    return listOf(
+        opprettDokumentMetadata(journalpostId)
+    )
+}
+
+fun opprettVedtakDto(): VedtakDto {
+    return VedtakDto(
+        kilde = VedtakKilde.AUTOMATISK,
+        type = VedtakType.FASTSETTELSE,
+        stonadsendringListe = listOf(opprettStonadsEndringDto()),
+        engangsbelopListe = emptyList(),
+        opprettetAv = "",
+        opprettetTidspunkt = LocalDateTime.now(),
+        vedtakTidspunkt = LocalDateTime.now(),
+        enhetId = JOURNALFØRENDE_ENHET,
+        behandlingsreferanseListe = emptyList(),
+        grunnlagListe = listOf(
+            GrunnlagDto(
+                innhold = ObjectMapper().createObjectNode(),
+                type = GrunnlagType.SLUTTBEREGNING_BBM,
+                referanse = ""
+            )
+        ),
+        opprettetAvNavn = "",
+        utsattTilDato = LocalDate.now()
+    )
+}
+
+fun opprettStonadsEndringDto() = StonadsendringDto(
+    StonadType.BIDRAG,
+    sakId = SAKSNUMMER,
+    skyldnerId = "",
+    kravhaverId = "",
+    mottakerId = "",
+    innkreving = Innkreving.JA,
+    endring = false,
+    periodeListe = emptyList(),
+    omgjorVedtakId = 1,
+    eksternReferanse = "",
+    indeksreguleringAar = ""
+)

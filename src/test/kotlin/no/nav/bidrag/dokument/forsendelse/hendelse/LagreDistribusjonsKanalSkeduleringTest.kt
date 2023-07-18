@@ -9,6 +9,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Distribusjo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import org.junit.jupiter.api.BeforeEach
@@ -45,7 +46,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
                         dokumentStatus = DokumentStatus.UNDER_REDIGERING,
                         tittel = "FORSENDELSE 1",
                         arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = "MAL1"
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
                     )
                 )
             )
@@ -64,7 +65,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
                         dokumentStatus = DokumentStatus.FERDIGSTILT,
                         tittel = "FORSENDELSE 1",
                         arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = "MAL1"
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
                     )
                 ),
                 arkivJournalpostId = (10000..20000).random().toString()

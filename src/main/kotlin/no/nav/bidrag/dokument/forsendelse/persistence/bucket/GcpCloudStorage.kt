@@ -4,6 +4,8 @@ import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.NoCredentials
 import com.google.cloud.WriteChannel
+import com.google.cloud.kms.v1.CryptoKeyName
+import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageException
@@ -26,6 +28,7 @@ import org.threeten.bp.Duration
 import java.nio.ByteBuffer
 import java.util.Optional
 
+
 private val LOGGER = KotlinLogging.logger {}
 
 @Component
@@ -37,6 +40,14 @@ class GcpCloudStorage(
     @Value("\${GCP_CREDENTIALS_PATH:#{null}}") private val credentialsPath: String? = null,
     @Value("\${DISABLE_CLIENTSIDE_ENCRYPTION:false}") private val disableClientsideEncryption: Boolean // Only use when running application locally
 ) {
+    private var keyVersion = -1
+    private val retrySetting = RetrySettings.newBuilder()
+        .setMaxAttempts(3)
+        .setTotalTimeout(Duration.ofMillis(3000)).build()
+    private val storage = StorageOptions.newBuilder()
+        .setHost(host)
+        .setCredentials(if (host != null) NoCredentials.getInstance() else GoogleCredentials.getApplicationDefault())
+        .setRetrySettings(retrySetting).build().service
 
     init {
         AeadConfig.register()
@@ -44,14 +55,19 @@ class GcpCloudStorage(
             Optional.of(kmsClientsideFilename),
             Optional.ofNullable(credentialsPath?.let { ClassPathResource(credentialsPath).file.absolutePath })
         )
+        fetchKeyVersion()
     }
 
-    private val tinkClient = initTinkClient()
-    private val retrySetting = RetrySettings.newBuilder().setTotalTimeout(Duration.ofMillis(3000)).build()
-    private val storage = StorageOptions.newBuilder()
-        .setHost(host)
-        .setCredentials(if (host != null) NoCredentials.getInstance() else GoogleCredentials.getApplicationDefault())
-        .setRetrySettings(retrySetting).build().service
+    private val tinkClient: Aead = initTinkClient()
+
+    private fun fetchKeyVersion() {
+        if (disableClientsideEncryption) return
+        KeyManagementServiceClient.create().use { client ->
+            val keyName = CryptoKeyName.parse(kmsClientsideFilename.replace("gcp-kms://", ""))
+            val key = client.getCryptoKey(keyName)
+            keyVersion = key.primary.name.split("cryptoKeyVersions/")[1].toInt()
+        }
+    }
 
     private fun initTinkClient(): Aead {
         val handle = KeysetHandle.generateNew(
@@ -65,12 +81,13 @@ class GcpCloudStorage(
         storage.delete(lagBlobinfo(filnavn).blobId)
     }
 
-    fun lagreFil(filnavn: String, byteArrayStream: ByteArray) {
+    fun lagreFil(filnavn: String, byteArrayStream: ByteArray): String {
         LOGGER.info("Starter overføring av fil: $filnavn til GCP-bucket: $bucketNavn")
         val blobInfo = lagBlobinfo(filnavn)
         val encryptedFile = encryptFile(byteArrayStream, blobInfo)
         getGcpWriter(blobInfo).use { it.write(ByteBuffer.wrap(encryptedFile, 0, encryptedFile.count())) }
         LOGGER.info("Fil: $filnavn har blitt lastet opp til GCP-bucket: $bucketNavn")
+        return keyVersion.toString()
     }
 
     fun hentFil(filnavn: String): ByteArray {

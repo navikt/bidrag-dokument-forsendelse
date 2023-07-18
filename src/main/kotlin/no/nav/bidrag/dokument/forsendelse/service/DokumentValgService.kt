@@ -26,7 +26,7 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
 
     val dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
 
-    val standardBrevkoder = listOf("BI01S02", "BI01S10", "BI01S67")
+    val standardBrevkoder = listOf("BI01S02", "BI01S10") //BI01S67 - Adresseforespørsel
     val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10")
     val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
@@ -66,9 +66,9 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                it.vedtakType.contains(vedtakType) &&
-                it.behandlingStatus.isValid(erFattetBeregnet) &&
-                it.forvaltning.isValid(enhet)
+                    it.vedtakType.contains(vedtakType) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
+                    it.forvaltning.isValid(enhet)
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }

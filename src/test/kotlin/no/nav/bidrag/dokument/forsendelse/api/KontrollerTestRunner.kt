@@ -1,5 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.AvvikType
@@ -13,6 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
+import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +30,10 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
 
     @Autowired
     lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
+
+    @MockkBean
+    lateinit var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent
+
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
@@ -41,6 +48,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         stubUtils.stubTilgangskontrollSak()
         stubUtils.stubTilgangskontrollPerson()
         stubUtils.stubTilgangskontrollTema()
+        every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
     }
 
     @AfterEach

@@ -14,7 +14,6 @@ import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
@@ -27,7 +26,7 @@ private val log = KotlinLogging.logger {}
 class FysiskDokumentService(
     val forsendelseTjeneste: ForsendelseTjeneste,
     val bidragDokumentConsumer: BidragDokumentConsumer,
-    val dokumentTjeneste: DokumentTjeneste,
+    val tilgangskontrollService: TilgangskontrollService,
     val dokumentStorageService: DokumentStorageService
 ) {
 
@@ -35,6 +34,7 @@ class FysiskDokumentService(
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
             ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
 
+        tilgangskontrollService.sjekkTilgangForsendelse(forsendelse)
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)!!
 
         if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {

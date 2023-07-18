@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
-@RequestMapping("/api/forsendelse/v2")
 @Timed
 class ForsendelseInnsynKontroller(
     val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste,
@@ -49,7 +48,7 @@ class ForsendelseInnsynKontroller(
         return forsendelseInnsynTjeneste.hentForsendelse(forsendelseId, saksnummer)
     }
 
-    @GetMapping("/sak/{saksnummer}/journal")
+    @GetMapping("/sak/{saksnummer}/forsendelser")
     @Operation(description = "Hent alle forsendelse med saksnummer")
     @ApiResponses(
         value = [
@@ -61,20 +60,6 @@ class ForsendelseInnsynKontroller(
     )
     fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
         return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)
-    }
-
-    @GetMapping("/soknad/{soknadId}")
-    @Operation(description = "Hent alle forsendelse med søknadId")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for søknad funnet."
-            )
-        ]
-    )
-    fun hentJournalSoknad(@PathVariable soknadId: String): List<ForsendelseResponsTo> {
-        return forsendelseInnsynTjeneste.hentForsendelseForSoknad(soknadId)
     }
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])

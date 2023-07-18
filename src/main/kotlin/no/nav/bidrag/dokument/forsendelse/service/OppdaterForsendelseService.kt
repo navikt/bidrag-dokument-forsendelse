@@ -30,6 +30,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokume
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
@@ -45,6 +46,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumenterIkkeSlettet
 import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumenterLogiskSlettet
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.skalDokumentSlettes
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
@@ -136,6 +138,11 @@ class OppdaterForsendelseService(
         forsendelse.validerKanFerdigstilleForsendelse()
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
+        val hovedtittel = forsendelse.dokumenter.hoveddokument?.tittel ?: ""
+        // Hvis forsendelse blir sendt lokalt så vil saksbehandler skrive ut forsendelse og evt vedlegg manuelt og sende alt sammen via posten
+        // Forsendelsen vil fortsatt være synlig på Nav.no etter lokal utskrift er valgt. Det legges derfor på beskjed til bruker at resten av forsendelsen (vedleggene) kommer i posten
+        val hovedtittelMedBeskjed = if (lokalUtskrift) opprettHoveddokumentTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
+
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
                 AvsenderMottakerDto(
@@ -160,7 +167,7 @@ class OppdaterForsendelseService(
             dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,
-                    tittel = it.tittel,
+                    tittel = if (it.tilknyttetSom === DokumentTilknyttetSom.HOVEDDOKUMENT) hovedtittelMedBeskjed else it.tittel,
                     fysiskDokument = fysiskDokumentService.hentFysiskDokument(it)
                 )
             },
@@ -171,6 +178,7 @@ class OppdaterForsendelseService(
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
             },
+            tittel = forsendelse.tittel ?: hovedtittel,
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
@@ -192,6 +200,11 @@ class OppdaterForsendelseService(
         log.info { "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. Opprettet journalpostId=${respons.journalpostId}." }
 
         return respons
+    }
+
+    fun opprettHoveddokumentTittelMedBeskjedForLokalUtskrift(tittel: String): String {
+        val beskjed = "dokumentet er sendt per post med vedlegg"
+        return "$tittel ($beskjed)"
     }
 
     fun fjernDokumentFraForsendelse(
@@ -351,7 +364,6 @@ class OppdaterForsendelseService(
                         eksisterendeDokument.dokumentDato
                     }
                 ) ?: knyttDokumentTilForsendelse(forsendelse, it.tilOpprettDokumentForespørsel())
-//                )?.let { listOf(it) } ?: it.konverterTilOpprettDokumentForespørsel().map { knyttDokumentTilForsendelse(forsendelse, it) }
             } + forsendelse.dokumenter.dokumenterLogiskSlettet + logiskSlettetDokumenterFraForespørsel
 
         if (oppdaterteDokumenter.dokumenterIkkeSlettet.isEmpty()) throw UgyldigForespørsel("Kan ikke slette alle dokumenter fra forsendelse")
@@ -371,12 +383,12 @@ class OppdaterForsendelseService(
             oppdaterteDokumenter.filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
                 .any {
                     it.erFraAnnenKilde &&
-                        it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
+                            it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
                 }
                 .ifTrue {
                     throw UgyldigForespørsel(
                         "Kan ikke legge til samme dokument flere ganger til forsendelse." +
-                            " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
+                                " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
                     )
                 }
         }
@@ -407,14 +419,6 @@ class OppdaterForsendelseService(
             )
         }
         dokumentTjeneste.lagreDokumenter(listOf(nyOriginalDokument) + oppdatertLenketDokumenter)
-    }
-
-    private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørsel(): List<OpprettDokumentForespørsel> {
-        return if (this.journalpostId?.erForsendelse == true) {
-            this.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter()
-        } else {
-            listOf(this.tilOpprettDokumentForespørsel())
-        }
     }
 
     private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {

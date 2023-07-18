@@ -24,6 +24,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
+import java.time.LocalDateTime
 
 private val LOGGER = KotlinLogging.logger {}
 
@@ -54,6 +55,12 @@ class DokumentBestillingLytter(
                         DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
                         else -> DokumentArkivSystem.UKJENT
                     },
+                    metadata = run {
+                        val metadata = dokument.metadata
+                        metadata.lagreBestiltTidspunkt(LocalDateTime.now())
+                        metadata.inkrementerBestiltAntallGanger()
+                        metadata.copy()
+                    },
                     dokumentStatus = DokumentStatus.UNDER_PRODUKSJON
                 )
             )
@@ -73,7 +80,7 @@ class DokumentBestillingLytter(
             LOGGER.info { "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}" }
             return respons?.arkivSystem
         } else {
-            // Bisys lytter på melding og bestiller brev
+            // Bisys lytter på kafka melding og produserer brev. Dette trigger deretter kvittering fra brevserver som bidrag-dokument-forsendelse lytter på og oppdaterer status når brevet er produsert og klar for redigering
             LOGGER.info { "Sender bestilling av nytt dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} for dokumentreferanse ${dokument.dokumentreferanse} som Kafka melding. Venter på at Bisys oppretter brevet og kvittering sendt for produkjson av brev." }
             dokumentKafkaHendelseProdusent.publiser(tilKafkaMelding(forsendelse, dokument))
         }

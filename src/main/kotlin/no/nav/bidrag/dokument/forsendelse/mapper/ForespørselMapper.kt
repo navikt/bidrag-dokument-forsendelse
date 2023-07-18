@@ -109,7 +109,7 @@ object ForespørselMapper {
 
     fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel(status: DokumentStatusTo? = null, arkivSystem: DokumentArkivSystemDto? = null) =
         OpprettDokumentForespørsel(
-            tittel = tittel!!,
+            tittel = tittel ?: "",
             dokumentreferanse = dokumentreferanse,
             status = status ?: DokumentStatusTo.MÅ_KONTROLLERES,
             dokumentmalId = dokumentmalId,

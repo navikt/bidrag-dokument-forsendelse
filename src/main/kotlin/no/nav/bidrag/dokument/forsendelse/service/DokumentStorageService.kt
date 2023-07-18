@@ -13,9 +13,9 @@ class DokumentStorageService(private val gcpCloudStorage: GcpCloudStorage) {
         gcpCloudStorage.slettFil("$FOLDER_NAME/$filenameWithExtension")
     }
 
-    fun lagreFil(filnavn: String, dokument: ByteArray) {
+    fun lagreFil(filnavn: String, dokument: ByteArray): String {
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn
-        gcpCloudStorage.lagreFil("$FOLDER_NAME/$filenameWithExtension", dokument)
+        return gcpCloudStorage.lagreFil("$FOLDER_NAME/$filenameWithExtension", dokument)
     }
 
     fun hentFil(filnavn: String): ByteArray {

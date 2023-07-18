@@ -1,17 +1,27 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
+import com.ninjasquad.springmockk.SpykBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.Ordering
+import io.mockk.verify
+import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
@@ -26,6 +36,9 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
+
+    @SpykBean
+    lateinit var gcpCloudStorage: GcpCloudStorage
 
     @Test
     fun `Skal opprette forsendelse`() {
@@ -162,6 +175,114 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             forsendelseResponse1.saksnummer shouldBe forsendelse.saksnummer
             forsendelseResponse1.enhet shouldBe forsendelse.enhet
             forsendelseResponse1.tittel shouldBe forsendelse.dokumenter.hoveddokument!!.tittel
+        }
+    }
+
+    @Test
+    @Transactional
+    fun `skal distribuere forsendelse med kontrollerte og redigerte dokumenter`() {
+        val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
+        val nyJournalpostId = "21313331231"
+        val dokumentRedigeringData = "redigeringdata"
+        val dokumentInnholdRedigering = "redigeringdata_PDF"
+        stubUtils.stubHentDokument()
+        stubUtils.stubBestillDistribusjon(bestillingId)
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                tittel = "Tittel på forsendelse",
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        rekkefølgeIndeks = 0
+                    ),
+                    nyttDokument(
+                        journalpostId = "45454545",
+                        dokumentreferanseOriginal = "23123123",
+                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                        tittel = "Tittel vedlegg må kontrolleres",
+                        dokumentMalId = "BI100",
+                        rekkefølgeIndeks = 1
+                    ),
+                    nyttDokument(
+                        journalpostId = "545454",
+                        dokumentreferanseOriginal = "45454545",
+                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                        tittel = "Tittel vedlegg må kontrolleres 2",
+                        dokumentMalId = "BI100",
+                        rekkefølgeIndeks = 2
+                    )
+                )
+            )
+        )
+        val dokument1 = forsendelse.dokumenter[1]
+        val responseFerdigstill = utførFerdigstillDokument(
+            forsendelse.forsendelseIdMedPrefix, dokument1.dokumentreferanse, request = FerdigstillDokumentRequest(
+                fysiskDokument = dokumentInnholdRedigering.toByteArray(),
+                redigeringMetadata = dokumentRedigeringData
+            )
+        )
+        responseFerdigstill.statusCode shouldBe HttpStatus.OK
+
+        val dokument2 = forsendelse.dokumenter[2]
+        val responseFerdigstill2 = utførFerdigstillDokument(
+            forsendelse.forsendelseIdMedPrefix, dokument2.dokumentreferanse, request = FerdigstillDokumentRequest(
+                fysiskDokument = dokumentInnholdRedigering.toByteArray(),
+                redigeringMetadata = dokumentRedigeringData
+            )
+        )
+        responseFerdigstill2.statusCode shouldBe HttpStatus.OK
+
+        stubUtils.stubOpprettJournalpost(
+            nyJournalpostId,
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+        )
+
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+
+        assertSoftly {
+            oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
+            oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
+            oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
+
+            oppdatertForsendelse.dokumenter.forEach {
+                it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
+            }
+
+            stubUtils.Valider().opprettJournalpostKaltMed(
+                "{" +
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på forsendelse\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
+                        "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
+            )
+            stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
+            stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.hoveddokument!!.dokumentreferanse)
+            stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse, 0)
+            stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[1].dokumentreferanse, 0)
+            verify(exactly = 2) {
+                gcpCloudStorage.hentFil(any())
+            }
+            verify(ordering = Ordering.ORDERED) {
+                gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[0].filsti}"))
+                gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[1].filsti}"))
+            }
         }
     }
 }
