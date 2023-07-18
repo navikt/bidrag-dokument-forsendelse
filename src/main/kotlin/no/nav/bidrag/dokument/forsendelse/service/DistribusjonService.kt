@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.validerKanDistribuere
@@ -25,7 +26,8 @@ class DistribusjonService(
     private val oppdaterForsendelseService: OppdaterForsendelseService,
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
-    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    private val dokumentStorageService: DokumentStorageService
 ) {
 
     fun harDistribuert(forsendelse: Forsendelse): Boolean {
@@ -123,6 +125,13 @@ class DistribusjonService(
                 endretTidspunkt = LocalDateTime.now()
             )
         )
+
+        forsendelse.dokumenter
+            .filter { it.dokumentStatus == DokumentStatus.KONTROLLERT }
+            .forEach {
+                dokumentStorageService.bestillSletting(forsendelseId, it.dokumentreferanse)
+            }
+
 
         return resultat
     }

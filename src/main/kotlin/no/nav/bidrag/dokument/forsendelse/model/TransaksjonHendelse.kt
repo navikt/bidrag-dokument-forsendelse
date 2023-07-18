@@ -8,3 +8,8 @@ data class DokumentBestilling(
 data class ForsendelseHendelseBestilling(
     val forsendelseId: Long
 )
+
+data class DokumentBestillSletting(
+    val forsendelseId: Long,
+    val dokumentreferanse: String
+)

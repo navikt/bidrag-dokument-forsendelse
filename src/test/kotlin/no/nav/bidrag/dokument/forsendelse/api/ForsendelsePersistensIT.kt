@@ -283,6 +283,10 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                 gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[0].filsti}"))
                 gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[1].filsti}"))
             }
+            verify(ordering = Ordering.ORDERED) {
+                gcpCloudStorage.slettFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[0].filsti}"))
+                gcpCloudStorage.slettFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[1].filsti}"))
+            }
         }
     }
 }

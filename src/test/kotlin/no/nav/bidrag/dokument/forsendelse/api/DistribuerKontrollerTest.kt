@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
@@ -7,6 +8,7 @@ import io.kotest.matchers.string.shouldContain
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -26,6 +28,9 @@ import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
 class DistribuerKontrollerTest : KontrollerTestRunner() {
+
+    @MockkBean
+    lateinit var gcpCloudStorage: GcpCloudStorage
     protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Unit> {
         return httpHeaderTestRestTemplate.getForEntity<Unit>("${rootUri()}/journal/distribuer/$forsendelseId/enabled")
     }

@@ -4,19 +4,18 @@ import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.util.concurrent.TimeUnit
 
 private val LOGGER = KotlinLogging.logger {}
 
 @Component
 class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, private val bestillingLytter: DokumentBestillingLytter) {
 
-    @Scheduled(fixedDelay = 15, timeUnit = TimeUnit.MINUTES, initialDelay = 10)
     @Scheduled(cron = "\${REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE}")
     @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
     fun bestillFeiledeDokumenterPåNyttSkeduler() {
@@ -32,12 +31,7 @@ class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, privat
     fun bestillFeiledeDokumenterPåNytt() {
         val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
         LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. Prøver å bestille dokumentene på nytt." }
-
-        SikkerhetsKontekst.medApplikasjonKontekst {
-            dokumenter.forEach {
-                bestillingLytter.bestill(DokumentBestilling(it.forsendelse.forsendelseId!!, it.dokumentreferanse))
-            }
-        }
+        bestill(dokumenter)
     }
 
     fun bestillDokumenterUnderProduksjonPåNytt() {
@@ -48,9 +42,13 @@ class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, privat
             it.metadata.hentDokumentBestiltAntallGanger() < 10 && bestiltFørTerskel
         }
         LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.UNDER_PRODUKSJON.name} som er eldre enn $threshold. Prøver å bestille dokumentene på nytt." }
+        bestill(dokumenter)
+    }
 
+    fun bestill(dokumenter: List<Dokument>) {
         SikkerhetsKontekst.medApplikasjonKontekst {
             dokumenter.forEach {
+                LOGGER.info { "Bestiller dokument med mal ${it.dokumentmalId} og tittel ${it.tittel} for dokumentreferanse ${it.dokumentreferanse}. Dokumentet ble sist bestilt ${it.metadata.hentBestiltTidspunkt()} og bestilt totalt ${it.metadata.hentDokumentBestiltAntallGanger()} ganger" }
                 bestillingLytter.bestill(DokumentBestilling(it.forsendelse.forsendelseId!!, it.dokumentreferanse))
             }
         }

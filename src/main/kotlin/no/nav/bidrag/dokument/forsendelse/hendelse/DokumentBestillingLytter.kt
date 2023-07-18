@@ -66,7 +66,15 @@ class DokumentBestillingLytter(
             )
         } catch (e: Exception) {
             dokumentTjeneste.lagreDokument(
-                dokument.copy(dokumentStatus = DokumentStatus.BESTILLING_FEILET)
+                dokument.copy(
+                    dokumentStatus = DokumentStatus.BESTILLING_FEILET,
+                    metadata = run {
+                        val metadata = dokument.metadata
+                        metadata.lagreBestiltTidspunkt(LocalDateTime.now())
+                        metadata.inkrementerBestiltAntallGanger()
+                        metadata.copy()
+                    },
+                )
             )
             LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }
         }
