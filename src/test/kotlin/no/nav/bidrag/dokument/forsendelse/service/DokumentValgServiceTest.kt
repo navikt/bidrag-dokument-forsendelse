@@ -149,6 +149,26 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for manuelt beregnet `() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = false
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01B50"
+            dokumentValgListe shouldContainKey "BI01G50"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente notater`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe()
 
