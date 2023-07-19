@@ -260,6 +260,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
             behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
             behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+            behandlingInfo.behandlingType shouldBe null
             forsendelse.tittel shouldBe "Vedtak om forskudd"
 
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
@@ -271,7 +272,6 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.status shouldBe JournalpostStatus.UNDER_OPPRETTELSE
     }
-
 
     @Test
     fun `Skal opprette forsendelse uten mottakernavn`() {

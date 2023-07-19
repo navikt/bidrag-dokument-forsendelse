@@ -7,6 +7,8 @@ alter table behandling_info
 alter table behandling_info
     add column if not exists soknad_fra text;
 alter table behandling_info
+    add column if not exists behandling_type text;
+alter table behandling_info
     add column if not exists er_fattet_beregnet boolean;
 alter table behandling_info
     drop column if exists soknad_id;

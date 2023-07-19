@@ -1,9 +1,11 @@
 package no.nav.bidrag.dokument.forsendelse.utils
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.bidrag.behandling.felles.dto.vedtak.EngangsbelopDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.GrunnlagDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.StonadsendringDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
+import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.GrunnlagType
 import no.nav.bidrag.behandling.felles.enums.Innkreving
 import no.nav.bidrag.behandling.felles.enums.StonadType
@@ -21,6 +23,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -31,6 +34,18 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.domain.bool.LevdeAdskilt
+import no.nav.bidrag.domain.bool.UkjentPart
+import no.nav.bidrag.domain.enums.Bidragssakstatus
+import no.nav.bidrag.domain.enums.Rolletype
+import no.nav.bidrag.domain.enums.Sakskategori
+import no.nav.bidrag.domain.ident.PersonIdent
+import no.nav.bidrag.domain.string.Enhetsnummer
+import no.nav.bidrag.domain.string.Saksnummer
+import no.nav.bidrag.domain.tid.OpprettetDato
+import no.nav.bidrag.transport.sak.BidragssakDto
+import no.nav.bidrag.transport.sak.RolleDto
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -50,6 +65,9 @@ val SAKSBEHANDLER_IDENT = "Z999444"
 val SAKSBEHANDLER_NAVN = "Saksbehandlersen, Saksbehandler"
 val SAKSNUMMER = "21312312"
 val GJELDER_IDENT = "12312333123"
+val GJELDER_IDENT_BM = "34344343434"
+val GJELDER_IDENT_BP = "545454545"
+val GJELDER_IDENT_BA = "123213213213"
 val MOTTAKER_IDENT = "2312333123"
 val SAMHANDLER_ID = "80000365555"
 val MOTTAKER_NAVN = "Nils Nilsen"
@@ -179,12 +197,14 @@ fun opprettForsendelse2(
     gjelderIdent: String = GJELDER_IDENT,
     tittel: String? = null,
     mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN),
-    dokumenter: List<Dokument> = listOf()
+    dokumenter: List<Dokument> = listOf(),
+    behandlingInfo: BehandlingInfo? = null
 ): Forsendelse {
     val forsendelse = Forsendelse(
         forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
         enhet = journalførendeenhet,
         status = status,
+        behandlingInfo = behandlingInfo,
         tittel = tittel,
         språk = "NB",
         saksnummer = saksnummer,
@@ -321,6 +341,24 @@ fun opprettVedtakDto(): VedtakDto {
     )
 }
 
+fun opprettEngangsbelopDto() = EngangsbelopDto(
+    EngangsbelopType.SAERTILSKUDD,
+    sakId = SAKSNUMMER,
+    skyldnerId = "",
+    kravhaverId = "",
+    mottakerId = "",
+    innkreving = Innkreving.JA,
+    endring = false,
+    omgjorVedtakId = 1,
+    eksternReferanse = "",
+    belop = BigDecimal.ONE,
+    delytelseId = "",
+    grunnlagReferanseListe = emptyList(),
+    referanse = "",
+    resultatkode = "",
+    valutakode = ""
+)
+
 fun opprettStonadsEndringDto() = StonadsendringDto(
     StonadType.BIDRAG,
     sakId = SAKSNUMMER,
@@ -334,3 +372,20 @@ fun opprettStonadsEndringDto() = StonadsendringDto(
     eksternReferanse = "",
     indeksreguleringAar = ""
 )
+
+fun opprettSak(): BidragssakDto {
+    return BidragssakDto(
+        eierfogd = Enhetsnummer(JOURNALFØRENDE_ENHET),
+        kategori = Sakskategori.U,
+        levdeAdskilt = LevdeAdskilt(false),
+        opprettetDato = OpprettetDato(LocalDate.now()),
+        saksnummer = Saksnummer(SAKSNUMMER),
+        saksstatus = Bidragssakstatus.IN,
+        ukjentPart = UkjentPart(false),
+        roller = listOf(
+            RolleDto(PersonIdent(GJELDER_IDENT_BM), Rolletype.BM),
+            RolleDto(PersonIdent(GJELDER_IDENT_BP), Rolletype.BP),
+            RolleDto(PersonIdent(GJELDER_IDENT_BA), Rolletype.BA),
+        )
+    )
+}

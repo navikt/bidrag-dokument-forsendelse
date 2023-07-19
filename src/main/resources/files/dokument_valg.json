@@ -79,10 +79,29 @@
     {
       "soknadType": [
         "ENDRING",
+        "OPPJUST_FORSK",
         "SOKNAD"
       ],
       "soknadFra": [
-        "NAV_BIDRAG",
+        "NAV_BIDRAG"
+      ],
+      "stonadType": "FORSKUDD",
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "FATTET_BEREGNET",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A01"
+      ]
+    },
+    {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
         "UTENLANDSKE_MYNDIGHET"
       ],
       "stonadType": "FORSKUDD",
@@ -167,10 +186,36 @@
         "INDEKSREG",
         "KLAGE_BEGR_SATS",
         "KORRIGERING",
+        "OPPJUST_FORSK",
         "PRIVAT_AVTALE"
       ],
       "soknadFra": [
-        "NAV_BIDRAG",
+        "NAV_BIDRAG"
+      ],
+      "stonadType": "FORSKUDD",
+      "vedtakType": [
+        "ENDRING",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "PRIVAT_AVTALE"
+      ],
+      "soknadFra": [
         "UTENLANDSKE_MYNDIGHET"
       ],
       "stonadType": "FORSKUDD",
@@ -2731,22 +2776,488 @@
       ]
     }
   ],
-  "null": [
+  "INNKREVING": [
     {
       "soknadType": [
-        "KLAGE"
+        "OPPHOR",
+        "SOKNAD"
       ],
       "soknadFra": [
+        "BARN_18_AAR",
         "BIDRAGSMOTTAKER",
-        "BIDRAGSPLIKTIG"
+        "BIDRAGSPLIKTIG",
+        "VERGE"
       ],
       "vedtakType": [
+        "FASTSETTELSE",
+        "OPPHØR"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S19"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
+        "OPPHOR",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE",
+        "OPPHØR"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01G50"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S01",
+        "BI01S03",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S01",
+        "BI01S03",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BM_I_ANNEN_SAK"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S01",
+        "BI01S03",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "KLAGE_BEGR_SATS",
+        "OPPHOR",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BM_I_ANNEN_SAK"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "REVURDERING"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S01",
+        "BI01S03",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BEGGE",
       "brevkoder": [
+        "BI01G50",
         "BI01K50"
+      ]
+    },
+    {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "KORRIGERING"
+      ],
+      "soknadFra": [
+        "BM_I_ANNEN_SAK"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01G50",
+        "BI01K50"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "KORRIGERING"
+      ],
+      "soknadFra": [
+        "BM_I_ANNEN_SAK"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KORRIGERING",
+        "OMGJORING"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01G50",
+        "BI01K50"
+      ]
+    },
+    {
+      "soknadType": [
+        "FOLGER_KLAGE",
+        "KORRIGERING",
+        "OMGJORING"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE_BEGR_SATS"
+      ],
+      "soknadFra": [
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NAV_BIDRAG",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S19"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE_BEGR_SATS"
+      ],
+      "soknadFra": [
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NAV_BIDRAG",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01G50"
+      ]
+    },
+    {
+      "soknadType": [
+        "KORRIGERING"
+      ],
+      "soknadFra": [
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01G50",
+        "BI01K50"
+      ]
+    },
+    {
+      "soknadType": [
+        "KORRIGERING"
+      ],
+      "soknadFra": [
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
       ]
     }
   ],
@@ -3717,6 +4228,423 @@
       ]
     }
   ],
+  "FARSKAP": [
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H02",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05"
+      ]
+    },
+    {
+      "soknadType": [
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H02",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05"
+      ]
+    },
+    {
+      "soknadType": [
+        "ENDRING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OMGJORING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "ENDRING"
+      ],
+      "soknadFra": [
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NAV_INTERNASJONALT",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NAV_INTERNASJONALT",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "NAV_INTERNASJONALT"
+      ],
+      "vedtakType": [
+        "KLAGE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK"
+      ],
+      "soknadFra": [
+        "NAV_INTERNASJONALT"
+      ],
+      "vedtakType": [
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H02",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05"
+      ]
+    }
+  ],
   "EKTEFELLEBIDRAG": [
     {
       "soknadType": [
@@ -4489,6 +5417,457 @@
       ]
     }
   ],
+  "SAKSOMKOSTNINGER": [
+    {
+      "soknadType": [
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50",
+        "BI01S07"
+      ]
+    }
+  ],
+  "ERSTATNING": [
+    {
+      "soknadType": [
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    }
+  ],
+  "REFUSJON_BIDRAG": [
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H02",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING"
+      ],
+      "soknadFra": [
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    }
+  ],
   "TILBAKEKREVING": [
     {
       "soknadType": [
@@ -4828,6 +6207,87 @@
       "forvaltning": "BEGGE",
       "brevkoder": [
         "BI01K50"
+      ]
+    }
+  ],
+  "DIREKTE_OPPGJOR": [
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "BEGR_REVURD",
+        "EGET_TILTAK",
+        "ENDRING",
+        "FOLGER_KLAGE",
+        "INDEKSREG",
+        "INNKREVINGSGRUNNL",
+        "KLAGE",
+        "KLAGE_BEGR_SATS",
+        "KORRIGERING",
+        "OMGJORING",
+        "OPPHOR",
+        "PRIVAT_AVTALE",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "INDEKSREGULERING",
+        "INNKREVING",
+        "KLAGE",
+        "OPPHØR",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01S07"
       ]
     }
   ],
@@ -5303,6 +6763,354 @@
         "BI01B05",
         "BI01B20",
         "BI01B21"
+      ]
+    }
+  ],
+  "MORSKAP": [
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H02",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OMGJORING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_RELEVANT",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "OMGJORING"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    }
+  ],
+  "KUNNSKAP_BIOLOGISK_FAR": [
+    {
+      "soknadType": [
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01A05",
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H02",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR"
+      ],
+      "vedtakType": [
+        "FASTSETTELSE",
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "KLAGE_ANKE",
+      "brevkoder": [
+        "BI01H01",
+        "BI01H03",
+        "BI01H04",
+        "BI01H05",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50",
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01P17",
+        "BI01S60",
+        "BI01S64"
+      ]
+    }
+  ],
+  "AVSKRIVNING": [
+    {
+      "soknadType": [
+        "EGET_TILTAK",
+        "ENDRING",
+        "KLAGE",
+        "OMGJORING",
+        "REVURDERING",
+        "SOKNAD"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG",
+        "NAV_INTERNASJONALT"
+      ],
+      "vedtakType": [
+        "ENDRING",
+        "FASTSETTELSE",
+        "KLAGE",
+        "REVURDERING"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01S07"
+      ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "VERGE"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01S07"
+      ]
+    }
+  ],
+  "REISEKOSTNADER": [
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG"
+      ],
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BEGGE",
+      "brevkoder": [
+        "BI01K50"
       ]
     }
   ]

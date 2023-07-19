@@ -6,6 +6,7 @@ import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import java.time.LocalDateTime
 
@@ -40,10 +41,10 @@ data class BehandlingInfoDto(
     val soknadId: String? = null,
     @Schema(enumAsRef = true) val engangsBelopType: EngangsbelopType? = null,
     @Schema(enumAsRef = true) val stonadType: StonadType? = null,
+    @Schema(description = "Brukes bare hvis stonadType og engangsbelopType er null") val behandlingType: BehandlingType? = null,
     @Schema(enumAsRef = true) val vedtakType: VedtakType? = null,
     val erFattetBeregnet: Boolean? = null,
     @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
-    val roller: List<String> = emptyList()
 )
 
 @Schema(description = "Metadata til en respons etter forsendelse ble opprettet")

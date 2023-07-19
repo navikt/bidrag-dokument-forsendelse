@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.behandling.felles.enums.VedtakType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 
 @Entity(name = "behandling_info")
@@ -29,12 +30,10 @@ data class BehandlingInfo(
     @Enumerated(EnumType.STRING)
     val vedtakType: VedtakType? = null,
     @Enumerated(EnumType.STRING)
-    val soknadFra: SoknadFra? = null
-
-    // Bisys koder
-//    val soknadGruppe: SoknadGruppe? = null,
-//    val soknadType: SoknadType? = null,
-//    val soknadFra: SoknadFra? = null,
+    val soknadFra: SoknadFra? = null,
+    // Brukes hvis søknadgruppe fra bisys ikke mapper til stonadType eller engangsbelopType
+    // Gjelder foreløpig for soknadGruppe AVSKRIVNING
+    val behandlingType: BehandlingType? = null,
 ) {
-    fun toBehandlingType(): String? = stonadType?.name ?: engangsBelopType?.name
+    fun toBehandlingType(): String? = behandlingType ?: stonadType?.name ?: engangsBelopType?.name
 }

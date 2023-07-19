@@ -66,7 +66,7 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null):
             EngangsbelopType.GEBYR_MOTTAKER -> "Gebyr"
             EngangsbelopType.GEBYR_SKYLDNER -> "Gebyr"
             EngangsbelopType.TILBAKEKREVING -> "Tilbakekreving"
-            else -> null
+            else -> behandlingType?.lowercase()?.replaceFirstChar { it.uppercase() }
         }
     }
         ?: vedtak?.let { if (vedtak.stonadsendringListe.isNotEmpty()) vedtak.stonadsendringListe[0].type.name else vedtak.engangsbelopListe[0].type.name }
