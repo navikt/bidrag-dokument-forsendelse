@@ -79,6 +79,7 @@ fun OpprettForsendelseForespørsel.tilBehandlingInfo() = this.behandlingInfo?.le
         vedtakType = it.vedtakType,
         stonadType = it.stonadType,
         behandlingType = if (it.stonadType == null && it.engangsBelopType == null) it.behandlingType else null,
+        erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
         soknadFra = it.soknadFra,
         erFattetBeregnet = it.erFattetBeregnet
     )

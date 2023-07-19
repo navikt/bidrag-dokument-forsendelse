@@ -48,11 +48,28 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
                 val behandlingType =
                     if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
                 val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == GrunnlagType.SLUTTBEREGNING_BBM }
-                return hentDokumentMalListe(behandlingType, it.type, request.soknadFra, erFattetBeregnet, request.enhet ?: it.enhetId)
+                val erVedtakIkkeTilbakekreving = it.engangsbelopListe.any { gr -> gr.resultatkode == "IT" }
+                return hentDokumentMalListe(
+                    behandlingType,
+                    it.type,
+                    request.soknadFra,
+                    erFattetBeregnet,
+                    erVedtakIkkeTilbakekreving,
+                    request.enhet ?: it.enhetId
+                )
             } ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
-        val (vedtakType, behandlingType, soknadFra, erFattetBeregnet, _, _, enhet) = request
-        return behandlingType?.let { hentDokumentMalListe(behandlingType, vedtakType, soknadFra, erFattetBeregnet, enhet) }
+        val (vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
+        return behandlingType?.let {
+            hentDokumentMalListe(
+                behandlingType,
+                vedtakType,
+                soknadFra,
+                erFattetBeregnet,
+                erVedtakIkkeTilbakekreving,
+                enhet
+            )
+        }
             ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
     }
 
@@ -61,6 +78,7 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
         vedtakType: VedtakType? = null,
         soknadFra: SoknadFra? = null,
         erFattetBeregnet: Boolean? = null,
+        erVedtakIkkeTilbakekreving: Boolean? = false,
         enhet: String? = null
     ): Map<String, DokumentMalDetaljer> {
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
@@ -68,7 +86,8 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
             it.soknadFra.contains(soknadFra) &&
                     it.vedtakType.contains(vedtakType) &&
                     it.behandlingStatus.isValid(erFattetBeregnet) &&
-                    it.forvaltning.isValid(enhet)
+                    it.forvaltning.isValid(enhet) &&
+                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }

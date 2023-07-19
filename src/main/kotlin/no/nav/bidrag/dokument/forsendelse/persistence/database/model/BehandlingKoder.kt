@@ -123,6 +123,7 @@ data class DokumentBehandlingDetaljer(
     val vedtakType: List<VedtakType>,
     val soknadFra: List<SoknadFra>,
     val forvaltning: Forvaltning,
+    val erVedtakIkkeTilbakekreving: Boolean? = false,
     val behandlingStatus: BehandlingStatus,
     val brevkoder: List<String>
 )

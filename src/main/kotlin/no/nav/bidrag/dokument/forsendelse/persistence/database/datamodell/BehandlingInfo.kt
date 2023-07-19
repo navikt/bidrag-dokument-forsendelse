@@ -21,7 +21,8 @@ data class BehandlingInfo(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val soknadId: String? = null,
-    val erFattetBeregnet: Boolean? = null,
+    val erFattetBeregnet: Boolean? = null, // Null = ikke fattet, true = fattet og beregnet, false = fattet og manuelt beregnet
+    val erVedtakIkkeTilbakekreving: Boolean? = false, // Annen brevmeny vises hvis resultatkode = IT (Vedtak ikke tilbakekreving)
 
     @Enumerated(EnumType.STRING)
     val engangsBelopType: EngangsbelopType? = null,

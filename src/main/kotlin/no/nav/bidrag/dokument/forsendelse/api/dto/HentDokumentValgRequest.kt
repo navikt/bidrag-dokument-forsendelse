@@ -10,6 +10,7 @@ data class HentDokumentValgRequest(
     @Schema(enumAsRef = true) val behandlingType: BehandlingType? = null,
     @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
     val erFattetBeregnet: Boolean? = null,
+    val erVedtakIkkeTilbakekreving: Boolean? = false,
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val enhet: String? = null

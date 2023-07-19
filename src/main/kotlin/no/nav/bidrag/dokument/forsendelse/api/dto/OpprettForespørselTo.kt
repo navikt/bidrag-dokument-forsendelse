@@ -44,6 +44,7 @@ data class BehandlingInfoDto(
     @Schema(description = "Brukes bare hvis stonadType og engangsbelopType er null") val behandlingType: BehandlingType? = null,
     @Schema(enumAsRef = true) val vedtakType: VedtakType? = null,
     val erFattetBeregnet: Boolean? = null,
+    @Schema(description = "Hvis resultatkoden fra BBM er IT så skal denne være sann") val erVedtakIkkeTilbakekreving: Boolean? = null,
     @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
 )
 
