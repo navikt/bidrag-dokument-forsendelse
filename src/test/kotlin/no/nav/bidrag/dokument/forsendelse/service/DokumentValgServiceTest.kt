@@ -17,7 +17,9 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
+import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
+import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -43,6 +45,7 @@ class DokumentValgServiceTest {
         dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
+        every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
     }
 
     @Test
@@ -256,6 +259,89 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for vedtak opphør 18 åring`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.OPPHØR,
+                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR)),
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01B10"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak særtilskudd`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.ENDRING,
+                stonadsendringListe = emptyList(),
+                engangsbelopListe = listOf(
+                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                )
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01E01"
+            dokumentValgListe shouldContainKey "BI01E02"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak særtilskudd innkreving`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.INNKREVING,
+                stonadsendringListe = emptyList(),
+                grunnlagListe = emptyList(),
+                engangsbelopListe = listOf(
+                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                )
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01G04"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for vedtak ikke tilbakekreving fra vedtakId`() {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
@@ -300,6 +386,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
+                behandlingId = "123213",
                 soknadFra = SoknadFra.BIDRAGSMOTTAKER,
             )
         )
@@ -310,6 +397,35 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
             verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for behandlingId`() {
+        val behandlingId = "21321321"
+        every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns opprettBehandlingDto()
+            .copy(
+                soknadType = VedtakType.ENDRING,
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFraType = SoknadFra.BIDRAGSMOTTAKER
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                behandlingId = behandlingId,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 6
+            dokumentValgListe shouldContainKey "BI01S14"
+            dokumentValgListe shouldContainKey "BI01S26"
+            dokumentValgListe shouldContainKey "BI01S47"
+            dokumentValgListe shouldContainKey "BI01S48"
+            dokumentValgListe shouldContainKey "BI01S49"
+            dokumentValgListe shouldContainKey "BI01S02"
+            verify { bidragBehandlingConsumer.hentBehandling(behandlingId) }
         }
     }
 

@@ -22,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
@@ -34,6 +35,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.domain.bool.LevdeAdskilt
 import no.nav.bidrag.domain.bool.UkjentPart
 import no.nav.bidrag.domain.enums.Bidragssakstatus
@@ -315,6 +317,17 @@ fun opprettDokumentMetadata(journalpostId: String, dokumentreferanse: String? = 
 fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> {
     return listOf(
         opprettDokumentMetadata(journalpostId)
+    )
+}
+
+
+fun opprettBehandlingDto(): BehandlingDto {
+    return BehandlingDto(
+        behandlingType = StonadType.FORSKUDD.name,
+        soknadFraType = SoknadFra.BIDRAGSMOTTAKER,
+        soknadType = VedtakType.ENDRING,
+        saksnummer = SAKSNUMMER,
+        behandlerEnhet = JOURNALFØRENDE_ENHET
     )
 }
 

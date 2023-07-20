@@ -139,6 +139,7 @@ class ForsendelseInnsynTjeneste(
                     behandlingType = it.toBehandlingType(),
                     soknadFra = it.soknadFra,
                     erFattetBeregnet = it.erFattetBeregnet,
+                    erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
                     enhet = forsendelse.enhet
                 )
 

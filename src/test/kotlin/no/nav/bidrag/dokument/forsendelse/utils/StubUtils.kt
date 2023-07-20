@@ -15,6 +15,7 @@ import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
@@ -32,6 +33,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettJournalpostResponse
+import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettDokumentMetadataListe
 import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
@@ -71,6 +73,18 @@ class StubUtils {
                 .withHeader(HttpHeaders.CONNECTION, "close")
                 .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
         }
+    }
+
+    fun stubBehandling(behandlingDto: BehandlingDto = opprettBehandlingDto()) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/behandling/api/behandling(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(
+                        jsonToString(behandlingDto)
+                    )
+            )
+        )
     }
 
     fun stubVedtak(vedtakDto: VedtakDto = opprettVedtakDto()) {
@@ -301,6 +315,13 @@ class StubUtils {
         fun hentVedtakKalt(vedtakId: String, antallGanger: Int = 1) {
             val verify = WireMock.getRequestedFor(
                 WireMock.urlMatching("/vedtak/vedtak/$vedtakId")
+            )
+            WireMock.verify(antallGanger, verify)
+        }
+
+        fun hentBehandlingKalt(behandlingId: String, antallGanger: Int = 1) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/behandling/api/behandling/$behandlingId")
             )
             WireMock.verify(antallGanger, verify)
         }
