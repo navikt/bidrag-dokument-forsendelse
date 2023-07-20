@@ -66,20 +66,20 @@ class ForsendelseInnsynTjeneste(
     private fun tilJournalpostDto(forsendelse: Forsendelse): JournalpostDto {
         val dokumenterMetadata = tilDokumenterMetadata(forsendelse.dokumenter)
         val journalpost = forsendelse.tilJournalpostDto(dokumenterMetadata)
-        if (journalpost.innhold.isNullOrEmpty()) {
-            journalpost.innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
-        }
+//        if (journalpost.innhold.isNullOrEmpty()) {
+//            journalpost.innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+//        }
 
         return journalpost
     }
 
     private fun tilForsendelseRespons(forsendelse: Forsendelse): ForsendelseResponsTo {
         val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
-        if (forsendelseRespons.tittel.isNullOrEmpty()) {
-            return forsendelseRespons.copy(
-                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
-            )
-        }
+//        if (forsendelseRespons.tittel.isNullOrEmpty()) {
+//            return forsendelseRespons.copy(
+//                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+//            )
+//        }
         return forsendelseRespons
     }
 

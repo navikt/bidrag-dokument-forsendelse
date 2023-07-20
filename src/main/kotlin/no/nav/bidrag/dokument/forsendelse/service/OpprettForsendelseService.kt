@@ -84,7 +84,7 @@ class OpprettForsendelseService(
             gjelderIdent = forespørsel.gjelderIdent,
             behandlingInfo = forespørsel.tilBehandlingInfo(),
             enhet = forespørsel.enhet,
-            tittel = forsendelseTittelService.opprettForsendelseTittel(forespørsel),
+            tittel = if (forespørsel.opprettTittel == true) forsendelseTittelService.opprettForsendelseTittel(forespørsel) else null,
             språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
             endretAvIdent = bruker?.ident ?: "UKJENT",

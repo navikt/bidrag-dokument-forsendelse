@@ -245,7 +245,8 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 soknadFra = SoknadFra.BIDRAGSMOTTAKER,
                 stonadType = StonadType.FORSKUDD,
                 vedtakType = VedtakType.FASTSETTELSE
-            )
+            ),
+            opprettTittel = true
         )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)

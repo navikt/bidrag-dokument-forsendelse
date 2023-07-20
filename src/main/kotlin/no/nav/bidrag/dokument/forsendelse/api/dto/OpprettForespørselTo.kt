@@ -32,7 +32,8 @@ data class OpprettForsendelseForespørsel(
     @Schema(description = "Identifikator til batch kjøring forsendelsen ble opprettet av") val batchId: String? = null,
     @Schema(description = "Tema forsendelsen skal opprettes med", enumAsRef = true) val tema: JournalTema? = null,
     @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
-    @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null
+    @Schema(description = "Ident til saksbehandler som oppretter journalpost. Dette vil prioriteres over ident som tilhører tokenet til kallet.") val saksbehandlerIdent: String? = null,
+    @Schema(description = "Opprett tittel på forsendelse automatisk basert på behandling detaljer. Skal bare settes til false hvis gamle brevmeny (Bisys) brukes") val opprettTittel: Boolean? = false
 )
 
 data class BehandlingInfoDto(
