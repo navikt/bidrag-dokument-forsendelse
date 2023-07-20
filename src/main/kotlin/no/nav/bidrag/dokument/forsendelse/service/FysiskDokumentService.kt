@@ -123,6 +123,8 @@ class FysiskDokumentService(
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = dokument.tilArkivSystemDto()
             )
+        } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+            return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal).first()
         } else if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) {
             DokumentMetadata(
                 journalpostId = dokument.journalpostId,
