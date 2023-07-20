@@ -24,6 +24,9 @@ env:
   BIDRAG_VEDTAK_URL:  http://bidrag-vedtak
   BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak
 
+  BIDRAG_BEHANDLING_URL:  http://bidrag-behandling
+  BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling
+
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
@@ -48,6 +51,7 @@ outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
    - bidrag-vedtak
+   - bidrag-behandling
 outbound-access-hosts:
    - bidrag-dokument.dev-fss-pub.nais.io
    - bidrag-person.dev-fss-pub.nais.io

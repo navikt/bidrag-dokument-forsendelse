@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
@@ -63,7 +64,8 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
     fun `Skal hente dokumentvalg for forsendelse med vedtakId`() {
         val vedtakId = "123213213"
         val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2().copy(
+            opprettForsendelse2(
+                gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfo(
                     vedtakId = vedtakId,
                     soknadFra = SoknadFra.BIDRAGSMOTTAKER,

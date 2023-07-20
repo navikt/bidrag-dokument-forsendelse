@@ -7,10 +7,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import no.nav.bidrag.behandling.felles.enums.GrunnlagType
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
+import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
@@ -22,7 +24,11 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 @Component
-class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsumer, val bidragVedtakConsumer: BidragVedtakConsumer) {
+class DokumentValgService(
+    val bestillingConsumer: BidragDokumentBestillingConsumer,
+    val bidragVedtakConsumer: BidragVedtakConsumer,
+    val behandlingConsumer: BidragBehandlingConsumer
+) {
 
     val dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
 
@@ -44,20 +50,12 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
     ): Map<String, DokumentMalDetaljer> {
         if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         if (request.vedtakId != null) {
-            return bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let {
-                val behandlingType =
-                    if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
-                val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == GrunnlagType.SLUTTBEREGNING_BBM }
-                val erVedtakIkkeTilbakekreving = it.engangsbelopListe.any { gr -> gr.resultatkode == "IT" }
-                return hentDokumentMalListe(
-                    behandlingType,
-                    it.type,
-                    request.soknadFra,
-                    erFattetBeregnet,
-                    erVedtakIkkeTilbakekreving,
-                    request.enhet ?: it.enhetId
-                )
-            } ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+            return hentDokumentmalListeForVedtakId(request.vedtakId, request.soknadFra, request.enhet)
+                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+        }
+        if (request.behandlingId != null) {
+            return hentDokumentmalListeForBehandlingId(request.behandlingId, request.soknadFra, request.enhet)
+                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
         val (vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
         return behandlingType?.let {
@@ -71,6 +69,36 @@ class DokumentValgService(val bestillingConsumer: BidragDokumentBestillingConsum
             )
         }
             ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+    }
+
+    private fun hentDokumentmalListeForVedtakId(vedtakId: String, soknadFra: SoknadFra?, enhet: String?): Map<String, DokumentMalDetaljer>? {
+        return bidragVedtakConsumer.hentVedtak(vedtakId = vedtakId)?.let {
+            val behandlingType =
+                if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
+            val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == GrunnlagType.SLUTTBEREGNING_BBM }
+            val erVedtakIkkeTilbakekreving = it.engangsbelopListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+            return hentDokumentMalListe(
+                behandlingType,
+                it.type,
+                soknadFra,
+                erFattetBeregnet,
+                erVedtakIkkeTilbakekreving,
+                enhet ?: it.enhetId
+            )
+        }
+    }
+
+    private fun hentDokumentmalListeForBehandlingId(behandlingId: String, soknadFra: SoknadFra?, enhet: String?): Map<String, DokumentMalDetaljer>? {
+        return behandlingConsumer.hentBehandling(behandlingId)?.let {
+            return hentDokumentMalListe(
+                it.behandlingType,
+                it.soknadType,
+                soknadFra ?: it.soknadFraType,
+                null,
+                false,
+                enhet ?: it.behandlerEnhet
+            )
+        }
     }
 
     private fun hentDokumentMalListe(

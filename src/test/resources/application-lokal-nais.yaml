@@ -45,6 +45,9 @@ BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling
 BIDRAG_VEDTAK_URL: https://bidrag-vedtak.intern.dev.nav.no
 BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak
 
+BIDRAG_BEHANDLING_URL: https://bidrag-behandling.intern.dev.nav.no
+BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling
+
 AZURE_APP_TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851
 AZURE_APP_CLIENT_ID: <app_client_id>
 AZURE_APP_CLIENT_SECRET: unset

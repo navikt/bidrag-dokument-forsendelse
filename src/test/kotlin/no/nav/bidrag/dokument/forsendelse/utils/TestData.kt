@@ -341,8 +341,8 @@ fun opprettVedtakDto(): VedtakDto {
     )
 }
 
-fun opprettEngangsbelopDto() = EngangsbelopDto(
-    EngangsbelopType.SAERTILSKUDD,
+fun opprettEngangsbelopDto(type: EngangsbelopType = EngangsbelopType.SAERTILSKUDD, resultatkode: String = "") = EngangsbelopDto(
+    type,
     sakId = SAKSNUMMER,
     skyldnerId = "",
     kravhaverId = "",
@@ -355,7 +355,7 @@ fun opprettEngangsbelopDto() = EngangsbelopDto(
     delytelseId = "",
     grunnlagReferanseListe = emptyList(),
     referanse = "",
-    resultatkode = "",
+    resultatkode = resultatkode,
     valutakode = ""
 )
 

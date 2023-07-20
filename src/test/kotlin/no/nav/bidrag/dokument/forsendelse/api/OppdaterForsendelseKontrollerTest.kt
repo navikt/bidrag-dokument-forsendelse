@@ -198,7 +198,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal oppdatere og opprette dokumenter via bestilling og kafka (bisys som produserer dokument)`() {
+    fun `Skal oppdatere og opprette dokumenter via bestilling og kafka (bisys som produserer dokument`() {
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 dokumenter = listOf(
@@ -264,6 +264,12 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             dokumenter[2].tittel shouldBe "Ny tittel dok 2 bestilt med kafka melding"
             dokumenter[3].tittel shouldBe "Ny dokument 1 ekstern kilde"
             dokumenter[4].tittel shouldBe "Ny dokument 2 bestilt via bidrag-dokument-bestilling"
+
+            dokumenter[0].dokumentmalId shouldBe HOVEDDOKUMENT_DOKUMENTMAL
+            dokumenter[1].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
+            dokumenter[2].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
+            dokumenter[3].dokumentmalId shouldBe null
+            dokumenter[4].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE
 
             dokumenter[0].dokumentStatus shouldBe DokumentStatus.UNDER_REDIGERING
             dokumenter[1].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON

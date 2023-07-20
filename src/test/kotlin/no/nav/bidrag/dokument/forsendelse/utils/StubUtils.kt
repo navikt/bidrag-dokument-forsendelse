@@ -33,6 +33,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.utils.opprettDokumentMetadataListe
+import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.FulltNavn
@@ -174,6 +175,16 @@ class StubUtils {
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withBody(DOKUMENT_FIL)
+            )
+        )
+    }
+
+    fun stubHentSak() {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/sak/sak/(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(jsonToString(opprettSak()))
             )
         )
     }

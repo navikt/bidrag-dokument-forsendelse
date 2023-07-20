@@ -15,6 +15,35 @@ forsendelsen.
 Når forsendelsen er klar for distribusjon kan distribusjon av forsendelsen bestilles som arkiverer
 forsendelsen i Joark og distribusjon bestilles gjennom sentral distribusjon.
 
+## Dokumentvalg
+
+Kjør og eksporter følgende SQL skript til json fil før kjøring av skript
+
+```sql
+
+--- Bisys brevmeny export
+select B.TYPE_MOTTAKER,
+       BV.KODE_STONAD,
+       BV.KODE_SAKSTYPE,
+       HGUG.KODE_SOKN_GR,
+       HGUG.SOKN_FRA_KODE,
+       HGUG.SOKN_TYPE,
+       BIM.KODE_BREV,
+       B.BESKR_BREV,
+       BV.KODE_KATEGORI     as FATTET_VEDTAK_GJENNOM_BBM,
+       BV.TYPE_BESLUTNING   as FATTET_VEDTAK,
+       BV.KODE_BESLUT_NIVAA as KONTOR,
+       BM.BESKR_BREVMENY    as PREFIKS
+from BR462P.T_BREVVALG BV
+         inner join BR462P.T_BREV_I_MENY BIM on BIM.KODE_BREVMENY = BV.KODE_BREVMENY
+         inner join BR462P.T_BREV B on B.KODE_BREV = BIM.KODE_BREV
+         inner join BR462P.T_BREVMENY BM on BM.KODE_BREVMENY = BV.KODE_BREVMENY
+         inner join BR462P.T_UG_SAKSTYPE UGS on UGS.KODE_SAKSTYPE = BV.KODE_SAKSTYPE
+         inner join BI464P.T_KODE_HG_UG HGUG on ((HGUG.UG = UGS.KODE_UG and HGUG.HG = BV.KODE_STONAD) or (BV.KODE_STONAD = 'XX' and HGUG.HG = ' ') or
+                                                 (BV.KODE_STONAD = 'IT' and HGUG.UG = UGS.KODE_UG) or (HGUG.UG is null and HGUG.HG = BV.KODE_STONAD))
+;
+```
+
 #### Kjøre lokalt mot sky
 
 Start lokal postgres database og kafka ved å kjøre

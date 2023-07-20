@@ -33,6 +33,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTSTED
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.JOURNALFØRENDE_ENHET
 import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
@@ -233,8 +234,10 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette tom forsendelse med behandlingdetaljer`() {
+        stubUtils.stubHentSak()
         val soknadId = "123213"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            gjelderIdent = GJELDER_IDENT_BM,
             dokumenter = emptyList(),
             behandlingInfo = BehandlingInfoDto(
                 soknadId = "123213",
@@ -261,7 +264,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
             behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
             behandlingInfo.behandlingType shouldBe null
-            forsendelse.tittel shouldBe "Vedtak om forskudd"
+            forsendelse.tittel shouldBe "Vedtak om forskudd til bidragsmottaker"
 
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)

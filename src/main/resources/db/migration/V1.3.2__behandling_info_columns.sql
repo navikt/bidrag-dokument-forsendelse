@@ -12,8 +12,6 @@ alter table behandling_info
     add column if not exists er_fattet_beregnet boolean;
 alter table behandling_info
     add column if not exists er_vedtak_ikke_tilbakekreving boolean;
-alter table behandling_info
-    drop column if exists soknad_id;
 -- Legacy data fra Bisys for opprettelse av brev via Bisys
 alter table behandling_info
     add column if not exists soknad_id text;

@@ -6,14 +6,19 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.verify
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
+import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
+import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
+import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -28,13 +33,16 @@ class DokumentValgServiceTest {
     @MockkBean
     lateinit var bidragVedtakConsumer: BidragVedtakConsumer
 
+    @MockkBean
+    lateinit var bidragBehandlingConsumer: BidragBehandlingConsumer
 
     var dokumentValgService: DokumentValgService? = null
 
     @BeforeEach
     fun init() {
-        dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer)
+        dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
+        every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
     }
 
     @Test
@@ -244,6 +252,64 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01K50"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak ikke tilbakekreving fra vedtakId`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.ENDRING,
+                stonadsendringListe = emptyList(),
+                grunnlagListe = emptyList(),
+                engangsbelopListe = listOf(
+                    opprettEngangsbelopDto(EngangsbelopType.TILBAKEKREVING, ResultatKode.IKKE_TILBAKEKREVING)
+                )
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01A05"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak klage ikke tilbakekreving fra vedtakId`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.KLAGE,
+                stonadsendringListe = emptyList(),
+                grunnlagListe = emptyList(),
+                engangsbelopListe = listOf(
+                    opprettEngangsbelopDto(EngangsbelopType.TILBAKEKREVING, ResultatKode.IKKE_TILBAKEKREVING)
+                )
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01K50"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
         }
     }
 
