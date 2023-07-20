@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
@@ -25,6 +26,7 @@ private val log = KotlinLogging.logger {}
 @Component
 class FysiskDokumentService(
     val forsendelseTjeneste: ForsendelseTjeneste,
+    val dokumentTjeneste: DokumentTjeneste,
     val bidragDokumentConsumer: BidragDokumentConsumer,
     val tilgangskontrollService: TilgangskontrollService,
     val dokumentStorageService: DokumentStorageService
@@ -60,13 +62,14 @@ class FysiskDokumentService(
     }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
-        val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
-
         return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
                 dokument.dokumentreferanse
             )
+        } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+            val originalDokument = dokumentTjeneste.hentOriginalDokument(dokument)
+            return hentFysiskDokument(originalDokument)
         } else if (dokument.erFraAnnenKilde) {
             bidragDokumentConsumer.hentDokument(
                 dokument.journalpostId,
