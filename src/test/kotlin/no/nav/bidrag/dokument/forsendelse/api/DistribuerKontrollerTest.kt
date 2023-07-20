@@ -10,9 +10,11 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
@@ -268,6 +270,103 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     forsendelse.dokumenter.hoveddokument?.journalpostId!!,
                     forsendelse.dokumenter.hoveddokument?.dokumentreferanseOriginal!!
                 )
+        }
+    }
+
+    @Test
+    fun `skal distribuere forsendelse med dokumenter knyttet til andre forsendelser`() {
+        val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
+        val nyJournalpostId = "21313331231"
+        stubUtils.stubHentDokument()
+        stubUtils.stubBestillDistribusjon(bestillingId)
+        val forsendelseOriginal = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        tittel = "Dokument som det knyttes til 1",
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                        rekkefølgeIndeks = 0
+                    ),
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        tittel = "Dokument som det knyttes til 2",
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                        rekkefølgeIndeks = 1
+                    )
+                )
+            )
+        )
+        val dokumentKnyttetTil1 = forsendelseOriginal.dokumenter[0]
+        val dokumentKnyttetTil2 = forsendelseOriginal.dokumenter[1]
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = dokumentKnyttetTil1.forsendelseId.toString(),
+                        dokumentreferanseOriginal = dokumentKnyttetTil1.dokumentreferanse,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                        tittel = "Dokument knyttet til forsendelse 1",
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                        rekkefølgeIndeks = 0
+                    ),
+                    nyttDokument(
+                        journalpostId = dokumentKnyttetTil2.forsendelseId.toString(),
+                        dokumentreferanseOriginal = dokumentKnyttetTil2.dokumentreferanse,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                        tittel = "Dokument knyttet til forsendelse 2",
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                        rekkefølgeIndeks = 1
+                    )
+                )
+            )
+        )
+        stubUtils.stubOpprettJournalpost(
+            nyJournalpostId,
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+        )
+
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+
+        assertSoftly {
+            oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
+            oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
+            oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
+
+            oppdatertForsendelse.dokumenter.forEach {
+                it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
+            }
+
+            stubUtils.Valider().opprettJournalpostKaltMed(
+                "{" +
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Dokument knyttet til forsendelse 1\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Dokument knyttet til forsendelse 1\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Dokument knyttet til forsendelse 2\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
+            )
+            stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
+            stubUtils.Valider().hentDokumentKalt(forsendelseOriginal.forsendelseIdMedPrefix, forsendelseOriginal.dokumenter[0].dokumentreferanse)
+            stubUtils.Valider().hentDokumentKalt(forsendelseOriginal.forsendelseIdMedPrefix, forsendelseOriginal.dokumenter[1].dokumentreferanse)
         }
     }
 

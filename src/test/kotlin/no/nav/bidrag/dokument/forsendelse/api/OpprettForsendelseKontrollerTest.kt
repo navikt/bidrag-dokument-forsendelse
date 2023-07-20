@@ -107,6 +107,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 forsendelse.endretAvIdent shouldBe SAKSBEHANDLER_IDENT
 
                 forsendelse.mottaker shouldNotBe null
+                forsendelse.tittel shouldBe null
 
                 val mottaker = forsendelse.mottaker!!
                 mottaker.ident shouldBe MOTTAKER_IDENT
@@ -147,6 +148,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost.innhold shouldBe journalpost.hentHoveddokument()?.tittel
     }
 
     @Test
@@ -275,6 +277,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.status shouldBe JournalpostStatus.UNDER_OPPRETTELSE
+        journalpost.innhold shouldBe "Vedtak om forskudd til bidragsmottaker"
     }
 
     @Test

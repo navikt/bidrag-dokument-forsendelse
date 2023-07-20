@@ -46,7 +46,7 @@ class DokumentHendelseLytter(
             log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
             dokumentTjeneste.lagreDokument(
                 it.copy(
-                    arkivsystem = when (hendelse.arkivSystem) {
+                    arkivsystem = if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) it.arkivsystem else when (hendelse.arkivSystem) {
                         DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
                         else -> it.arkivsystem
                     },

@@ -138,7 +138,7 @@ class OppdaterForsendelseService(
         forsendelse.validerKanFerdigstilleForsendelse()
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
-        val hovedtittel = forsendelse.dokumenter.hoveddokument?.tittel ?: ""
+        val hovedtittel = forsendelse.dokumenter.hoveddokument?.tittel!!
         // Hvis forsendelse blir sendt lokalt så vil saksbehandler skrive ut forsendelse og evt vedlegg manuelt og sende alt sammen via posten
         // Forsendelsen vil fortsatt være synlig på Nav.no etter lokal utskrift er valgt. Det legges derfor på beskjed til bruker at resten av forsendelsen (vedleggene) kommer i posten
         val hovedtittelMedBeskjed = if (lokalUtskrift) opprettHoveddokumentTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
