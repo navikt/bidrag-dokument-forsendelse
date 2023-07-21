@@ -89,13 +89,18 @@ class ForsendelseInnsynTjeneste(
                 val metadata = DokumentDtoMetadata()
                 if (it.erLenkeTilEnAnnenForsendelse) {
                     val originalDokument = dokumentTjeneste.hentOriginalDokument(it)
-                    metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanseOriginal)
-                    metadata.oppdaterOriginalJournalpostId(originalDokument.journalpostIdOriginal)
+                    if (originalDokument.erFraAnnenKilde) {
+                        metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanseOriginal)
+                        metadata.oppdaterOriginalJournalpostId(originalDokument.journalpostIdOriginal)
+                    } else {
+                        metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanse)
+                        metadata.oppdaterOriginalJournalpostId(originalDokument.forsendelseId?.toString())
+                    }
                 } else {
                     metadata.oppdaterOriginalDokumentreferanse(it.dokumentreferanseOriginal)
                     metadata.oppdaterOriginalJournalpostId(it.journalpostIdOriginal)
                 }
-                metadata
+                metadata.copy()
             }
         }
     }

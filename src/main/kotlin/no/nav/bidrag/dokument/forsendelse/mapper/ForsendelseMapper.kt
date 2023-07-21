@@ -64,6 +64,7 @@ fun Dokument.tilArkivSystemDto() = when (arkivsystem) {
     DokumentArkivSystem.BIDRAG -> DokumentArkivSystemDto.BIDRAG
     DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
     DokumentArkivSystem.JOARK -> DokumentArkivSystemDto.JOARK
+    DokumentArkivSystem.FORSENDELSE -> DokumentArkivSystemDto.FORSENDELSE
     else -> DokumentArkivSystemDto.UKJENT
 }
 

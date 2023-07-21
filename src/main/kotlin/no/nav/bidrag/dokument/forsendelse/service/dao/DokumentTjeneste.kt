@@ -15,6 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.DokumentRepository
 import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
+import no.nav.bidrag.dokument.forsendelse.utvidelser.exists
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import org.springframework.stereotype.Component
@@ -31,6 +32,10 @@ class DokumentTjeneste(
         return lagreDokument(nyDokument)
     }
 
+    fun opprettDokumentDo(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel, indeks: Int? = null): Dokument {
+        return forespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse, indeks ?: forsendelse.dokumenter.size)
+    }
+
     fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
         val nyeDokumenter = forespørsel.mapIndexed { i, it -> it.tilDokumentDoMedOriginalLenketDokument(forsendelse, i) }
         return lagreDokumenter(nyeDokumenter.sortertEtterRekkefølge)
@@ -44,9 +49,8 @@ class DokumentTjeneste(
     }
 
     @Transactional
-    fun lagreDokumenter(dokument: List<Dokument>): List<Dokument> {
-        val nyDokumenter = dokumentRepository.saveAll(dokument).toList()
-
+    fun lagreDokumenter(dokumenter: List<Dokument>): List<Dokument> {
+        val nyDokumenter = dokumentRepository.saveAll(dokumenter).toList()
         nyDokumenter.forEach { bestillDokumentHvisNødvendig(it) }
         return nyDokumenter
     }
@@ -85,8 +89,8 @@ class DokumentTjeneste(
                 ?: return this.tilDokumentDo(forsendelse, indeks)
 
         if (this.dokumentreferanse.isNullOrEmpty()) ugyldigEndringAvForsendelse("Dokumentreferanse må settes når en dokument opprettes fra en annen forsendelse. Kan ikke knytte en hel forsendelse til en annen forsendelse.")
-//        return if (this.dokumentreferanse.isNullOrEmpty()) dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
         val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!.tilOriginalDokument()
+        validerKanLeggeTilDokument(dokumentLenket, forsendelse)
         val erFraAnnenKilde = dokumentLenket.erFraAnnenKilde
         return Dokument(
             forsendelse = forsendelse,
@@ -101,5 +105,11 @@ class DokumentTjeneste(
             metadata = dokumentLenket.metadata,
             rekkefølgeIndeks = indeks
         )
+    }
+
+    private fun validerKanLeggeTilDokument(dokumentLenket: Dokument, forsendelse: Forsendelse) {
+        val originalDokumentDelAvSammeForsendelse = dokumentLenket.forsendelse.forsendelseId == forsendelse.forsendelseId
+        val harAlleredeLenkeTilSammeDokument = forsendelse.dokumenter.exists(dokumentLenket.dokumentreferanse)
+        if (harAlleredeLenkeTilSammeDokument || originalDokumentDelAvSammeForsendelse) ugyldigEndringAvForsendelse("Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger")
     }
 }

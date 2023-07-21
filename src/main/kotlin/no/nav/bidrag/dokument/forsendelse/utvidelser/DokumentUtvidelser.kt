@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 
 val Dokument.forsendelseIdMedPrefix get() = this.forsendelse.forsendelseIdMedPrefix
+fun List<Dokument>.exists(dokumentreferanse: String?) = hentDokument(dokumentreferanse) != null
 fun List<Dokument>.hentDokument(dokumentreferanse: String?) =
     dokumenterIkkeSlettet.find { dokumentreferanse.isNotNullOrEmpty() && (it.dokumentreferanseOriginal == dokumentreferanse || it.dokumentreferanse == dokumentreferanse) }
 

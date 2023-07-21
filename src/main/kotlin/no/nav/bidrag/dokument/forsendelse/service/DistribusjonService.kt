@@ -23,7 +23,7 @@ private val log = KotlinLogging.logger {}
 
 @Component
 class DistribusjonService(
-    private val oppdaterForsendelseService: OppdaterForsendelseService,
+    private val ferdigstillForsendelseService: FerdigstillForsendelseService,
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
@@ -60,7 +60,7 @@ class DistribusjonService(
         log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt og batchId=$batchId" }
 
         if (forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
-            forsendelse = oppdaterForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
+            forsendelse = ferdigstillForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
         }
 
         return if (distribuerLokalt) {

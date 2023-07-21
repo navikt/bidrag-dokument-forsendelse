@@ -13,7 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
-import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
+import no.nav.bidrag.dokument.forsendelse.service.FerdigstillForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
@@ -29,7 +29,7 @@ class DokumentHendelseLytter(
     val objectMapper: ObjectMapper,
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
-    val oppdaterForsendelseService: OppdaterForsendelseService
+    val ferdigstillForsendelseService: FerdigstillForsendelseService
 ) {
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
@@ -82,7 +82,7 @@ class DokumentHendelseLytter(
             if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt) {
                 medApplikasjonKontekst {
                     log.info { "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} med type NOTAT er ferdigstilt. Ferdigstiller forsendelse." }
-                    oppdaterForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
+                    ferdigstillForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
                 }
             }
         }

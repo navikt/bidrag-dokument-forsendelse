@@ -98,13 +98,13 @@ automatisk re-bygger filene som er endret:
 Bruk `kcat` til å sende meldinger til kafka topic. Feks
 
 ````bash
-kcat -b 0.0.0.0:9092 -t bidrag-dokument -P -K:
+kcat -b 0.0.0.0:9092 -t bidrag.dokument -P -K:
 ````
 
 og lim inn eks:
 
 ```bash
-BIF_2121212121:{"dokumentreferanse":"BIF_1000000007","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_PRODUKSJON","hendelseType":"ENDRING"}
+BIF100000260:{"dokumentreferanse":"BIF100000260","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_REDIGERING","hendelseType":"ENDRING"}
 ```
 
 og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-dokument

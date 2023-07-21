@@ -111,7 +111,7 @@ class DefaultRestControllerAdvice {
         LOGGER.warn("Forsendelsen kan ikke endres: ${exception.message}", exception)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, "Forespørselen kan ikke endres: ${exception.message}")
+            .header(HttpHeaders.WARNING, exception.message)
             .build<Any>()
     }
 
