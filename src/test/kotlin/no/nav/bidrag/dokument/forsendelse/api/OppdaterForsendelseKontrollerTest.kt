@@ -538,7 +538,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
 
     @Test
-    fun `Skal koble til dokument under produksjon som tilhører annen forsendelse`() {
+    fun `Skal lenke til dokument under redigering som tilhører annen forsendelse`() {
         val originalForsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 dokumenter = listOf(
@@ -561,6 +561,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         )
 
         val originalDokument = originalForsendelse.dokumenter[0]
+        val originalDokumentMedReferanseTilJoark = originalForsendelse.dokumenter[1]
         val originalForsendelseId = originalForsendelse.forsendelseId!!
         val forsendelseId = forsendelse.forsendelseId!!
 
@@ -574,6 +575,88 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                     tittel = "Tittel knyttet dokument",
                     journalpostId = "BIF-$originalForsendelseId",
                     dokumentreferanse = originalDokument.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel dokument joark",
+                    journalpostId = "BIF-$originalForsendelseId",
+                    dokumentreferanse = originalDokumentMedReferanseTilJoark.dokumentreferanse
+                )
+            )
+        )
+
+        val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 3
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            val vedlegg = oppdatertForsendelse.dokumenter.vedlegger[0]
+            vedlegg.tittel shouldBe "Tittel knyttet dokument"
+            vedlegg.journalpostIdOriginal shouldBe originalForsendelseId.toString()
+            vedlegg.dokumentreferanseOriginal shouldBe originalDokument.dokumentreferanse
+
+            val vedlegg2 = oppdatertForsendelse.dokumenter.vedlegger[1]
+            vedlegg2.tittel shouldBe "Tittel dokument joark"
+            vedlegg2.journalpostIdOriginal shouldBe "64443434"
+            vedlegg2.dokumentreferanseOriginal shouldBe "12313213"
+        }
+    }
+
+    @Test
+    fun `Skal koble til dokument under redigering som er kobling til dokument i en annen forsendelse`() {
+        val originalForsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = "64443434",
+                        dokumentreferanseOriginal = "12313213",
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+        val originalDokument = originalForsendelse.dokumenter[0]
+        val originalForsendelseId = originalForsendelse.forsendelseId!!
+
+        val forsendelseMedKoblingTilOriginal = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = originalDokument.forsendelseId.toString(),
+                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                        rekkefølgeIndeks = 0
+                    )
+                )
+            )
+        )
+
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
+
+        val kobleTilDokumentUnderRedigering = forsendelseMedKoblingTilOriginal.dokumenter[0]
+        val kobleTilForsendelse = forsendelseMedKoblingTilOriginal.forsendelseId
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = forsendelse.dokumenter[0].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel knyttet dokument",
+                    journalpostId = "BIF-$kobleTilForsendelse",
+                    dokumentreferanse = kobleTilDokumentUnderRedigering.dokumentreferanse
                 )
             )
         )
@@ -591,6 +674,128 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             vedlegg.journalpostIdOriginal shouldBe originalForsendelseId.toString()
             vedlegg.dokumentreferanseOriginal shouldBe originalDokument.dokumentreferanse
         }
+    }
+
+    @Test
+    fun `Skal feile dokument i forsendelse forsøkes å kobles til som lenke fra annen dokument`() {
+        val originalForsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = "64443434",
+                        dokumentreferanseOriginal = "12313213",
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+        val originalDokument = originalForsendelse.dokumenter[0]
+        val originalForsendelseId = originalForsendelse.forsendelseId!!
+
+        val forsendelseMedKoblingTilOriginal = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = originalForsendelseId.toString(),
+                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                        rekkefølgeIndeks = 0
+                    )
+                )
+            )
+        )
+
+        val kobleTilDokument = forsendelseMedKoblingTilOriginal.dokumenter[0]
+        val kobleTilForsendelse = forsendelseMedKoblingTilOriginal.forsendelseId
+        val forsendelseId = originalForsendelse.forsendelseId!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = originalForsendelse.dokumenter[0].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = originalForsendelse.dokumenter[1].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel knyttet dokument",
+                    journalpostId = "BIF-$kobleTilForsendelse",
+                    dokumentreferanse = kobleTilDokument.dokumentreferanse
+                )
+            )
+        )
+
+        val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST
+        responseNyDokument.headers["Warning"]!![0] shouldBe "Dokument med tittel \"Tittel på hoveddokument\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger"
+    }
+
+    @Test
+    fun `Skal feile hvis samme dokument forsøkes å kobles til forsendelse`() {
+        val originalForsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = "64443434",
+                        dokumentreferanseOriginal = "12313213",
+                        rekkefølgeIndeks = 1,
+                        tittel = "Skjermet dokument"
+                    )
+                )
+            )
+        )
+        val originalDokument = originalForsendelse.dokumenter[0]
+
+        val forsendelseMedKoblingTilOriginal = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = originalDokument.forsendelseId.toString(),
+                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                        rekkefølgeIndeks = 0
+                    )
+                )
+            )
+        )
+
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
+
+        val kobleTilDokument = forsendelseMedKoblingTilOriginal.dokumenter[0]
+        val kobleTilForsendelse = forsendelseMedKoblingTilOriginal.forsendelseId
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = forsendelse.dokumenter[0].dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel knyttet dokument",
+                    journalpostId = "BIF-$kobleTilForsendelse",
+                    dokumentreferanse = kobleTilDokument.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = "Tittel knyttet dokument 2",
+                    journalpostId = "BIF-${originalForsendelse.forsendelseId}",
+                    dokumentreferanse = originalDokument.dokumentreferanse
+                )
+            )
+        )
+
+        val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST
+        responseNyDokument.headers["Warning"]!![0] shouldBe "Kan ikke legge til samme dokument flere ganger til forsendelse"
     }
 
     @Test

@@ -13,7 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.DokumentValgService
-import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 @ForsendelseApiKontroller
 @Timed
 class ForsendelseInnsynKontroller(
-    val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste,
+    val forsendelseInnsynService: ForsendelseInnsynService,
     val dokumentValgService: DokumentValgService,
     val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
 ) {
@@ -45,7 +45,7 @@ class ForsendelseInnsynKontroller(
         saksnummer: String?
     ): ForsendelseResponsTo {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return forsendelseInnsynTjeneste.hentForsendelse(forsendelseId, saksnummer)
+        return forsendelseInnsynService.hentForsendelse(forsendelseId, saksnummer)
     }
 
     @GetMapping("/sak/{saksnummer}/forsendelser")
@@ -59,7 +59,7 @@ class ForsendelseInnsynKontroller(
         ]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
-        return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)
+        return forsendelseInnsynService.hentForsendelseForSak(saksnummer)
     }
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
@@ -79,7 +79,7 @@ class ForsendelseInnsynKontroller(
     fun hentDokumentValgForForsendelse(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId
     ): Map<String, DokumentMalDetaljer> {
-        return forsendelseInnsynTjeneste.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
+        return forsendelseInnsynService.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
     }
 
     @PostMapping("/dokumentvalg")

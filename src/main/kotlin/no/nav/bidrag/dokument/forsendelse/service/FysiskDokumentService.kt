@@ -69,7 +69,10 @@ class FysiskDokumentService(
             )
         } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             val originalDokument = dokumentTjeneste.hentOriginalDokument(dokument)
-            return hentFysiskDokument(originalDokument)
+            return if (originalDokument.dokumentreferanse == dokument.dokumentreferanse)
+            // Hindre stack-overflow hvis det ved feil har blitt lagret lenket dokument som peker til samme forsendelse
+                hentFysiskDokument(originalDokument.copy(arkivsystem = DokumentArkivSystem.UKJENT))
+            else hentFysiskDokument(originalDokument)
         } else if (dokument.erFraAnnenKilde) {
             bidragDokumentConsumer.hentDokument(
                 dokument.journalpostId,

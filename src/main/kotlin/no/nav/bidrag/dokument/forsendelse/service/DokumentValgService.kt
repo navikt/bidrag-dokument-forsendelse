@@ -119,7 +119,7 @@ class DokumentValgService(
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
-                ?: ekstraBrevkoderVedtakIkkeFattet
+                ?: if (erFattetBeregnet != null) ekstraBrevkoderVedtakFattet else ekstraBrevkoderVedtakIkkeFattet
         return brevkoder.associateWith { mapToMalDetaljer(it) }.filter { it.value.type != DokumentMalType.NOTAT }
     }
 

@@ -82,6 +82,45 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for varsel bidrag søknad`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.FASTSETTELSE,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = null
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe shouldContainKey "BI01S01"
+            dokumentValgListe shouldContainKey "BI01S12"
+            dokumentValgListe shouldContainKey "BI01S52"
+            dokumentValgListe shouldContainKey "BI01S53"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for motregning vedtak`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                behandlingType = StonadType.MOTREGNING.name,
+                erFattetBeregnet = false
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for bidrag søknad som er fastsatt beregnet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(

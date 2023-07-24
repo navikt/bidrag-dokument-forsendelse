@@ -28,12 +28,11 @@ val List<Forsendelse>.filtrerIkkeFerdigstiltEllerArkivert
     get() = this.filter { it.journalpostIdFagarkiv == null }.filter { it.status != ForsendelseStatus.SLETTET }
 
 @Component
-class ForsendelseInnsynTjeneste(
+class ForsendelseInnsynService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
-    private val dokumentTjeneste: DokumentTjeneste,
-    private val forsendelseTittelService: ForsendelseTittelService
+    private val dokumentTjeneste: DokumentTjeneste
 ) {
 
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {

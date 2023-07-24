@@ -197,6 +197,8 @@ export function soknadTypeToVedtakType(kode: string, soknadFra: string) {
     return "OPPHØR"
   } else if ("OPPJUST_FORSK" == kode && soknadFra == "BIDRAGSENHET") {
     return "ALDERSJUSTERING"
+  } else if ("KORRIGERING" == kode) {
+    return "KORRIGERING"
   }
   return "ENDRING"
 }

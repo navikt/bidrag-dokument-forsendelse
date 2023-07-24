@@ -257,11 +257,10 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
         DokumentRespons(
             dokumentreferanse = it.dokumentreferanse,
-            lenkeTilDokumentreferanse = it.lenkeTilDokumentreferanse,
             originalDokumentreferanse = dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalDokumentreferanse()
                 ?: it.dokumentreferanseOriginal,
             originalJournalpostId = dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalJournalpostId() ?: it.journalpostIdOriginal,
-            forsendelseId = it.forsendelseId.toString(),
+            forsendelseId = it.forsendelseId?.toString(),
             tittel = it.tittel,
             journalpostId = it.journalpostId,
             dokumentmalId = it.dokumentmalId,

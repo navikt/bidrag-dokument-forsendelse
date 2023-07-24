@@ -24,6 +24,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
@@ -227,6 +228,17 @@ fun opprettForsendelse2(
 
     return forsendelse
 }
+
+fun opprettAdresseDo() = Adresse(
+    adresselinje1 = ADRESSE_ADRESSELINJE1,
+    adresselinje2 = ADRESSE_ADRESSELINJE2,
+    adresselinje3 = ADRESSE_ADRESSELINJE3,
+    landkode = ADRESSE_LANDKODE,
+    landkode3 = ADRESSE_LANDKODE3,
+    bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
+    postnummer = ADRESSE_POSTNUMMER,
+    poststed = ADRESSE_POSTSTED
+)
 
 fun nyttDokument(
     tittel: String = TITTEL_HOVEDDOKUMENT,

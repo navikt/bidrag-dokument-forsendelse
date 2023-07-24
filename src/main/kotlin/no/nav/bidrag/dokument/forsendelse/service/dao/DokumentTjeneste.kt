@@ -76,6 +76,7 @@ class DokumentTjeneste(
     fun hentOriginalDokument(dokument: Dokument): Dokument {
         if (dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) return dokument
         val forsendelse = forsendelseTjeneste.medForsendelseId(dokument.forsendelseId!!) ?: fantIkkeForsendelse(dokument.forsendelseId!!)
+        if (dokument.lenkeTilDokumentreferanse == dokument.dokumentreferanse) return dokument // Dette betyr at dokument er lenket til seg selv som ikke burde skje
         val referertDokument = forsendelse.dokumenter.hentDokument(dokument.lenkeTilDokumentreferanse)
         if (referertDokument?.erFraAnnenKilde == false || referertDokument?.arkivsystem != DokumentArkivSystem.FORSENDELSE) return referertDokument!!
         return hentOriginalDokument(dokument)
@@ -109,7 +110,10 @@ class DokumentTjeneste(
 
     private fun validerKanLeggeTilDokument(dokumentLenket: Dokument, forsendelse: Forsendelse) {
         val originalDokumentDelAvSammeForsendelse = dokumentLenket.forsendelse.forsendelseId == forsendelse.forsendelseId
+        val dokumentLenkerTilSammeForsendelse = dokumentLenket.journalpostIdOriginal == forsendelse.forsendelseId.toString()
         val harAlleredeLenkeTilSammeDokument = forsendelse.dokumenter.exists(dokumentLenket.dokumentreferanse)
-        if (harAlleredeLenkeTilSammeDokument || originalDokumentDelAvSammeForsendelse) ugyldigEndringAvForsendelse("Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger")
+        if (dokumentLenkerTilSammeForsendelse || harAlleredeLenkeTilSammeDokument || originalDokumentDelAvSammeForsendelse) ugyldigEndringAvForsendelse(
+            "Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger"
+        )
     }
 }

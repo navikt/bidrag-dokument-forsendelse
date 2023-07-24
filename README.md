@@ -104,7 +104,7 @@ kcat -b 0.0.0.0:9092 -t bidrag.dokument -P -K:
 og lim inn eks:
 
 ```bash
-BIF100000260:{"dokumentreferanse":"BIF100000260","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_REDIGERING","hendelseType":"ENDRING"}
+BIF100000311:{"dokumentreferanse":"BIF100000311","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_REDIGERING","hendelseType":"ENDRING"}
 ```
 
 og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-dokument

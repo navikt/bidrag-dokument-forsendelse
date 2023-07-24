@@ -12,7 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResp
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam
 @ForsendelseApiKontroller
 @Timed
 class ForsendelseJournalKontroller(
-    val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste
+    val forsendelseInnsynService: ForsendelseInnsynService
 ) {
 
     @GetMapping("/journal/{forsendelseIdMedPrefix}")
@@ -40,7 +40,7 @@ class ForsendelseJournalKontroller(
         saksnummer: String?
     ): JournalpostResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return forsendelseInnsynTjeneste.hentForsendelseJournal(forsendelseId, saksnummer)
+        return forsendelseInnsynService.hentForsendelseJournal(forsendelseId, saksnummer)
     }
 
     @GetMapping("/sak/{saksnummer}/journal")
@@ -59,7 +59,7 @@ class ForsendelseJournalKontroller(
         @PathVariable saksnummer: String,
         @RequestParam(name = "fagomrade") temaListe: List<JournalTema> = emptyList()
     ): List<JournalpostDto> {
-        return forsendelseInnsynTjeneste.hentForsendelseForSakJournal(saksnummer, temaListe)
+        return forsendelseInnsynService.hentForsendelseForSakJournal(saksnummer, temaListe)
     }
 
     @GetMapping("/journal/ikkedistribuert")
@@ -75,6 +75,6 @@ class ForsendelseJournalKontroller(
         ]
     )
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
-        return forsendelseInnsynTjeneste.hentForsendelserIkkeDistribuert()
+        return forsendelseInnsynService.hentForsendelserIkkeDistribuert()
     }
 }

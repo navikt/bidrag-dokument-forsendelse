@@ -2349,7 +2349,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "KLAGE",
         "REVURDERING"
       ],
@@ -2412,7 +2411,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "KLAGE",
         "REVURDERING"
       ],
@@ -2513,7 +2511,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET",
@@ -2573,7 +2570,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -3125,7 +3121,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET",
@@ -3186,7 +3181,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -3777,7 +3771,6 @@
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
       "vedtakType": [
-        "ENDRING",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",
@@ -3953,9 +3946,7 @@
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
-      "vedtakType": [
-        "ENDRING"
-      ],
+      "vedtakType": [],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BEGGE",
       "brevkoder": [
@@ -5165,7 +5156,6 @@
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "REVURDERING"
       ],
@@ -5241,7 +5231,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "engangsbelopType": "SAERTILSKUDD",
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",
@@ -5658,7 +5647,6 @@
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -5684,7 +5672,6 @@
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET_MANUELT",
@@ -5839,7 +5826,6 @@
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -5860,7 +5846,6 @@
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET_MANUELT",
@@ -6277,9 +6262,7 @@
         "VERGE"
       ],
       "erVedtakIkkeTilbakekreving": true,
-      "vedtakType": [
-        "ENDRING"
-      ],
+      "vedtakType": [],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BEGGE",
       "brevkoder": [
@@ -6315,9 +6298,7 @@
         "UTENLANDSKE_MYNDIGHET"
       ],
       "erVedtakIkkeTilbakekreving": false,
-      "vedtakType": [
-        "ENDRING"
-      ],
+      "vedtakType": [],
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
@@ -6337,9 +6318,7 @@
         "UTENLANDSKE_MYNDIGHET"
       ],
       "erVedtakIkkeTilbakekreving": false,
-      "vedtakType": [
-        "ENDRING"
-      ],
+      "vedtakType": [],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BIDRAG",
       "brevkoder": [
@@ -6801,7 +6780,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -6830,7 +6808,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -6999,7 +6976,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "KLAGE",
         "REVURDERING"
       ],
@@ -7390,7 +7366,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "IKKE_FATTET",
@@ -7420,7 +7395,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "KLAGE",
         "REVURDERING"
       ],
@@ -7444,7 +7418,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG18AAR",
       "vedtakType": [
-        "ENDRING",
         "KLAGE"
       ],
       "behandlingStatus": "FATTET_BEREGNET",
@@ -8190,9 +8163,7 @@
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
-      "vedtakType": [
-        "ENDRING"
-      ],
+      "vedtakType": [],
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BEGGE",
       "brevkoder": [
@@ -9790,7 +9761,6 @@
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "INNKREVING",
         "KLAGE",
@@ -9896,7 +9866,6 @@
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "INNKREVING",
         "KLAGE",
@@ -11813,7 +11782,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "EKTEFELLEBIDRAG",
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "KLAGE",
         "REVURDERING"
@@ -13428,7 +13396,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "engangsbelopType": "ETTERGIVELSE",
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "INNKREVING",
         "KLAGE",
@@ -13459,7 +13426,6 @@
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "INNKREVING",
         "OPPHØR",
@@ -21790,7 +21756,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "MOTREGNING",
       "vedtakType": [
-        "ENDRING",
         "FASTSETTELSE",
         "INDEKSREGULERING",
         "INNKREVING",
@@ -22329,7 +22294,6 @@
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "MOTREGNING",
       "vedtakType": [
-        "ENDRING",
         "INDEKSREGULERING",
         "INNKREVING",
         "KLAGE",

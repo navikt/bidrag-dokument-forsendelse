@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
@@ -92,6 +93,12 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         return httpHeaderTestRestTemplate.patchForEntity<OppdaterForsendelseResponse>(
             "${rootUri()}/$forsendelseId",
             HttpEntity(oppdaterForespørsel)
+        )
+    }
+
+    protected fun utførHentForsendelse(forsendelseId: String, saksnummer: String? = null): ResponseEntity<ForsendelseResponsTo> {
+        return httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
+            "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}"
         )
     }
 
