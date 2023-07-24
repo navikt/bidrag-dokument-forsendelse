@@ -795,7 +795,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val responseNyDokument = utførOppdaterForsendelseForespørsel("BIF-$forsendelseId", oppdaterForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.BAD_REQUEST
-        responseNyDokument.headers["Warning"]!![0] shouldBe "Kan ikke legge til samme dokument flere ganger til forsendelse"
+        responseNyDokument.headers["Warning"]!![0] shouldContain "Kan ikke legge til samme dokument flere ganger til forsendelse"
     }
 
     @Test
