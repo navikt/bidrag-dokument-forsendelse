@@ -57,7 +57,7 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
             oppdatertDokument.ferdigstiltAvIdent shouldBe SAKSBEHANDLER_IDENT
             oppdatertDokument.metadata.hentRedigeringmetadata() shouldBe redigeringData
             oppdatertDokument.metadata.hentGcpKrypteringnøkkelVersjon() shouldBe "-1"
-            oppdatertDokument.metadata.hentGcpFilsti() shouldBe oppdatertDokument.filsti
+            oppdatertDokument.metadata.hentGcpFilsti() shouldBe "gs://bidrag-dokument-forsendelse-local/dokumenter/forsendelse_${forsendelse.forsendelseId}/dokument_${oppdatertDokument.dokumentreferanse}.pdf"
             String(dokumentResponse.body!!) shouldBe VALID_PDF_BASE64
             dokumentMetadata shouldHaveSize 1
             dokumentMetadata[0].journalpostId shouldBe forsendelse.forsendelseIdMedPrefix

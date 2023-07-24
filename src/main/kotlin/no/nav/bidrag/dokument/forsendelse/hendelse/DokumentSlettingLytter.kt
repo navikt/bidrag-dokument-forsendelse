@@ -31,6 +31,7 @@ class DokumentSlettingLytter(
             ?: throw KunneIkkBestilleDokument("Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}")
 
         try {
+            val gcpFilsti = dokument.metadata.hentGcpFilsti() ?: dokument.filsti
             dokumentStorageService.slettFil(dokument.filsti)
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
@@ -42,7 +43,7 @@ class DokumentSlettingLytter(
                     },
                 )
             )
-            LOGGER.info { "Slettet fil med filsti ${dokument.filsti} som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}" }
+            LOGGER.info { "Slettet fil med GCP filsti $gcpFilsti som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}. Forsendelse har status ${forsendelse.status}" }
         } catch (e: Exception) {
             LOGGER.error(e) { "Kunne ikke slettet fil med filsti ${dokument.filsti} som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}" }
         }

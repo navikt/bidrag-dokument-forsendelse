@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestillSletting
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
+import no.nav.bidrag.dokument.forsendelse.persistence.bucket.LagreFilResponse
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
@@ -18,7 +19,7 @@ class DokumentStorageService(private val gcpCloudStorage: GcpCloudStorage, priva
         gcpCloudStorage.slettFil("$FOLDER_NAME/$filenameWithExtension")
     }
 
-    fun lagreFil(filnavn: String, dokument: ByteArray): String {
+    fun lagreFil(filnavn: String, dokument: ByteArray): LagreFilResponse {
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn
         return gcpCloudStorage.lagreFil("$FOLDER_NAME/$filenameWithExtension", dokument)
     }

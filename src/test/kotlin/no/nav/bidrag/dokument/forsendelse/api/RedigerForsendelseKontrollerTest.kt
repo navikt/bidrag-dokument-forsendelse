@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResp
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
+import no.nav.bidrag.dokument.forsendelse.persistence.bucket.LagreFilResponse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -32,7 +33,7 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
     @BeforeEach
     fun initMockCloudStorage() {
 
-        every { gcpCloudStorage.lagreFil(any(), any()) } returns "2"
+        every { gcpCloudStorage.lagreFil(any(), any()) } returns LagreFilResponse("2", "filsti")
         every { gcpCloudStorage.hentFil(any()) } returns "asdasd".toByteArray()
     }
 

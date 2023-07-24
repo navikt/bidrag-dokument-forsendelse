@@ -56,30 +56,10 @@ class ForsendelseInnsynService(
         val forsendelserFiltrert = forsendelser.filtrerIkkeFerdigstiltEllerArkivert
             .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
             .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-            .map { tilJournalpostDto(it) }
+            .map { it.tilJournalpostDto(tilDokumenterMetadata(it.dokumenter)) }
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
         return forsendelserFiltrert
-    }
-
-    private fun tilJournalpostDto(forsendelse: Forsendelse): JournalpostDto {
-        val dokumenterMetadata = tilDokumenterMetadata(forsendelse.dokumenter)
-        val journalpost = forsendelse.tilJournalpostDto(dokumenterMetadata)
-//        if (journalpost.innhold.isNullOrEmpty()) {
-//            journalpost.innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
-//        }
-
-        return journalpost
-    }
-
-    private fun tilForsendelseRespons(forsendelse: Forsendelse): ForsendelseResponsTo {
-        val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
-//        if (forsendelseRespons.tittel.isNullOrEmpty()) {
-//            return forsendelseRespons.copy(
-//                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
-//            )
-//        }
-        return forsendelseRespons
     }
 
     private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> {
@@ -113,7 +93,7 @@ class ForsendelseInnsynService(
         log.debug { "Hentet forsendelse $forsendelseId med saksnummer ${forsendelse.saksnummer}" }
 
         return JournalpostResponse(
-            journalpost = tilJournalpostDto(forsendelse),
+            journalpost = forsendelse.tilJournalpostDto(tilDokumenterMetadata(forsendelse.dokumenter)),
             sakstilknytninger = listOf(forsendelse.saksnummer)
         )
     }
@@ -122,14 +102,14 @@ class ForsendelseInnsynService(
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
 
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map { tilForsendelseRespons(it) }
+            .map { it.tilForsendelseRespons(tilDokumenterMetadata(it.dokumenter)) }
     }
 
     fun hentForsendelse(forsendelseId: Long, saksnummer: String? = null): ForsendelseResponsTo {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
-        return tilForsendelseRespons(forsendelse)
+        return forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
     }
 
     fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {

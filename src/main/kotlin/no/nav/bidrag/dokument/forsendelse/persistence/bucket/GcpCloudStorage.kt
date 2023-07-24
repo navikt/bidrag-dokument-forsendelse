@@ -81,13 +81,13 @@ class GcpCloudStorage(
         storage.delete(lagBlobinfo(filnavn).blobId)
     }
 
-    fun lagreFil(filnavn: String, byteArrayStream: ByteArray): String {
+    fun lagreFil(filnavn: String, byteArrayStream: ByteArray): LagreFilResponse {
         LOGGER.info("Starter overføring av fil: $filnavn til GCP-bucket: $bucketNavn")
         val blobInfo = lagBlobinfo(filnavn)
         val encryptedFile = encryptFile(byteArrayStream, blobInfo)
         getGcpWriter(blobInfo).use { it.write(ByteBuffer.wrap(encryptedFile, 0, encryptedFile.count())) }
         LOGGER.info("Fil: $filnavn har blitt lastet opp til GCP-bucket: $bucketNavn")
-        return keyVersion.toString()
+        return LagreFilResponse(keyVersion.toString(), blobInfo.blobId.toGsUtilUri())
     }
 
     fun hentFil(filnavn: String): ByteArray {

@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.model.bytesIntoHumanReadable
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.persistence.bucket.LagreFilResponse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -45,9 +46,6 @@ class RedigerDokumentService(
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
             ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
-        log.info {
-            "Opphever ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId"
-        }
         val oppdatertForsendelse = forsendelseTjeneste.lagre(
             forsendelse.copy(
                 dokumenter = opphevFerdigstillDokument(forsendelse, dokumentreferanse),
@@ -109,20 +107,13 @@ class RedigerDokumentService(
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {
                     it.copy(
                         dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        metadata = run {
-                            val metadata = it.metadata
-                            metadata.lagreGcpKrypteringnøkkelVersjon(null)
-                            metadata.lagreGcpFilsti(null)
-                            metadata.copy()
-                        },
                         ferdigstiltAvIdent = null,
                         ferdigstiltTidspunkt = null
                     )
                 } ?: it
             }
 
-        val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
-        dokumentStorageService.slettFil(dokument.filsti)
+        dokumentStorageService.bestillSletting(forsendelse.forsendelseId!!, dokumentreferanse)
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
@@ -148,19 +139,23 @@ class RedigerDokumentService(
             }
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
-        val keyVersion = dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
-        return lagreKryptreringnøkkelVersjon(oppdaterteDokumenter, dokumentreferanse, keyVersion).sortertEtterRekkefølge
+        val respons = dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
+        return lagreKryptreringnøkkelVersjon(oppdaterteDokumenter, dokumentreferanse, respons).sortertEtterRekkefølge
     }
 
-    private fun lagreKryptreringnøkkelVersjon(dokumenter: List<Dokument>, dokumentreferanse: String, versjon: String): List<Dokument> {
+    private fun lagreKryptreringnøkkelVersjon(
+        dokumenter: List<Dokument>,
+        dokumentreferanse: String,
+        lagreFilResponse: LagreFilResponse
+    ): List<Dokument> {
         return dokumenter
             .map {
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {
                     it.copy(
                         metadata = run {
                             val metadata = it.metadata
-                            metadata.lagreGcpKrypteringnøkkelVersjon(versjon)
-                            metadata.lagreGcpFilsti(it.filsti)
+                            metadata.lagreGcpKrypteringnøkkelVersjon(lagreFilResponse.versjon)
+                            metadata.lagreGcpFilsti(lagreFilResponse.filsti)
                             metadata.copy()
                         }
                     )
