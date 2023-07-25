@@ -17,6 +17,8 @@ forsendelsen i Joark og distribusjon bestilles gjennom sentral distribusjon.
 
 #### Kjøre lokalt mot sky
 
+dsad
+
 Start lokal postgres database og kafka ved å kjøre
 
 ```bash
