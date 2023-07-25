@@ -513,7 +513,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
                         "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Tittel på hoveddokument\"," +
+                        "\"tittel\":\"Tittel på hoveddokument (dokumentet er sendt per post med vedlegg)\"," +
                         "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
                         "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
                         "\"dokumenter\":[" +

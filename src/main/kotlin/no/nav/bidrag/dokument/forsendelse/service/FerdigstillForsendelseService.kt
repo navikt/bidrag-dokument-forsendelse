@@ -53,9 +53,11 @@ class FerdigstillForsendelseService(
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
         val hovedtittel = forsendelse.dokumenter.hoveddokument?.tittel!!
+        val forsendelseTittel = forsendelse.tittel ?: hovedtittel
         // Hvis forsendelse blir sendt lokalt så vil saksbehandler skrive ut forsendelse og evt vedlegg manuelt og sende alt sammen via posten
         // Forsendelsen vil fortsatt være synlig på Nav.no etter lokal utskrift er valgt. Det legges derfor på beskjed til bruker at resten av forsendelsen (vedleggene) kommer i posten
-        val hovedtittelMedBeskjed = if (lokalUtskrift) opprettHoveddokumentTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
+        val hovedtittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
+        val forsendelseTittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(forsendelseTittel) else forsendelseTittel
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
@@ -92,7 +94,7 @@ class FerdigstillForsendelseService(
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
             },
-            tittel = forsendelse.tittel ?: hovedtittel,
+            tittel = forsendelseTittelMedBeskjed,
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
@@ -116,7 +118,7 @@ class FerdigstillForsendelseService(
         return respons
     }
 
-    fun opprettHoveddokumentTittelMedBeskjedForLokalUtskrift(tittel: String): String {
+    fun opprettTittelMedBeskjedForLokalUtskrift(tittel: String): String {
         val beskjed = "dokumentet er sendt per post med vedlegg"
         return "$tittel ($beskjed)"
     }
