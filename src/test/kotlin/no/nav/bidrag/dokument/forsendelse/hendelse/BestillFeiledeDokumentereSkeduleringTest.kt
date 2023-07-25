@@ -169,7 +169,7 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
                         dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES,
                         metadata = run {
                             val metadata = DokumentMetadataDo()
-                            metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusHours(2))
+                            metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusMinutes(10))
                             metadata.inkrementerBestiltAntallGanger()
                             metadata
                         }

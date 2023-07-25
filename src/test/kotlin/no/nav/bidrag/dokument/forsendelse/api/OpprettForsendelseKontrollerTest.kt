@@ -86,7 +86,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
                 val vedlegg = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge[1]
                 vedlegg.språk shouldBe forsendelse.språk
-                vedlegg.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+                vedlegg.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
                 vedlegg.arkivsystem shouldBe DokumentArkivSystem.JOARK
                 vedlegg.rekkefølgeIndeks shouldBe 1
                 vedlegg.tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
@@ -141,6 +141,46 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                             "\"enhet\":\"${forsendelse.enhet}\"," +
                             "\"språk\":\"${forsendelse.språk}\"}"
                 )
+            }
+        }
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost.innhold shouldBe journalpost.hentHoveddokument()?.tittel
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med behandlingsdetaljer uten forsendelse tittel`() {
+        val soknadId = "123213"
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            batchId = "FB050",
+            behandlingInfo = BehandlingInfoDto(
+                soknadId = soknadId,
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = StonadType.FORSKUDD,
+                vedtakType = VedtakType.FASTSETTELSE
+            ),
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+            assertSoftly {
+                forsendelse.dokumenter shouldHaveSize 2
+                val behandlingInfo = forsendelse.behandlingInfo!!
+                behandlingInfo.soknadId shouldBe soknadId
+                behandlingInfo.erFattetBeregnet shouldBe true
+                behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+                behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
+                behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+                behandlingInfo.behandlingType shouldBe null
+                forsendelse.tittel shouldBe null
             }
         }
 
@@ -461,7 +501,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
         dokument.tittel shouldBe TITTEL_VEDLEGG_1
 
@@ -507,7 +547,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
@@ -554,7 +594,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
@@ -606,7 +646,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(

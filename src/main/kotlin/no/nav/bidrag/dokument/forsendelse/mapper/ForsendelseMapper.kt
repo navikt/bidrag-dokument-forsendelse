@@ -72,7 +72,6 @@ fun Dokument.tilOpprettDokumentForespørsel() =
     OpprettDokumentForespørsel(
         tittel = tittel,
         dokumentreferanse = dokumentreferanse,
-        status = this.tilDokumentStatusTo(),
         dokumentmalId = dokumentmalId,
         journalpostId = forsendelseId.toString(),
         dokumentDato = dokumentDato,

@@ -67,15 +67,12 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
         val endreTilFagområde = avvikshendelse.hentFagområde() ?: ugyldigAvviksForespørsel("forespørsel mangler fagområde")
         forsendelse.validerKanEndreForsendelse()
         forsendelse.validerKanEndreTilFagområde(endreTilFagområde)
-        val saksbehandler = saksbehandlerInfoManager.hentSaksbehandler()
         forsendelseTjeneste.lagre(
             forsendelse.copy(
                 tema = when (endreTilFagområde) {
                     Fagomrade.FARSKAP -> ForsendelseTema.FAR
                     else -> ForsendelseTema.BID
-                },
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandler?.ident ?: forsendelse.endretAvIdent
+                }
             )
         )
 
@@ -90,9 +87,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
             forsendelse.copy(
                 status = ForsendelseStatus.SLETTET,
                 avbruttAvIdent = saksbehandler?.ident,
-                avbruttTidspunkt = LocalDateTime.now(),
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandler?.ident ?: forsendelse.endretAvIdent
+                avbruttTidspunkt = LocalDateTime.now()
             )
         )
 
@@ -107,9 +102,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
             forsendelse.copy(
                 status = ForsendelseStatus.AVBRUTT,
                 avbruttAvIdent = saksbehandler?.ident,
-                avbruttTidspunkt = LocalDateTime.now(),
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandler?.ident ?: forsendelse.endretAvIdent
+                avbruttTidspunkt = LocalDateTime.now()
             )
         )
 

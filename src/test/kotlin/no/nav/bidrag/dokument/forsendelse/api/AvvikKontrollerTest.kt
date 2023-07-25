@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
@@ -13,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
+import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -22,10 +24,15 @@ import java.time.LocalDateTime
 class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
-    fun `Skal hente avvik for forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+    fun `Skal hente avvik for forsendelse med status UNDER_PRODUKSJON`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                status = ForsendelseStatus.UNDER_PRODUKSJON,
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+                )
+            )
+        )
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
@@ -37,49 +44,86 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal utføre avvik FEILFORE_SAK for forsendelse`() {
-        val saksnummer = "13213213213"
-
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
-
-        testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+    fun `Skal hente avvik for forsendelse med status UNDER_OPPRETTELSE`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                status = ForsendelseStatus.UNDER_OPPRETTELSE,
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+                )
+            )
+        )
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 
-        respons.body!! shouldHaveSize 3
-        respons.body!! shouldContain AvvikType.FEILFORE_SAK
+        respons.body!! shouldHaveSize 1
+        respons.body!! shouldContain AvvikType.SLETT_JOURNALPOST
+    }
 
-        val forsendelseListe = utførHentJournalForSaksnummer(saksnummer)
-        forsendelseListe.statusCode shouldBe HttpStatus.OK
-        forsendelseListe.body!! shouldHaveSize 2
+    @Test
+    fun `Skal utføre avvik FEILFORE_SAK for forsendelse`() {
+        val saksnummer = "13213213213"
+
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                saksnummer = saksnummer,
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+                )
+            )
+        )
+
+        testDataManager
+            .lagreForsendelse(
+                opprettForsendelse2(
+                    saksnummer = saksnummer,
+                    endretAvIdent = "",
+                    dokumenter = listOf(
+                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+                    )
+                )
+            )
+
+
+        assertSoftly("Valider før utført avvik") {
+            val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
+            respons.statusCode shouldBe HttpStatus.OK
+
+            respons.body!! shouldHaveSize 3
+            respons.body!! shouldContain AvvikType.FEILFORE_SAK
+
+            val forsendelseListe = utførHentJournalForSaksnummer(saksnummer)
+            forsendelseListe.statusCode shouldBe HttpStatus.OK
+            forsendelseListe.body!! shouldHaveSize 2
+        }
 
         val responsUtfør = utførAvbrytForsendelseAvvik(forsendelse.forsendelseId.toString())
         responsUtfør.statusCode shouldBe HttpStatus.OK
 
-        val responsEtter = utførHentAvvik(forsendelse.forsendelseId.toString())
-        responsEtter.statusCode shouldBe HttpStatus.OK
+        assertSoftly("Valider etter utført avvik") {
+            val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
+            respons.statusCode shouldBe HttpStatus.OK
 
-        responsEtter.body!! shouldHaveSize 0
+            respons.body!! shouldHaveSize 0
 
-        val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
+            val forsendelseListe = utførHentJournalForSaksnummer(saksnummer)
+            forsendelseListe.statusCode shouldBe HttpStatus.OK
+            forsendelseListe.body!! shouldHaveSize 2
 
-        forsendelseEtter!!.status shouldBe ForsendelseStatus.AVBRUTT
-        forsendelseEtter.avbruttAvIdent shouldBe SAKSBEHANDLER_IDENT
-        forsendelseEtter.avbruttTidspunkt shouldNotBe null
-        forsendelseEtter.avbruttTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            forsendelseListe.body!!.filter { it.journalstatus == Journalstatus.FEILREGISTRERT } shouldHaveSize 1
+        }
 
-        val forsendelseListeEtter = utførHentJournalForSaksnummer(saksnummer)
-        forsendelseListeEtter.statusCode shouldBe HttpStatus.OK
-        forsendelseListeEtter.body!! shouldHaveSize 2
+        assertSoftly("Valider forsendelse etter utført avvik") {
+            val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
 
-        forsendelseListeEtter.body!!.filter { it.journalstatus == Journalstatus.FEILREGISTRERT } shouldHaveSize 1
+            forsendelseEtter!!.status shouldBe ForsendelseStatus.AVBRUTT
+            forsendelseEtter.avbruttAvIdent shouldBe SAKSBEHANDLER_IDENT
+            forsendelseEtter.avbruttTidspunkt shouldNotBe null
+            forsendelseEtter.avbruttTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            forsendelseEtter.endretAvIdent shouldBe SAKSBEHANDLER_IDENT
+            forsendelseEtter.endretTidspunkt shouldHaveSameDayAs LocalDateTime.now()
+        }
     }
 
     @Test
@@ -232,11 +276,12 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     @ParameterizedTest
     @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON", "UNDER_OPPRETTELSE"], mode = EnumSource.Mode.EXCLUDE)
     fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus) {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med status status
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
-
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                status = status,
+                dokumenter = listOf(nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"))
+            )
+        )
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 

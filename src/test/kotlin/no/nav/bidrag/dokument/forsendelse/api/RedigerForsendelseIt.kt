@@ -4,7 +4,6 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
@@ -113,25 +112,6 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
             dokumentMetadataEtterOpphev[0].dokumentreferanse shouldBe "123213213"
 
         }
-    }
-
-    fun utførHentDokumentMetadata(
-        forsendelseId: String,
-        dokumentreferanse: String
-    ): ResponseEntity<List<DokumentMetadata>> {
-        return httpHeaderTestRestTemplate.optionsForEntity<List<DokumentMetadata>>(
-            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
-        )
-
-    }
-
-    fun utførHentDokument(
-        forsendelseId: String,
-        dokumentreferanse: String,
-    ): ResponseEntity<ByteArray> {
-        return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
-            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
-        )
     }
 
     fun utførOpphevFerdigstillDokument(

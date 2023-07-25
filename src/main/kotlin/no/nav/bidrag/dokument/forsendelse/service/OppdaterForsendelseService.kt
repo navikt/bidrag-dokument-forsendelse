@@ -2,22 +2,20 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.toForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
-import no.nav.bidrag.dokument.forsendelse.mapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
-import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -59,6 +57,7 @@ class OppdaterForsendelseService(
         forespørsel.validerGyldigEndring(forsendelse)
 
         log.info { "Oppdaterer forsendelse $forsendelseId" }
+        SIKKER_LOGG.info { "Oppdaterer forsendelse $forsendelseId for forespørsel $forespørsel" }
 
         val oppdatertForsendelse = if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) {
             val mottaker = forespørsel.mottaker?.let {
@@ -320,20 +319,20 @@ class OppdaterForsendelseService(
         dokumentTjeneste.lagreDokumenter(listOf(nyOriginalDokument) + oppdatertLenketDokumenter)
     }
 
-    private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
-        val dokumentForsendelse =
-            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
-                ?: return listOf(this.tilOpprettDokumentForespørsel())
+//    private fun OppdaterDokumentForespørsel.konverterTilOpprettDokumentForespørselMedOriginalLenketDokumenter(): List<OpprettDokumentForespørsel> {
+//        val dokumentForsendelse =
+//            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
+//                ?: return listOf(this.tilOpprettDokumentForespørsel())
+//
+//        return if (this.dokumentreferanse.isNullOrEmpty()) {
+//            dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
+//        } else {
+//            val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
+//            listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
+//        }
+//    }
 
-        return if (this.dokumentreferanse.isNullOrEmpty()) {
-            dokumentForsendelse.dokumenter.map { dok -> dok.opprettDokumentForespørselMedOriginalDokument() }
-        } else {
-            val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!
-            listOf(dokumentLenket.opprettDokumentForespørselMedOriginalDokument())
-        }
-    }
-
-    private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumentTjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
+//    private fun Dokument.opprettDokumentForespørselMedOriginalDokument() = dokumentTjeneste.hentOriginalDokument(this).tilOpprettDokumentForespørsel()
 
     fun opphevFerdigstillingAvDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)

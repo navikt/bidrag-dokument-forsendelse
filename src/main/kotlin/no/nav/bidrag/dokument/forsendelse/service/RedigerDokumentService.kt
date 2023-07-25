@@ -140,10 +140,10 @@ class RedigerDokumentService(
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
         val respons = dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
-        return lagreKryptreringnøkkelVersjon(oppdaterteDokumenter, dokumentreferanse, respons).sortertEtterRekkefølge
+        return lagreGcpMetadata(oppdaterteDokumenter, dokumentreferanse, respons).sortertEtterRekkefølge
     }
 
-    private fun lagreKryptreringnøkkelVersjon(
+    private fun lagreGcpMetadata(
         dokumenter: List<Dokument>,
         dokumentreferanse: String,
         lagreFilResponse: LagreFilResponse

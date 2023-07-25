@@ -3,6 +3,10 @@ management:
     web:
       exposure:
         include: "prometheus,health"
+spring:
+  jackson:
+    deserialization:
+      READ_UNKNOWN_ENUM_VALUES_AS_NULL: true
 #spring:
 #  jpa:
 #    properties:

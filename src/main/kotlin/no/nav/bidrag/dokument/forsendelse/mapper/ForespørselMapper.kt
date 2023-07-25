@@ -1,7 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalpostId
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
@@ -77,22 +75,12 @@ object ForespørselMapper {
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
         this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
 
+    fun OpprettDokumentForespørsel.erFraAnnenKilde() = !(dokumentreferanse == null && journalpostId == null)
     fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (bestillDokument && this.erBestillingAvNyttDokument()) {
         DokumentStatus.IKKE_BESTILT
     } else if (this.erBestillingAvNyttDokument()) {
         DokumentStatus.UNDER_PRODUKSJON
-    } else {
-        when (this.status) {
-            DokumentStatusTo.BESTILLING_FEILET -> DokumentStatus.BESTILLING_FEILET
-            DokumentStatusTo.IKKE_BESTILT -> DokumentStatus.IKKE_BESTILT
-            DokumentStatusTo.AVBRUTT -> DokumentStatus.AVBRUTT
-            DokumentStatusTo.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
-            DokumentStatusTo.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
-            DokumentStatusTo.UNDER_PRODUKSJON -> DokumentStatus.UNDER_PRODUKSJON
-            DokumentStatusTo.MÅ_KONTROLLERES -> DokumentStatus.MÅ_KONTROLLERES
-            DokumentStatusTo.KONTROLLERT -> DokumentStatus.KONTROLLERT
-        }
-    }
+    } else DokumentStatus.MÅ_KONTROLLERES
 
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
         forsendelse = forsendelse,
@@ -107,14 +95,13 @@ object ForespørselMapper {
         rekkefølgeIndeks = indeks
     )
 
-    fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel(status: DokumentStatusTo? = null, arkivSystem: DokumentArkivSystemDto? = null) =
+    fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel() =
         OpprettDokumentForespørsel(
             tittel = tittel ?: "",
             dokumentreferanse = dokumentreferanse,
-            status = status ?: DokumentStatusTo.MÅ_KONTROLLERES,
             dokumentmalId = dokumentmalId,
             journalpostId = journalpostId,
             dokumentDato = dokumentDato,
-            arkivsystem = arkivSystem ?: this.arkivsystem
+            arkivsystem = this.arkivsystem
         )
 }

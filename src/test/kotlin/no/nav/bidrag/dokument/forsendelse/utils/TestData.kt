@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.utils
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.bidrag.behandling.felles.dto.vedtak.EngangsbelopDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.GrunnlagDto
@@ -13,6 +14,8 @@ import no.nav.bidrag.behandling.felles.enums.VedtakKilde
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
+import no.nav.bidrag.dokument.dto.DokumentHendelse
+import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
@@ -48,6 +51,7 @@ import no.nav.bidrag.domain.string.Saksnummer
 import no.nav.bidrag.domain.tid.OpprettetDato
 import no.nav.bidrag.transport.sak.BidragssakDto
 import no.nav.bidrag.transport.sak.RolleDto
+import org.junit.Assert
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -91,6 +95,15 @@ val ADRESSE_LANDKODE = "NO"
 val SPRÅK_NORSK_BOKMÅL = "NB"
 
 val NY_JOURNALPOSTID = "12312312312"
+
+fun jsonToString(data: Any): String {
+    return try {
+        ObjectMapper().findAndRegisterModules().writeValueAsString(data)
+    } catch (e: JsonProcessingException) {
+        Assert.fail(e.message)
+        ""
+    }
+}
 
 @DslMarker
 annotation class OpprettForsendelseTestdataDsl
@@ -201,7 +214,8 @@ fun opprettForsendelse2(
     tittel: String? = null,
     mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN),
     dokumenter: List<Dokument> = listOf(),
-    behandlingInfo: BehandlingInfo? = null
+    behandlingInfo: BehandlingInfo? = null,
+    endretAvIdent: String = SAKSBEHANDLER_IDENT
 ): Forsendelse {
     val forsendelse = Forsendelse(
         forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
@@ -216,7 +230,7 @@ fun opprettForsendelse2(
         tema = tema,
         opprettetAvIdent = SAKSBEHANDLER_IDENT,
         opprettetAvNavn = SAKSBEHANDLER_NAVN,
-        endretAvIdent = SAKSBEHANDLER_IDENT,
+        endretAvIdent = endretAvIdent,
         dokumenter = dokumenter,
         journalpostIdFagarkiv = arkivJournalpostId,
         distribusjonBestillingsId = distribusjonBestillingsId,
@@ -266,6 +280,16 @@ fun nyttDokument(
         slettetTidspunkt = if (slettet) LocalDate.now() else null,
         dokumentDato = dokumentDato
 
+    )
+}
+
+fun opprettHendelse(dokumentreferanse: String, status: DokumentStatusDto = DokumentStatusDto.UNDER_REDIGERING): DokumentHendelse {
+    return DokumentHendelse(
+        dokumentreferanse = dokumentreferanse,
+        arkivSystem = DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER,
+        hendelseType = DokumentHendelseType.ENDRING,
+        sporingId = "sporing",
+        status = status
     )
 }
 

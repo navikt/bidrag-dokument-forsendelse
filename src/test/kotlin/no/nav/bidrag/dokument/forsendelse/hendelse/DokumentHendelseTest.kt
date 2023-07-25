@@ -7,9 +7,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.JournalpostType
@@ -21,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.awaitility.kotlin.await
@@ -40,16 +38,6 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
     @BeforeEach
     fun resetSpys() {
         clearAllMocks()
-    }
-
-    private fun opprettHendelse(dokumentreferanse: String, status: DokumentStatusDto = DokumentStatusDto.UNDER_REDIGERING): DokumentHendelse {
-        return DokumentHendelse(
-            dokumentreferanse = dokumentreferanse,
-            arkivSystem = DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER,
-            hendelseType = DokumentHendelseType.ENDRING,
-            sporingId = "sporing",
-            status = status
-        )
     }
 
     @Test

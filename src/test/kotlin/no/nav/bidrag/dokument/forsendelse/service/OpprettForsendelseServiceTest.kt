@@ -11,16 +11,25 @@ import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BP
+import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
+import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
+import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.jupiter.api.BeforeEach
@@ -50,6 +59,15 @@ class OpprettForsendelseServiceTest {
     lateinit var saksbehandlerInfoManager: SaksbehandlerInfoManager
 
     @MockkBean
+    lateinit var vedtakConsumer: BidragVedtakConsumer
+
+    @MockkBean
+    lateinit var behandlingConsumer: BidragBehandlingConsumer
+
+    @MockkBean
+    lateinit var sakService: SakService
+
+    @MockkBean
     lateinit var forsendelseTittelService: ForsendelseTittelService
     var opprettForsendelseService: OpprettForsendelseService? = null
 
@@ -72,6 +90,9 @@ class OpprettForsendelseServiceTest {
         every { dokumenttjeneste.opprettNyttDokument(any(), any<List<OpprettDokumentForespørsel>>()) } returns emptyList()
         every { forsendelseTjeneste.lagre(any()) } returns opprettForsendelse2()
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns emptyMap()
+        every { sakService.hentSak(any()) } returns opprettSak()
+        every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
+        every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
     }
 
     @Test
@@ -92,6 +113,107 @@ class OpprettForsendelseServiceTest {
                 it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
                 it.behandlingInfo!!.stonadType shouldBe null
                 it.behandlingInfo!!.engangsBelopType shouldBe null
+            })
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med forsendelse tittel`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = TITTEL_HOVEDDOKUMENT,
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
+                ),
+            ),
+            opprettTittel = true,
+            gjelderIdent = GJELDER_IDENT_BP,
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = null,
+                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = VedtakType.FASTSETTELSE
+            )
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(withArg {
+                it.tittel shouldBe "Vedtak om bidrag"
+            })
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med status under opprettelse hvis det ikke er noe dokumenter`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = emptyList(),
+            opprettTittel = true,
+            gjelderIdent = GJELDER_IDENT_BP,
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = null,
+                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = VedtakType.FASTSETTELSE
+            )
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(withArg {
+                it.status shouldBe ForsendelseStatus.UNDER_OPPRETTELSE
+            })
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med status under produksjon hvis det opprettes med dokumenter`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = TITTEL_HOVEDDOKUMENT,
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
+                ),
+            ),
+            opprettTittel = true,
+            gjelderIdent = GJELDER_IDENT_BP,
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = null,
+                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = VedtakType.FASTSETTELSE
+            )
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(withArg {
+                it.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
+            })
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse uten forsendelse tittel`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = TITTEL_HOVEDDOKUMENT,
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
+                ),
+            ),
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = null,
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+                vedtakType = VedtakType.FASTSETTELSE
+            )
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(withArg {
+                it.tittel shouldBe null
             })
         }
     }

@@ -6,6 +6,7 @@ import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.Avvikshendelse
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
@@ -43,6 +44,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     fun setupMocks() {
         stubUtils.stubHentPersonSpraak()
         stubUtils.stubHentPerson()
+        stubUtils.stubHentSak()
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
@@ -148,6 +150,24 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
                 ),
                 headers
             )
+        )
+    }
+
+    fun utførHentDokumentMetadata(
+        forsendelseId: String,
+        dokumentreferanse: String? = null
+    ): ResponseEntity<List<DokumentMetadata>> {
+        return httpHeaderTestRestTemplate.optionsForEntity<List<DokumentMetadata>>(
+            "${rootUri()}/dokument/$forsendelseId${dokumentreferanse?.let { "/$it" }}"
+        )
+    }
+
+    fun utførHentDokument(
+        forsendelseId: String,
+        dokumentreferanse: String,
+    ): ResponseEntity<ByteArray> {
+        return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
+            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
         )
     }
 }

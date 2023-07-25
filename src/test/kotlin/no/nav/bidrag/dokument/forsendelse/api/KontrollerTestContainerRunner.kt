@@ -7,10 +7,12 @@ import com.google.cloud.storage.StorageOptions
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
@@ -78,6 +80,12 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         )
     }
 
+    protected fun utførHentForsendelse(forsendelseId: String, saksnummer: String? = null): ResponseEntity<ForsendelseResponsTo> {
+        return httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
+            "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}"
+        )
+    }
+
     protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
         return httpHeaderTestRestTemplate.getForEntity<JournalpostResponse>("${rootUri()}/journal/$forsendelseId")
     }
@@ -101,6 +109,24 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         return httpHeaderTestRestTemplate.patchForEntity<DokumentRespons>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill",
             HttpEntity(request)
+        )
+    }
+
+    fun utførHentDokumentMetadata(
+        forsendelseId: String,
+        dokumentreferanse: String
+    ): ResponseEntity<List<DokumentMetadata>> {
+        return httpHeaderTestRestTemplate.optionsForEntity<List<DokumentMetadata>>(
+            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
+        )
+    }
+
+    fun utførHentDokument(
+        forsendelseId: String,
+        dokumentreferanse: String,
+    ): ResponseEntity<ByteArray> {
+        return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
+            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
         )
     }
 }

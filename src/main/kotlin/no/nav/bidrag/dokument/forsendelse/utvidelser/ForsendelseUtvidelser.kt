@@ -3,6 +3,8 @@ package no.nav.bidrag.dokument.forsendelse.utvidelser
 import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
 import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
 import no.nav.bidrag.behandling.felles.enums.StonadType
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
+import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
@@ -50,15 +52,35 @@ fun Rolletype.toName(): String? {
     }
 }
 
-fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null): String {
-    val behandlingType = when (stonadType) {
+fun BehandlingDto.tilStonadtype(): StonadType? {
+    return try {
+        behandlingType.let { StonadType.valueOf(it) }
+    } catch (e: Exception) {
+        null
+    }
+}
+
+fun BehandlingDto.tilEngangsbelopType(): EngangsbelopType? {
+    return try {
+        behandlingType.let { EngangsbelopType.valueOf(it) }
+    } catch (e: Exception) {
+        null
+    }
+}
+
+fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {
+    val stonadTypeValue =
+        vedtak?.stonadsendringListe?.isNotEmpty()?.ifTrue { vedtak.stonadsendringListe[0].type } ?: behandling?.tilStonadtype() ?: stonadType
+    val engangsBelopTypeValue =
+        vedtak?.engangsbelopListe?.isNotEmpty()?.ifTrue { vedtak.engangsbelopListe[0].type } ?: behandling?.tilEngangsbelopType() ?: engangsBelopType
+    val behandlingType = when (stonadTypeValue) {
         StonadType.FORSKUDD -> "Forskudd"
         StonadType.BIDRAG -> "Bidrag"
         StonadType.BIDRAG18AAR -> "Bidrag 18 år"
         StonadType.EKTEFELLEBIDRAG -> "Ektefellebidrag"
         StonadType.OPPFOSTRINGSBIDRAG -> "Oppfostringbidrag"
         StonadType.MOTREGNING -> "Motregning"
-        else -> when (engangsBelopType) {
+        else -> when (engangsBelopTypeValue) {
             EngangsbelopType.SAERTILSKUDD -> "Særtilskudd"
             EngangsbelopType.DIREKTE_OPPGJOR -> "Direkte oppgjør"
             EngangsbelopType.ETTERGIVELSE -> "Ettergivelse"
@@ -69,7 +91,7 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null):
             else -> behandlingType?.lowercase()?.replaceFirstChar { it.uppercase() }
         }
     }
-        ?: vedtak?.let { if (vedtak.stonadsendringListe.isNotEmpty()) vedtak.stonadsendringListe[0].type.name else vedtak.engangsbelopListe[0].type.name }
+
 
     val stringBuilder = mutableListOf<String>()
     if (vedtakId.isNotNullOrEmpty() || erFattetBeregnet != null) {

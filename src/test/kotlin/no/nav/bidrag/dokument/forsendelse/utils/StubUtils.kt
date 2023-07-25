@@ -233,12 +233,12 @@ class StubUtils {
         )
     }
 
-    fun stubBestillDistribusjon(bestillingId: String) {
+    fun stubBestillDistribusjon(bestillingId: String, journalpostId: String = "324324234") {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/dokument/journal/distribuer/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withBody(jsonToString(DistribuerJournalpostResponse("324324234", bestillingId)))
+                    .withBody(jsonToString(DistribuerJournalpostResponse(journalpostId, bestillingId)))
             )
         )
     }
