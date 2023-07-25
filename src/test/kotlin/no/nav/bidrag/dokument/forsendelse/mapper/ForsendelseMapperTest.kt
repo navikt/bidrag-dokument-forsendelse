@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -93,6 +94,7 @@ class ForsendelseMapperTest {
             val dokumenter = journalpostResponse.dokumenter
             val dokument1 = dokumenter[0]
             dokument1.dokumentreferanse shouldBe forsendelse.dokumenter[1].dokumentreferanse
+            dokument1.journalpostId shouldBe forsendelse.forsendelseIdMedPrefix
             dokument1.status shouldBe DokumentStatusDto.UNDER_REDIGERING
             dokument1.tittel shouldBe forsendelse.dokumenter[1].tittel
             dokument1.arkivSystem shouldBe DokumentArkivSystemDto.JOARK
@@ -103,6 +105,7 @@ class ForsendelseMapperTest {
             val dokumenter = journalpostResponse.dokumenter
             val dokument1 = dokumenter[2]
             dokument1.dokumentreferanse shouldBe forsendelse.dokumenter[2].dokumentreferanse
+            dokument1.journalpostId shouldBe forsendelse.forsendelseIdMedPrefix
             dokument1.status shouldBe DokumentStatusDto.UNDER_REDIGERING
             dokument1.tittel shouldBe forsendelse.dokumenter[2].tittel
             dokument1.dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE

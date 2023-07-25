@@ -150,7 +150,7 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { dokument ->
         DokumentDto(
             dokumentreferanse = dokument.dokumentreferanse,
-            journalpostId = dokument.forsendelseId.toString(),
+            journalpostId = dokument.forsendelseIdMedPrefix,
             arkivSystem = dokument.tilArkivSystemDto(),
             metadata = dokumenterMetadata?.get(dokument.dokumentreferanse)?.toMap() ?: emptyMap(),
             tittel = dokument.tittel,

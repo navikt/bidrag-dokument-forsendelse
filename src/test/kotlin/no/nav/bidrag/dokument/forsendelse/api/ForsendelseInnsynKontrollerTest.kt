@@ -12,7 +12,6 @@ import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.JournalpostDto
-import no.nav.bidrag.dokument.dto.numeric
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
@@ -273,7 +272,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             val hoveddokument = forsendelseResponse.dokumenter[0]
             hoveddokument.tittel shouldBe TITTEL_HOVEDDOKUMENT
             hoveddokument.arkivSystem shouldBe DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
-            hoveddokument.journalpostId shouldBe forsendelseResponse.journalpostId?.numeric.toString()
+            hoveddokument.journalpostId shouldBe forsendelseResponse.journalpostId
             hoveddokument.dokumentmalId shouldBe HOVEDDOKUMENT_DOKUMENTMAL
             hoveddokument.dokumentreferanse shouldBe forsendelse.dokumenter[0].dokumentreferanse
         }
