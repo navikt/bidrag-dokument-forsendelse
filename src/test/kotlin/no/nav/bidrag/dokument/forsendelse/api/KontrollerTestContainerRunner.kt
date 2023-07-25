@@ -58,6 +58,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     fun initBucket() {
         val storage = StorageOptions.newBuilder()
             .setHost(host)
+            .setProjectId("bidrag-local")
             .setCredentials(NoCredentials.getInstance()).build()
         try {
             storage.service.create(BucketInfo.of(bucketNavn))
