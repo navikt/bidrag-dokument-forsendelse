@@ -62,7 +62,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         try {
             storage.service.create(BucketInfo.of(bucketNavn))
         } catch (e: Exception) {
-            log.error(e) { "Failed while creating bucket" }
+            log.error(e) { "Failed while creating bucket. Host = $host" }
         }
     }
 
