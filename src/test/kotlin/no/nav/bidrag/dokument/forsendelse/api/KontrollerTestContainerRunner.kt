@@ -1,9 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.NoCredentials
 import com.google.cloud.storage.BucketInfo
 import com.google.cloud.storage.StorageOptions
+import mu.KotlinLogging
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.ResponseEntity
+
+private val log = KotlinLogging.logger {}
 
 abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     @LocalServerPort
@@ -56,10 +58,11 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     fun initBucket() {
         val storage = StorageOptions.newBuilder()
             .setHost(host)
-            .setCredentials(if (host != null) NoCredentials.getInstance() else GoogleCredentials.getApplicationDefault()).build()
+            .setCredentials(NoCredentials.getInstance()).build()
         try {
             storage.service.create(BucketInfo.of(bucketNavn))
         } catch (e: Exception) {
+            log.error(e) { "Failed while creating bucket" }
         }
     }
 
