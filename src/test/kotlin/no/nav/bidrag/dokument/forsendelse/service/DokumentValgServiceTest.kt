@@ -261,6 +261,57 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for varsling revurdering bidrag`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.REVURDERING,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = null
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 13
+            dokumentValgListe shouldContainKey "BI01S06"
+            dokumentValgListe shouldContainKey "BI01S07"
+            dokumentValgListe shouldContainKey "BI01S31"
+            dokumentValgListe shouldContainKey "BI01S32"
+            dokumentValgListe shouldContainKey "BI01S34"
+            dokumentValgListe shouldContainKey "BI01S35"
+            dokumentValgListe shouldContainKey "BI01S36"
+            dokumentValgListe shouldContainKey "BI01S46"
+            dokumentValgListe shouldContainKey "BI01S62"
+            dokumentValgListe shouldContainKey "BI01S63"
+            dokumentValgListe shouldContainKey "BI01S65"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak revurdering bidrag`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.REVURDERING,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = true
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01B01"
+            dokumentValgListe shouldContainKey "BI01B04"
+            dokumentValgListe shouldContainKey "BI01B05"
+            dokumentValgListe shouldContainKey "BI01B20"
+            dokumentValgListe shouldContainKey "BI01B21"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for vedtak bidrag klage`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
