@@ -1,0 +1,517 @@
+{
+  "BI01P11": {
+    "beskrivelse": "NOTAT P11 T",
+    "type": "NOTAT",
+    "kanBestilles": true
+  },
+  "BI01P18": {
+    "beskrivelse": "Saksbehandlingsnotat",
+    "type": "NOTAT",
+    "kanBestilles": true
+  },
+  "BI01X01": {
+    "beskrivelse": "REFERAT FRA SAMTALE",
+    "type": "NOTAT",
+    "kanBestilles": true
+  },
+  "BI01X02": {
+    "beskrivelse": "ELEKTRONISK DIALOG",
+    "type": "NOTAT",
+    "kanBestilles": true
+  },
+  "BI01S10": {
+    "beskrivelse": "KOPIFORSIDE T",
+    "type": "UTGÅENDE",
+    "kanBestilles": true
+  },
+  "BI01S67": {
+    "beskrivelse": "ADRESSEFORESPØRSEL",
+    "type": "UTGÅENDE",
+    "kanBestilles": true
+  },
+  "BI01S02": {
+    "beskrivelse": "Fritekstbrev",
+    "type": "UTGÅENDE",
+    "kanBestilles": true
+  },
+  "BI01A50": {
+    "beskrivelse": "Klage - Vedtak bidragsforskudd",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01A01": {
+    "beskrivelse": "Vedtak bidragsforskudd",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01A04": {
+    "beskrivelse": "Revurdering forskudd settes ned",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S08": {
+    "beskrivelse": "Varsel revurd forskudd",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S27": {
+    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S28": {
+    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S29": {
+    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S30": {
+    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01G01": {
+    "beskrivelse": "Vedtak innkrev. barnebidrag og gjeld",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01G02": {
+    "beskrivelse": "Vedtak innkreving opphør",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S19": {
+    "beskrivelse": "Innkreving varsel til motparten",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B50": {
+    "beskrivelse": "Klage - Vedtak barnebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01G50": {
+    "beskrivelse": "Klage - vedtak innkreving",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01P17": {
+    "beskrivelse": "Innstilling til klageinstans",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S20": {
+    "beskrivelse": "NAV har mottatt klage på vedtak",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S21": {
+    "beskrivelse": "Du har klaget på vedtaket",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S60": {
+    "beskrivelse": "Infobrev til partene oversendelse klageinstans",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S61": {
+    "beskrivelse": "Innhenting opplysninger paragraf 10 i barnelova",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S64": {
+    "beskrivelse": "Varsel klage fvt 35",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S65": {
+    "beskrivelse": "Varsel om motregning",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B10": {
+    "beskrivelse": "Opphørsvedtak",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S07": {
+    "beskrivelse": "Fastsettelse eget tiltak varsel til BP",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B01": {
+    "beskrivelse": "Vedtak barnebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B04": {
+    "beskrivelse": "Revurdering Bidrags pga forskudd",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B20": {
+    "beskrivelse": "Vedtak utland skjønn fastsettelse",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B21": {
+    "beskrivelse": "Vedtak utland skjønn endring",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S06": {
+    "beskrivelse": "Varsel eget tiltak nyfødt barn",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S31": {
+    "beskrivelse": "Fasts. eget tiltak uten innkr varsel til partene",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S32": {
+    "beskrivelse": "Fastsettelse eget tiltak varsel til BM",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S33": {
+    "beskrivelse": "Endring varsel eget tiltak pga 25%",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S34": {
+    "beskrivelse": "Endring varsel eget tiltak pga barnetillegg",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S35": {
+    "beskrivelse": "Endring varsel eget tiltak pga forholds fordel",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S36": {
+    "beskrivelse": "Endring varsel eget tiltak pga forsørgingstillegg",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S46": {
+    "beskrivelse": "Varsel oppfostringsbidrag forholdsmessig fordeling",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S62": {
+    "beskrivelse": "Fastsettelse bidrag barnetillegg varsel partene",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S63": {
+    "beskrivelse": "Fastsettelse bidrag forsørgingstillegg varsel",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S22": {
+    "beskrivelse": "Revurd bidrag pga FO til BM",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S23": {
+    "beskrivelse": "Revurd bidrag pga FO til BP",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S01": {
+    "beskrivelse": "NAV har mottatt søknad om barnebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S12": {
+    "beskrivelse": "Du har søkt om barnebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S52": {
+    "beskrivelse": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S53": {
+    "beskrivelse": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S13": {
+    "beskrivelse": "Du har søkt om barnebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B02": {
+    "beskrivelse": "Vedtak tilleggsbidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S05": {
+    "beskrivelse": "NAV har mottatt søknad om sletting av bidragsgjeld",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S14": {
+    "beskrivelse": "Du har søkt om endring av barnebidraget",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S26": {
+    "beskrivelse": "Endring varsel til motparten",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S47": {
+    "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S48": {
+    "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S49": {
+    "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01I50": {
+    "beskrivelse": "Klage - vedtak ektefellebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01I01": {
+    "beskrivelse": "Vedtak ektefellebidrag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S43": {
+    "beskrivelse": "Fastsettelse ektefellebidrag orientering",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S44": {
+    "beskrivelse": "Fastsettelse ektefellebidrag varsel til BP",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S37": {
+    "beskrivelse": "Bortfall ektefellebidrag BP død orientering til BM",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S38": {
+    "beskrivelse": "Bortfall ektefellebidrag orientering til partene",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S39": {
+    "beskrivelse": "Bortfall ektefellebidrag nytt ekteskap orientering",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S41": {
+    "beskrivelse": "Vedtak - bortfall nytt ekteskap",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S42": {
+    "beskrivelse": "Endring ektefellebidrag orientering til søkeren",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S45": {
+    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01H01": {
+    "beskrivelse": "Farskap innkalling mor",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01H03": {
+    "beskrivelse": "Melding om blodprøver i farskapsak",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01H04": {
+    "beskrivelse": "Pålegg om å framstille barn for å gi blodprøve",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01H05": {
+    "beskrivelse": "Pålegg om blodprøve i farskapssak",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01H02": {
+    "beskrivelse": "Innkalling farskapssak oppgitt far",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01J50": {
+    "beskrivelse": "Klage - vedtak gebyr",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S03": {
+    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01K50": {
+    "beskrivelse": "Klage - vedtak tilbakekreving",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01A05": {
+    "beskrivelse": "Vedtak ikke tilbakekreving",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01G04": {
+    "beskrivelse": "Vedtak innkreving særtilskudd",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01E50": {
+    "beskrivelse": "Klage - vedtak bidrag til særlige utgifter",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01E01": {
+    "beskrivelse": "Vedtak bidrag til særlige utgifter",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01E02": {
+    "beskrivelse": "Vedtak særtilskudd avslag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01E03": {
+    "beskrivelse": "Vedtak bidrag til særlige utgifter tannregulering",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S04": {
+    "beskrivelse": "NAV har mottatt søknad om bidrag til særlige utgifter",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S18": {
+    "beskrivelse": "Du har søkt om bidrag til særlige utgifter",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01F50": {
+    "beskrivelse": "Klage - vedtak ettergivelse gjeld",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01F01": {
+    "beskrivelse": "Vedtak ettergivelse innvilget",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01F02": {
+    "beskrivelse": "Vedtak ettergivelse avslag",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S17": {
+    "beskrivelse": "Informasjon om din søknad om sletting av bidragsgjeld",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S50": {
+    "beskrivelse": "Ettergivelse oppfostringsbidrag orientering til BP",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S51": {
+    "beskrivelse": "Ettergivelse oppfostringsbidrag varsel kommune",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01A02": {
+    "beskrivelse": "Vedtak tilbakekreving",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S54": {
+    "beskrivelse": "Varsel om tilbakekreving av bidragsforskudd",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S55": {
+    "beskrivelse": "Varsel tilb.kr. paragraf 2 - partene bor sammen",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S56": {
+    "beskrivelse": "Varsel tilb.kr. paragraf 2 ikke opphold i Riket",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S57": {
+    "beskrivelse": "Varsel tilb.kr. NAV paragraf 3 direkte betalinger",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S58": {
+    "beskrivelse": "Varsel tilb.kr. NAV paragraf 6 ikke omsorg",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S59": {
+    "beskrivelse": "Informasjon om din søknad om sletting av bidragsgjeld",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S24": {
+    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B03": {
+    "beskrivelse": "Vedtak barnebidrag etter fylte 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S15": {
+    "beskrivelse": "Du har søkt om barnebidrag etter fylte 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S16": {
+    "beskrivelse": "Du har søkt om barnebidrag etter fylte 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B11": {
+    "beskrivelse": "Vedtak tilleggsbidrag over 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01B05": {
+    "beskrivelse": "VEDTAK AUTOMATISK JUSTERING BARNEBIDRAG",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  },
+  "BI01S09": {
+    "beskrivelse": "Varsel om opphør barnebidrag etter fylte 18 år",
+    "type": "UTGÅENDE",
+    "kanBestilles": false
+  }
+}

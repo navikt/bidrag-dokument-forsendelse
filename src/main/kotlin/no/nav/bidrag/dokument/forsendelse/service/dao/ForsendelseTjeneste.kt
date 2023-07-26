@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service.dao
 
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.TilgangskontrollService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt

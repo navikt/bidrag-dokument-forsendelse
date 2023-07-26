@@ -1,19 +1,18 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldNotBe
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.JournalpostHendelse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
+import no.nav.bidrag.dokument.forsendelse.utils.jsonToString
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.junit.Assert
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -108,14 +107,5 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
 
     fun sendMeldingTilDokumentHendelse(melding: DokumentHendelse) {
         configureProducer().send(ProducerRecord(topicDokument, jsonToString(melding)))
-    }
-
-    private fun jsonToString(data: Any): String {
-        return try {
-            ObjectMapper().findAndRegisterModules().writeValueAsString(data)
-        } catch (e: JsonProcessingException) {
-            Assert.fail(e.message)
-            ""
-        }
     }
 }

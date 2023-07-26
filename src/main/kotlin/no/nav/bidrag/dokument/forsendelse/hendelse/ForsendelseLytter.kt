@@ -2,8 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.forsendelse.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseHendelseBestilling
+import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener

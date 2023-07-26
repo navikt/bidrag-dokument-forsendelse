@@ -5,9 +5,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.harArkivPrefiks
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
@@ -15,6 +12,9 @@ import no.nav.bidrag.dokument.forsendelse.model.inneholderKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.validerErSann
 import no.nav.bidrag.dokument.forsendelse.model.validerIkkeNullEllerTom
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
@@ -42,10 +42,9 @@ object ForespørselValidering {
             feilmeldinger.add("Kan ikke opprette forsendelse uten gjelder")
         }
 
-        if (mottaker?.ident.isNullOrEmpty()) {
-            feilmeldinger.add("Kan ikke opprette forsendelse uten mottaker ident")
+        if (mottaker?.ident.isNullOrEmpty() && mottaker?.navn.isNullOrEmpty()) {
+            feilmeldinger.add("Kan ikke opprette forsendelse uten mottaker ident eller navn")
         }
-
         this.dokumenter.forEachIndexed { i, it ->
             feilmeldinger.addAll(it.valider(i, false))
         }
@@ -132,7 +131,7 @@ object ForespørselValidering {
     }
 
     fun Forsendelse.validerKanEndreForsendelse() {
-        if (this.status != ForsendelseStatus.UNDER_PRODUKSJON) {
+        if (this.status != ForsendelseStatus.UNDER_PRODUKSJON && this.status != ForsendelseStatus.UNDER_OPPRETTELSE) {
             throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres")
         }
     }

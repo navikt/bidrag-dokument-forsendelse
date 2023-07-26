@@ -7,21 +7,26 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
-import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.DokumentValgService
+import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
-@RequestMapping("/api/forsendelse/v2")
 @Timed
 class ForsendelseInnsynKontroller(
-    val forsendelseInnsynTjeneste: ForsendelseInnsynTjeneste,
+    val forsendelseInnsynService: ForsendelseInnsynService,
+    val dokumentValgService: DokumentValgService,
     val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
 ) {
 
@@ -40,10 +45,10 @@ class ForsendelseInnsynKontroller(
         saksnummer: String?
     ): ForsendelseResponsTo {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        return forsendelseInnsynTjeneste.hentForsendelse(forsendelseId, saksnummer)
+        return forsendelseInnsynService.hentForsendelse(forsendelseId, saksnummer)
     }
 
-    @GetMapping("/sak/{saksnummer}/journal")
+    @GetMapping("/sak/{saksnummer}/forsendelser")
     @Operation(description = "Hent alle forsendelse med saksnummer")
     @ApiResponses(
         value = [
@@ -54,12 +59,40 @@ class ForsendelseInnsynKontroller(
         ]
     )
     fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
-        return forsendelseInnsynTjeneste.hentForsendelseForSak(saksnummer)
+        return forsendelseInnsynService.hentForsendelseForSak(saksnummer)
     }
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun støttedeDokumentmaler(): List<String> {
         return bidragDokumentBestillingConsumer.støttedeDokumentmaler()
+    }
+
+    @RequestMapping("/dokumentmaler/detaljer", method = [RequestMethod.OPTIONS])
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun støttedeDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
+        return bidragDokumentBestillingConsumer.dokumentmalDetaljer()
+    }
+
+    @GetMapping("/dokumentvalg/forsendelse/{forsendelseIdMedPrefix}")
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun hentDokumentValgForForsendelse(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId
+    ): Map<String, DokumentMalDetaljer> {
+        return forsendelseInnsynService.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
+    }
+
+    @PostMapping("/dokumentvalg")
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun hentDokumentValg(
+        @RequestBody(required = false) request: HentDokumentValgRequest? = null
+    ): Map<String, DokumentMalDetaljer> {
+        return dokumentValgService.hentDokumentMalListe(request)
+    }
+
+    @GetMapping("/dokumentvalg/notat")
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun hentDokumentValgNotater(): Map<String, DokumentMalDetaljer> {
+        return dokumentValgService.hentNotatListe()
     }
 }

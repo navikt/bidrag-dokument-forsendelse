@@ -6,7 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nav.bidrag.dokument.forsendelse.consumer.KodeverkConsumer
-import no.nav.bidrag.dokument.forsendelse.database.model.KodeverkResponse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.KodeverkResponse
 import no.nav.bidrag.dokument.forsendelse.utils.TestDataManager
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach

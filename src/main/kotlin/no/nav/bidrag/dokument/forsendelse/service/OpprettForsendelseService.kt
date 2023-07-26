@@ -2,20 +2,24 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
+import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
+import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -27,7 +31,8 @@ class OpprettForsendelseService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val personConsumer: BidragPersonConsumer,
     private val dokumenttjeneste: DokumentTjeneste,
-    private val saksbehandlerInfoManager: SaksbehandlerInfoManager
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    private val forsendelseTittelService: ForsendelseTittelService
 ) {
 
     @Transactional
@@ -36,13 +41,16 @@ class OpprettForsendelseService(
         tilgangskontrollService.sjekkTilgangSak(forespørsel.saksnummer)
         val forsendelseType = hentForsendelseType(forespørsel)
         forespørsel.valider(forsendelseType)
+        SIKKER_LOGG.info { "Oppretter forsendelse for forespørsel $forespørsel med forsendelseType $forsendelseType" }
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)
 
-        val dokumenter = dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
+        val dokumenter =
+            dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
 
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
             forsendelseId = forsendelse.forsendelseId,
+            forsendelseType = forsendelse.tilForsendelseType(),
             dokumenter = dokumenter.map {
                 DokumentRespons(
                     dokumentreferanse = it.dokumentreferanse,
@@ -62,20 +70,23 @@ class OpprettForsendelseService(
 
     private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse {
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
-        val mottakerIdent = forespørsel.mottaker!!.ident!!
-        val mottakerInfo = personConsumer.hentPerson(mottakerIdent)
-        val mottakerSpråk = forespørsel.språk ?: personConsumer.hentPersonSpråk(mottakerIdent) ?: "NB"
+        val mottakerIdent = forespørsel.mottaker!!.ident
+        val mottakerInfo = mottakerIdent?.let { personConsumer.hentPerson(mottakerIdent) }
+        val mottakerSpråk = forespørsel.språk ?: mottakerIdent?.let { personConsumer.hentPersonSpråk(mottakerIdent) } ?: "NB"
         val forsendelse = Forsendelse(
             saksnummer = forespørsel.saksnummer,
             batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
             forsendelseType = forsendelseType,
             gjelderIdent = forespørsel.gjelderIdent,
+            behandlingInfo = forespørsel.tilBehandlingInfo(),
             enhet = forespørsel.enhet,
+            tittel = if (forespørsel.opprettTittel == true) forsendelseTittelService.opprettForsendelseTittel(forespørsel) else null,
             språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
             endretAvIdent = bruker?.ident ?: "UKJENT",
             opprettetAvNavn = bruker?.navn,
             mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
+            status = if (forespørsel.dokumenter.isEmpty()) ForsendelseStatus.UNDER_OPPRETTELSE else ForsendelseStatus.UNDER_PRODUKSJON,
             tema = when (forespørsel.tema) {
                 JournalTema.FAR -> ForsendelseTema.FAR
                 else -> ForsendelseTema.BID

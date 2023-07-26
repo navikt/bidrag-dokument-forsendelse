@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct
 import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.web.HttpHeaderRestTemplate
-import no.nav.bidrag.dokument.forsendelse.database.model.KodeverkResponse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.KodeverkResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RootUriTemplateHandler
 import org.springframework.cache.CacheManager

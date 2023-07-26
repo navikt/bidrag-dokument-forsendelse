@@ -1,18 +1,23 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.Avvikshendelse
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
+import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
+import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +32,10 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
 
     @Autowired
     lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
+
+    @MockkBean
+    lateinit var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent
+
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
@@ -35,12 +44,14 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     fun setupMocks() {
         stubUtils.stubHentPersonSpraak()
         stubUtils.stubHentPerson()
+        stubUtils.stubHentSak()
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
         stubUtils.stubTilgangskontrollSak()
         stubUtils.stubTilgangskontrollPerson()
         stubUtils.stubTilgangskontrollTema()
+        every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
     }
 
     @AfterEach
@@ -84,6 +95,12 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         return httpHeaderTestRestTemplate.patchForEntity<OppdaterForsendelseResponse>(
             "${rootUri()}/$forsendelseId",
             HttpEntity(oppdaterForespørsel)
+        )
+    }
+
+    protected fun utførHentForsendelse(forsendelseId: String, saksnummer: String? = null): ResponseEntity<ForsendelseResponsTo> {
+        return httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
+            "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}"
         )
     }
 
@@ -133,6 +150,24 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
                 ),
                 headers
             )
+        )
+    }
+
+    fun utførHentDokumentMetadata(
+        forsendelseId: String,
+        dokumentreferanse: String? = null
+    ): ResponseEntity<List<DokumentMetadata>> {
+        return httpHeaderTestRestTemplate.optionsForEntity<List<DokumentMetadata>>(
+            "${rootUri()}/dokument/$forsendelseId${dokumentreferanse?.let { "/$it" }}"
+        )
+    }
+
+    fun utførHentDokument(
+        forsendelseId: String,
+        dokumentreferanse: String,
+    ): ResponseEntity<ByteArray> {
+        return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
+            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
         )
     }
 }

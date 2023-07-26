@@ -7,30 +7,44 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
+import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_3
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENT_FIL
 import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettJournalpostResponse
+import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
+import no.nav.bidrag.dokument.forsendelse.utils.opprettDokumentMetadataListe
+import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
+import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.FulltNavn
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.Assert
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import java.nio.charset.StandardCharsets
 import java.util.Arrays
 
 class StubUtils {
@@ -38,11 +52,51 @@ class StubUtils {
     private val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
 
     companion object {
+        fun getDokumentMalDetaljerResponse(): MutableMap<String, DokumentMalDetaljer> {
+            val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
+            val maldetaljerInputStream = ClassPathResource("__files/maldetaljer/maldetaljer.json").inputStream
+            val text = String(maldetaljerInputStream.readAllBytes(), StandardCharsets.UTF_8)
+            val stringType = objectMapper.typeFactory.constructType(String::class.java)
+            val mapType = objectMapper.typeFactory.constructType(DokumentMalDetaljer::class.java)
+            return objectMapper.readValue(
+                text,
+                objectMapper.typeFactory.constructMapType(
+                    MutableMap::class.java,
+                    stringType,
+                    mapType
+                )
+            )
+        }
+
         fun aClosedJsonResponse(): ResponseDefinitionBuilder {
             return aResponse()
                 .withHeader(HttpHeaders.CONNECTION, "close")
                 .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
         }
+    }
+
+    fun stubBehandling(behandlingDto: BehandlingDto = opprettBehandlingDto()) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/behandling/api/behandling(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(
+                        jsonToString(behandlingDto)
+                    )
+            )
+        )
+    }
+
+    fun stubVedtak(vedtakDto: VedtakDto = opprettVedtakDto()) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/vedtak/(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(
+                        jsonToString(vedtakDto)
+                    )
+            )
+        )
     }
 
     fun stubHentPerson(
@@ -99,12 +153,52 @@ class StubUtils {
         )
     }
 
+    fun stubHentDokumentMetadata(
+        journalpostId: String? = null,
+        dokumentreferanse: String? = null,
+        response: List<DokumentMetadata> = opprettDokumentMetadataListe("123123123")
+    ) {
+        var urlMatch = WireMock.urlMatching("/dokument/dokument/(.*)")
+        if (journalpostId.isNotNullOrEmpty()) {
+            urlMatch = WireMock.urlMatching("/dokument/dokument/$journalpostId${dokumentreferanse?.let { "/$it" } ?: ""}")
+        }
+
+        WireMock.stubFor(
+            WireMock.options(urlMatch).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(jsonToString(response))
+            )
+        )
+    }
+
+    fun stubHentDokumentFraPDF() {
+        val inputstream = ClassPathResource("__files/dokument/test_dokument.pdf").inputStream
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/dokument/dokument/(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(inputstream.readAllBytes())
+            )
+        )
+    }
+
     fun stubHentDokument() {
         WireMock.stubFor(
             WireMock.get(WireMock.urlMatching("/dokument/dokument/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withBody(DOKUMENT_FIL)
+            )
+        )
+    }
+
+    fun stubHentSak() {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/sak/sak/(.*)")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(jsonToString(opprettSak()))
             )
         )
     }
@@ -139,12 +233,12 @@ class StubUtils {
         )
     }
 
-    fun stubBestillDistribusjon(bestillingId: String) {
+    fun stubBestillDistribusjon(bestillingId: String, journalpostId: String = "324324234") {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/dokument/journal/distribuer/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withBody(jsonToString(DistribuerJournalpostResponse("324324234", bestillingId)))
+                    .withBody(jsonToString(DistribuerJournalpostResponse(journalpostId, bestillingId)))
             )
         )
     }
@@ -160,18 +254,18 @@ class StubUtils {
     }
 
     fun stubBestillDokumenDetaljer() {
+        val dokumentMalDetaljerMap: MutableMap<String, DokumentMalDetaljer> = getDokumentMalDetaljerResponse()
+        dokumentMalDetaljerMap[DOKUMENTMAL_NOTAT] = DokumentMalDetaljer("Notat", DokumentMalType.NOTAT, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, false)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, false)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_2] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_3] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
         WireMock.stubFor(
             WireMock.get(WireMock.urlEqualTo("/bestilling/dokumentmal/detaljer")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withBody(
-                        jsonToString(
-                            mapOf(
-                                DOKUMENTMAL_NOTAT to DokumentMalDetaljer("Notat", DokumentMalType.NOTAT),
-                                DOKUMENTMAL_UTGÅENDE to DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE)
-                            )
-                        )
-                    )
+                    .withBody(jsonToString(dokumentMalDetaljerMap))
             )
         )
     }
@@ -218,11 +312,39 @@ class StubUtils {
     }
 
     inner class Valider {
-        fun hentDokumentKalt(journalpostId: String, dokumentreferanse: String) {
+        fun hentVedtakKalt(vedtakId: String, antallGanger: Int = 1) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/vedtak/vedtak/$vedtakId")
+            )
+            WireMock.verify(antallGanger, verify)
+        }
+
+        fun hentBehandlingKalt(behandlingId: String, antallGanger: Int = 1) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/behandling/api/behandling/$behandlingId")
+            )
+            WireMock.verify(antallGanger, verify)
+        }
+
+        fun hentDokumentKalt(journalpostId: String, dokumentreferanse: String, antallGanger: Int = 1) {
             val verify = WireMock.getRequestedFor(
                 WireMock.urlMatching("/dokument/dokument/$journalpostId/$dokumentreferanse(.*)")
             )
-            WireMock.verify(verify)
+            WireMock.verify(antallGanger, verify)
+        }
+
+        fun hentDokumentIkkeKalt() {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/dokument/(.*)")
+            )
+            WireMock.verify(0, verify)
+        }
+
+        fun hentDokumentMetadataKalt(journalpostId: String, dokumentreferanse: String? = null, antallGanger: Int = 1) {
+            val verify = WireMock.optionsRequestedFor(
+                WireMock.urlMatching("/dokument/dokument/$journalpostId${dokumentreferanse?.let { "/$it" } ?: ""}")
+            )
+            WireMock.verify(antallGanger, verify)
         }
 
         fun hentDistribusjonInfoKalt(antallGanger: Int) {

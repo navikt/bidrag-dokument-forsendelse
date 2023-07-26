@@ -1,4 +1,5 @@
 name: bidrag-dokument-forsendelse
+bucket_name: bidrag-dokument-forsendelse-prod
 ingresses:
   - https://bidrag-dokument-forsendelse.intern.nav.no
 env:
@@ -20,6 +21,12 @@ env:
   BIDRAG_PERSON_URL: https://bidrag-person.prod-fss-pub.nais.io/bidrag-person
   BIDRAG_PERSON_SCOPE: prod-fss.bidrag.bidrag-person
 
+  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak
+  BIDRAG_VEDTAK_SCOPE: prod-gcp.bidrag.bidrag-vedtak
+
+  BIDRAG_BEHANDLING_URL:  http://bidrag-behandling
+  BIDRAG_BEHANDLING_SCOPE: prod-gcp.bidrag.bidrag-behandling
+
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
@@ -28,7 +35,10 @@ env:
   LAGRE_DIST_INFO_PAGE_SIZE: 500
   LAGRE_DIST_INFO_CRON: "0 0 */12 * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 0 */12 * * ?"
+  REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
+  REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 * * * * *"
   OPPDATER_DIST_STATUS_ENABLED: true
+  GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-prod-8f72/locations/europe-north1/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false
@@ -38,6 +48,8 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
+   - bidrag-vedtak
+   - bidrag-behandling
 outbound-access-hosts:
    - bidrag-dokument.prod-fss-pub.nais.io
    - bidrag-person.prod-fss-pub.nais.io

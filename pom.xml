@@ -15,7 +15,7 @@
   <name>bidrag-dokument-forsendelse</name>
   <properties>
     <java.version>17</java.version>
-    <bidrag-dokument-dto.version>1.6.33</bidrag-dokument-dto.version>
+    <bidrag-dokument-dto.version>1.6.35</bidrag-dokument-dto.version>
     <kotlin.version>1.8.21</kotlin.version>
     <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
     <bidrag-transport.version>20230508100903_0aa6729</bidrag-transport.version>
@@ -31,13 +31,17 @@
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.18.1</testcontainers.version>
     <shedlock.version>5.2.0</shedlock.version>
+    <google-api-extention.version>2.31.0</google-api-extention.version>
+    <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
+    <bidrag-behandling-felles-dto.version>0.0.87</bidrag-behandling-felles-dto.version>
+
   </properties>
 
   <repositories>
     <repository>
       <id>github</id>
-        <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
-      </repository>
+      <url>https://maven.pkg.github.com/navikt/bidrag-commons</url>
+    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -52,6 +56,13 @@
         <artifactId>scala-library</artifactId>
         <version>2.13.10</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>libraries-bom</artifactId>
+        <version>26.18.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -61,6 +72,12 @@
       <artifactId>nv-i18n</artifactId>
       <version>1.29</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>2.0.27</version>
+    </dependency>
+
     <!--Spring-->
     <dependency>
       <groupId>org.springframework.kafka</groupId>
@@ -127,6 +144,32 @@
       <artifactId>shedlock-provider-jdbc-template</artifactId>
       <version>${shedlock.version}</version>
     </dependency>
+
+    <!--  Google GCP -->
+    <dependency>
+      <groupId>com.google.crypto.tink</groupId>
+      <artifactId>tink</artifactId>
+      <version>1.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.crypto.tink</groupId>
+      <artifactId>tink-gcpkms</artifactId>
+      <version>1.8.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-kms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-storage</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api</groupId>
+      <artifactId>gax</artifactId>
+      <version>${google-api-extention.version}</version>
+    </dependency>
+
     <!-- Database -->
     <dependency>
       <groupId>io.hypersistence</groupId>
@@ -231,6 +274,27 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-serialization-json</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>no.nav.bidrag</groupId>
+      <artifactId>bidrag-behandling-felles-dto</artifactId>
+      <version>${bidrag-behandling-felles-dto.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>no.nav.bidrag</groupId>
+          <artifactId>bidrag-behandling-felles</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>no.nav.bidrag</groupId>
+      <artifactId>bidrag-behandling-felles</artifactId>
+      <version>0.0.84</version>
     </dependency>
 
     <!--Test-->
@@ -352,6 +416,7 @@
           <compilerPlugins>
             <plugin>spring</plugin>
             <plugin>jpa</plugin>
+            <plugin>kotlinx-serialization</plugin>
           </compilerPlugins>
         </configuration>
         <dependencies>
@@ -365,56 +430,61 @@
             <artifactId>kotlin-maven-noarg</artifactId>
             <version>${kotlin.version}</version>
           </dependency>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-serialization</artifactId>
+            <version>${kotlin.version}</version>
+          </dependency>
         </dependencies>
       </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>ktlint</id>
-                        <phase>verify</phase>
-                        <configuration>
-                            <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
-                                      classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
-                                    <arg value="src/**/*.kt"/>
-                                </java>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>ktlint-format</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
-                                      classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
-                                    <jvmarg value="--add-opens"/>
-                                    <jvmarg value="java.base/java.lang=ALL-UNNAMED"/>
-                                    <arg value="-F"/>
-                                    <arg value="src/**/*.kt"/>
-                                </java>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.pinterest</groupId>
-                        <artifactId>ktlint</artifactId>
-                        <version>0.47.1</version>
-                    </dependency>
-                    <!-- additional 3rd party ruleset(s) can be specified here -->
-                </dependencies>
-            </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>ktlint</id>
+            <phase>verify</phase>
+            <configuration>
+              <target name="ktlint">
+                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                  classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
+                  <arg value="src/**/*.kt"/>
+                </java>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>ktlint-format</id>
+            <phase>validate</phase>
+            <configuration>
+              <target name="ktlint">
+                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                  classpathref="maven.plugin.classpath" classname="com.pinterest.ktlint.Main">
+                  <jvmarg value="--add-opens"/>
+                  <jvmarg value="java.base/java.lang=ALL-UNNAMED"/>
+                  <arg value="-F"/>
+                  <arg value="src/**/*.kt"/>
+                </java>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.pinterest</groupId>
+            <artifactId>ktlint</artifactId>
+            <version>0.47.1</version>
+          </dependency>
+          <!-- additional 3rd party ruleset(s) can be specified here -->
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
 </project>

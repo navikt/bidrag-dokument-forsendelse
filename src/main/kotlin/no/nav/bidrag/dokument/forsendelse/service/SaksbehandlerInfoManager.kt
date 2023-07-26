@@ -6,9 +6,11 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragOrganisasjonConsumer
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import org.springframework.stereotype.Service
 
+val FORSENDELSE_APP_ID = "bidrag-dokument-forsendelse"
+
 @Service
 class SaksbehandlerInfoManager(private val bidragOrganisasjonConsumer: BidragOrganisasjonConsumer) {
-    fun hentSaksbehandlerBrukerId(): String? = if (erIApplikasjonKontekst()) "bidrag-dokument-forsendelse" else TokenUtils.hentBruker()
+    fun hentSaksbehandlerBrukerId(): String? = if (erIApplikasjonKontekst()) FORSENDELSE_APP_ID else TokenUtils.hentBruker()
 
     fun hentSaksbehandler(): Saksbehandler? {
         val saksbehandlerIdent = hentSaksbehandlerBrukerId() ?: return null

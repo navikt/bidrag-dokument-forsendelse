@@ -9,13 +9,20 @@ import java.time.LocalDateTime
 data class OppdaterForsendelseForespørsel(
     @Schema(description = "Liste over dokumentene på journalposten der metadata skal oppdateres")
     val dokumenter: List<OppdaterDokumentForespørsel> = emptyList(),
-    @Schema(description = "Dato hoveddokument i forsendelsen ble opprettet") val dokumentDato: LocalDateTime? = null
+    @Schema(description = "Dato hoveddokument i forsendelsen ble opprettet") val dokumentDato: LocalDateTime? = null,
+    @Schema(description = "Ident til brukeren som journalposten gjelder. Kan bare oppdateres hvis status = UNDER_OPPRETTELSE") val gjelderIdent: String? = null,
+    val mottaker: MottakerTo? = null,
+    @Schema(description = "NAV-enheten som oppretter forsendelsen. Kan bare oppdateres hvis status = UNDER_OPPRETTELSE") val enhet: String? = null,
+    @Schema(description = "Tema forsendelsen skal opprettes med", enumAsRef = true) val tema: JournalTema? = null,
+    @Schema(description = "Språk forsendelsen skal være på") val språk: String? = null,
+    @Schema(description = "Tittelen på forsendelse. Dette er tittel som vil vises i journalen i Bisys og i forsendelse skjermbildet") val tittel: String? = null
 )
 
 @Schema(description = "Metadata til en respons etter journalpost ble oppdatert")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OppdaterForsendelseResponse(
     @Schema(description = "ForsendelseId på forsendelse som ble opprettet") val forsendelseId: String? = null,
+    @Schema(description = "Tittel på forsendelsen") val tittel: String? = null,
     @Schema(description = "Liste med dokumenter som er knyttet til journalposten") val dokumenter: List<DokumentRespons> = emptyList()
 )
 

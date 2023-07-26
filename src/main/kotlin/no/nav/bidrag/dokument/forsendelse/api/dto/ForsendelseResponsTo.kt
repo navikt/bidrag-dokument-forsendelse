@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -14,15 +15,27 @@ data class ForsendelseResponsTo(
     val dokumenter: List<DokumentRespons> = emptyList(),
     @Schema(description = "Bidragsak som forsendelsen er knyttet til") val saksnummer: String? = null,
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
+    @Schema(description = "Tema på forsendelsen") val tema: String? = null,
+    @Schema(description = "Detaljer om behandling forsendelse er knyttet til") val behandlingInfo: BehandlingInfoResponseDto? = null,
     @Schema(description = "Ident på saksbehandler eller applikasjon som opprettet forsendelsen") val opprettetAvIdent: String? = null,
     @Schema(description = "Navn på saksbehandler eller applikasjon som opprettet forsendelsen") val opprettetAvNavn: String? = null,
     @Schema(description = "Tittel på hoveddokumentet i forsendelsen") val tittel: String? = null,
     @Schema(description = "Journalpostid som forsendelsen ble arkivert på. Dette vil bli satt hvis status er FERDIGSTILT") val arkivJournalpostId: String? = null,
-    @Schema(description = "Type på forsendelse. Kan være NOTAT eller UTGÅENDE") val forsendelseType: ForsendelseTypeTo? = null,
-    @Schema(description = "Status på forsendelsen") val status: ForsendelseStatusTo? = null,
+    @Schema(description = "Type på forsendelse. Kan være NOTAT eller UTGÅENDE", enumAsRef = true) val forsendelseType: ForsendelseTypeTo? = null,
+    val status: ForsendelseStatusTo? = null,
     @Schema(description = "Dato forsendelsen ble opprettet") val opprettetDato: LocalDate? = null,
     @Schema(description = "Dato på hoveddokumentet i forsendelsen") val dokumentDato: LocalDate? = null,
     @Schema(description = "Dato forsendelsen ble distribuert") val distribuertDato: LocalDate? = null
+) {
+    fun hentHoveddokument() = if (dokumenter.isEmpty()) null else dokumenter[0]
+}
+
+@Schema(description = "Metadata om behandling")
+data class BehandlingInfoResponseDto(
+    val vedtakId: String? = null,
+    val behandlingId: String? = null,
+    val soknadId: String? = null,
+    val behandlingType: BehandlingType? = null
 )
 
 @Schema(description = "Metadata om forsendelse")

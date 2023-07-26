@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.bidrag.dokument.dto.EndreJournalpostCommand
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
@@ -117,22 +116,5 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
         val respons = oppdaterForsendelseService.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse)
             ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
-    }
-
-    @PatchMapping("/{forsendelseIdMedPrefix}/ferdigstill")
-    @Operation(
-        summary = "Ferdigstiller forsendelse ved å arkivere forsendelsen i Joark og dermed klargjør for eventuell distribuering",
-        security = [SecurityRequirement(name = "bearer-key")]
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Forsendelse er ferdigstilt"),
-            ApiResponse(responseCode = "400", description = "Fant ingen forsendelse for id")
-        ]
-    )
-    fun ferdigstillForsendelse(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<OpprettJournalpostResponse> {
-        val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val result = oppdaterForsendelseService.ferdigstillForsendelse(forsendelseId)
-        return if (result != null) ResponseEntity.ok(result) else ResponseEntity.badRequest().build()
     }
 }

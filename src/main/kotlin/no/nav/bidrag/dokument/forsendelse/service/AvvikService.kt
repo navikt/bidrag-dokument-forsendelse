@@ -5,11 +5,11 @@ import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.Avvikshendelse
 import no.nav.bidrag.dokument.dto.Fagomrade
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigAvvikForForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ugyldigAvviksForespørsel
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreTilFagområde
@@ -32,6 +32,8 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
                 AvvikType.SLETT_JOURNALPOST,
                 AvvikType.ENDRE_FAGOMRADE
             )
+        } else if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) {
+            listOf(AvvikType.SLETT_JOURNALPOST)
         } else {
             emptyList()
         }
@@ -65,15 +67,12 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
         val endreTilFagområde = avvikshendelse.hentFagområde() ?: ugyldigAvviksForespørsel("forespørsel mangler fagområde")
         forsendelse.validerKanEndreForsendelse()
         forsendelse.validerKanEndreTilFagområde(endreTilFagområde)
-        val saksbehandler = saksbehandlerInfoManager.hentSaksbehandler()
         forsendelseTjeneste.lagre(
             forsendelse.copy(
                 tema = when (endreTilFagområde) {
                     Fagomrade.FARSKAP -> ForsendelseTema.FAR
                     else -> ForsendelseTema.BID
-                },
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandler?.ident ?: forsendelse.endretAvIdent
+                }
             )
         )
 
@@ -88,9 +87,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
             forsendelse.copy(
                 status = ForsendelseStatus.SLETTET,
                 avbruttAvIdent = saksbehandler?.ident,
-                avbruttTidspunkt = LocalDateTime.now(),
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandler?.ident ?: forsendelse.endretAvIdent
+                avbruttTidspunkt = LocalDateTime.now()
             )
         )
 
@@ -105,9 +102,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
             forsendelse.copy(
                 status = ForsendelseStatus.AVBRUTT,
                 avbruttAvIdent = saksbehandler?.ident,
-                avbruttTidspunkt = LocalDateTime.now(),
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandler?.ident ?: forsendelse.endretAvIdent
+                avbruttTidspunkt = LocalDateTime.now()
             )
         )
 

@@ -6,17 +6,22 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
+import no.nav.bidrag.behandling.felles.enums.StonadType
+import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.dto.JournalpostStatus
+import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentTilknyttetSom
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
@@ -27,6 +32,8 @@ import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTNUMMER
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTSTED
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.JOURNALFØRENDE_ENHET
 import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
@@ -79,7 +86,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
                 val vedlegg = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge[1]
                 vedlegg.språk shouldBe forsendelse.språk
-                vedlegg.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+                vedlegg.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
                 vedlegg.arkivsystem shouldBe DokumentArkivSystem.JOARK
                 vedlegg.rekkefølgeIndeks shouldBe 1
                 vedlegg.tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
@@ -100,6 +107,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 forsendelse.endretAvIdent shouldBe SAKSBEHANDLER_IDENT
 
                 forsendelse.mottaker shouldNotBe null
+                forsendelse.tittel shouldBe null
 
                 val mottaker = forsendelse.mottaker!!
                 mottaker.ident shouldBe MOTTAKER_IDENT
@@ -121,17 +129,17 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtaksId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"}"
                 )
             }
         }
@@ -140,6 +148,47 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost.innhold shouldBe journalpost.hentHoveddokument()?.tittel
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med behandlingsdetaljer uten forsendelse tittel`() {
+        val soknadId = "123213"
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            batchId = "FB050",
+            behandlingInfo = BehandlingInfoDto(
+                soknadId = soknadId,
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = StonadType.FORSKUDD,
+                vedtakType = VedtakType.FASTSETTELSE
+            ),
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+            assertSoftly {
+                forsendelse.dokumenter shouldHaveSize 2
+                val behandlingInfo = forsendelse.behandlingInfo!!
+                behandlingInfo.soknadId shouldBe soknadId
+                behandlingInfo.erFattetBeregnet shouldBe true
+                behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+                behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
+                behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+                behandlingInfo.behandlingType shouldBe null
+                forsendelse.tittel shouldBe null
+            }
+        }
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost.innhold shouldBe journalpost.hentHoveddokument()?.tittel
     }
 
     @Test
@@ -223,6 +272,52 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
         journalpost.avsenderMottaker!!.ident shouldBe SAMHANDLER_ID
         journalpost.avsenderMottaker?.navn shouldBe MOTTAKER_NAVN
+    }
+
+    @Test
+    fun `Skal opprette tom forsendelse med behandlingdetaljer`() {
+        stubUtils.stubHentSak()
+        val soknadId = "123213"
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            gjelderIdent = GJELDER_IDENT_BM,
+            dokumenter = emptyList(),
+            behandlingInfo = BehandlingInfoDto(
+                soknadId = "123213",
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = StonadType.FORSKUDD,
+                vedtakType = VedtakType.FASTSETTELSE
+            ),
+            opprettTittel = true
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+        assertSoftly {
+            forsendelse.mottaker shouldNotBe null
+            forsendelse.dokumenter shouldHaveSize 0
+            forsendelse.behandlingInfo shouldNotBe null
+            val behandlingInfo = forsendelse.behandlingInfo!!
+            behandlingInfo.soknadId shouldBe soknadId
+            behandlingInfo.erFattetBeregnet shouldBe true
+            behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+            behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
+            behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+            behandlingInfo.behandlingType shouldBe null
+            forsendelse.tittel shouldBe "Vedtak om forskudd til bidragsmottaker"
+
+            stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
+            stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
+        }
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.status shouldBe JournalpostStatus.UNDER_OPPRETTELSE
+        journalpost.innhold shouldBe "Vedtak om forskudd til bidragsmottaker"
     }
 
     @Test
@@ -406,7 +501,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
         dokument.tittel shouldBe TITTEL_VEDLEGG_1
 
@@ -452,7 +547,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
@@ -499,7 +594,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
@@ -530,7 +625,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument med annen språk på opprettet forsendelse`() {
-        val nyDokumentmal = "BI00133"
+        val nyDokumentmal = DOKUMENTMAL_UTGÅENDE_2
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -551,7 +646,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 1
         val dokument = forsendelseMedEnDokument.dokumenter[0]
-        dokument.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+        dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(

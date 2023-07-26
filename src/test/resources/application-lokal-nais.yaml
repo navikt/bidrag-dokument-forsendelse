@@ -8,6 +8,12 @@ KODEVERK_URL: https://kodeverk.dev.adeo.no
 #DB_USERNAME=ugur.alpay.cenar@nav.no
 #DB_PASSWORD=asdsadsadasd
 
+BUCKET_NAME: bidrag-dokument-forsendelse-local
+#GCP_HOST: http://0.0.0.0:4443
+GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
+GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://path/to/kms/key
+DISABLE_CLIENTSIDE_ENCRYPTION: false
+
 spring:
   flyway:
     enabled: true
@@ -26,12 +32,22 @@ spring:
 
 springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
 
-PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
-BIDRAG_ORGANISASJON_URL: https://bidrag-person-feature.dev.adeo.no
-BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling-feature.intern.dev.nav.no
-BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling-feature
 BIDRAG_PERSON_URL: https://bidrag-person-feature.dev.adeo.no
-BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll-feature.intern.dev.nav.no
+PERSON_SCOPE: dev-fss.bidrag.bidrag-person-feature
+
+BIDRAG_DOKUMENT_BESTILLING_URL: https://bidrag-dokument-bestilling.intern.dev.nav.no
+BIDRAG_DOKUMENT_BESTILLING_URL2: http://localhost:8998
+BIDRAG_DOKUMENT_URL: http://localhost:8099/bidrag-dokument
+
+BIDRAG_TILGANGSKONTROLL_URL: https://bidrag-tilgangskontroll.intern.dev.nav.no
+BIDRAG_DOKUMENT_BESTILLING_SCOPE: dev-gcp.bidrag.bidrag-dokument-bestilling
+
+BIDRAG_VEDTAK_URL: https://bidrag-vedtak.intern.dev.nav.no
+BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak
+
+BIDRAG_BEHANDLING_URL: https://bidrag-behandling.intern.dev.nav.no
+BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling
+
 AZURE_APP_TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851
 AZURE_APP_CLIENT_ID: <app_client_id>
 AZURE_APP_CLIENT_SECRET: unset
@@ -39,3 +55,5 @@ server.port: 8999
 NAIS_APP_NAME: bidrag-dokument-forsendelse
 LAGRE_DIST_INFO_CRON: "0 * * * * *"
 OPPDATER_DIST_STATUS_CRON: "0 * * * * *"
+REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
+REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 * * * * *"

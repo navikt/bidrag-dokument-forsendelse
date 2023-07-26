@@ -3,9 +3,16 @@ package no.nav.bidrag.dokument.forsendelse
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse.BodyHandlers
+
 
 @Testcontainers
 @ActiveProfiles(value = ["test", "testcontainer"])
@@ -21,6 +28,36 @@ class TestContainerRunner : CommonTestRunner() {
             start()
         }
 
+        @Container
+        protected val gcpCloudStorage = GenericContainer("fsouza/fake-gcs-server").apply {
+            withExposedPorts(4443)
+            withCreateContainerCmdModifier { cmd ->
+                cmd.withEntrypoint(
+                    "/bin/fake-gcs-server",
+                    "-scheme", "http"
+                )
+            }
+        }
+
+        private fun updateExternalUrlWithContainerUrl(fakeGcsExternalUrl: String) {
+            val modifyExternalUrlRequestUri = "$fakeGcsExternalUrl/_internal/config"
+            val updateExternalUrlJson = ("{"
+                    + "\"externalUrl\": \"" + fakeGcsExternalUrl + "\""
+                    + "}")
+            val req = HttpRequest.newBuilder()
+                .uri(URI.create(modifyExternalUrlRequestUri))
+                .header("Content-Type", "application/json")
+                .PUT(BodyPublishers.ofString(updateExternalUrlJson))
+                .build()
+            val response = HttpClient.newBuilder().build()
+                .send(req, BodyHandlers.discarding())
+            if (response.statusCode() != 200) {
+                throw RuntimeException(
+                    "error updating fake-gcs-server with external url, response status code " + response.statusCode() + " != 200"
+                )
+            }
+        }
+
         @JvmStatic
         @DynamicPropertySource
         fun postgresqlProperties(registry: DynamicPropertyRegistry) {
@@ -31,6 +68,13 @@ class TestContainerRunner : CommonTestRunner() {
             registry.add("spring.datasource.url", postgreSqlDb::getJdbcUrl)
             registry.add("spring.datasource.password", postgreSqlDb::getPassword)
             registry.add("spring.datasource.username", postgreSqlDb::getUsername)
+            try {
+                val url = "http://${gcpCloudStorage.host}:${gcpCloudStorage.firstMappedPort}"
+                updateExternalUrlWithContainerUrl(url)
+                registry.add("GCP_HOST") { url }
+            } catch (e: Exception) {
+            }
+
         }
     }
 }

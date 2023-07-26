@@ -7,18 +7,20 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Dokument
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
-import no.nav.bidrag.dokument.forsendelse.service.OppdaterForsendelseService
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
+import no.nav.bidrag.dokument.forsendelse.service.FerdigstillForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
 
@@ -27,7 +29,7 @@ class DokumentHendelseLytter(
     val objectMapper: ObjectMapper,
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
-    val oppdaterForsendelseService: OppdaterForsendelseService
+    val ferdigstillForsendelseService: FerdigstillForsendelseService
 ) {
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
@@ -44,7 +46,7 @@ class DokumentHendelseLytter(
             log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
             dokumentTjeneste.lagreDokument(
                 it.copy(
-                    arkivsystem = when (hendelse.arkivSystem) {
+                    arkivsystem = if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) it.arkivsystem else when (hendelse.arkivSystem) {
                         DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
                         else -> it.arkivsystem
                     },
@@ -53,7 +55,9 @@ class DokumentHendelseLytter(
                         DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
                         DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
                         else -> it.dokumentStatus
-                    }
+                    },
+                    ferdigstiltTidspunkt = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) LocalDateTime.now() else null,
+                    ferdigstiltAvIdent = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) FORSENDELSE_APP_ID else null
 
                 )
             )
@@ -78,7 +82,7 @@ class DokumentHendelseLytter(
             if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt) {
                 medApplikasjonKontekst {
                     log.info { "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} med type NOTAT er ferdigstilt. Ferdigstiller forsendelse." }
-                    oppdaterForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
+                    ferdigstillForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
                 }
             }
         }

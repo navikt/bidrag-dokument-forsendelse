@@ -7,19 +7,18 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.JournalpostType
-import no.nav.bidrag.dokument.forsendelse.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentArkivSystem
-import no.nav.bidrag.dokument.forsendelse.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import org.awaitility.kotlin.await
@@ -39,16 +38,6 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
     @BeforeEach
     fun resetSpys() {
         clearAllMocks()
-    }
-
-    private fun opprettHendelse(dokumentreferanse: String, status: DokumentStatusDto = DokumentStatusDto.UNDER_REDIGERING): DokumentHendelse {
-        return DokumentHendelse(
-            dokumentreferanse = dokumentreferanse,
-            arkivSystem = DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER,
-            hendelseType = DokumentHendelseType.ENDRING,
-            sporingId = "sporing",
-            status = status
-        )
     }
 
     @Test
@@ -77,24 +66,80 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
     @Test
     fun `Skal oppdatere status på alle dokumenter til FERDIGSTILT ved mottatt hendelse`() {
-        val dokumentreferanse = "13213123123"
-        val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(
-                dokumentreferanseOriginal = dokumentreferanse,
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "FORSENDELSE 1",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        val forsendelse1 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.UKJENT
+                    )
+                )
             )
-        }
+        )
 
-        val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(
-                dokumentreferanseOriginal = dokumentreferanse,
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "FORSENDELSE 2",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        val dokumentreferanse = forsendelse1.dokumenter[0].dokumentreferanse
+        val forsendelseMedLenketDokument = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = forsendelse1.forsendelseId.toString(),
+                        dokumentreferanseOriginal = dokumentreferanse,
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        tittel = "FORSENDELSE 2",
+                        arkivsystem = DokumentArkivSystem.FORSENDELSE
+                    )
+                )
             )
+        )
+        val hendelse = opprettHendelse(dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
+        sendMeldingTilDokumentHendelse(hendelse)
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse1Etter = testDataManager.hentForsendelse(forsendelse1.forsendelseId!!)!!
+            val forsendelse2Etter = testDataManager.hentForsendelse(forsendelseMedLenketDokument.forsendelseId!!)!!
+            val dokument1Etter = forsendelse1Etter.dokumenter[0]
+            val dokument2Etter = forsendelse2Etter.dokumenter[0]
+            dokument1Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            dokument2Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            dokument1Etter.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+            dokument2Etter.arkivsystem shouldBe DokumentArkivSystem.FORSENDELSE
+            dokument1Etter.ferdigstiltTidspunkt shouldNotBe null
+            dokument1Etter.ferdigstiltAvIdent shouldBe FORSENDELSE_APP_ID
+            dokument1Etter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            dokument2Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            verify(exactly = 2) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
         }
+    }
+
+    @Test
+    fun `Skal oppdatere arkivsystem på dokumenter ved mottatt hendelse`() {
+        val forsendelse1 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.UKJENT
+                    )
+                )
+            )
+        )
+
+        val dokumentreferanse = forsendelse1.dokumenter[0].dokumentreferanse
+        val forsendelse2 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = forsendelse1.forsendelseId.toString(),
+                        dokumentreferanseOriginal = dokumentreferanse,
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        tittel = "FORSENDELSE 2",
+                        arkivsystem = DokumentArkivSystem.FORSENDELSE
+                    )
+                )
+            )
+        )
         val hendelse = opprettHendelse(dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelse)
 
@@ -105,7 +150,10 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
             val dokument2Etter = forsendelse2Etter.dokumenter[0]
             dokument1Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
             dokument2Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
-
+            dokument1Etter.ferdigstiltTidspunkt shouldNotBe null
+            dokument1Etter.ferdigstiltAvIdent shouldBe FORSENDELSE_APP_ID
+            dokument1Etter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            dokument2Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
             verify(exactly = 2) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
         }
     }
@@ -240,18 +288,19 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"NOTAT\"," +
-                    "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                    "\"saksbehandlerIdent\":\"Z999444\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Forsendelse notat\"," +
+                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"NOTAT\"," +
+                        "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
+                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                        "\"saksbehandlerIdent\":\"Z999444\"" +
+                        "}"
             )
 
             stubUtils.Valider().hentDokumentKalt(forsendelseEtter.forsendelseIdMedPrefix, forsendelseEtter.dokumenter[0].dokumentreferanse)

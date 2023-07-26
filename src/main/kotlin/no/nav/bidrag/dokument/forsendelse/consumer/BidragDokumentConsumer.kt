@@ -5,6 +5,7 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
 import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
+import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
@@ -31,11 +32,30 @@ class BidragDokumentConsumer(
         return postForEntity(createUri("/journalpost/JOARK"), opprettJournalpostRequest)
     }
 
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun hentDokumentMetadata(journalpostId: String, dokumentId: String?): List<DokumentMetadata> {
+        return optionsForEntity(
+            UriComponentsBuilder.fromUri(url)
+                .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}")
+                .build().toUri()
+        ) ?: emptyList()
+    }
+
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 300, maxDelay = 2000, multiplier = 2.0))
-    fun hentDokument(journalpostId: String, dokumentId: String?): ByteArray? {
+    fun hentDokument(journalpostId: String?, dokumentId: String?): ByteArray? {
+        if (journalpostId.isNullOrEmpty()) return hentDokument(dokumentId)
         return getForEntity(
             UriComponentsBuilder.fromUri(url)
-                .path("/dokument/$journalpostId/$dokumentId").queryParam("optimizeForPrint", "false")
+                .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}").queryParam("optimizeForPrint", "false")
+                .build().toUri()
+        )
+    }
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun hentDokument(dokumentId: String?): ByteArray? {
+        return getForEntity(
+            UriComponentsBuilder.fromUri(url)
+                .path("/dokumentreferanse/$dokumentId").queryParam("optimizeForPrint", "false")
                 .build().toUri()
         )
     }

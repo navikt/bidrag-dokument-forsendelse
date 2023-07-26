@@ -1,6 +1,6 @@
 name: bidrag-dokument-forsendelse
+bucket_name: bidrag-dokument-forsendelse-main
 ingresses:
-  - https://bidrag-dokument-forsendelse.dev.intern.nav.no
   - https://bidrag-dokument-forsendelse.intern.dev.nav.no
 env:
   BIDRAG_ORGANISASJON_URL: https://bidrag-organisasjon.dev-fss-pub.nais.io/bidrag-organisasjon
@@ -21,6 +21,12 @@ env:
   BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
   BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
 
+  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak
+  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak
+
+  BIDRAG_BEHANDLING_URL:  http://bidrag-behandling
+  BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling
+
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
@@ -29,8 +35,12 @@ env:
   LAGRE_DIST_INFO_PAGE_SIZE: 10
   LAGRE_DIST_INFO_CRON: "0 */10 * * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 */10 * * * ?"
+  REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
+  REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 */10 * * * *"
   OPPDATER_DIST_STATUS_ENABLED: true
   KAFKA_MAX_RETRY: 5
+  GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/bucket-dokument-encryption
+  GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/clientside_document_encryption
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false
@@ -40,6 +50,8 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
+   - bidrag-vedtak
+   - bidrag-behandling
 outbound-access-hosts:
    - bidrag-dokument.dev-fss-pub.nais.io
    - bidrag-person.dev-fss-pub.nais.io

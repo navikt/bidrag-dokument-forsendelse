@@ -7,6 +7,9 @@ import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.FysiskDokumentService
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,8 +24,14 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
         summary = "Hent fysisk dokument som byte",
         security = [SecurityRequirement(name = "bearer-key")]
     )
-    fun hentDokument(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @PathVariable dokumentreferanse: String): ByteArray {
-        return fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
+    fun hentDokument(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @PathVariable dokumentreferanse: String): ResponseEntity<ByteArray> {
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "inline; filename=$dokumentreferanse.pdf"
+            )
+            .body(fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse))
     }
 
     @RequestMapping(
