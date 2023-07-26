@@ -238,6 +238,49 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for varsling bidrag klage`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = null
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01P17"
+            dokumentValgListe shouldContainKey "BI01S20"
+            dokumentValgListe shouldContainKey "BI01S21"
+            dokumentValgListe shouldContainKey "BI01S60"
+            dokumentValgListe shouldContainKey "BI01S64"
+            dokumentValgListe shouldContainKey "BI01S65"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak bidrag klage`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = true
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01B50"
+            dokumentValgListe shouldContainKey "BI01G50"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for manuelt beregnet bidrag søknad type opphør`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
