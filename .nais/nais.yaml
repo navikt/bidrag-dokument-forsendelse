@@ -79,6 +79,4 @@ spec:
   {{/each}}
      - name: BUCKET_NAME
        value: {{ bucket_name }}
-  envFrom:
-      - secret: bidrag-dokument-forsendelse-encryption-key
 
