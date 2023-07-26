@@ -76,6 +76,44 @@ class ForsendelseTittelServiceTest {
     }
 
     @Test
+    fun `Skal opprette forsendelse tittel for refusjon bidrag`() {
+        val tittel = forsendelseTittelService.opprettForsendelseTittel(
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BP,
+                behandlingInfo = BehandlingInfoDto(
+                    erFattetBeregnet = true,
+                    soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                    behandlingType = "REFUSJON_BIDRAG",
+                    vedtakType = VedtakType.FASTSETTELSE
+                )
+            )
+        )
+
+        tittel shouldBe "Vedtak om refusjon bidrag til bidragspliktig"
+    }
+
+    @Test
+    fun `Skal opprette forsendelse tittel for reisekostnader`() {
+        val tittel = forsendelseTittelService.opprettForsendelseTittel(
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BM,
+                behandlingInfo = BehandlingInfoDto(
+                    erFattetBeregnet = true,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    behandlingType = "REISEKOSTNADER",
+                    vedtakType = VedtakType.FASTSETTELSE
+                )
+            )
+        )
+
+        tittel shouldBe "Vedtak om reisekostnader til bidragsmottaker"
+    }
+
+    @Test
     fun `Skal opprette forsendelse tittel for vedtak om bidrag til bidragspliktig`() {
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
             OpprettForsendelseForespørsel(
@@ -260,6 +298,7 @@ class ForsendelseTittelServiceTest {
 
         tittel shouldBe "Orientering/Varsel om forskudd til bidragsmottaker"
     }
+
 
     @Test
     fun `Skal ikke opprette forsendelse tittel hvis mangler behandlingInfo`() {

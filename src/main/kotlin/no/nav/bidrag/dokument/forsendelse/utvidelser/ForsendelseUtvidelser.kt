@@ -88,7 +88,7 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, 
             EngangsbelopType.GEBYR_MOTTAKER -> "Gebyr"
             EngangsbelopType.GEBYR_SKYLDNER -> "Gebyr"
             EngangsbelopType.TILBAKEKREVING -> "Tilbakekreving"
-            else -> behandlingType?.lowercase()?.replaceFirstChar { it.uppercase() }
+            else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
         }
     }
 
