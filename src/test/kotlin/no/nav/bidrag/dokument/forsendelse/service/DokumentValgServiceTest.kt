@@ -469,6 +469,111 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for varsel farskap`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.FASTSETTELSE,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = "FARSKAP",
+                erFattetBeregnet = null
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 6
+            dokumentValgListe shouldContainKey "BI01H01"
+            dokumentValgListe shouldContainKey "BI01H02"
+            dokumentValgListe shouldContainKey "BI01H03"
+            dokumentValgListe shouldContainKey "BI01H04"
+            dokumentValgListe shouldContainKey "BI01H05"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak farskap`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.FASTSETTELSE,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = "FARSKAP",
+                erFattetBeregnet = false
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01H01"
+            dokumentValgListe shouldContainKey "BI01H02"
+            dokumentValgListe shouldContainKey "BI01H03"
+            dokumentValgListe shouldContainKey "BI01H04"
+            dokumentValgListe shouldContainKey "BI01H05"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for klage farskap`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = "FARSKAP",
+                erFattetBeregnet = false
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01S07"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+
+    @Test
+    fun `Skal hente dokumentvalg varsel for klage farskap fra Bidragspliktig`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                behandlingType = "FARSKAP",
+                erFattetBeregnet = null
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01P17"
+            dokumentValgListe shouldContainKey "BI01S60"
+            dokumentValgListe shouldContainKey "BI01S64"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for klage farskap fra klage enhet`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = "FARSKAP",
+                enhet = KLAGE_ANKE_ENHET.ENHET_KLANKE_OSLO_AKERSHUS.kode,
+                erFattetBeregnet = false
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01S07"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente notater`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe()
 

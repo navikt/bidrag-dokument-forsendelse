@@ -114,7 +114,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
 
   const mergedValuesVedtakType1 = mergedValues4.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
 
     if (currObj.erVedtakIkkeTilbakekreving && currObj.vedtakType == "KLAGE") {
       prevValues.push(currObj)
@@ -131,7 +131,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
 
   const mergedValuesVedtakType2 = mergedValuesVedtakType1.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualByVedtakType(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualByVedtakType(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
     if (currObj.erVedtakIkkeTilbakekreving && currObj.vedtakType == "KLAGE") {
       prevValues.push(currObj)
       return prevValues

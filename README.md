@@ -17,6 +17,14 @@ forsendelsen i Joark og distribusjon bestilles gjennom sentral distribusjon.
 
 ## Dokumentvalg
 
+Dokumentvalg bruker [dokument_valg.json](src/main/resources/files/dokument_valg.json) for å finne ut hvilken brevkoder som skal vises for type
+vedtak/behandling,
+[dokument_valg.json](src/main/resources/files/dokument_valg.json) inneholder json med map fra behandlingtype (stonadType eller engangsbelopType) til
+brevkoder.
+Denne filen er generert basert på SQL eksport fra Bisys databasen som vist under.
+
+[brevmeny_brevkode.ts](script/brevmeny_brevkode.ts) leser og konverterer SQL eksport til dokument_valg.json fil som igjen brukes av forsendelse koden.
+
 Kjør og eksporter følgende SQL skript til json fil før kjøring av skript
 
 ```sql
@@ -42,6 +50,12 @@ from BR462P.T_BREVVALG BV
          inner join BI464P.T_KODE_HG_UG HGUG on ((HGUG.UG = UGS.KODE_UG and HGUG.HG = BV.KODE_STONAD) or (BV.KODE_STONAD = 'XX' and HGUG.HG = ' ') or
                                                  (BV.KODE_STONAD = 'IT' and HGUG.UG = UGS.KODE_UG) or (HGUG.UG is null and HGUG.HG = BV.KODE_STONAD))
 ;
+```
+
+Kjør deretter [brevmeny_brevkode.ts](script/brevmeny_brevkode.ts) med følgende kommando
+
+```bash
+cd script && yarn start
 ```
 
 #### Kjøre lokalt mot sky
@@ -115,15 +129,16 @@ og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-dokument
 docker run -v $(pwd)/.nais:/nais navikt/deployment:v1 ./deploy --dry-run --print-payload --resource /nais/nais.yaml --vars /nais/feature.yaml
 ```
 
-#### Create GCP bucket encryption key secret
+### Opprett klientside GCP bucket encryption key secret
 
-Bidrag-ui bruker redis for session lagring. For å kjøre bidrag-ui på NAIS må en redis secret bli opprettet. Redis secret brukes for sikker
-kommunikasjon med redis instansen.
-Kjør følgende kommando for å opprette secret på namespace bidrag
-
-``
-kubectl create secret generic bidrag-dokument-forsendelse-encryption-key --from-literal=GCP_DOCUMENT_ENCRYPTION_KEY=$(cat /dev/urandom | env LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1) -n=bidrag
-``
+* Opprett KMS nøkkelring i GCP
+* Legg til ny symmetrisk nøkkel med navn `clientside_document_encryption`
+    * Rotering og sletting policy kan settes til følgende verdier (90 dager og 60 dager)
+* Gi bidrag-dokument-forsendelse tilgang til nøkkelringen. Bidrag-dokument-forsendelse service bruker kan finnes under IAM brukere
+    * Gi følgende tilganger:
+        * Cloud KMS CryptoKey Encrypter/Decrypter
+        * Cloud KMS Viewer
+* Deretter kopier `Resource name` til nøkkelen og lim det inn som miljøvariabel `GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH` i prod.yaml
 
 #### Connect to aiven kafka instance
 

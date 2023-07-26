@@ -263,4 +263,45 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_2)
     }
+
+    @Test
+    fun `Skal ikke bestille dokumenter med status under produksjon hvis de mangler bestilling metadata`() {
+        val forsendelse1 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentreferanseOriginal = null,
+                        journalpostId = null,
+                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.UKJENT,
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
+                    ).copy(opprettetTidspunkt = LocalDateTime.now().minusHours(1))
+                )
+            )
+        )
+        val forsendelse2 = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentreferanseOriginal = null,
+                        journalpostId = null,
+                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.UKJENT,
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES,
+                        metadata = DokumentMetadataDo()
+                    )
+                )
+            )
+        )
+
+        skedulering.bestillDokumenterUnderProduksjonPåNytt()
+
+        verify(exactly = 0) {
+            kafkaHendelseProdusent.publiser(any())
+        }
+        stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
+        stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_2)
+    }
 }
