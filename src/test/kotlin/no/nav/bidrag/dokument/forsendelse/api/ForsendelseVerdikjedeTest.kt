@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.api
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import no.nav.bidrag.behandling.felles.enums.StonadType
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 
 class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
 
@@ -211,7 +213,9 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             opprettetForsendelseOppdatert.dokumenter shouldHaveSize 3
             val dokumenter = opprettetForsendelseOppdatert.dokumenter.sortertEtterRekkefølge
             dokumenter[0].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            dokumenter[0].metadata.hentProdusertTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
             dokumenter[1].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            dokumenter[1].metadata.hentProdusertTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
             dokumenter[2].dokumentStatus shouldBe DokumentStatus.KONTROLLERT
 
 
@@ -219,6 +223,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             originalForsendelseOppdatert.dokumenter shouldHaveSize 2
             val dokumenter2 = originalForsendelseOppdatert.dokumenter.sortertEtterRekkefølge
             dokumenter2[0].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            dokumenter2[0].metadata.hentProdusertTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
             dokumenter2[1].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
 
             val forsendelse2OppdatertEtterHendelse = testDataManager.hentForsendelse(forsendelse2?.forsendelseId!!)!!
@@ -226,6 +231,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             val dokumenter3 = forsendelse2OppdatertEtterHendelse.dokumenter.sortertEtterRekkefølge
             dokumenter3[0].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
             dokumenter3[1].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            dokumenter3[1].metadata.hentProdusertTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
             dokumenter3[2].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         }
 

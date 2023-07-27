@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.ninjasquad.springmockk.SpykBean
+import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
@@ -41,16 +42,20 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
     }
 
     @Test
-    fun `Skal oppdatere status på dokument til UNDER_REDIGERING ved mottatt hendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(
-                dokumentreferanseOriginal = null,
-                journalpostId = null,
-                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                tittel = "FORSENDELSE 1",
-                arkivsystem = DokumentArkivSystem.UKJENT
+    fun `Skal oppdatere status på dokument til UNDER_REDIGERING og lagre produsert tidspunkt ved mottatt hendelse`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentreferanseOriginal = null,
+                        journalpostId = null,
+                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                        tittel = "FORSENDELSE 1",
+                        arkivsystem = DokumentArkivSystem.UKJENT
+                    )
+                )
             )
-        }
+        )
         val dokument = forsendelse.dokumenter[0]
         val hendelse = opprettHendelse(dokument.dokumentreferanse, status = DokumentStatusDto.UNDER_REDIGERING)
         sendMeldingTilDokumentHendelse(hendelse)
@@ -60,6 +65,8 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
             val dokumentEtter = forsendelseEtter.dokumenter[0]
             dokumentEtter.dokumentStatus shouldBe DokumentStatus.UNDER_REDIGERING
             dokumentEtter.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+            dokumentEtter.metadata.hentProdusertTidspunkt() shouldNotBe null
+            dokumentEtter.metadata.hentProdusertTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
             verify(exactly = 0) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
         }
     }
@@ -96,18 +103,29 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
         sendMeldingTilDokumentHendelse(hendelse)
 
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
-            val forsendelse1Etter = testDataManager.hentForsendelse(forsendelse1.forsendelseId!!)!!
-            val forsendelse2Etter = testDataManager.hentForsendelse(forsendelseMedLenketDokument.forsendelseId!!)!!
-            val dokument1Etter = forsendelse1Etter.dokumenter[0]
-            val dokument2Etter = forsendelse2Etter.dokumenter[0]
-            dokument1Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
-            dokument2Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
-            dokument1Etter.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-            dokument2Etter.arkivsystem shouldBe DokumentArkivSystem.FORSENDELSE
-            dokument1Etter.ferdigstiltTidspunkt shouldNotBe null
-            dokument1Etter.ferdigstiltAvIdent shouldBe FORSENDELSE_APP_ID
-            dokument1Etter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
-            dokument2Etter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+
+            assertSoftly("Valider dokument for forsendelse 1") {
+                val forsendelseEtter = testDataManager.hentForsendelse(forsendelse1.forsendelseId!!)!!
+                val dokumentEtter = forsendelseEtter.dokumenter[0]
+                dokumentEtter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+                dokumentEtter.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                dokumentEtter.ferdigstiltTidspunkt shouldNotBe null
+                dokumentEtter.ferdigstiltAvIdent shouldBe FORSENDELSE_APP_ID
+                dokumentEtter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+                dokumentEtter.metadata.hentProdusertTidspunkt() shouldBe null // Skal ikke sette produsert tidspunkt hvis status går fra under redigering -> ferdigstilt
+            }
+
+            assertSoftly("Valider dokument for forsendelse 2 med lenket dokument") {
+                val forsendelseEtter = testDataManager.hentForsendelse(forsendelseMedLenketDokument.forsendelseId!!)!!
+                val dokumentEtter = forsendelseEtter.dokumenter[0]
+                dokumentEtter.dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+                dokumentEtter.arkivsystem shouldBe DokumentArkivSystem.FORSENDELSE
+                dokumentEtter.ferdigstiltTidspunkt shouldNotBe null
+                dokumentEtter.ferdigstiltAvIdent shouldBe FORSENDELSE_APP_ID
+                dokumentEtter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+                dokumentEtter.metadata.hentProdusertTidspunkt() shouldBe null // Skal ikke sette produsert tidspunkt hvis status går fra under redigering -> ferdigstilt
+            }
+
             verify(exactly = 2) { journalpostHendelseProdusent.publiserForsendelse(ofType(Forsendelse::class)) }
         }
     }
