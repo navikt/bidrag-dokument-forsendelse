@@ -30,6 +30,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
+import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
@@ -251,8 +252,8 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
     dokumentDato = this.dokumentDato?.toLocalDate(),
     distribuertDato = this.distribuertTidspunkt?.toLocalDate(),
     enhet = this.enhet,
-    opprettetAvIdent = this.opprettetAvIdent,
-    opprettetAvNavn = this.opprettetAvNavn,
+    opprettetAvIdent = if (opprettetAvIdent == "bisys") "Bisys (Automatisk jobb)" else if (opprettetAvIdent == FORSENDELSE_APP_ID) "Bidrag (Automatisk jobb)" else opprettetAvIdent,
+    opprettetAvNavn = if (opprettetAvIdent == "bisys") "Bisys (Automatisk jobb)" else if (opprettetAvIdent == FORSENDELSE_APP_ID) "Bidrag (Automatisk jobb)" else opprettetAvNavn,
     dokumenter = this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
         DokumentRespons(
             dokumentreferanse = it.dokumentreferanse,

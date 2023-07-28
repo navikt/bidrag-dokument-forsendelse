@@ -56,6 +56,13 @@ class DokumentHendelseLytter(
                         DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
                         else -> it.dokumentStatus
                     },
+                    metadata = run {
+                        val metadata = it.metadata
+                        if (erKvitteringForProdusertDokument(it, hendelse)) {
+                            metadata.lagreProdusertTidspunkt(LocalDateTime.now())
+                        }
+                        metadata.copy()
+                    },
                     ferdigstiltTidspunkt = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) LocalDateTime.now() else null,
                     ferdigstiltAvIdent = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) FORSENDELSE_APP_ID else null
 
@@ -65,6 +72,10 @@ class DokumentHendelseLytter(
 
         sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
         ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+    }
+
+    private fun erKvitteringForProdusertDokument(dokument: Dokument, dokumentHendelse: DokumentHendelse): Boolean {
+        return dokument.dokumentStatus == DokumentStatus.UNDER_PRODUKSJON && (dokumentHendelse.status == DokumentStatusDto.UNDER_REDIGERING || dokumentHendelse.status == DokumentStatusDto.FERDIGSTILT)
     }
 
     private fun sendJournalposthendelseHvisKlarForDistribusjon(dokumenter: List<Dokument>) {

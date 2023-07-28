@@ -7,6 +7,7 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
@@ -16,10 +17,12 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
@@ -53,7 +56,6 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelse`() {
-
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
@@ -94,6 +96,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         assertSoftly {
             forsendelseResponse.forsendelseType shouldBe ForsendelseTypeTo.UTGÅENDE
             forsendelseResponse.status shouldBe ForsendelseStatusTo.UNDER_PRODUKSJON
+            forsendelseResponse.behandlingInfo shouldBe null
             forsendelseResponse.dokumentDato!! shouldBeEqual dokumentDato.toLocalDate()
             forsendelseResponse.tema shouldBe TEMA_BIDRAG.verdi
             forsendelseResponse.enhet shouldBe JOURNALFØRENDE_ENHET
@@ -137,6 +140,57 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             dokument1.originalDokumentreferanse shouldBe "123123213"
             dokument1.originalJournalpostId shouldBe "12312355555"
         }
+    }
+
+    @Test
+    fun `Skal hente forsendelse med behandlingInfo`() {
+        val soknadId = "12321312"
+        val vedtakId = "565656"
+        val behandlingId = "343434"
+        val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                mottaker = Mottaker(
+                    ident = MOTTAKER_IDENT,
+                    navn = MOTTAKER_NAVN,
+                    adresse = opprettAdresseDo()
+                ),
+                tittel = "Forsendelse tittel",
+                behandlingInfo = BehandlingInfo(
+                    vedtakId = vedtakId,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadId = soknadId,
+                    behandlingId = behandlingId,
+                    stonadType = StonadType.BIDRAG,
+                ),
+                dokumenter = listOf(
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        tittel = "Tittel dokument under redigering",
+                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                        dokumentDato = dokumentDato,
+                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                    ),
+                )
+            )
+        )
+        val response = utførHentForsendelse(forsendelse.forsendelseId.toString())
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelseResponse = response.body!!
+
+        assertSoftly {
+            val behandlingInfo = forsendelseResponse.behandlingInfo
+            behandlingInfo shouldNotBe null
+            behandlingInfo!!.behandlingId shouldBe behandlingId
+            behandlingInfo.soknadId shouldBe soknadId
+            behandlingInfo.vedtakId shouldBe vedtakId
+            behandlingInfo.behandlingType shouldBe StonadType.BIDRAG.name
+        }
+
     }
 
     @Test
