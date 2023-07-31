@@ -563,6 +563,35 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg fra paramtere hvis behandlingId finnes men er fattet`() {
+        val behandlingId = "21321321"
+        every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns opprettBehandlingDto()
+            .copy(
+                soknadType = VedtakType.ENDRING,
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFraType = SoknadFra.BIDRAGSMOTTAKER
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                behandlingId = behandlingId,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = StonadType.FORSKUDD.name,
+                vedtakType = VedtakType.FASTSETTELSE,
+                erFattetBeregnet = true
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01A01"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify(exactly = 0) { bidragBehandlingConsumer.hentBehandling(behandlingId) }
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for varsel farskap`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(

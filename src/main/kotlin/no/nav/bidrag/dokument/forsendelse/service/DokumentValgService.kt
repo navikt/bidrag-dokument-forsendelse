@@ -53,7 +53,7 @@ class DokumentValgService(
             return hentDokumentmalListeForVedtakId(request.vedtakId, request.soknadFra, request.enhet)
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
-        if (request.behandlingId != null) {
+        if (request.behandlingId != null && request.erFattetBeregnet == null) {
             return hentDokumentmalListeForBehandlingId(request.behandlingId, request.soknadFra, request.enhet)
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
