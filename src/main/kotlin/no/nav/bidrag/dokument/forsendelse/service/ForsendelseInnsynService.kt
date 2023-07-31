@@ -111,7 +111,7 @@ class ForsendelseInnsynService(
 
         val forsendelseResponse = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
 
-        return if (forsendelseResponse.tittel.isNullOrEmpty()) {
+        return if (forsendelse.tittel.isNullOrEmpty()) {
             forsendelseResponse.copy(
                 tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
             )
