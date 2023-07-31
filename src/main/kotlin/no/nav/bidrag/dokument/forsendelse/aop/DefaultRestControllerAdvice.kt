@@ -63,11 +63,9 @@ class DefaultRestControllerAdvice {
 
     private fun getErrorMessage(exception: HttpStatusCodeException): String {
         val errorMessage = StringBuilder()
-        errorMessage.append("Det skjedde en feil ved kall mot ekstern tjeneste: ")
         exception.responseHeaders?.get("Warning")
             ?.let { if (it.size > 0) errorMessage.append(it[0]) }
         if (exception.statusText.isNotNullOrEmpty()) {
-            errorMessage.append(" - ")
             errorMessage.append(exception.statusText)
         }
         return errorMessage.toString()
