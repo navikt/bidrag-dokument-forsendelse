@@ -31,7 +31,8 @@ class ForsendelseInnsynService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
-    private val dokumentTjeneste: DokumentTjeneste
+    private val dokumentTjeneste: DokumentTjeneste,
+    private val forsendelseTittelService: ForsendelseTittelService
 ) {
 
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
@@ -108,7 +109,13 @@ class ForsendelseInnsynService(
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
-        return forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+        val forsendelseResponse = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+
+        return if (forsendelseResponse.tittel.isNullOrEmpty()) {
+            forsendelseResponse.copy(
+                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+            )
+        } else forsendelseResponse
     }
 
     fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {

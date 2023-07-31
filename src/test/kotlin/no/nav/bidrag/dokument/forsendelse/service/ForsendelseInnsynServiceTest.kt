@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import org.junit.jupiter.api.BeforeEach
@@ -13,6 +14,9 @@ class ForsendelseInnsynServiceTest {
 
     @MockkBean
     lateinit var forsendelseTjeneste: ForsendelseTjeneste
+
+    @MockkBean
+    lateinit var forsendelseTittelService: ForsendelseTittelService
 
     @MockkBean
     lateinit var tilgangskontrollService: TilgangskontrollService
@@ -31,11 +35,13 @@ class ForsendelseInnsynServiceTest {
             forsendelseTjeneste,
             tilgangskontrollService,
             dokumentValgService,
-            dokumentTjeneste
+            dokumentTjeneste,
+            forsendelseTittelService
         )
         every { tilgangskontrollService.sjekkTilgangForsendelse(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangPerson(any()) } returns Unit
+        every { forsendelseTittelService.opprettForsendelseTittel(any<Forsendelse>()) } returns "Tittel"
     }
 
 }
