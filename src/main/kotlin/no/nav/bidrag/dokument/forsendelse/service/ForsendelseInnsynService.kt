@@ -109,13 +109,13 @@ class ForsendelseInnsynService(
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
-        val forsendelseResponse = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+        return forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
 
-        return if (forsendelse.tittel.isNullOrEmpty()) {
-            forsendelseResponse.copy(
-                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
-            )
-        } else forsendelseResponse
+//        return if (forsendelse.tittel.isNullOrEmpty()) {
+//            forsendelseResponse.copy(
+//                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+//            )
+//        } else forsendelseResponse
     }
 
     fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {
