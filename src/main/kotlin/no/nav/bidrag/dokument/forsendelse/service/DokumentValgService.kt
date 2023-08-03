@@ -17,7 +17,9 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingT
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import java.io.IOException
@@ -50,14 +52,14 @@ class DokumentValgService(
     ): Map<String, DokumentMalDetaljer> {
         if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         if (request.vedtakId != null) {
-            return hentDokumentmalListeForVedtakId(request.vedtakId, request.soknadFra, request.enhet)
+            return hentDokumentmalListeForVedtakId(request.vedtakId, request.soknadFra, request.enhet, request.soknadType)
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
         if (request.behandlingId != null && request.erFattetBeregnet == null) {
-            return hentDokumentmalListeForBehandlingId(request.behandlingId, request.soknadFra, request.enhet)
+            return hentDokumentmalListeForBehandlingId(request.behandlingId, request.soknadFra, request.enhet, request.soknadType)
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         }
-        val (vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
+        val (soknadType, vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
         return behandlingType?.let {
             hentDokumentMalListe(
                 behandlingType,
@@ -65,13 +67,19 @@ class DokumentValgService(
                 soknadFra,
                 erFattetBeregnet,
                 erVedtakIkkeTilbakekreving,
-                enhet
+                enhet,
+                soknadType
             )
         }
             ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
     }
 
-    private fun hentDokumentmalListeForVedtakId(vedtakId: String, soknadFra: SoknadFra?, enhet: String?): Map<String, DokumentMalDetaljer>? {
+    private fun hentDokumentmalListeForVedtakId(
+        vedtakId: String,
+        soknadFra: SoknadFra?,
+        enhet: String?,
+        soknadType: SoknadType?
+    ): Map<String, DokumentMalDetaljer>? {
         return bidragVedtakConsumer.hentVedtak(vedtakId = vedtakId)?.let {
             val behandlingType =
                 if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
@@ -83,12 +91,18 @@ class DokumentValgService(
                 soknadFra,
                 erFattetBeregnet,
                 erVedtakIkkeTilbakekreving,
-                enhet ?: it.enhetId
+                enhet ?: it.enhetId,
+                soknadType = soknadType
             )
         }
     }
 
-    private fun hentDokumentmalListeForBehandlingId(behandlingId: String, soknadFra: SoknadFra?, enhet: String?): Map<String, DokumentMalDetaljer>? {
+    private fun hentDokumentmalListeForBehandlingId(
+        behandlingId: String,
+        soknadFra: SoknadFra?,
+        enhet: String?,
+        soknadType: SoknadType?
+    ): Map<String, DokumentMalDetaljer>? {
         return behandlingConsumer.hentBehandling(behandlingId)?.let {
             return hentDokumentMalListe(
                 it.behandlingType,
@@ -96,7 +110,8 @@ class DokumentValgService(
                 soknadFra ?: it.soknadFraType,
                 null,
                 false,
-                enhet ?: it.behandlerEnhet
+                enhet ?: it.behandlerEnhet,
+                soknadType = soknadType
             )
         }
     }
@@ -107,12 +122,13 @@ class DokumentValgService(
         soknadFra: SoknadFra? = null,
         erFattetBeregnet: Boolean? = null,
         erVedtakIkkeTilbakekreving: Boolean? = false,
-        enhet: String? = null
+        enhet: String? = null,
+        soknadType: SoknadType? = null,
     ): Map<String, DokumentMalDetaljer> {
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                    it.vedtakType.contains(vedtakType) &&
+                    it.isVedtaktypeValid(vedtakType, soknadType) &&
                     it.behandlingStatus.isValid(erFattetBeregnet) &&
                     it.forvaltning.isValid(enhet) &&
                     it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving

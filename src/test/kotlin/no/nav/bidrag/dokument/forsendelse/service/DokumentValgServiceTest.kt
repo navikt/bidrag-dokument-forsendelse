@@ -697,6 +697,30 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for tilbakekreving varsel`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = EngangsbelopType.TILBAKEKREVING.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01S54"
+            dokumentValgListe shouldContainKey "BI01S55"
+            dokumentValgListe shouldContainKey "BI01S56"
+            dokumentValgListe shouldContainKey "BI01S57"
+            dokumentValgListe shouldContainKey "BI01S58"
+            dokumentValgListe shouldContainKey "BI01S59"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+
+    @Test
     fun `Skal hente notater`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe()
 

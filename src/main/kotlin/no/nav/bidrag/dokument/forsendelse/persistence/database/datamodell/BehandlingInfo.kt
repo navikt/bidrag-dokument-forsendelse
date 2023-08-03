@@ -11,6 +11,7 @@ import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
 
 @Entity(name = "behandling_info")
 data class BehandlingInfo(
@@ -35,6 +36,7 @@ data class BehandlingInfo(
     // Brukes hvis søknadgruppe fra bisys ikke mapper til stonadType eller engangsbelopType
     // Gjelder foreløpig for soknadGruppe AVSKRIVNING
     val behandlingType: BehandlingType? = null,
+    val soknadType: SoknadType? = null,
 ) {
     fun toBehandlingType(): String? = behandlingType ?: stonadType?.name ?: engangsBelopType?.name
 }
