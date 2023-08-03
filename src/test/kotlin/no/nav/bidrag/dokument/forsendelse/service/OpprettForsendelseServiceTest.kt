@@ -14,11 +14,15 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BP
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
@@ -111,6 +115,29 @@ class OpprettForsendelseServiceTest {
         verify {
             forsendelseTjeneste.lagre(withArg {
                 it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
+                it.behandlingInfo!!.stonadType shouldBe null
+                it.behandlingInfo!!.engangsBelopType shouldBe null
+            })
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med soknadtype`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = emptyList(),
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadType = "EGET_TILTAK",
+                behandlingType = "AVSKRIVNING",
+                vedtakType = VedtakType.ENDRING
+            )
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(withArg {
+                it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
+                it.behandlingInfo!!.soknadType shouldBe "EGET_TILTAK"
                 it.behandlingInfo!!.stonadType shouldBe null
                 it.behandlingInfo!!.engangsBelopType shouldBe null
             })
@@ -214,6 +241,41 @@ class OpprettForsendelseServiceTest {
         verify {
             forsendelseTjeneste.lagre(withArg {
                 it.tittel shouldBe null
+            })
+        }
+    }
+
+    @Test
+    fun `Skal ikke opprette forsendelse tittel for notat`() {
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
+            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
+                "Tittel notat",
+                DokumentMalType.NOTAT
+            )
+        )
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "Tittel notat",
+                    dokumentmalId = DOKUMENTMAL_NOTAT
+                ),
+            ),
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = null,
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+                vedtakType = VedtakType.FASTSETTELSE
+            ),
+            opprettTittel = true
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(withArg {
+                it.tittel shouldBe null
+            })
+            dokumenttjeneste.opprettNyttDokument(any<Forsendelse>(), withArg<List<OpprettDokumentForespørsel>> {
+                it[0].tittel shouldBe "Tittel notat"
             })
         }
     }

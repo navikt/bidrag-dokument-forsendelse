@@ -68,12 +68,12 @@ fun BehandlingDto.tilEngangsbelopType(): EngangsbelopType? {
     }
 }
 
-fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {
+fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String? {
     val stonadTypeValue =
         vedtak?.stonadsendringListe?.isNotEmpty()?.ifTrue { vedtak.stonadsendringListe[0].type } ?: behandling?.tilStonadtype() ?: stonadType
     val engangsBelopTypeValue =
         vedtak?.engangsbelopListe?.isNotEmpty()?.ifTrue { vedtak.engangsbelopListe[0].type } ?: behandling?.tilEngangsbelopType() ?: engangsBelopType
-    val behandlingType = when (stonadTypeValue) {
+    return when (stonadTypeValue) {
         StonadType.FORSKUDD -> "Forskudd"
         StonadType.BIDRAG -> "Bidrag"
         StonadType.BIDRAG18AAR -> "Bidrag 18 år"
@@ -91,7 +91,10 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, 
             else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
         }
     }
+}
 
+fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {
+    val behandlingType = this.tilBeskrivelseBehandlingType(vedtak, behandling)
 
     val stringBuilder = mutableListOf<String>()
     if (vedtakId.isNotNullOrEmpty() || erFattetBeregnet != null) {

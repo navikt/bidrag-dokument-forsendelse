@@ -697,7 +697,38 @@ class DokumentValgServiceTest {
     }
 
     @Test
-    fun `Skal hente dokumentvalg for tilbakekreving varsel`() {
+    fun `Skal hente dokumentvalg for vedtak særtilskudd og ignorere behandlingtype`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.ENDRING,
+                stonadsendringListe = emptyList(),
+                engangsbelopListe = listOf(
+                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                )
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadType = "FOLGER_KLAGE",
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01E01"
+            dokumentValgListe shouldContainKey "BI01E02"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+
+    @Test
+    fun `Skal hente dokumentvalg for tilbakekreving varsel med soknad type EGET_TILTAK`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakType = VedtakType.ENDRING,
