@@ -263,8 +263,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}_$opprettetEpochMillis\"" +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
@@ -366,7 +366,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
                         "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}_$opprettetEpochMillis\"" +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
