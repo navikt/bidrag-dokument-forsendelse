@@ -32,7 +32,6 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @BeforeEach
     fun initMockCloudStorage() {
-
         every { gcpCloudStorage.lagreFil(any(), any()) } returns LagreFilResponse("2", "filsti")
         every { gcpCloudStorage.hentFil(any()) } returns "asdasd".toByteArray()
     }
@@ -137,7 +136,6 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
 
             stubUtils.Valider().hentDokumentIkkeKalt()
             stubUtils.Valider().hentDokumentMetadataKalt("JOARK-$journalpostId", antallGanger = 0)
-
         }
     }
 
@@ -253,10 +251,10 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
 
     fun utførHentRedigeringmetadata(
         forsendelseId: String,
-        dokumentreferanse: String,
+        dokumentreferanse: String
     ): ResponseEntity<DokumentRedigeringMetadataResponsDto> {
         return httpHeaderTestRestTemplate.getForEntity<DokumentRedigeringMetadataResponsDto>(
-            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse",
+            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse"
         )
     }
 }

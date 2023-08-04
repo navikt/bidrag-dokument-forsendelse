@@ -103,7 +103,6 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
         sendMeldingTilDokumentHendelse(hendelse)
 
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
-
             assertSoftly("Valider dokument for forsendelse 1") {
                 val forsendelseEtter = testDataManager.hentForsendelse(forsendelse1.forsendelseId!!)!!
                 val dokumentEtter = forsendelseEtter.dokumenter[0]
@@ -306,19 +305,19 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Forsendelse notat\"," +
-                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"NOTAT\"," +
-                        "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                        "\"saksbehandlerIdent\":\"Z999444\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Forsendelse notat\"," +
+                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"NOTAT\"," +
+                    "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
+                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                    "\"saksbehandlerIdent\":\"Z999444\"" +
+                    "}"
             )
 
             stubUtils.Valider().hentDokumentKalt(forsendelseEtter.forsendelseIdMedPrefix, forsendelseEtter.dokumenter[0].dokumentreferanse)

@@ -241,23 +241,26 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
             dokument3.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
             dokument2.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
             dokument3.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
-
         }
 
         verify(exactly = 2) {
             kafkaHendelseProdusent.publiser(any())
         }
         verify(ordering = Ordering.SEQUENCE) {
-            kafkaHendelseProdusent.publiser(withArg {
-                it.forsendelseId shouldBe forsendelse2.forsendelseId.toString()
-                it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                it.dokumentreferanse shouldBe forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
-            })
-            kafkaHendelseProdusent.publiser(withArg {
-                it.forsendelseId shouldBe forsendelse3.forsendelseId.toString()
-                it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                it.dokumentreferanse shouldBe forsendelse3.dokumenter.hoveddokument!!.dokumentreferanse
-            })
+            kafkaHendelseProdusent.publiser(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse2.forsendelseId.toString()
+                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                    it.dokumentreferanse shouldBe forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
+                }
+            )
+            kafkaHendelseProdusent.publiser(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse3.forsendelseId.toString()
+                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                    it.dokumentreferanse shouldBe forsendelse3.dokumenter.hoveddokument!!.dokumentreferanse
+                }
+            )
         }
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)

@@ -152,7 +152,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     behandlingStatus: kodemapper.toBehandlingStatusKode(v.erFattetVedtak, v.erManuelBeregning),
     forvaltning: kodemapper.toForvaltningKode(v.erKlageEnhet),
     brevkoder: v.brevkode,
-    vedtakType: v.vedtakType.filter((vt) => vt !== "KORRIGERING")
+    vedtakType: v.vedtakType.filter((vt) => !["KORRIGERING", "EGET_TILTAK"].includes(vt))
   })).map((v) => {
     delete v.tittel
     delete v.stonad

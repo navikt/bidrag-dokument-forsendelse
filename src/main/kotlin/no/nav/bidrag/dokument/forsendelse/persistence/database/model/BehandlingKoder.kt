@@ -24,6 +24,7 @@ enum class SoknadFra(private val kode: String) {
 }
 
 typealias BehandlingType = String
+typealias SoknadType = String
 
 data class DokumentBehandling(
     val tittel: String,
@@ -66,9 +67,19 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
     }
 }
 
+typealias SoknadTyper = List<SoknadType>
+
+fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
+    if (st == "EGET_TILTAK") {
+        return soknadType.contains(st)
+    }
+    return vedtakType.contains(vt)
+}
+
 data class DokumentBehandlingDetaljer(
     val stonadType: StonadType? = null,
     val engangsbelopType: EngangsbelopType? = null,
+    val soknadType: SoknadTyper,
     val vedtakType: List<VedtakType>,
     val soknadFra: List<SoknadFra>,
     val forvaltning: Forvaltning,

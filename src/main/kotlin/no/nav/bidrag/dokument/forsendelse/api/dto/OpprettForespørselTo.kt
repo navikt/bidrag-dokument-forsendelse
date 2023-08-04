@@ -8,6 +8,7 @@ import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
 import java.time.LocalDateTime
 
 @Schema(description = "Metadata for opprettelse av forsendelse")
@@ -44,9 +45,10 @@ data class BehandlingInfoDto(
     @Schema(enumAsRef = true) val stonadType: StonadType? = null,
     @Schema(description = "Brukes bare hvis stonadType og engangsbelopType er null") val behandlingType: BehandlingType? = null,
     @Schema(enumAsRef = true) val vedtakType: VedtakType? = null,
+    @Schema(enumAsRef = true, description = "Soknadtype er gamle kodeverdier som er erstattet av vedtaktype.") val soknadType: SoknadType? = null,
     val erFattetBeregnet: Boolean? = null,
     @Schema(description = "Hvis resultatkoden fra BBM er IT så skal denne være sann") val erVedtakIkkeTilbakekreving: Boolean? = null,
-    @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
+    @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null
 )
 
 @Schema(description = "Metadata til en respons etter forsendelse ble opprettet")

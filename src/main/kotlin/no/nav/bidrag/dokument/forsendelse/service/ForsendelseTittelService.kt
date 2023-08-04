@@ -7,6 +7,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsen
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
+import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelseBehandlingType
 import org.springframework.stereotype.Service
 
 @Service
@@ -33,4 +34,9 @@ class ForsendelseTittelService(
         return forespørsel.tilBehandlingInfo()?.tilBeskrivelse(gjelderRolle?.type, vedtak, behandling)
     }
 
+    fun opprettForsendelseBehandlingPrefiks(forespørsel: OpprettForsendelseForespørsel): String? {
+        val vedtak = forespørsel.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
+        val behandling = if (vedtak == null) forespørsel.behandlingInfo?.behandlingId?.let { behandlingConsumer.hentBehandling(it) } else null
+        return forespørsel.tilBehandlingInfo()?.tilBeskrivelseBehandlingType(vedtak, behandling)
+    }
 }

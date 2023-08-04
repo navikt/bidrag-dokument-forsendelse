@@ -55,7 +55,8 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         initBucket()
     }
 
-    fun initBucket() {
+    fun initBucket(retryCount: Int = 0) {
+        if (retryCount > 3) return
         val storage = StorageOptions.newBuilder()
             .setHost(host)
             .setProjectId("bidrag-local")
@@ -64,6 +65,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
             storage.service.create(BucketInfo.of(bucketNavn))
         } catch (e: Exception) {
             log.error(e) { "Failed while creating bucket. Host = $host" }
+            initBucket(retryCount + 1)
         }
     }
 
@@ -127,7 +129,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
 
     fun utførHentDokument(
         forsendelseId: String,
-        dokumentreferanse: String,
+        dokumentreferanse: String
     ): ResponseEntity<ByteArray> {
         return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
             "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"

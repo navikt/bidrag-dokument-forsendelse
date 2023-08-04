@@ -123,7 +123,8 @@ class ForsendelseInnsynService(
                     soknadFra = it.soknadFra,
                     erFattetBeregnet = it.erFattetBeregnet,
                     erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
-                    enhet = forsendelse.enhet
+                    enhet = forsendelse.enhet,
+                    soknadType = it.soknadType
                 )
 
             )

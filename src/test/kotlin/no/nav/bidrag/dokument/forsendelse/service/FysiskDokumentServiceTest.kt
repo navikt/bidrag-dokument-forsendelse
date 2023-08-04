@@ -21,7 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 class FysiskDokumentServiceTest {
 
-
     @MockkBean
     lateinit var forsendelseTjeneste: ForsendelseTjeneste
 
@@ -68,7 +67,7 @@ class FysiskDokumentServiceTest {
             dokumentStatus = DokumentStatus.KONTROLLERT,
             tittel = "Tittel dokument",
             dokumentMalId = "BI100",
-            rekkefølgeIndeks = 1,
+            rekkefølgeIndeks = 1
         ).copy(dokumentId = 2L, forsendelse = forsendelse)
 
         forsendelse = forsendelse.copy(dokumenter = listOf(dokumentKontrollert))
@@ -95,7 +94,7 @@ class FysiskDokumentServiceTest {
             tittel = "Tittel dokument",
             dokumentMalId = "BI100",
             arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-            rekkefølgeIndeks = 1,
+            rekkefølgeIndeks = 1
         ).copy(dokumentId = 2L, forsendelse = forsendelse)
 
         forsendelse = forsendelse.copy(dokumenter = listOf(dokumentKontrollert))
@@ -123,7 +122,7 @@ class FysiskDokumentServiceTest {
             tittel = "Tittel dokument",
             dokumentMalId = "BI100",
             arkivsystem = DokumentArkivSystem.FORSENDELSE,
-            rekkefølgeIndeks = 1,
+            rekkefølgeIndeks = 1
         ).copy(dokumentId = 2L, forsendelse = forsendelse)
 
         var forsendelseOriginal = opprettForsendelse2(
@@ -136,7 +135,7 @@ class FysiskDokumentServiceTest {
             tittel = "Tittel dokument",
             dokumentMalId = "BI100",
             arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-            rekkefølgeIndeks = 1,
+            rekkefølgeIndeks = 1
         ).copy(dokumentId = 5L, forsendelse = forsendelseOriginal)
 
         forsendelse = forsendelse.copy(dokumenter = listOf(dokumentLenket))

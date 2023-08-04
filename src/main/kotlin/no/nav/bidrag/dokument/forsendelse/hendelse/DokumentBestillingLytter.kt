@@ -73,7 +73,7 @@ class DokumentBestillingLytter(
                         metadata.lagreBestiltTidspunkt(LocalDateTime.now())
                         metadata.inkrementerBestiltAntallGanger()
                         metadata.copy()
-                    },
+                    }
                 )
             )
             LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }

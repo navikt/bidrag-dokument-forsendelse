@@ -240,6 +240,7 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
         )
     },
     gjelderIdent = this.gjelderIdent,
+    arkivJournalpostId = this.journalpostIdFagarkiv,
     tittel = tittel ?: this.dokumenter.hoveddokument?.tittel ?: "Forsendelse $forsendelseId",
     tema = this.tema.name,
     saksnummer = this.saksnummer,

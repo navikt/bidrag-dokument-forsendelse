@@ -85,7 +85,6 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
                 )
             )
 
-
         assertSoftly("Valider før utført avvik") {
             val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
             respons.statusCode shouldBe HttpStatus.OK

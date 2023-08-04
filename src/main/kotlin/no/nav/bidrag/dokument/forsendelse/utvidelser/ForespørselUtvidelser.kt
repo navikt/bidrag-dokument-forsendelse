@@ -69,7 +69,6 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     }
 }
 
-
 fun OpprettForsendelseForespørsel.tilBehandlingInfo() = this.behandlingInfo?.let {
     BehandlingInfo(
         behandlingId = it.behandlingId,
@@ -81,6 +80,7 @@ fun OpprettForsendelseForespørsel.tilBehandlingInfo() = this.behandlingInfo?.le
         behandlingType = if (it.stonadType == null && it.engangsBelopType == null) it.behandlingType else null,
         erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
         soknadFra = it.soknadFra,
-        erFattetBeregnet = it.erFattetBeregnet
+        erFattetBeregnet = it.erFattetBeregnet,
+        soknadType = it.soknadType
     )
 }

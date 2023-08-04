@@ -122,5 +122,4 @@ class FerdigstillForsendelseService(
         val beskjed = "dokumentet er sendt per post med vedlegg"
         return "$tittel ($beskjed)"
     }
-
 }

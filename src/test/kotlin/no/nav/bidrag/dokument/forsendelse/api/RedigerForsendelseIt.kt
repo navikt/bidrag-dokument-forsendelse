@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
-
 class RedigerForsendelseIt : KontrollerTestContainerRunner() {
 
     @Test
@@ -37,7 +36,9 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
 
         val dokument = forsendelse.dokumenter[0]
         val response = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse, request = FerdigstillDokumentRequest(
+            forsendelse.forsendelseIdMedPrefix,
+            dokument.dokumentreferanse,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = VALID_PDF_BASE64.toByteArray(),
                 redigeringMetadata = redigeringData
             )
@@ -82,7 +83,9 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
 
         // Ferdigstill dokument
         val responseFerdigstill = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse, request = FerdigstillDokumentRequest(
+            forsendelse.forsendelseIdMedPrefix,
+            dokument.dokumentreferanse,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = VALID_PDF_BASE64.toByteArray(),
                 redigeringMetadata = redigeringData
             )
@@ -110,16 +113,15 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
             dokumentMetadataEtterOpphev shouldHaveSize 1
             dokumentMetadataEtterOpphev[0].journalpostId shouldBe "BID-123123"
             dokumentMetadataEtterOpphev[0].dokumentreferanse shouldBe "123213213"
-
         }
     }
 
     fun utførOpphevFerdigstillDokument(
         forsendelseId: String,
-        dokumentreferanse: String,
+        dokumentreferanse: String
     ): ResponseEntity<DokumentRespons> {
         return httpHeaderTestRestTemplate.patchForEntity<DokumentRespons>(
-            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill/opphev",
+            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill/opphev"
         )
     }
 }

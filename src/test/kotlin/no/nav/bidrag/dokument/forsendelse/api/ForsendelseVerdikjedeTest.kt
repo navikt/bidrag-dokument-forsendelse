@@ -71,7 +71,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                         journalpostId = "JOARK-64443434",
                         dokumentreferanse = "12313213"
 
-                    ),
+                    )
                 )
             )
         )
@@ -106,7 +106,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                     OpprettDokumentForespørsel(
                         tittel = TITTEL_HOVEDDOKUMENT,
                         dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                    ),
+                    )
                 )
             )
         )
@@ -130,7 +130,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                     OppdaterDokumentForespørsel(
                         tittel = "Ny tittel dokument fra Joark",
                         dokumentreferanse = originalForsendelse.dokumenter.sortertEtterRekkefølge[1].dokumentreferanse,
-                        journalpostId = "JOARK-${originalForsendelse.forsendelseId}",
+                        journalpostId = "JOARK-${originalForsendelse.forsendelseId}"
                     )
                 )
             )
@@ -189,7 +189,6 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             dokumenter[2].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         }
 
-
         dokumentHendelseLytter.prossesserDokumentHendelse(
             opprettConsumerRecord(
                 originalDokument.dokumentreferanse,
@@ -203,7 +202,9 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             )
         )
         utførFerdigstillDokument(
-            forsendelseIdSomSkalDistribueres.toString(), nyForsendelseDokumentreferanseMåKontrolleres, request = FerdigstillDokumentRequest(
+            forsendelseIdSomSkalDistribueres.toString(),
+            nyForsendelseDokumentreferanseMåKontrolleres,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = dokumentInnholdRedigering.toByteArray(),
                 redigeringMetadata = dokumentRedigeringData
             )
@@ -217,7 +218,6 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             dokumenter[1].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
             dokumenter[1].metadata.hentProdusertTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
             dokumenter[2].dokumentStatus shouldBe DokumentStatus.KONTROLLERT
-
 
             val originalForsendelseOppdatert = testDataManager.hentForsendelse(originalForsendelseId)!!
             originalForsendelseOppdatert.dokumenter shouldHaveSize 2
@@ -266,43 +266,39 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                         dokumentreferanse = dokumenter[0].dokumentreferanse
                     ),
                     OppdaterDokumentForespørsel(
-                        dokumentreferanse = dokumenter[1].dokumentreferanse,
+                        dokumentreferanse = dokumenter[1].dokumentreferanse
                     )
                 )
             )
         )
-
 
         val distribuerResponse = utførDistribuerForsendelse(forsendelseIdSomSkalDistribueres.toString())
         distribuerResponse.statusCode shouldBe HttpStatus.OK
         distribuerResponse.body!!.journalpostId shouldBe nyJournalpostId
 
         assertSoftly("Skal validere forsendelse etter distribusjon") {
-
             val forsendelseResponseEtterDistribusjon = utførHentForsendelse(forsendelseIdSomSkalDistribueres.toString())
             forsendelseResponseEtterDistribusjon.statusCode shouldBe HttpStatus.OK
             val responseBody = forsendelseResponseEtterDistribusjon.body!!
             responseBody.status shouldBe ForsendelseStatusTo.DISTRIBUERT
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Tittel på forsendelse\"," +
-                        "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
-                        "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Ny tittel dokument fra Joark\",\"fysiskDokument\":\"UkVESUdFUklOR0RBVEFfQllURQ==\"}," +
-                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                        "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${opprettetForsendelseOppdatert.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Tittel på forsendelse\"," +
+                    "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
+                    "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Ny tittel dokument fra Joark\",\"fysiskDokument\":\"UkVESUdFUklOR0RBVEFfQllURQ==\"}," +
+                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                    "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                    "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"UTGÅENDE\"," +
+                    "\"referanseId\":\"BIF_${opprettetForsendelseOppdatert.forsendelseId}\"," +
+                    "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
+                    "}"
             )
         }
-
-
     }
 
     fun opprettConsumerRecord(key: String, value: String) = ConsumerRecord("", 1, 1L, key, value)

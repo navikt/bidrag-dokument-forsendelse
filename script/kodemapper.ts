@@ -59,11 +59,11 @@ export function soknadTypeToName(kode: string) {
     case "FA":
       return "SOKNAD"
     case "IG":
-      return "INNKREVINGSGRUNNL"
+      return "INNKREVINGSGRUNNLAG"
     case "IR":
-      return "INDEKSREG"
+      return "INDEKSREGULERING"
     case "KB":
-      return "KLAGE_BEGR_SATS"
+      return "KLAGE_BEGRENSET_SATS"
     case "KL":
       return "KLAGE"
     case "KM":
@@ -71,9 +71,9 @@ export function soknadTypeToName(kode: string) {
     case "KV":
       return "KONVERTERING"
     case "OB":
-      return "OMGJORING_BEGR_SATS"
+      return "OMGJORING_BEGRENSET_SATS"
     case "OF":
-      return "OPPJUST_FORSK"
+      return "OPPJUSTERT_FORSKUDD"
     case "OH":
       return "OPPHOR"
     case "OM":
@@ -81,7 +81,7 @@ export function soknadTypeToName(kode: string) {
     case "PA":
       return "PRIVAT_AVTALE"
     case "RB":
-      return "BEGR_REVURD"
+      return "BEGRENSET_REVURDERING"
     case "RF":
       return "REVURDERING"
     case "KR":
@@ -185,20 +185,22 @@ export function soknadGruppeToStonadType(kode: string) {
 export function soknadTypeToVedtakType(kode: string, soknadFra: string) {
   if (kode == "SOKNAD") {
     return "FASTSETTELSE"
-  } else if (["INNKREVINGSGRUNNL", "PRIVAT_AVTALE"].includes(kode)) {
+  } else if (["INNKREVINGSGRUNNLAG", "PRIVAT_AVTALE"].includes(kode)) {
     return "INNKREVING"
-  } else if ("INDEKSREG" == kode) {
+  } else if ("INDEKSREGULERING" == kode) {
     return "INDEKSREGULERING"
-  } else if (["KLAGE_BEGR_SATS", "KLAGE", "FOLGER_KLAGE"].includes(kode)) {
+  } else if (["KLAGE_BEGRENSET_SATS", "KLAGE", "FOLGER_KLAGE"].includes(kode)) {
     return "KLAGE"
-  } else if (["BEGR_REVURD", "REVURDERING", "EGET_TILTAK"].includes(kode)) {
+  } else if (["BEGRENSET_REVURDERING", "REVURDERING"].includes(kode)) {
     return "REVURDERING"
   } else if ("OPPHOR" == kode) {
     return "OPPHØR"
-  } else if ("OPPJUST_FORSK" == kode && soknadFra == "BIDRAGSENHET") {
+  } else if ("OPPJUSTERT_FORSKUDD" == kode && soknadFra == "BIDRAGSENHET") {
     return "ALDERSJUSTERING"
   } else if ("KORRIGERING" == kode) {
     return "KORRIGERING"
+  } else if ("EGET_TILTAK" == kode) {
+    return "EGET_TILTAK"
   }
   return "ENDRING"
 }

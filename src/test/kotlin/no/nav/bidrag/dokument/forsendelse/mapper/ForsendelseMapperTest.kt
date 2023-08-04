@@ -17,7 +17,6 @@ import java.time.LocalDateTime
 
 class ForsendelseMapperTest {
 
-
     @Test
     fun `Skal mappe forsendelse med flere dokumenter`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
@@ -41,7 +40,7 @@ class ForsendelseMapperTest {
                     journalpostId = "123123213123",
                     arkivsystem = DokumentArkivSystem.JOARK,
                     rekkefølgeIndeks = 0,
-                    dokumentDato = dokumentDato,
+                    dokumentDato = dokumentDato
                 ).copy(dokumentId = dokumentId2),
                 nyttDokument(
                     journalpostId = origForsendelseId,
@@ -55,9 +54,8 @@ class ForsendelseMapperTest {
             )
         )
 
-
         val dokumentMetadata = mapOf(
-            "BIF${dokumentId2}" to run {
+            "BIF$dokumentId2" to run {
                 val metadata = DokumentDtoMetadata()
                 metadata.oppdaterOriginalJournalpostId("orig_jp_123")
                 metadata.oppdaterOriginalDokumentreferanse("orig_dokref_123")
@@ -117,7 +115,7 @@ class ForsendelseMapperTest {
     @Test
     fun `Skal mappe forsendelse med forsendelse tittel`() {
         val forsendelse = opprettForsendelse2(
-            tittel = "Forsendelse tittel",
+            tittel = "Forsendelse tittel"
         )
 
         val forsendelseRespons = forsendelse.tilForsendelseRespons()

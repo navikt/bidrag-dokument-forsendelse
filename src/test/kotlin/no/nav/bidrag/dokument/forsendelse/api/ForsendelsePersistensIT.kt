@@ -9,8 +9,12 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.Ordering
 import io.mockk.verify
 import jakarta.transaction.Transactional
+import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
+import no.nav.bidrag.behandling.felles.enums.StonadType
+import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
@@ -21,6 +25,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
@@ -57,6 +62,53 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med behandlinginfo`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            behandlingInfo = BehandlingInfoDto(
+                soknadId = "123123",
+                vedtakId = "12321333",
+                behandlingId = "2342323",
+                erVedtakIkkeTilbakekreving = true,
+                erFattetBeregnet = true,
+                behandlingType = "BEHANDLING_TYPE",
+                engangsBelopType = EngangsbelopType.TILBAKEKREVING,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadType = "EGET_TILTAK",
+                stonadType = StonadType.FORSKUDD,
+                vedtakType = VedtakType.FASTSETTELSE
+            )
+        )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)
+            forsendelse shouldNotBe null
+            forsendelse!!.tema shouldBe ForsendelseTema.BID
+            val behandlingInfo = forsendelse.behandlingInfo
+            behandlingInfo shouldNotBe null
+            behandlingInfo!!.behandlingType shouldBe null
+            behandlingInfo.soknadId shouldBe "123123"
+            behandlingInfo.vedtakId shouldBe "12321333"
+            behandlingInfo.behandlingId shouldBe "2342323"
+            behandlingInfo.erVedtakIkkeTilbakekreving shouldBe true
+            behandlingInfo.erFattetBeregnet shouldBe true
+            behandlingInfo.engangsBelopType shouldBe EngangsbelopType.TILBAKEKREVING
+            behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+            behandlingInfo.soknadType shouldBe "EGET_TILTAK"
+            behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
+            behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+        }
+
+        val forsendelseResponse = utførHentForsendelse(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!
+
+        journalpost.behandlingInfo shouldNotBe null
+        journalpost.behandlingInfo!!.soknadId shouldBe "123123"
     }
 
     @Test
@@ -218,7 +270,9 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         )
         val dokument1 = forsendelse.dokumenter[1]
         val responseFerdigstill = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix, dokument1.dokumentreferanse, request = FerdigstillDokumentRequest(
+            forsendelse.forsendelseIdMedPrefix,
+            dokument1.dokumentreferanse,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = dokumentInnholdRedigering.toByteArray(),
                 redigeringMetadata = dokumentRedigeringData
             )
@@ -227,7 +281,9 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
         val dokument2 = forsendelse.dokumenter[2]
         val responseFerdigstill2 = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix, dokument2.dokumentreferanse, request = FerdigstillDokumentRequest(
+            forsendelse.forsendelseIdMedPrefix,
+            dokument2.dokumentreferanse,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = dokumentInnholdRedigering.toByteArray(),
                 redigeringMetadata = dokumentRedigeringData
             )
@@ -257,20 +313,20 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Tittel på forsendelse\"," +
-                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                        "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
-                        "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Tittel på forsendelse\"," +
+                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                    "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
+                    "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"UTGÅENDE\"," +
+                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                    "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.hoveddokument!!.dokumentreferanse)

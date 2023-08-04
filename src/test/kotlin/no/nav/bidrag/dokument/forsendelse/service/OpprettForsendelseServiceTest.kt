@@ -14,11 +14,15 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BP
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
@@ -109,11 +113,38 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
-                it.behandlingInfo!!.stonadType shouldBe null
-                it.behandlingInfo!!.engangsBelopType shouldBe null
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
+                    it.behandlingInfo!!.stonadType shouldBe null
+                    it.behandlingInfo!!.engangsBelopType shouldBe null
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med soknadtype`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = emptyList(),
+            behandlingInfo = BehandlingInfoDto(
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadType = "EGET_TILTAK",
+                behandlingType = "AVSKRIVNING",
+                vedtakType = VedtakType.ENDRING
+            )
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
+                    it.behandlingInfo!!.soknadType shouldBe "EGET_TILTAK"
+                    it.behandlingInfo!!.stonadType shouldBe null
+                    it.behandlingInfo!!.engangsBelopType shouldBe null
+                }
+            )
         }
     }
 
@@ -124,7 +155,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
+                )
             ),
             opprettTittel = true,
             gjelderIdent = GJELDER_IDENT_BP,
@@ -138,9 +169,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.tittel shouldBe "Vedtak om bidrag"
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe "Vedtak om bidrag"
+                }
+            )
         }
     }
 
@@ -160,9 +193,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.status shouldBe ForsendelseStatus.UNDER_OPPRETTELSE
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.status shouldBe ForsendelseStatus.UNDER_OPPRETTELSE
+                }
+            )
         }
     }
 
@@ -173,7 +208,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
+                )
             ),
             opprettTittel = true,
             gjelderIdent = GJELDER_IDENT_BP,
@@ -187,9 +222,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
+                }
+            )
         }
     }
 
@@ -200,7 +237,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
+                )
             ),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
@@ -212,9 +249,85 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.tittel shouldBe null
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe null
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Skal ikke lagre forsendelse tittel for notat men legge til prefiks på dokument tittel`() {
+        every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
+            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
+                "Tittel notat",
+                DokumentMalType.NOTAT
+            )
+        )
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "Tittel notat",
+                    dokumentmalId = DOKUMENTMAL_NOTAT
+                )
+            ),
+            behandlingInfo = BehandlingInfoDto(
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+            ),
+            opprettTittel = true
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe null
+                }
+            )
+            dokumenttjeneste.opprettNyttDokument(
+                any<Forsendelse>(),
+                withArg<List<OpprettDokumentForespørsel>> {
+                    it[0].tittel shouldBe "Ektefellebidrag, Tittel notat"
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Skal ikke legge til prefiks på dokument tittel hvis opprettTittel er false`() {
+        every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
+            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
+                "Tittel notat",
+                DokumentMalType.NOTAT
+            )
+        )
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "Tittel notat",
+                    dokumentmalId = DOKUMENTMAL_NOTAT
+                )
+            ),
+            behandlingInfo = BehandlingInfoDto(
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+            ),
+            opprettTittel = false
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe null
+                }
+            )
+            dokumenttjeneste.opprettNyttDokument(
+                any<Forsendelse>(),
+                withArg<List<OpprettDokumentForespørsel>> {
+                    it[0].tittel shouldBe "Tittel notat"
+                }
+            )
         }
     }
 
@@ -244,17 +357,20 @@ class OpprettForsendelseServiceTest {
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørselEngangsbelop)
 
         verify(ordering = Ordering.SEQUENCE) {
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe null
-                it.behandlingInfo!!.stonadType shouldBe StonadType.BIDRAG
-                it.behandlingInfo!!.engangsBelopType shouldBe null
-            })
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe null
-                it.behandlingInfo!!.stonadType shouldBe null
-                it.behandlingInfo!!.engangsBelopType shouldBe EngangsbelopType.SAERTILSKUDD
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe null
+                    it.behandlingInfo!!.stonadType shouldBe StonadType.BIDRAG
+                    it.behandlingInfo!!.engangsBelopType shouldBe null
+                }
+            )
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe null
+                    it.behandlingInfo!!.stonadType shouldBe null
+                    it.behandlingInfo!!.engangsBelopType shouldBe EngangsbelopType.SAERTILSKUDD
+                }
+            )
         }
     }
-
 }

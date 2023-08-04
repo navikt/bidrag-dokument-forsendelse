@@ -338,7 +338,7 @@ class DokumentValgServiceTest {
                 vedtakType = VedtakType.OPPHØR,
                 soknadFra = SoknadFra.BIDRAGSMOTTAKER,
                 behandlingType = StonadType.BIDRAG.name,
-                erFattetBeregnet = false,
+                erFattetBeregnet = false
             )
         )
 
@@ -397,13 +397,13 @@ class DokumentValgServiceTest {
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
                 type = VedtakType.OPPHØR,
-                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR)),
+                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR))
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                soknadFra = SoknadFra.NAV_BIDRAG
             )
         )
 
@@ -431,7 +431,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -461,7 +461,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -490,7 +490,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                soknadFra = SoknadFra.NAV_BIDRAG
             )
         )
 
@@ -520,7 +520,7 @@ class DokumentValgServiceTest {
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
                 behandlingId = "123213",
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -546,7 +546,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 behandlingId = behandlingId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -655,7 +655,6 @@ class DokumentValgServiceTest {
         }
     }
 
-
     @Test
     fun `Skal hente dokumentvalg varsel for klage farskap fra Bidragspliktig`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
@@ -695,6 +694,89 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01S10"
         }
     }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak særtilskudd og ignorere behandlingtype`() {
+        val vedtakId = "21321321"
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
+            .copy(
+                type = VedtakType.ENDRING,
+                stonadsendringListe = emptyList(),
+                engangsbelopListe = listOf(
+                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                )
+            )
+
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakId = vedtakId,
+                soknadType = "FOLGER_KLAGE",
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01E01"
+            dokumentValgListe shouldContainKey "BI01E02"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+            verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for tilbakekreving varsel med soknad type EGET_TILTAK`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = EngangsbelopType.TILBAKEKREVING.name,
+                soknadFra = SoknadFra.NAV_BIDRAG
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01S54"
+            dokumentValgListe shouldContainKey "BI01S55"
+            dokumentValgListe shouldContainKey "BI01S56"
+            dokumentValgListe shouldContainKey "BI01S57"
+            dokumentValgListe shouldContainKey "BI01S58"
+            dokumentValgListe shouldContainKey "BI01S59"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for bidrag varsel med soknad type EGET_TILTAK fra NAV_BIDRAG`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 13
+            dokumentValgListe shouldContainKey "BI01S06"
+            dokumentValgListe shouldContainKey "BI01S07"
+            dokumentValgListe shouldContainKey "BI01S31"
+            dokumentValgListe shouldContainKey "BI01S32"
+            dokumentValgListe shouldContainKey "BI01S33"
+            dokumentValgListe shouldContainKey "BI01S34"
+            dokumentValgListe shouldContainKey "BI01S35"
+            dokumentValgListe shouldContainKey "BI01S36"
+            dokumentValgListe shouldContainKey "BI01S46"
+            dokumentValgListe shouldContainKey "BI01S62"
+            dokumentValgListe shouldContainKey "BI01S63"
+            dokumentValgListe shouldContainKey "BI01S65"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
 
     @Test
     fun `Skal hente notater`() {

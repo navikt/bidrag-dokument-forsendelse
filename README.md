@@ -86,7 +86,7 @@ Deretter kjør følgende kommando for å importere secrets. Viktig at filen som 
 committes til git
 
 ```bash
-kubectl exec --tty deployment/bidrag-dokument-forsendelse printenv | grep -E 'AZURE_|_URL|SCOPE' | grep -v -e 'BIDRAG_TILGANGSKONTROLL_URL' -e 'BIDRAG_DOKUMENT_BESTILLING_URL' -e 'BIDRAG_VEDTAK_URL' > src/test/resources/application-lokal-nais-secrets.properties
+kubectl exec --tty deployment/bidrag-dokument-forsendelse printenv | grep -E 'AZURE_|_URL|SCOPE' | grep -v -e 'BIDRAG_BEHANDLING_URL' -e 'BIDRAG_TILGANGSKONTROLL_URL' -e 'BIDRAG_DOKUMENT_BESTILLING_URL' -e 'BIDRAG_VEDTAK_URL' > src/test/resources/application-lokal-nais-secrets.properties
 ```
 
 Start opp applikasjonen ved å
@@ -118,7 +118,7 @@ kcat -b 0.0.0.0:9092 -t bidrag.dokument -P -K:
 og lim inn eks:
 
 ```bash
-BIF100000311:{"dokumentreferanse":"BIF100000311","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_REDIGERING","hendelseType":"ENDRING"}
+BIF100000311:{"dokumentreferanse":"BIF100000411","journalpostId":null,"forsendelseId":null,"sporingId":"1853dd066d1-brevkvittering_3884646513","arkivSystem":"MIDLERTIDLIG_BREVLAGER","status":"UNDER_REDIGERING","hendelseType":"ENDRING"}
 ```
 
 og deretter trykk Ctrl+D. Da vil meldingen bli sendt til topic bidrag-dokument
