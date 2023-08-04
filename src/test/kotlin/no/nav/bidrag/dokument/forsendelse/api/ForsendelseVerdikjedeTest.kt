@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
 
@@ -275,6 +276,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         val distribuerResponse = utførDistribuerForsendelse(forsendelseIdSomSkalDistribueres.toString())
         distribuerResponse.statusCode shouldBe HttpStatus.OK
         distribuerResponse.body!!.journalpostId shouldBe nyJournalpostId
+        val opprettetEpochMillis = opprettetForsendelseOppdatert.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
         assertSoftly("Skal validere forsendelse etter distribusjon") {
             val forsendelseResponseEtterDistribusjon = utførHentForsendelse(forsendelseIdSomSkalDistribueres.toString())
@@ -283,20 +285,20 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             responseBody.status shouldBe ForsendelseStatusTo.DISTRIBUERT
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på forsendelse\"," +
-                    "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Ny tittel dokument fra Joark\",\"fysiskDokument\":\"UkVESUdFUklOR0RBVEFfQllURQ==\"}," +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${opprettetForsendelseOppdatert.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på forsendelse\"," +
+                        "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Ny tittel dokument fra Joark\",\"fysiskDokument\":\"UkVESUdFUklOR0RBVEFfQllURQ==\"}," +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"BIF_${opprettetForsendelseOppdatert.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
+                        "}"
             )
         }
     }
