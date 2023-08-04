@@ -57,7 +57,7 @@ class FerdigstillForsendelseService(
         // Hvis forsendelse blir sendt lokalt så vil saksbehandler skrive ut forsendelse og evt vedlegg manuelt og sende alt sammen via posten
         // Forsendelsen vil fortsatt være synlig på Nav.no etter lokal utskrift er valgt. Det legges derfor på beskjed til bruker at resten av forsendelsen (vedleggene) kommer i posten
         val hovedtittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
-        val forsendelseTittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(forsendelseTittel) else forsendelseTittel
+//        val forsendelseTittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(forsendelseTittel) else forsendelseTittel
 
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
@@ -94,7 +94,7 @@ class FerdigstillForsendelseService(
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
             },
-            tittel = forsendelseTittelMedBeskjed,
+            tittel = forsendelseTittel,
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
