@@ -777,7 +777,6 @@ class DokumentValgServiceTest {
         }
     }
 
-
     @Test
     fun `Skal hente notater`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe()

@@ -274,7 +274,7 @@ class OpprettForsendelseServiceTest {
                 )
             ),
             behandlingInfo = BehandlingInfoDto(
-                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name
             ),
             opprettTittel = true
         )
@@ -311,7 +311,7 @@ class OpprettForsendelseServiceTest {
                 )
             ),
             behandlingInfo = BehandlingInfoDto(
-                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name
             ),
             opprettTittel = false
         )

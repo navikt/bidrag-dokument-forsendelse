@@ -3,7 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.hypersistence.utils.hibernate.type.ImmutableType
-import io.hypersistence.utils.hibernate.type.util.Configuration
+import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -23,8 +23,8 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTil
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
+import org.hibernate.engine.spi.SessionFactoryImplementor
 import org.hibernate.engine.spi.SharedSessionContractImplementor
-import org.hibernate.type.spi.TypeBootstrapContext
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
@@ -169,10 +169,7 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
     }
 }
 
-class DokumentMetadataDoConverter(typeBootstrapContext: TypeBootstrapContext) : ImmutableType<DokumentMetadataDo>(
-    DokumentMetadataDo::class.java,
-    Configuration(typeBootstrapContext.configurationSettings)
-) {
+class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMetadataDo::class.java) {
 
     override fun get(rs: ResultSet, p1: Int, session: SharedSessionContractImplementor?, owner: Any?): DokumentMetadataDo {
         val map = rs.getObject(p1) as Map<String, String>
@@ -185,5 +182,22 @@ class DokumentMetadataDoConverter(typeBootstrapContext: TypeBootstrapContext) : 
 
     override fun getSqlType(): Int {
         return Types.OTHER
+    }
+
+    override fun compare(p0: Any?, p1: Any?, p2: SessionFactoryImplementor?): Int {
+        return 0
+    }
+
+    override fun fromStringValue(sequence: CharSequence?): DokumentMetadataDo {
+        return try {
+            JacksonUtil.fromString(sequence as String?, DokumentMetadataDo::class.java)
+        } catch (e: Exception) {
+            throw IllegalArgumentException(
+                String.format(
+                    "Could not transform the [%s] value to a Map!",
+                    sequence
+                )
+            )
+        }
     }
 }
