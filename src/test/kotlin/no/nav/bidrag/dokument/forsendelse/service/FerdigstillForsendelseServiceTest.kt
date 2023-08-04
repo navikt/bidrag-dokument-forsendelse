@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @ExtendWith(SpringExtension::class)
 class FerdigstillForsendelseServiceTest {
@@ -60,6 +61,8 @@ class FerdigstillForsendelseServiceTest {
 
     @Test
     fun `skal oprette forsendelse med referanseId`() {
+        val opprettetTidspunkt = LocalDateTime.now()
+        val epochTime = opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
         val forsendelse = opprettForsendelse2(
             tittel = null,
             erNotat = true,
@@ -78,14 +81,14 @@ class FerdigstillForsendelseServiceTest {
                     rekkefølgeIndeks = 1
                 ).copy(dokumentId = 2L)
             )
-        ).copy(forsendelseId = 123L)
+        ).copy(forsendelseId = 123L, opprettetTidspunkt = opprettetTidspunkt)
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.referanseId shouldBe "BIF_123"
+                    it.referanseId shouldBe "BIF_123_$epochTime"
                 }
             )
         }

@@ -24,6 +24,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 private val log = KotlinLogging.logger {}
 
@@ -72,7 +73,7 @@ class FerdigstillForsendelseService(
             } else {
                 null
             },
-            referanseId = "BIF_${forsendelse.forsendelseId}",
+            referanseId = "BIF_${forsendelse.forsendelseId}_${forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)}",
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
             journalposttype = when (forsendelse.forsendelseType) {
