@@ -28,6 +28,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class DistribuerKontrollerTest : KontrollerTestRunner() {
 
@@ -172,6 +173,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
 
+        val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
+
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
             oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
@@ -194,7 +197,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"FAR\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
@@ -246,6 +249,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
+            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -260,7 +264,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
                         "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}_$opprettetEpochMillis\"" +
                         "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
@@ -347,6 +351,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
+            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -360,8 +365,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}_$opprettetEpochMillis\"" +
                         "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
@@ -439,6 +444,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
+            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -452,7 +458,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
@@ -509,6 +515,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
+            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -523,7 +530,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"kanal\":\"LOKAL_UTSKRIFT\"," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
