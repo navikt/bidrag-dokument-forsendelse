@@ -258,7 +258,7 @@ class OpprettForsendelseServiceTest {
     }
 
     @Test
-    fun `Skal ikke opprette forsendelse tittel for notat`() {
+    fun `Skal ikke lagre forsendelse tittel for notat men legge til prefiks på dokument tittel`() {
         every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
             DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
@@ -274,11 +274,7 @@ class OpprettForsendelseServiceTest {
                 )
             ),
             behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                stonadType = null,
                 behandlingType = StonadType.EKTEFELLEBIDRAG.name,
-                vedtakType = VedtakType.FASTSETTELSE
             ),
             opprettTittel = true
         )
@@ -293,6 +289,43 @@ class OpprettForsendelseServiceTest {
                 any<Forsendelse>(),
                 withArg<List<OpprettDokumentForespørsel>> {
                     it[0].tittel shouldBe "Ektefellebidrag, Tittel notat"
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `Skal ikke legge til prefiks på dokument tittel hvis opprettTittel er false`() {
+        every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
+            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
+                "Tittel notat",
+                DokumentMalType.NOTAT
+            )
+        )
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "Tittel notat",
+                    dokumentmalId = DOKUMENTMAL_NOTAT
+                )
+            ),
+            behandlingInfo = BehandlingInfoDto(
+                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
+            ),
+            opprettTittel = false
+        )
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe null
+                }
+            )
+            dokumenttjeneste.opprettNyttDokument(
+                any<Forsendelse>(),
+                withArg<List<OpprettDokumentForespørsel>> {
+                    it[0].tittel shouldBe "Tittel notat"
                 }
             )
         }

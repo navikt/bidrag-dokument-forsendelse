@@ -67,7 +67,8 @@ class OpprettForsendelseService(
         forsendelseType: ForsendelseType
     ): List<OpprettDokumentForespørsel> {
         val dokumenter = forespørsel.dokumenter
-        if (forsendelseType == ForsendelseType.NOTAT && dokumenter.size == 1) {
+        val skalLeggeTilPrefiksPåNotatTittel = forsendelseType == ForsendelseType.NOTAT && dokumenter.size == 1 && forespørsel.opprettTittel == true
+        if (skalLeggeTilPrefiksPåNotatTittel) {
             val originalTittel = dokumenter[0].tittel
             val tittelPrefiks = forsendelseTittelService.opprettForsendelseBehandlingPrefiks(forespørsel)
             val nyTittel = tittelPrefiks?.let { "$it, $originalTittel" } ?: originalTittel
