@@ -39,5 +39,4 @@ class ForsendelseTittelService(
         val behandling = if (vedtak == null) forespørsel.behandlingInfo?.behandlingId?.let { behandlingConsumer.hentBehandling(it) } else null
         return forespørsel.tilBehandlingInfo()?.tilBeskrivelseBehandlingType(vedtak, behandling)
     }
-
 }

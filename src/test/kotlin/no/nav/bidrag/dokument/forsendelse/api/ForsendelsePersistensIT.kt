@@ -79,7 +79,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                 soknadType = "EGET_TILTAK",
                 stonadType = StonadType.FORSKUDD,
                 vedtakType = VedtakType.FASTSETTELSE
-            ),
+            )
         )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
@@ -110,7 +110,6 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         journalpost.behandlingInfo shouldNotBe null
         journalpost.behandlingInfo!!.soknadId shouldBe "123123"
     }
-
 
     @Test
     fun `Skal opprette forsendelse med tema FAR`() {
@@ -271,7 +270,9 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         )
         val dokument1 = forsendelse.dokumenter[1]
         val responseFerdigstill = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix, dokument1.dokumentreferanse, request = FerdigstillDokumentRequest(
+            forsendelse.forsendelseIdMedPrefix,
+            dokument1.dokumentreferanse,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = dokumentInnholdRedigering.toByteArray(),
                 redigeringMetadata = dokumentRedigeringData
             )
@@ -280,7 +281,9 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
         val dokument2 = forsendelse.dokumenter[2]
         val responseFerdigstill2 = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix, dokument2.dokumentreferanse, request = FerdigstillDokumentRequest(
+            forsendelse.forsendelseIdMedPrefix,
+            dokument2.dokumentreferanse,
+            request = FerdigstillDokumentRequest(
                 fysiskDokument = dokumentInnholdRedigering.toByteArray(),
                 redigeringMetadata = dokumentRedigeringData
             )
@@ -310,20 +313,20 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Tittel på forsendelse\"," +
-                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                        "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
-                        "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Tittel på forsendelse\"," +
+                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                    "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
+                    "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"UTGÅENDE\"," +
+                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
+                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                    "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.hoveddokument!!.dokumentreferanse)

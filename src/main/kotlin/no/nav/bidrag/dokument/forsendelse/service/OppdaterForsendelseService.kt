@@ -44,7 +44,7 @@ private val log = KotlinLogging.logger {}
 class OppdaterForsendelseService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val dokumentTjeneste: DokumentTjeneste,
-    private val personConsumer: BidragPersonConsumer,
+    private val personConsumer: BidragPersonConsumer
 ) {
 
     fun oppdaterForsendelse(
@@ -281,12 +281,12 @@ class OppdaterForsendelseService(
             oppdaterteDokumenter.filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
                 .any {
                     it.erFraAnnenKilde &&
-                            it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
+                        it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
                 }
                 .ifTrue {
                     throw UgyldigForespørsel(
                         "Kan ikke legge til samme dokument flere ganger til forsendelse." +
-                                " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
+                            " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
                     )
                 }
         }

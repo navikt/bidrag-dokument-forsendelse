@@ -30,7 +30,6 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
         every { gcpCloudStorage.hentFil(any()) } returns DOKUMENT_FIL.toByteArray()
     }
 
-
     @Test
     fun `skal hente dokumentmetadata`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
@@ -43,7 +42,7 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         dokumentreferanseOriginal = null,
                         dokumentStatus = DokumentStatus.UNDER_REDIGERING,
                         dokumentDato = dokumentDato
-                    ),
+                    )
                 )
             )
         )
@@ -184,7 +183,7 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         journalpostId = "123123213123",
                         arkivsystem = DokumentArkivSystem.JOARK,
                         dokumentDato = dokumentDato
-                    ),
+                    )
                 )
             )
         )
@@ -217,7 +216,7 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         dokumentreferanseOriginal = null,
                         dokumentStatus = DokumentStatus.UNDER_REDIGERING,
                         dokumentDato = dokumentDato
-                    ),
+                    )
                 )
             )
         )
@@ -237,7 +236,7 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         journalpostId = originalForsendelse.forsendelseId.toString(),
                         arkivsystem = DokumentArkivSystem.FORSENDELSE,
                         dokumentDato = dokumentDato
-                    ),
+                    )
                 )
             )
         )
@@ -276,8 +275,8 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         dokumentStatus = DokumentStatus.KONTROLLERT,
                         dokumentreferanseOriginal = "123213213",
                         journalpostId = "515325325325",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                    ),
+                        arkivsystem = DokumentArkivSystem.JOARK
+                    )
                 )
             )
         )
@@ -298,8 +297,8 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
                         dokumentreferanseOriginal = "123213213",
                         journalpostId = "515325325325",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                    ),
+                        arkivsystem = DokumentArkivSystem.JOARK
+                    )
                 )
             )
         )
@@ -307,7 +306,7 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
 
         respons.statusCode shouldBe HttpStatus.BAD_REQUEST
-        respons.headers["Warning"]!![0] shouldBe "Fant ikke dokument: Kan ikke hente dokument ${forsendelse.dokumenter[0].dokumentreferanse} med forsendelseId ${forsendelse.forsendelseId.toString()} fra arkivsystem = JOARK"
+        respons.headers["Warning"]!![0] shouldBe "Fant ikke dokument: Kan ikke hente dokument ${forsendelse.dokumenter[0].dokumentreferanse} med forsendelseId ${forsendelse.forsendelseId} fra arkivsystem = JOARK"
     }
 
     @Test
@@ -319,8 +318,8 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
                         dokumentStatus = DokumentStatus.KONTROLLERT,
                         dokumentreferanseOriginal = "123213213",
                         journalpostId = "515325325325",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                    ),
+                        arkivsystem = DokumentArkivSystem.JOARK
+                    )
                 )
             )
         )

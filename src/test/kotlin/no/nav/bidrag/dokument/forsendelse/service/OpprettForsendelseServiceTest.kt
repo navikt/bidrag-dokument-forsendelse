@@ -113,11 +113,13 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
-                it.behandlingInfo!!.stonadType shouldBe null
-                it.behandlingInfo!!.engangsBelopType shouldBe null
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
+                    it.behandlingInfo!!.stonadType shouldBe null
+                    it.behandlingInfo!!.engangsBelopType shouldBe null
+                }
+            )
         }
     }
 
@@ -135,12 +137,14 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
-                it.behandlingInfo!!.soknadType shouldBe "EGET_TILTAK"
-                it.behandlingInfo!!.stonadType shouldBe null
-                it.behandlingInfo!!.engangsBelopType shouldBe null
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
+                    it.behandlingInfo!!.soknadType shouldBe "EGET_TILTAK"
+                    it.behandlingInfo!!.stonadType shouldBe null
+                    it.behandlingInfo!!.engangsBelopType shouldBe null
+                }
+            )
         }
     }
 
@@ -151,7 +155,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
+                )
             ),
             opprettTittel = true,
             gjelderIdent = GJELDER_IDENT_BP,
@@ -165,9 +169,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.tittel shouldBe "Vedtak om bidrag"
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe "Vedtak om bidrag"
+                }
+            )
         }
     }
 
@@ -187,9 +193,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.status shouldBe ForsendelseStatus.UNDER_OPPRETTELSE
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.status shouldBe ForsendelseStatus.UNDER_OPPRETTELSE
+                }
+            )
         }
     }
 
@@ -200,7 +208,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
+                )
             ),
             opprettTittel = true,
             gjelderIdent = GJELDER_IDENT_BP,
@@ -214,9 +222,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
+                }
+            )
         }
     }
 
@@ -227,7 +237,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = TITTEL_HOVEDDOKUMENT,
                     dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
+                )
             ),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
@@ -239,9 +249,11 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.tittel shouldBe null
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe null
+                }
+            )
         }
     }
 
@@ -259,7 +271,7 @@ class OpprettForsendelseServiceTest {
                 OpprettDokumentForespørsel(
                     tittel = "Tittel notat",
                     dokumentmalId = DOKUMENTMAL_NOTAT
-                ),
+                )
             ),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
@@ -272,12 +284,17 @@ class OpprettForsendelseServiceTest {
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.tittel shouldBe null
-            })
-            dokumenttjeneste.opprettNyttDokument(any<Forsendelse>(), withArg<List<OpprettDokumentForespørsel>> {
-                it[0].tittel shouldBe "Ektefellebidrag, Tittel notat"
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.tittel shouldBe null
+                }
+            )
+            dokumenttjeneste.opprettNyttDokument(
+                any<Forsendelse>(),
+                withArg<List<OpprettDokumentForespørsel>> {
+                    it[0].tittel shouldBe "Ektefellebidrag, Tittel notat"
+                }
+            )
         }
     }
 
@@ -307,17 +324,20 @@ class OpprettForsendelseServiceTest {
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørselEngangsbelop)
 
         verify(ordering = Ordering.SEQUENCE) {
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe null
-                it.behandlingInfo!!.stonadType shouldBe StonadType.BIDRAG
-                it.behandlingInfo!!.engangsBelopType shouldBe null
-            })
-            forsendelseTjeneste.lagre(withArg {
-                it.behandlingInfo!!.behandlingType shouldBe null
-                it.behandlingInfo!!.stonadType shouldBe null
-                it.behandlingInfo!!.engangsBelopType shouldBe EngangsbelopType.SAERTILSKUDD
-            })
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe null
+                    it.behandlingInfo!!.stonadType shouldBe StonadType.BIDRAG
+                    it.behandlingInfo!!.engangsBelopType shouldBe null
+                }
+            )
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.behandlingInfo!!.behandlingType shouldBe null
+                    it.behandlingInfo!!.stonadType shouldBe null
+                    it.behandlingInfo!!.engangsBelopType shouldBe EngangsbelopType.SAERTILSKUDD
+                }
+            )
         }
     }
-
 }

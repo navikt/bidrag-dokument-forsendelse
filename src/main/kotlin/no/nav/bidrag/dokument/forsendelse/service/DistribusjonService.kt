@@ -132,7 +132,6 @@ class DistribusjonService(
                 dokumentStorageService.bestillSletting(forsendelseId, it.dokumentreferanse)
             }
 
-
         return resultat
     }
 

@@ -28,7 +28,6 @@ import org.threeten.bp.Duration
 import java.nio.ByteBuffer
 import java.util.Optional
 
-
 private val LOGGER = KotlinLogging.logger {}
 
 @Component

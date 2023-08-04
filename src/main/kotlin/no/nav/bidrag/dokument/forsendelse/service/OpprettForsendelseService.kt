@@ -96,9 +96,11 @@ class OpprettForsendelseService(
             gjelderIdent = forespørsel.gjelderIdent,
             behandlingInfo = forespørsel.tilBehandlingInfo(),
             enhet = forespørsel.enhet,
-            tittel = if (forespørsel.opprettTittel == true && forsendelseType !== ForsendelseType.NOTAT)
+            tittel = if (forespørsel.opprettTittel == true && forsendelseType !== ForsendelseType.NOTAT) {
                 forsendelseTittelService.opprettForsendelseTittel(forespørsel)
-            else null,
+            } else {
+                null
+            },
             språk = mottakerSpråk,
             opprettetAvIdent = bruker?.ident ?: "UKJENT",
             endretAvIdent = bruker?.ident ?: "UKJENT",

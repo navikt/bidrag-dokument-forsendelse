@@ -37,5 +37,4 @@ class ForsendelseInnsynServiceTest {
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangPerson(any()) } returns Unit
     }
-
 }

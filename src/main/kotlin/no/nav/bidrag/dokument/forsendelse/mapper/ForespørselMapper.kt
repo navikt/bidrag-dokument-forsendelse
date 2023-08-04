@@ -80,7 +80,9 @@ object ForespørselMapper {
         DokumentStatus.IKKE_BESTILT
     } else if (this.erBestillingAvNyttDokument()) {
         DokumentStatus.UNDER_PRODUKSJON
-    } else DokumentStatus.MÅ_KONTROLLERES
+    } else {
+        DokumentStatus.MÅ_KONTROLLERES
+    }
 
     fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
         forsendelse = forsendelse,

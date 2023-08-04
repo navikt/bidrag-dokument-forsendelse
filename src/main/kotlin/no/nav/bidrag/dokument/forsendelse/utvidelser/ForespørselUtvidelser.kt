@@ -69,7 +69,6 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     }
 }
 
-
 fun OpprettForsendelseForespørsel.tilBehandlingInfo() = this.behandlingInfo?.let {
     BehandlingInfo(
         behandlingId = it.behandlingId,

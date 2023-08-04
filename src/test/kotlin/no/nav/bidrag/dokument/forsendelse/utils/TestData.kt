@@ -356,7 +356,6 @@ fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> 
     )
 }
 
-
 fun opprettBehandlingDto(): BehandlingDto {
     return BehandlingDto(
         behandlingType = StonadType.FORSKUDD.name,
@@ -434,7 +433,7 @@ fun opprettSak(): BidragssakDto {
         roller = listOf(
             RolleDto(PersonIdent(GJELDER_IDENT_BM), Rolletype.BM),
             RolleDto(PersonIdent(GJELDER_IDENT_BP), Rolletype.BP),
-            RolleDto(PersonIdent(GJELDER_IDENT_BA), Rolletype.BA),
+            RolleDto(PersonIdent(GJELDER_IDENT_BA), Rolletype.BA)
         )
     )
 }

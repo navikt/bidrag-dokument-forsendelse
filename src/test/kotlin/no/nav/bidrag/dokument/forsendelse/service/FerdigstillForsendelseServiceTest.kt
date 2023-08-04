@@ -30,7 +30,6 @@ import java.time.LocalDateTime
 @ExtendWith(SpringExtension::class)
 class FerdigstillForsendelseServiceTest {
 
-
     @MockkBean
     lateinit var forsendelseTjeneste: ForsendelseTjeneste
 
@@ -84,9 +83,11 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.referanseId shouldBe "BIF_123"
-            })
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.referanseId shouldBe "BIF_123"
+                }
+            )
         }
     }
 
@@ -112,19 +113,22 @@ class FerdigstillForsendelseServiceTest {
         )
         every { bidragDokumentConsumer.opprettJournalpost(any()) } returns OpprettJournalpostResponse(
             NY_JOURNALPOSTID,
-            dokumenter = forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") })
+            dokumenter = forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+        )
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, true)
 
         verify {
-            forsendelseTjeneste.lagre(withArg {
-                it.journalpostIdFagarkiv shouldBe NY_JOURNALPOSTID
-                it.status shouldBe ForsendelseStatus.FERDIGSTILT
-                it.dokumenter.forEach { dok ->
-                    dok.dokumentreferanseFagarkiv shouldBe "JOARK${dok.dokumentreferanse}"
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.journalpostIdFagarkiv shouldBe NY_JOURNALPOSTID
+                    it.status shouldBe ForsendelseStatus.FERDIGSTILT
+                    it.dokumenter.forEach { dok ->
+                        dok.dokumentreferanseFagarkiv shouldBe "JOARK${dok.dokumentreferanse}"
+                    }
+                    it.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
                 }
-                it.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
-            })
+            )
         }
     }
 
@@ -152,10 +156,12 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, true)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.tittel shouldBe "Forsendelse tittel (dokumentet er sendt per post med vedlegg)"
-                it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
-            })
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.tittel shouldBe "Forsendelse tittel (dokumentet er sendt per post med vedlegg)"
+                    it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
+                }
+            )
         }
     }
 
@@ -183,10 +189,12 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, true)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
-                it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
-            })
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
+                    it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
+                }
+            )
         }
     }
 
@@ -214,10 +222,12 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.tittel shouldBe "Hoveddokument tittel"
-                it.dokumenter[0].tittel shouldBe "Hoveddokument tittel"
-            })
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.tittel shouldBe "Hoveddokument tittel"
+                    it.dokumenter[0].tittel shouldBe "Hoveddokument tittel"
+                }
+            )
         }
     }
 
@@ -246,11 +256,13 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.avsenderMottaker shouldNotBe null
-                it.avsenderMottaker!!.ident shouldBe MOTTAKER_IDENT
-                it.avsenderMottaker!!.navn shouldBe MOTTAKER_NAVN
-            })
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.avsenderMottaker shouldNotBe null
+                    it.avsenderMottaker!!.ident shouldBe MOTTAKER_IDENT
+                    it.avsenderMottaker!!.navn shouldBe MOTTAKER_NAVN
+                }
+            )
         }
     }
 
@@ -279,9 +291,11 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.avsenderMottaker shouldBe null
-            })
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.avsenderMottaker shouldBe null
+                }
+            )
         }
     }
 
@@ -309,11 +323,13 @@ class FerdigstillForsendelseServiceTest {
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
-            bidragDokumentConsumer.opprettJournalpost(withArg {
-                it.dokumenter.forEach { dok ->
-                    dok.fysiskDokument shouldBe DOKUMENT_FIL.toByteArray()
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.dokumenter.forEach { dok ->
+                        dok.fysiskDokument shouldBe DOKUMENT_FIL.toByteArray()
+                    }
                 }
-            })
+            )
         }
     }
 }

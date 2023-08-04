@@ -40,13 +40,12 @@ class DokumentSlettingLytter(
                         metadata.lagreGcpFilsti(null)
                         metadata.lagreGcpKrypteringnøkkelVersjon(null)
                         metadata.copy()
-                    },
+                    }
                 )
             )
             LOGGER.info { "Slettet fil med GCP filsti $gcpFilsti som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}. Forsendelse har status ${forsendelse.status}" }
         } catch (e: Exception) {
             LOGGER.error(e) { "Kunne ikke slettet fil med filsti ${dokument.filsti} som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}" }
         }
-
     }
 }

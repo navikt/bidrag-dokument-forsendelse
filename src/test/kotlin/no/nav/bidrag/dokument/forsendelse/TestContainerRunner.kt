@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse
 
+import mu.KotlinLogging
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -13,6 +14,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse.BodyHandlers
 
+private val log = KotlinLogging.logger {}
 
 @Testcontainers
 @ActiveProfiles(value = ["test", "testcontainer"])
@@ -34,16 +36,19 @@ class TestContainerRunner : CommonTestRunner() {
             withCreateContainerCmdModifier { cmd ->
                 cmd.withEntrypoint(
                     "/bin/fake-gcs-server",
-                    "-scheme", "http"
+                    "-scheme",
+                    "http"
                 )
             }
         }
 
         private fun updateExternalUrlWithContainerUrl(fakeGcsExternalUrl: String) {
             val modifyExternalUrlRequestUri = "$fakeGcsExternalUrl/_internal/config"
-            val updateExternalUrlJson = ("{"
-                    + "\"externalUrl\": \"" + fakeGcsExternalUrl + "\""
-                    + "}")
+            val updateExternalUrlJson = (
+                    "{" +
+                            "\"externalUrl\": \"" + fakeGcsExternalUrl + "\"" +
+                            "}"
+                    )
             val req = HttpRequest.newBuilder()
                 .uri(URI.create(modifyExternalUrlRequestUri))
                 .header("Content-Type", "application/json")
@@ -71,10 +76,11 @@ class TestContainerRunner : CommonTestRunner() {
             try {
                 val url = "http://${gcpCloudStorage.host}:${gcpCloudStorage.firstMappedPort}"
                 updateExternalUrlWithContainerUrl(url)
+                log.info { "Setter GCP_HOST til $url" }
                 registry.add("GCP_HOST") { url }
             } catch (e: Exception) {
+                log.error(e) { "Det skjedde en feil ved oppdatering av GCP_HOST variabel" }
             }
-
         }
     }
 }

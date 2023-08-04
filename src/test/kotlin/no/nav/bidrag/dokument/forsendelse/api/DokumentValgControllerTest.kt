@@ -58,7 +58,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01B21"]!!.beskrivelse shouldBe "Vedtak utland skjønn endring"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
-
         }
     }
 
@@ -89,7 +88,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01K50"]!!.beskrivelse shouldBe "Klage - vedtak tilbakekreving"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
-
         }
     }
 
@@ -101,7 +99,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfo(
                     vedtakId = vedtakId,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER
                 )
             )
         )
@@ -126,7 +124,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
             stubUtils.Valider().hentVedtakKalt(vedtakId)
-
         }
     }
 
@@ -138,7 +135,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfo(
                     behandlingId = behandlingId,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER
                 )
             )
         )
@@ -164,13 +161,11 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01S45"]!!.beskrivelse shouldBe "Varsel opphør av bidragsforskudd tilbake i tid"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             stubUtils.Valider().hentBehandlingKalt(behandlingId)
-
         }
     }
 
     @Test
     fun `Skal hente dokumentvalg for standardbrev`() {
-
         val dokumentValgResponse = utførHentDokumentvalg()
 
         assertSoftly {
@@ -182,7 +177,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
-
         }
     }
 
@@ -210,7 +204,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
             stubUtils.Valider().hentVedtakKalt(vedtakId)
-
         }
     }
 
@@ -249,7 +242,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente dokumentvalg for notater`() {
-
         val dokumentValgResponse = utførHentForsendelseDokumentvalgNotat()
 
         assertSoftly {
@@ -264,16 +256,16 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
     }
 
     fun utførHentForsendelseDokumentvalg(
-        forsendelseId: String,
+        forsendelseId: String
     ): ResponseEntity<Map<String, DokumentMalDetaljer>> {
         return httpHeaderTestRestTemplate.getForEntity(
-            "${rootUri()}/dokumentvalg/forsendelse/$forsendelseId",
+            "${rootUri()}/dokumentvalg/forsendelse/$forsendelseId"
         )
     }
 
     fun utførHentForsendelseDokumentvalgNotat(): ResponseEntity<Map<String, DokumentMalDetaljer>> {
         return httpHeaderTestRestTemplate.getForEntity(
-            "${rootUri()}/dokumentvalg/notat",
+            "${rootUri()}/dokumentvalg/notat"
         )
     }
 

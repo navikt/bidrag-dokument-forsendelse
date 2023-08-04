@@ -36,7 +36,7 @@ data class BehandlingInfo(
     // Brukes hvis søknadgruppe fra bisys ikke mapper til stonadType eller engangsbelopType
     // Gjelder foreløpig for soknadGruppe AVSKRIVNING
     val behandlingType: BehandlingType? = null,
-    val soknadType: SoknadType? = null,
+    val soknadType: SoknadType? = null
 ) {
     fun toBehandlingType(): String? = behandlingType ?: stonadType?.name ?: engangsBelopType?.name
 }

@@ -46,9 +46,13 @@ class DokumentHendelseLytter(
             log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
             dokumentTjeneste.lagreDokument(
                 it.copy(
-                    arkivsystem = if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) it.arkivsystem else when (hendelse.arkivSystem) {
-                        DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                        else -> it.arkivsystem
+                    arkivsystem = if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+                        it.arkivsystem
+                    } else {
+                        when (hendelse.arkivSystem) {
+                            DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                            else -> it.arkivsystem
+                        }
                     },
                     dokumentStatus = when (hendelse.status) {
                         DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING

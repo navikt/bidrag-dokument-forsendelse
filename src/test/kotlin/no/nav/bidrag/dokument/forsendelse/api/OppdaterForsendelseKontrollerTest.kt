@@ -54,7 +54,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             )
         )
 
-
         val forsendelseId = forsendelse.forsendelseId!!
         val hoveddokument = forsendelse.dokumenter.hoveddokument!!
         val vedlegg1 = forsendelse.dokumenter.vedlegger[0]
@@ -108,7 +107,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             )
         )
 
-
         val forsendelseId = forsendelse.forsendelseId!!
 
         val oppdaterForespørsel = OppdaterForsendelseForespørsel(
@@ -141,7 +139,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.mottaker!!.språk shouldBe "EN"
             oppdatertForsendelse.dokumenter.size shouldBe 1
             oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe "Vedtak om barnebidrag"
-
         }
     }
 
@@ -295,16 +292,20 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
             stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
             verify(ordering = Ordering.SEQUENCE) {
-                dokumentKafkaHendelseProdusent.publiser(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
-                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                    it.dokumentreferanse shouldBe dokumenter[1].dokumentreferanse
-                })
-                dokumentKafkaHendelseProdusent.publiser(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
-                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                    it.dokumentreferanse shouldBe dokumenter[2].dokumentreferanse
-                })
+                dokumentKafkaHendelseProdusent.publiser(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
+                        it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                        it.dokumentreferanse shouldBe dokumenter[1].dokumentreferanse
+                    }
+                )
+                dokumentKafkaHendelseProdusent.publiser(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
+                        it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                        it.dokumentreferanse shouldBe dokumenter[2].dokumentreferanse
+                    }
+                )
             }
         }
     }
@@ -535,7 +536,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             vedlegg.dokumentreferanseOriginal shouldBe originalDokument.dokumentreferanseOriginal
         }
     }
-
 
     @Test
     fun `Skal lenke til dokument under redigering som tilhører annen forsendelse`() {
@@ -813,7 +813,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                 )
             )
         )
-
 
         val originalDokument = originalForsendelse.dokumenter[0]
         val originalForsendelseId = originalForsendelse.forsendelseId!!

@@ -129,7 +129,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
 
     fun utførHentDokument(
         forsendelseId: String,
-        dokumentreferanse: String,
+        dokumentreferanse: String
     ): ResponseEntity<ByteArray> {
         return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
             "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"

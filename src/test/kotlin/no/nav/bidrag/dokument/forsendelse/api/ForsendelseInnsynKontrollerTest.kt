@@ -82,7 +82,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                         tittel = "Dokument må kontrolleres",
                         dokumentDato = dokumentDato,
                         arkivsystem = DokumentArkivSystem.JOARK
-                    ),
+                    )
                 )
             )
         )
@@ -161,7 +161,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                     soknadFra = SoknadFra.BIDRAGSMOTTAKER,
                     soknadId = soknadId,
                     behandlingId = behandlingId,
-                    stonadType = StonadType.BIDRAG,
+                    stonadType = StonadType.BIDRAG
                 ),
                 dokumenter = listOf(
                     nyttDokument(
@@ -172,7 +172,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                         dokumentMalId = DOKUMENTMAL_UTGÅENDE,
                         dokumentDato = dokumentDato,
                         arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                    ),
+                    )
                 )
             )
         )
@@ -190,7 +190,6 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.vedtakId shouldBe vedtakId
             behandlingInfo.behandlingType shouldBe StonadType.BIDRAG.name
         }
-
     }
 
     @Test
@@ -205,7 +204,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                         dokumentreferanseOriginal = null,
                         dokumentStatus = DokumentStatus.UNDER_REDIGERING,
                         dokumentDato = dokumentDato
-                    ),
+                    )
                 )
             )
         )
@@ -342,7 +341,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                         dokumentreferanseOriginal = null,
                         dokumentStatus = DokumentStatus.UNDER_REDIGERING,
                         dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
+                    )
                 )
             )
         )
@@ -656,7 +655,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                         dokumentreferanseOriginal = null,
                         dokumentStatus = DokumentStatus.UNDER_REDIGERING,
                         dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
+                    )
                 )
             )
         )

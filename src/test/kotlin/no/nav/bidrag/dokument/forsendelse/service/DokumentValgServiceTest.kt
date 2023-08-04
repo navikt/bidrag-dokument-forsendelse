@@ -338,7 +338,7 @@ class DokumentValgServiceTest {
                 vedtakType = VedtakType.OPPHØR,
                 soknadFra = SoknadFra.BIDRAGSMOTTAKER,
                 behandlingType = StonadType.BIDRAG.name,
-                erFattetBeregnet = false,
+                erFattetBeregnet = false
             )
         )
 
@@ -397,13 +397,13 @@ class DokumentValgServiceTest {
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
                 type = VedtakType.OPPHØR,
-                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR)),
+                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR))
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                soknadFra = SoknadFra.NAV_BIDRAG
             )
         )
 
@@ -431,7 +431,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -461,7 +461,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -490,7 +490,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                soknadFra = SoknadFra.NAV_BIDRAG
             )
         )
 
@@ -520,7 +520,7 @@ class DokumentValgServiceTest {
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
                 behandlingId = "123213",
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -546,7 +546,7 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 behandlingId = behandlingId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -655,7 +655,6 @@ class DokumentValgServiceTest {
         }
     }
 
-
     @Test
     fun `Skal hente dokumentvalg varsel for klage farskap fra Bidragspliktig`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
@@ -712,7 +711,7 @@ class DokumentValgServiceTest {
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
                 soknadType = "FOLGER_KLAGE",
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER
             )
         )
 
@@ -726,7 +725,6 @@ class DokumentValgServiceTest {
         }
     }
 
-
     @Test
     fun `Skal hente dokumentvalg for tilbakekreving varsel med soknad type EGET_TILTAK`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
@@ -734,7 +732,7 @@ class DokumentValgServiceTest {
                 vedtakType = VedtakType.ENDRING,
                 soknadType = "EGET_TILTAK",
                 behandlingType = EngangsbelopType.TILBAKEKREVING.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                soknadFra = SoknadFra.NAV_BIDRAG
             )
         )
 
@@ -749,7 +747,6 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01S02"
         }
     }
-
 
     @Test
     fun `Skal hente notater`() {

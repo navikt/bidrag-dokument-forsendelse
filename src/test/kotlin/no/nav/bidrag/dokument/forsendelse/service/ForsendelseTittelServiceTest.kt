@@ -277,7 +277,6 @@ class ForsendelseTittelServiceTest {
         tittel shouldBe "Orientering/Varsel til bidragsmottaker"
     }
 
-
     @Test
     fun `Skal opprette tittel fra forespørsel behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
@@ -298,7 +297,6 @@ class ForsendelseTittelServiceTest {
 
         tittel shouldBe "Orientering/Varsel om forskudd til bidragsmottaker"
     }
-
 
     @Test
     fun `Skal ikke opprette forsendelse tittel hvis mangler behandlingInfo`() {

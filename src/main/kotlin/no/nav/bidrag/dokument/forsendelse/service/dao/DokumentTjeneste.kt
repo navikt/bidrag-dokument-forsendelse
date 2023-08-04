@@ -112,8 +112,10 @@ class DokumentTjeneste(
         val originalDokumentDelAvSammeForsendelse = dokumentLenket.forsendelse.forsendelseId == forsendelse.forsendelseId
         val dokumentLenkerTilSammeForsendelse = dokumentLenket.journalpostIdOriginal == forsendelse.forsendelseId.toString()
         val harAlleredeLenkeTilSammeDokument = forsendelse.dokumenter.exists(dokumentLenket.dokumentreferanse)
-        if (dokumentLenkerTilSammeForsendelse || harAlleredeLenkeTilSammeDokument || originalDokumentDelAvSammeForsendelse) ugyldigEndringAvForsendelse(
-            "Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger"
-        )
+        if (dokumentLenkerTilSammeForsendelse || harAlleredeLenkeTilSammeDokument || originalDokumentDelAvSammeForsendelse) {
+            ugyldigEndringAvForsendelse(
+                "Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger"
+            )
+        }
     }
 }
