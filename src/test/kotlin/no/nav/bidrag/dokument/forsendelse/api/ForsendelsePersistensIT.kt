@@ -39,6 +39,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
@@ -310,23 +311,24 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
+            val opprettetEpochMillis = forsendelseEtter.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på forsendelse\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
-                    "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på forsendelse\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
+                        "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.hoveddokument!!.dokumentreferanse)
