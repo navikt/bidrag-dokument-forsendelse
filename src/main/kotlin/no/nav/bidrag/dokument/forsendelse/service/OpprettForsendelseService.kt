@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
@@ -45,7 +46,7 @@ class OpprettForsendelseService(
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)
 
         val dokumenter =
-            dokumenttjeneste.opprettNyttDokument(forsendelse, forespørsel.dokumenter)
+            dokumenttjeneste.opprettNyttDokument(forsendelse, dokumenterMedOppdatertTittel(forespørsel, forsendelseType))
 
         log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
         return OpprettForsendelseRespons(
@@ -59,6 +60,21 @@ class OpprettForsendelseService(
                 )
             }
         )
+    }
+
+    private fun dokumenterMedOppdatertTittel(
+        forespørsel: OpprettForsendelseForespørsel,
+        forsendelseType: ForsendelseType
+    ): List<OpprettDokumentForespørsel> {
+        val dokumenter = forespørsel.dokumenter
+        if (forsendelseType == ForsendelseType.NOTAT && dokumenter.size == 1) {
+            val originalTittel = dokumenter[0].tittel
+            val tittelPrefiks = forsendelseTittelService.opprettForsendelseBehandlingPrefiks(forespørsel)
+            val nyTittel = tittelPrefiks?.let { "$it, $originalTittel" } ?: originalTittel
+            return dokumenter.map { it.copy(tittel = nyTittel) }
+        }
+
+        return dokumenter
     }
 
     private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType {

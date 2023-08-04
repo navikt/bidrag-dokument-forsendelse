@@ -387,12 +387,20 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`() {
+    fun `Skal opprette forsendelse som notat med tittel som beskriver behandling`() {
+        val soknadId = "12321321"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
             .copy(
+                behandlingInfo = BehandlingInfoDto(
+                    soknadId = soknadId,
+                    erFattetBeregnet = true,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    stonadType = StonadType.EKTEFELLEBIDRAG,
+                    vedtakType = VedtakType.FASTSETTELSE
+                ),
                 dokumenter = listOf(
                     OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
+                        tittel = "Tittel notat",
                         dokumentmalId = DOKUMENTMAL_NOTAT
                     )
                 )
@@ -401,15 +409,40 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
 
-        await.pollDelay(Duration.ofMillis(300)).atMost(Duration.ofSeconds(2)).untilAsserted {
-            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
-            forsendelse.forsendelseType shouldBe ForsendelseType.NOTAT
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+        forsendelse.forsendelseType shouldBe ForsendelseType.NOTAT
 
-            forsendelse.dokumenter shouldHaveSize 1
-            val hoveddokument = forsendelse.dokumenter.hoveddokument!!
-            hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
-            hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-        }
+        forsendelse.dokumenter shouldHaveSize 1
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+        hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+        hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        hoveddokument.tittel shouldBe "Ektefellebidrag, Tittel notat"
+    }
+
+
+    @Test
+    fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`() {
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
+            .copy(
+                dokumenter = listOf(
+                    OpprettDokumentForespørsel(
+                        tittel = "Tittel notat",
+                        dokumentmalId = DOKUMENTMAL_NOTAT
+                    )
+                )
+            )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+        forsendelse.forsendelseType shouldBe ForsendelseType.NOTAT
+
+        forsendelse.dokumenter shouldHaveSize 1
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+        hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+        hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        hoveddokument.tittel shouldBe "Tittel notat"
     }
 
     @Test

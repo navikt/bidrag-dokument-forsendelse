@@ -247,6 +247,7 @@ class OpprettForsendelseServiceTest {
 
     @Test
     fun `Skal ikke opprette forsendelse tittel for notat`() {
+        every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
             DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
                 "Tittel notat",
@@ -275,7 +276,7 @@ class OpprettForsendelseServiceTest {
                 it.tittel shouldBe null
             })
             dokumenttjeneste.opprettNyttDokument(any<Forsendelse>(), withArg<List<OpprettDokumentForespørsel>> {
-                it[0].tittel shouldBe "Tittel notat"
+                it[0].tittel shouldBe "Ektefellebidrag, Tittel notat"
             })
         }
     }
