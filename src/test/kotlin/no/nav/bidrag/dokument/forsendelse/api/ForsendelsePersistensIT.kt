@@ -311,7 +311,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-            val opprettetEpochMillis = forsendelseEtter.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
+            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
