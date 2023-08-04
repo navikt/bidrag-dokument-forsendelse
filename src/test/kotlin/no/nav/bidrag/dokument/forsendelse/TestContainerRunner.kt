@@ -73,10 +73,11 @@ class TestContainerRunner : CommonTestRunner() {
             registry.add("spring.datasource.url", postgreSqlDb::getJdbcUrl)
             registry.add("spring.datasource.password", postgreSqlDb::getPassword)
             registry.add("spring.datasource.username", postgreSqlDb::getUsername)
+            gcpCloudStorage.start()
             try {
                 val url = "http://${gcpCloudStorage.host}:${gcpCloudStorage.firstMappedPort}"
                 updateExternalUrlWithContainerUrl(url)
-                log.info { "Setter GCP_HOST til $url" }
+                log.info { "Setter GCP_HOST miljøvariabel til $url" }
                 registry.add("GCP_HOST") { url }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av GCP_HOST variabel" }
