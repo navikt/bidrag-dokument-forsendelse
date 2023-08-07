@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
@@ -57,8 +58,8 @@ class FerdigstillForsendelseService(
         // Hvis forsendelse blir sendt lokalt så vil saksbehandler skrive ut forsendelse og evt vedlegg manuelt og sende alt sammen via posten
         // Forsendelsen vil fortsatt være synlig på Nav.no etter lokal utskrift er valgt. Det legges derfor på beskjed til bruker at resten av forsendelsen (vedleggene) kommer i posten
         val hovedtittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
-        val forsendelseTittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(forsendelseTittel) else forsendelseTittel
 
+        val referanseId = forsendelse.opprettReferanseId()
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
                 AvsenderMottakerDto(
@@ -72,7 +73,7 @@ class FerdigstillForsendelseService(
             } else {
                 null
             },
-            referanseId = "BIF_${forsendelse.forsendelseId}",
+            referanseId = referanseId,
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
             journalposttype = when (forsendelse.forsendelseType) {
@@ -94,7 +95,7 @@ class FerdigstillForsendelseService(
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
             },
-            tittel = forsendelseTittelMedBeskjed,
+            tittel = forsendelseTittel,
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
@@ -109,7 +110,8 @@ class FerdigstillForsendelseService(
                         dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null
                     )
                 },
-                ferdigstiltTidspunkt = LocalDateTime.now()
+                ferdigstiltTidspunkt = LocalDateTime.now(),
+                referanseId = referanseId
             )
         )
 

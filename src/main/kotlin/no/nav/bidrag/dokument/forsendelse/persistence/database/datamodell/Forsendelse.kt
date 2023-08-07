@@ -16,6 +16,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Entity(name = "forsendelse")
 data class Forsendelse(
@@ -47,6 +48,7 @@ data class Forsendelse(
     val opprettetAvIdent: String,
     val endretAvIdent: String,
     val tittel: String? = null,
+
     val batchId: String? = null,
     val opprettetAvNavn: String? = null,
     val avbruttAvIdent: String? = null,
@@ -66,5 +68,11 @@ data class Forsendelse(
     val behandlingInfo: BehandlingInfo? = null,
 
     @OneToMany(mappedBy = "forsendelse", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    val dokumenter: List<Dokument> = emptyList()
+    val dokumenter: List<Dokument> = emptyList(),
+    // Unik referanseid som kan brukes til sporing av forsendelsen gjennom verdikjeden. Denne verdien brukes som eksternReferanseId når forsendelsen arkiveres i fagarkivet (JOARK)
+    // Denne verdien brukes også som duplikatkontroll slik at samme forsendelse ikke opprettes flere ganger i fagarkivet (må være globalt unik verdi)
+    val referanseId: String? = null,
 )
+
+
+fun Forsendelse.opprettReferanseId() = "BIF_${forsendelseId}_${opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)}"

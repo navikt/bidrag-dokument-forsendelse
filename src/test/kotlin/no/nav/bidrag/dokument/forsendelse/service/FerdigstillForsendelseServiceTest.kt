@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -60,6 +61,7 @@ class FerdigstillForsendelseServiceTest {
 
     @Test
     fun `skal oprette forsendelse med referanseId`() {
+        val opprettetTidspunkt = LocalDateTime.parse("2021-01-01T01:02:03")
         val forsendelse = opprettForsendelse2(
             tittel = null,
             erNotat = true,
@@ -78,14 +80,22 @@ class FerdigstillForsendelseServiceTest {
                     rekkefølgeIndeks = 1
                 ).copy(dokumentId = 2L)
             )
-        ).copy(forsendelseId = 123L)
+        ).copy(forsendelseId = 123L, opprettetTidspunkt = opprettetTidspunkt)
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
         ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
 
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.referanseId shouldBe "BIF_123"
+                    it.referanseId shouldBe "BIF_123_1609462923"
+                    it.referanseId shouldBe forsendelse.opprettReferanseId()
+                }
+            )
+
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.referanseId shouldBe "BIF_123_1609462923"
+                    it.referanseId shouldBe forsendelse.opprettReferanseId()
                 }
             )
         }
@@ -158,7 +168,7 @@ class FerdigstillForsendelseServiceTest {
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.tittel shouldBe "Forsendelse tittel (dokumentet er sendt per post med vedlegg)"
+                    it.tittel shouldBe "Forsendelse tittel"
                     it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
                 }
             )
@@ -191,7 +201,7 @@ class FerdigstillForsendelseServiceTest {
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
+                    it.tittel shouldBe "Hoveddokument tittel"
                     it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
                 }
             )

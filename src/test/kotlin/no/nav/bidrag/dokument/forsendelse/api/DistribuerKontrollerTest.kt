@@ -9,6 +9,7 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -171,6 +172,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
@@ -184,19 +186,19 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på hoveddokument\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"tema\":\"FAR\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på hoveddokument\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"FAR\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
@@ -237,31 +239,34 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
 
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
             oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
             oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
             oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
+            oppdatertForsendelse.referanseId shouldBe referanseId
 
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
 
+
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på hoveddokument\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på hoveddokument\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
@@ -337,6 +342,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
@@ -350,19 +356,19 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Dokument knyttet til forsendelse 1\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Dokument knyttet til forsendelse 1\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Dokument knyttet til forsendelse 2\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Dokument knyttet til forsendelse 1\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Dokument knyttet til forsendelse 1\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Dokument knyttet til forsendelse 2\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             stubUtils.Valider().hentDokumentKalt(forsendelseOriginal.forsendelseIdMedPrefix, forsendelseOriginal.dokumenter[0].dokumentreferanse)
@@ -428,6 +434,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
@@ -439,22 +446,21 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på hoveddokument\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på hoveddokument\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", batchId = batchId)
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)
@@ -498,6 +504,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe null
@@ -512,20 +519,20 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på hoveddokument (dokumentet er sendt per post med vedlegg)\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument (dokumentet er sendt per post med vedlegg)\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"kanal\":\"LOKAL_UTSKRIFT\"," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"BIF_${forsendelse.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på hoveddokument\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument (dokumentet er sendt per post med vedlegg)\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
+                        "{\"tittel\":\"Tittel vedlegg\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"kanal\":\"LOKAL_UTSKRIFT\"," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
             stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse)

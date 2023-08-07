@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -302,22 +303,22 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
             forsendelseEtter.journalpostIdFagarkiv shouldBe nyJournalpostId
             forsendelseEtter.ferdigstiltTidspunkt shouldNotBe null
             forsendelseEtter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
-
+            val referanseId = forsendelseEtter.opprettReferanseId()
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Forsendelse notat\"," +
-                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"NOTAT\"," +
-                    "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}\"," +
-                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                    "\"saksbehandlerIdent\":\"Z999444\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Forsendelse notat\"," +
+                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"NOTAT\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                        "\"saksbehandlerIdent\":\"Z999444\"" +
+                        "}"
             )
 
             stubUtils.Valider().hentDokumentKalt(forsendelseEtter.forsendelseIdMedPrefix, forsendelseEtter.dokumenter[0].dokumentreferanse)
