@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -27,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
@@ -303,8 +303,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
             forsendelseEtter.journalpostIdFagarkiv shouldBe nyJournalpostId
             forsendelseEtter.ferdigstiltTidspunkt shouldNotBe null
             forsendelseEtter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
-            val opprettetEpochMillis = forsendelseEtter.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
-
+            val referanseId = forsendelseEtter.opprettReferanseId()
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
                         "\"skalFerdigstilles\":true," +
@@ -316,7 +315,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
                         "\"datoDokument\":\"2022-01-05T01:02:03\"," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"NOTAT\"," +
-                        "\"referanseId\":\"BIF_${forsendelseEtter.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
                         "\"saksbehandlerIdent\":\"Z999444\"" +
                         "}"

@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
@@ -24,7 +25,6 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 private val log = KotlinLogging.logger {}
 
@@ -60,6 +60,7 @@ class FerdigstillForsendelseService(
         val hovedtittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
 //        val forsendelseTittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(forsendelseTittel) else forsendelseTittel
 
+        val referanseId = forsendelse.opprettReferanseId()
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
                 AvsenderMottakerDto(
@@ -73,7 +74,7 @@ class FerdigstillForsendelseService(
             } else {
                 null
             },
-            referanseId = "BIF_${forsendelse.forsendelseId}_${forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)}",
+            referanseId = referanseId,
             gjelderIdent = forsendelse.gjelderIdent,
             journalførendeEnhet = forsendelse.enhet,
             journalposttype = when (forsendelse.forsendelseType) {
@@ -110,7 +111,8 @@ class FerdigstillForsendelseService(
                         dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null
                     )
                 },
-                ferdigstiltTidspunkt = LocalDateTime.now()
+                ferdigstiltTidspunkt = LocalDateTime.now(),
+                referanseId = referanseId
             )
         )
 

@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @ExtendWith(SpringExtension::class)
 class FerdigstillForsendelseServiceTest {
@@ -61,8 +61,7 @@ class FerdigstillForsendelseServiceTest {
 
     @Test
     fun `skal oprette forsendelse med referanseId`() {
-        val opprettetTidspunkt = LocalDateTime.now()
-        val epochTime = opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
+        val opprettetTidspunkt = LocalDateTime.parse("2021-01-01T01:02:03")
         val forsendelse = opprettForsendelse2(
             tittel = null,
             erNotat = true,
@@ -88,7 +87,15 @@ class FerdigstillForsendelseServiceTest {
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.referanseId shouldBe "BIF_123_$epochTime"
+                    it.referanseId shouldBe "BIF_123_1609462923"
+                    it.referanseId shouldBe forsendelse.opprettReferanseId()
+                }
+            )
+
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.referanseId shouldBe "BIF_123_1609462923"
+                    it.referanseId shouldBe forsendelse.opprettReferanseId()
                 }
             )
         }

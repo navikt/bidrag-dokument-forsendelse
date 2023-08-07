@@ -21,6 +21,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -39,7 +40,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
@@ -311,8 +311,8 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
-
+            val referanseId = oppdatertForsendelse.opprettReferanseId()
+            oppdatertForsendelse.referanseId shouldBe referanseId
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
                         "\"skalFerdigstilles\":true," +
@@ -326,7 +326,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )

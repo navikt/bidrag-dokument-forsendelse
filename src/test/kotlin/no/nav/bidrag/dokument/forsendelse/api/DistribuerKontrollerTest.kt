@@ -9,6 +9,7 @@ import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -28,7 +29,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class DistribuerKontrollerTest : KontrollerTestRunner() {
 
@@ -172,8 +172,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
-
-        val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
@@ -197,7 +196,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"FAR\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
@@ -240,16 +239,18 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
 
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
             oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
             oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
             oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
+            oppdatertForsendelse.referanseId shouldBe referanseId
 
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
+
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -263,7 +264,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
@@ -341,6 +342,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
@@ -351,7 +353,6 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -365,7 +366,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
@@ -433,6 +434,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
@@ -444,8 +446,6 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
-
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
                         "\"skalFerdigstilles\":true," +
@@ -458,7 +458,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )
@@ -504,6 +504,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
 
         assertSoftly {
             oppdatertForsendelse.distribusjonBestillingsId shouldBe null
@@ -515,7 +516,6 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.forEach {
                 it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
             }
-            val opprettetEpochMillis = forsendelse.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
@@ -530,7 +530,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "\"kanal\":\"LOKAL_UTSKRIFT\"," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${forsendelse.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
                         "}"
             )

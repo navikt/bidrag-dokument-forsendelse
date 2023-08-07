@@ -18,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
@@ -33,7 +34,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
 
@@ -276,9 +276,11 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         val distribuerResponse = utførDistribuerForsendelse(forsendelseIdSomSkalDistribueres.toString())
         distribuerResponse.statusCode shouldBe HttpStatus.OK
         distribuerResponse.body!!.journalpostId shouldBe nyJournalpostId
-        val opprettetEpochMillis = opprettetForsendelseOppdatert.opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)
 
         assertSoftly("Skal validere forsendelse etter distribusjon") {
+            val forsendelseEtterDistribusjon = testDataManager.hentForsendelse(forsendelseIdSomSkalDistribueres)!!
+            val referanseId = forsendelseEtterDistribusjon.opprettReferanseId()
+            forsendelseEtterDistribusjon.referanseId shouldBe referanseId
             val forsendelseResponseEtterDistribusjon = utførHentForsendelse(forsendelseIdSomSkalDistribueres.toString())
             forsendelseResponseEtterDistribusjon.statusCode shouldBe HttpStatus.OK
             val responseBody = forsendelseResponseEtterDistribusjon.body!!
@@ -296,7 +298,7 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                         "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"BIF_${opprettetForsendelseOppdatert.forsendelseId}_$opprettetEpochMillis\"," +
+                        "\"referanseId\":\"$referanseId\"," +
                         "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
                         "}"
             )
