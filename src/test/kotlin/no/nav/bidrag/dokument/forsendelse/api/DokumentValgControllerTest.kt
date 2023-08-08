@@ -154,11 +154,11 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             val dokumentValgMap = dokumentValgResponse.body!!
             dokumentValgMap.size shouldBe 3
             dokumentValgMap shouldContainKey "BI01S08"
-            dokumentValgMap shouldContainKey "BI01S45"
+            dokumentValgMap shouldContainKey "BI01S27"
             dokumentValgMap shouldContainKey "BI01S02"
 
             dokumentValgMap["BI01S08"]!!.beskrivelse shouldBe "Varsel revurd forskudd"
-            dokumentValgMap["BI01S45"]!!.beskrivelse shouldBe "Varsel opphør av bidragsforskudd tilbake i tid"
+            dokumentValgMap["BI01S27"]!!.beskrivelse shouldBe "Varsel opphør av bidragsforskudd tilbake i tid"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             stubUtils.Valider().hentBehandlingKalt(behandlingId)
         }

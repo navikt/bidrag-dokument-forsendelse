@@ -964,7 +964,7 @@
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01S08",
-        "BI01S45"
+        "BI01S27"
       ]
     },
     {
@@ -1017,7 +1017,7 @@
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01S08",
-        "BI01S45"
+        "BI01S27"
       ]
     },
     {
@@ -1065,7 +1065,7 @@
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01S08",
-        "BI01S45"
+        "BI01S27"
       ]
     },
     {
@@ -1821,10 +1821,7 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S27",
-        "BI01S28",
-        "BI01S29",
-        "BI01S30"
+        "BI01S27"
       ]
     },
     {
@@ -1911,8 +1908,7 @@
       "brevkoder": [
         "BI01S01",
         "BI01S12",
-        "BI01S52",
-        "BI01S53"
+        "BI01S52"
       ]
     },
     {
@@ -1988,7 +1984,7 @@
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01S01",
-        "BI01S13"
+        "BI01S12"
       ]
     },
     {
@@ -2325,9 +2321,7 @@
       "brevkoder": [
         "BI01S14",
         "BI01S26",
-        "BI01S47",
-        "BI01S48",
-        "BI01S49"
+        "BI01S47"
       ]
     },
     {
@@ -3901,9 +3895,7 @@
       "brevkoder": [
         "BI01S14",
         "BI01S26",
-        "BI01S47",
-        "BI01S48",
-        "BI01S49"
+        "BI01S47"
       ]
     },
     {
@@ -6367,7 +6359,6 @@
       "brevkoder": [
         "BI01S03",
         "BI01S15",
-        "BI01S16",
         "BI01S24"
       ]
     },
@@ -18143,10 +18134,6 @@
       "forvaltning": "BEGGE",
       "brevkoder": [
         "BI01S54",
-        "BI01S55",
-        "BI01S56",
-        "BI01S57",
-        "BI01S58",
         "BI01S59"
       ]
     },
@@ -23153,8 +23140,7 @@
       "brevkoder": [
         "BI01S01",
         "BI01S12",
-        "BI01S52",
-        "BI01S53"
+        "BI01S52"
       ]
     },
     {
@@ -23238,9 +23224,7 @@
       "brevkoder": [
         "BI01S14",
         "BI01S26",
-        "BI01S47",
-        "BI01S48",
-        "BI01S49"
+        "BI01S47"
       ]
     },
     {
