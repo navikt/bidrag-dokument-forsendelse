@@ -10,6 +10,7 @@ const dokumentValgListeBySoknadGruppe = new Map<string, Set>()
 const skipBrevkode = ["BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70"]
 
 const brevkoderSomErstattesAvEttBrev = {
+  "BI01S52": ["BI01S53"],
   "BI01S54": ["BI01S55", "BI01S56", "BI01S57", "BI01S58"],
   "BI01S47": ["BI01S48", "BI01S49"],
   "BI01S27": ["BI01S28", "BI01S29", "BI01S30", "BI01S45"],
