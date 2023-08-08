@@ -9,6 +9,13 @@ const brevmeny2jsonData = JSON.parse(brevmeny2)
 const dokumentValgListeBySoknadGruppe = new Map<string, Set>()
 const skipBrevkode = ["BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70"]
 
+const brevkoderSomErstattesAvEttBrev = {
+  "BI01S54": ["BI01S55", "BI01S56", "BI01S57", "BI01S58"],
+  "BI01S47": ["BI01S48", "BI01S49"],
+  "BI01S27": ["BI01S28", "BI01S29", "BI01S30", "BI01S45"],
+  "BI01S15": ["BI01S16"],
+  "BI01S12": ["BI01S13"]
+}
 const ignorer_brevkoder = ["BI01P11", "BI01S02", "BI01S10", "BI01S67", "BI01P18", "BI01X01", "BI01X02", "BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70", "BI01S61", "BI01S65 "]
 brevmeny2jsonData.forEach((data: Record<string, string>) => {
       const result = {
@@ -166,9 +173,25 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     if (v.engangsbelopType == null) delete v.engangsbelopType
     if (v.stonadType == null) delete v.stonadType
     return v
-  })
+  }).map((v) => ({
+    ...v,
+    brevkoder: settSammenBrevkoder(v.brevkoder)
+  }))
 
   return existingVedtakType;
 }, {})
+
+function settSammenBrevkoder(brevkoder: string[]): string[] {
+  let brevkoderSattSammen = [...brevkoder]
+  Object.keys(brevkoderSomErstattesAvEttBrev).forEach((brevkodeSomErstattesMed) => {
+    const fjernBrevkoder = brevkoderSomErstattesAvEttBrev[brevkodeSomErstattesMed]
+    const inneholderBrevkodeSomSkalErstattes = fjernBrevkoder.some((b) => brevkoder.includes(b))
+    if (inneholderBrevkodeSomSkalErstattes) {
+      brevkoderSattSammen = brevkoderSattSammen.filter((b) => !fjernBrevkoder.includes(b))
+      brevkoderSattSammen.push(brevkodeSomErstattesMed)
+    }
+  })
+  return [...new Set(brevkoderSattSammen)]
+}
 
 fs.writeFileSync('../src/main/resources/files/dokument_valg.json', JSON.stringify(dokumentValgKtBySoknadGruppe, null, 2));

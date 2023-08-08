@@ -551,12 +551,12 @@ class DokumentValgServiceTest {
         )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 6
+            dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S14"
             dokumentValgListe shouldContainKey "BI01S26"
             dokumentValgListe shouldContainKey "BI01S47"
-            dokumentValgListe shouldContainKey "BI01S48"
-            dokumentValgListe shouldContainKey "BI01S49"
+//            dokumentValgListe shouldContainKey "BI01S48"
+//            dokumentValgListe shouldContainKey "BI01S49"
             dokumentValgListe shouldContainKey "BI01S02"
             verify { bidragBehandlingConsumer.hentBehandling(behandlingId) }
         }
@@ -737,12 +737,12 @@ class DokumentValgServiceTest {
         )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 7
+            dokumentValgListe.size shouldBe 3
             dokumentValgListe shouldContainKey "BI01S54"
-            dokumentValgListe shouldContainKey "BI01S55"
-            dokumentValgListe shouldContainKey "BI01S56"
-            dokumentValgListe shouldContainKey "BI01S57"
-            dokumentValgListe shouldContainKey "BI01S58"
+//            dokumentValgListe shouldContainKey "BI01S55"
+//            dokumentValgListe shouldContainKey "BI01S56"
+//            dokumentValgListe shouldContainKey "BI01S57"
+//            dokumentValgListe shouldContainKey "BI01S58"
             dokumentValgListe shouldContainKey "BI01S59"
             dokumentValgListe shouldContainKey "BI01S02"
         }
