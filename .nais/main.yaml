@@ -50,7 +50,7 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
-   - bidrag-vedtak
+   - bidrag-vedtak-syntetisk
    - bidrag-behandling
 outbound-access-hosts:
    - bidrag-dokument.dev-fss-pub.nais.io
