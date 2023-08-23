@@ -71,3 +71,6 @@ azure_access_inbound:
   - application: bidrag-cucumber-cloud
     namespace: bidrag
     cluster: dev-gcp
+  - application: bidrag-behandling
+    namespace: bidrag
+    cluster: dev-gcp
