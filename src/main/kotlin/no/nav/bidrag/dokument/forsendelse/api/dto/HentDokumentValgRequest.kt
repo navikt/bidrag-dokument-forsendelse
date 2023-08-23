@@ -1,10 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
+import no.nav.bidrag.domain.enums.VedtakType
 
 data class HentDokumentValgRequest(
     @Schema(enumAsRef = true) val soknadType: SoknadType? = null,

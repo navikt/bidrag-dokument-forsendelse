@@ -7,9 +7,6 @@ import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
-import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
@@ -21,6 +18,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
+import no.nav.bidrag.domain.enums.EngangsbelopType
+import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -756,6 +756,36 @@ class DokumentValgServiceTest {
                 soknadType = "EGET_TILTAK",
                 behandlingType = StonadType.BIDRAG.name,
                 soknadFra = SoknadFra.NAV_BIDRAG
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 13
+            dokumentValgListe shouldContainKey "BI01S06"
+            dokumentValgListe shouldContainKey "BI01S07"
+            dokumentValgListe shouldContainKey "BI01S31"
+            dokumentValgListe shouldContainKey "BI01S32"
+            dokumentValgListe shouldContainKey "BI01S33"
+            dokumentValgListe shouldContainKey "BI01S34"
+            dokumentValgListe shouldContainKey "BI01S35"
+            dokumentValgListe shouldContainKey "BI01S36"
+            dokumentValgListe shouldContainKey "BI01S46"
+            dokumentValgListe shouldContainKey "BI01S62"
+            dokumentValgListe shouldContainKey "BI01S63"
+            dokumentValgListe shouldContainKey "BI01S65"
+            dokumentValgListe shouldContainKey "BI01S02"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for revurdering`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.REVURDERING,
+                soknadType = "BEGRENSET_REVURDERING",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = true
             )
         )
 

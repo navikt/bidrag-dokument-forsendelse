@@ -2,13 +2,13 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
-import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
-import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
+import no.nav.bidrag.domain.enums.EngangsbelopType
+import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakType
 import java.time.LocalDateTime
 
 @Schema(description = "Metadata for opprettelse av forsendelse")

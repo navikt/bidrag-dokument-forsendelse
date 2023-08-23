@@ -3,9 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.api
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
-import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
@@ -17,6 +14,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.domain.enums.EngangsbelopType
+import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakType
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus

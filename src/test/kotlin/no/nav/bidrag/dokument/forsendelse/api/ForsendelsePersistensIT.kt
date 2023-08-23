@@ -9,9 +9,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.Ordering
 import io.mockk.verify
 import jakarta.transaction.Transactional
-import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
-import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
@@ -34,6 +31,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
+import no.nav.bidrag.domain.enums.EngangsbelopType
+import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakType
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus

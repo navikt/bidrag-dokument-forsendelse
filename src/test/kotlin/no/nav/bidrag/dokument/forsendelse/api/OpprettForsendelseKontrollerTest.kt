@@ -6,8 +6,6 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
@@ -50,6 +48,8 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
+import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakType
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -129,17 +129,17 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"}"
                 )
             }
         }
