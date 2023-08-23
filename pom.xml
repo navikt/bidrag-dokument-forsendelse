@@ -33,7 +33,7 @@
     <shedlock.version>5.2.0</shedlock.version>
     <google-api-extention.version>2.32.0</google-api-extention.version>
     <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
-    <bidrag-behandling-felles-dto.version>0.0.87</bidrag-behandling-felles-dto.version>
+    <bidrag-behandling-felles-dto.version>0.0.97</bidrag-behandling-felles-dto.version>
 
   </properties>
 
