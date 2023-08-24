@@ -7,7 +7,6 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import no.nav.bidrag.behandling.felles.enums.StonadType
 import no.nav.bidrag.dokument.dto.AktorDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
 import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
@@ -46,6 +45,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettAdresseDo
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.string.TEMA_BIDRAG
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus

@@ -6,12 +6,6 @@ import no.nav.bidrag.behandling.felles.dto.vedtak.EngangsbelopDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.GrunnlagDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.StonadsendringDto
 import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
-import no.nav.bidrag.behandling.felles.enums.EngangsbelopType
-import no.nav.bidrag.behandling.felles.enums.GrunnlagType
-import no.nav.bidrag.behandling.felles.enums.Innkreving
-import no.nav.bidrag.behandling.felles.enums.StonadType
-import no.nav.bidrag.behandling.felles.enums.VedtakKilde
-import no.nav.bidrag.behandling.felles.enums.VedtakType
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
@@ -43,8 +37,14 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.domain.bool.LevdeAdskilt
 import no.nav.bidrag.domain.bool.UkjentPart
 import no.nav.bidrag.domain.enums.Bidragssakstatus
+import no.nav.bidrag.domain.enums.EngangsbelopType
+import no.nav.bidrag.domain.enums.GrunnlagType
+import no.nav.bidrag.domain.enums.Innkreving
 import no.nav.bidrag.domain.enums.Rolletype
 import no.nav.bidrag.domain.enums.Sakskategori
+import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakKilde
+import no.nav.bidrag.domain.enums.VedtakType
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.Enhetsnummer
 import no.nav.bidrag.domain.string.Saksnummer

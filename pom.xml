@@ -18,7 +18,8 @@
     <bidrag-dokument-dto.version>1.6.35</bidrag-dokument-dto.version>
     <kotlin.version>1.9.0</kotlin.version>
     <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
-    <bidrag-transport.version>20230508100903_0aa6729</bidrag-transport.version>
+    <bidrag-transport.version>20230821134807_d0642b9</bidrag-transport.version>
+    <bidrag-domain.version>20230817134109_ada9d45</bidrag-domain.version>
     <logback-encoder.version>7.3</logback-encoder.version>
     <token-support.version>3.0.12</token-support.version>
     <springdoc-openapi-ui.version>2.1.0</springdoc-openapi-ui.version>
@@ -32,7 +33,7 @@
     <shedlock.version>5.2.0</shedlock.version>
     <google-api-extention.version>2.32.0</google-api-extention.version>
     <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
-    <bidrag-behandling-felles-dto.version>0.0.87</bidrag-behandling-felles-dto.version>
+    <bidrag-behandling-felles-dto.version>0.0.97</bidrag-behandling-felles-dto.version>
 
   </properties>
 

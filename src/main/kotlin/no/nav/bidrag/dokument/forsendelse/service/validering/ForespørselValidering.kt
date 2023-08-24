@@ -42,7 +42,7 @@ object ForespørselValidering {
             feilmeldinger.add("Kan ikke opprette forsendelse uten gjelder")
         }
 
-        if (mottaker?.ident.isNullOrEmpty() && mottaker?.navn.isNullOrEmpty()) {
+        if (forsendelseType == ForsendelseType.UTGÅENDE && mottaker?.ident.isNullOrEmpty() && mottaker?.navn.isNullOrEmpty()) {
             feilmeldinger.add("Kan ikke opprette forsendelse uten mottaker ident eller navn")
         }
         this.dokumenter.forEachIndexed { i, it ->
