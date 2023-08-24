@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 @Schema(description = "Metadata om forsendelse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ForsendelseResponsTo(
+    val forsendelseId: Long,
     @Schema(description = "Ident til brukeren som journalposten gjelder") val gjelderIdent: String? = null,
     val mottaker: MottakerTo? = null,
     @Schema(description = "Liste over dokumentene på journalposten der metadata skal oppdateres")
@@ -35,7 +36,8 @@ data class BehandlingInfoResponseDto(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val soknadId: String? = null,
-    val behandlingType: BehandlingType? = null
+    val behandlingType: BehandlingType? = null,
+    val erFattet: Boolean? = null
 )
 
 @Schema(description = "Metadata om forsendelse")

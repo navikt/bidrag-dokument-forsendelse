@@ -218,6 +218,7 @@ fun opprettForsendelse2(
     endretAvIdent: String = SAKSBEHANDLER_IDENT
 ): Forsendelse {
     val forsendelse = Forsendelse(
+        forsendelseId = 1L,
         forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
         enhet = journalførendeenhet,
         status = status,

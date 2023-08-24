@@ -70,7 +70,7 @@ class ForsendelseMapperTest {
             dokument1.status shouldBe DokumentStatusTo.MÅ_KONTROLLERES
             dokument1.tittel shouldBe forsendelse.dokumenter[1].tittel
             dokument1.arkivsystem shouldBe DokumentArkivSystemDto.JOARK
-            dokument1.forsendelseId shouldBe null
+            dokument1.forsendelseId shouldBe "1"
             dokument1.originalJournalpostId shouldBe "orig_jp_123"
             dokument1.originalDokumentreferanse shouldBe "orig_dokref_123"
         }
