@@ -797,7 +797,7 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01B20"
             dokumentValgListe shouldContainKey "BI01B21"
             dokumentValgListe shouldContainKey "BI01S02"
-            dokumentValgListe shouldContainKey "BI01S10"Pong
+            dokumentValgListe shouldContainKey "BI01S10"
         }
     }
 
