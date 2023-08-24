@@ -214,6 +214,7 @@ fun Forsendelse.tilForsendelseType() = when (this.forsendelseType) {
 }
 
 fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) = ForsendelseResponsTo(
+    forsendelseId = forsendelseId!!,
     mottaker = this.mottaker?.let {
         MottakerTo(
             ident = it.ident,
@@ -236,7 +237,8 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
             vedtakId = it.vedtakId,
             behandlingId = it.behandlingId,
             soknadId = it.soknadId,
-            behandlingType = it.toBehandlingType()
+            behandlingType = it.toBehandlingType(),
+            erFattet = it.erFattetBeregnet != null || it.vedtakId != null
         )
     },
     gjelderIdent = this.gjelderIdent,
