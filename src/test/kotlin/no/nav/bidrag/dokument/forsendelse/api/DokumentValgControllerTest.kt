@@ -238,7 +238,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
             dokumentValgMap["BI01A01"]!!.beskrivelse shouldBe "Vedtak bidragsforskudd"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
         }
     }
 
