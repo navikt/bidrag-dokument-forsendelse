@@ -36,7 +36,7 @@ class DokumentValgService(
 
     val standardBrevkoder = listOf("BI01S02", "BI01S10") // BI01S67 - Adresseforespørsel
     val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10")
-    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02")
+    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
 
     init {

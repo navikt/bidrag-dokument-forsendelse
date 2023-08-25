@@ -57,7 +57,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01B20"]!!.beskrivelse shouldBe "Vedtak utland skjønn fastsettelse"
             dokumentValgMap["BI01B21"]!!.beskrivelse shouldBe "Vedtak utland skjønn endring"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
         }
     }
 
@@ -87,7 +87,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
             dokumentValgMap["BI01K50"]!!.beskrivelse shouldBe "Klage - vedtak tilbakekreving"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
         }
     }
 
@@ -122,7 +122,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
             dokumentValgMap["BI01A01"]!!.beskrivelse shouldBe "Vedtak bidragsforskudd"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
             stubUtils.Valider().hentVedtakKalt(vedtakId)
         }
     }
@@ -152,14 +152,16 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         assertSoftly {
             dokumentValgResponse.statusCode shouldBe HttpStatus.OK
             val dokumentValgMap = dokumentValgResponse.body!!
-            dokumentValgMap.size shouldBe 3
+            dokumentValgMap.size shouldBe 4
             dokumentValgMap shouldContainKey "BI01S08"
             dokumentValgMap shouldContainKey "BI01S27"
             dokumentValgMap shouldContainKey "BI01S02"
+            dokumentValgMap shouldContainKey "BI01S10"
 
             dokumentValgMap["BI01S08"]!!.beskrivelse shouldBe "Varsel revurd forskudd"
             dokumentValgMap["BI01S27"]!!.beskrivelse shouldBe "Varsel opphør av bidragsforskudd tilbake i tid"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
             stubUtils.Valider().hentBehandlingKalt(behandlingId)
         }
     }
@@ -176,7 +178,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap shouldContainKey "BI01S10"
 
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
         }
     }
 
@@ -202,7 +204,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
             dokumentValgMap["BI01A01"]!!.beskrivelse shouldBe "Vedtak bidragsforskudd"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
             stubUtils.Valider().hentVedtakKalt(vedtakId)
         }
     }
@@ -236,7 +238,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
             dokumentValgMap["BI01A01"]!!.beskrivelse shouldBe "Vedtak bidragsforskudd"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
-            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "KOPIFORSIDE T"
+            dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
         }
     }
 

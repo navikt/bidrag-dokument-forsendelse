@@ -20,7 +20,7 @@
     "kanBestilles": true
   },
   "BI01S10": {
-    "beskrivelse": "KOPIFORSIDE T",
+    "beskrivelse": "Oversendelse av informasjon",
     "type": "UTGÅENDE",
     "kanBestilles": true
   },
