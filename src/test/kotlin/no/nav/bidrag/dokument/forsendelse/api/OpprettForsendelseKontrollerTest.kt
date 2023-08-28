@@ -141,7 +141,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                             "\"tittel\":\"${hoveddokument.tittel}\"," +
                             "\"enhet\":\"${forsendelse.enhet}\"," +
                             "\"språk\":\"${forsendelse.språk}\"," +
-                            "\"barnIBehandling\":null}"
+                            "\"barnIBehandling\":[]}"
                 )
             }
         }

@@ -14,7 +14,7 @@ data class DokumentBestillingForespørsel(
     val tittel: String? = null,
     val enhet: String? = null,
     val språk: String? = null,
-    val barnIBehandling: List<String>? = null
+    val barnIBehandling: List<String> = emptyList()
 )
 
 data class MottakerTo(

@@ -120,7 +120,7 @@ class DokumentBestillingLytter(
             behandlingId = forsendelse.behandlingInfo?.behandlingId,
             språk = dokument.språk ?: forsendelse.språk,
             saksbehandler = saksbehandlerIdent?.let { Saksbehandler(it) },
-            barnIBehandling = forsendelse.behandlingInfo?.barnIBehandling?.toList(),
+            barnIBehandling = forsendelse.behandlingInfo?.barnIBehandling?.toList() ?: emptyList(),
             mottaker = forsendelse.mottaker?.let { mottaker ->
                 MottakerTo(
                     mottaker.ident,
