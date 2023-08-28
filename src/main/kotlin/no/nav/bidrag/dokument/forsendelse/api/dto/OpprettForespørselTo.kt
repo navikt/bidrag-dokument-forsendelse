@@ -48,7 +48,8 @@ data class BehandlingInfoDto(
     @Schema(enumAsRef = true, description = "Soknadtype er gamle kodeverdier som er erstattet av vedtaktype.") val soknadType: SoknadType? = null,
     val erFattetBeregnet: Boolean? = null,
     @Schema(description = "Hvis resultatkoden fra BBM er IT så skal denne være sann") val erVedtakIkkeTilbakekreving: Boolean? = null,
-    @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null
+    @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
+    val barnIBehandling: List<String> = emptyList()
 )
 
 @Schema(description = "Metadata til en respons etter forsendelse ble opprettet")

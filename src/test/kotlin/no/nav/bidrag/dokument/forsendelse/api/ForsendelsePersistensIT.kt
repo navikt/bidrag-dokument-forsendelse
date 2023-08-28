@@ -2,6 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.api
 
 import com.ninjasquad.springmockk.SpykBean
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainAnyOf
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
@@ -79,7 +81,8 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                 soknadFra = SoknadFra.BIDRAGSMOTTAKER,
                 soknadType = "EGET_TILTAK",
                 stonadType = StonadType.FORSKUDD,
-                vedtakType = VedtakType.FASTSETTELSE
+                vedtakType = VedtakType.FASTSETTELSE,
+                barnIBehandling = listOf("13231231312", "43124324234")
             )
         )
 
@@ -103,6 +106,8 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             behandlingInfo.soknadType shouldBe "EGET_TILTAK"
             behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
             behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+            behandlingInfo.barnIBehandling shouldContain "13231231312"
+            behandlingInfo.barnIBehandling shouldContain "43124324234"
         }
 
         val forsendelseResponse = utførHentForsendelse(response.body!!.forsendelseId.toString())
@@ -110,6 +115,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
         journalpost.behandlingInfo shouldNotBe null
         journalpost.behandlingInfo!!.soknadId shouldBe "123123"
+        journalpost.behandlingInfo!!.barnIBehandling!! shouldContainAnyOf listOf("13231231312", "43124324234")
     }
 
     @Test
