@@ -67,7 +67,7 @@ spec:
     limits:
       memory: 3000Mi
     requests:
-      memory: 1500Mi
+      memory: 2500Mi
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
