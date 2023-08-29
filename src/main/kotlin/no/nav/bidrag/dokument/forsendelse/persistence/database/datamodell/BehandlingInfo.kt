@@ -54,12 +54,12 @@ data class BehandlingInfo(
 
 class BarnIBehandling : MutableList<String> by mutableListOf() {
 
-    fun asString() = this.joinToString(",")
+    fun asString() = this.distinct().joinToString(",")
 
     companion object {
         fun from(list: List<String>?): BarnIBehandling {
             val barnIBehandling = BarnIBehandling()
-            list?.forEach {
+            list?.distinct()?.forEach {
                 barnIBehandling.add(it)
             }
             return barnIBehandling
