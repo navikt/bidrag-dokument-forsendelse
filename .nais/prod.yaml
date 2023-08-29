@@ -40,7 +40,7 @@ env:
   OPPDATER_DIST_STATUS_ENABLED: true
   GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-prod-8f72/locations/europe-north1/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 
-  JAVA_OPTS: -Xmx1500m
+  JAVA_OPTS: -Xmx2500m
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false
