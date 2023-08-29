@@ -78,7 +78,7 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
     }
 
     override fun set(st: PreparedStatement, value: BarnIBehandling?, index: Int, session: SharedSessionContractImplementor) {
-        st.setObject(index, value?.asString())
+        st.setObject(index, if (value.isNullOrEmpty()) null else value.asString())
     }
 
     override fun getSqlType(): Int {

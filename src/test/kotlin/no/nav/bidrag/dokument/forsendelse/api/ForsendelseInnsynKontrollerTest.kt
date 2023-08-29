@@ -189,6 +189,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.soknadId shouldBe soknadId
             behandlingInfo.vedtakId shouldBe vedtakId
             behandlingInfo.behandlingType shouldBe StonadType.BIDRAG.name
+            behandlingInfo.barnIBehandling!! shouldHaveSize 0
         }
     }
 
