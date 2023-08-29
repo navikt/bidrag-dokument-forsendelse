@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.validerErSann
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BarnIBehandling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -81,6 +82,7 @@ fun OpprettForsendelseForespørsel.tilBehandlingInfo() = this.behandlingInfo?.le
         erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
         soknadFra = it.soknadFra,
         erFattetBeregnet = it.erFattetBeregnet,
-        soknadType = it.soknadType
+        soknadType = it.soknadType,
+        barnIBehandling = BarnIBehandling.from(it.barnIBehandling)
     )
 }

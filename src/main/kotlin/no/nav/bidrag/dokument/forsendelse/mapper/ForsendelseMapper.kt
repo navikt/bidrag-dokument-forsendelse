@@ -238,7 +238,8 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
             behandlingId = it.behandlingId,
             soknadId = it.soknadId,
             behandlingType = it.toBehandlingType(),
-            erFattet = it.erFattetBeregnet != null || it.vedtakId != null
+            erFattet = it.erFattetBeregnet != null || it.vedtakId != null,
+            barnIBehandling = it.barnIBehandling.toList()
         )
     },
     gjelderIdent = this.gjelderIdent,

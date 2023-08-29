@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
@@ -139,7 +140,50 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                             "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
                             "\"tittel\":\"${hoveddokument.tittel}\"," +
                             "\"enhet\":\"${forsendelse.enhet}\"," +
-                            "\"språk\":\"${forsendelse.språk}\"}"
+                            "\"språk\":\"${forsendelse.språk}\"," +
+                            "\"barnIBehandling\":[]}"
+                )
+            }
+        }
+
+        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+        val journalpost = forsendelseResponse.body!!.journalpost
+        forsendelseResponse.body!!.journalpost shouldNotBe null
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost.innhold shouldBe journalpost.hentHoveddokument()?.tittel
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med barn i behandling`() {
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(batchId = "FB050", behandlingInfo = BehandlingInfoDto(barnIBehandling = listOf("123123123123")))
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+            assertSoftly {
+                forsendelse.dokumenter shouldHaveSize 2
+                val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+                val mottaker = forsendelse.mottaker!!
+                forsendelse.behandlingInfo!!.barnIBehandling shouldContain "123123123123"
+                stubUtils.Valider().bestillDokumentKaltMed(
+                    HOVEDDOKUMENT_DOKUMENTMAL,
+                    "{" +
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"," +
+                            "\"barnIBehandling\":[\"123123123123\"]}"
                 )
             }
         }

@@ -13,7 +13,8 @@ data class DokumentBestillingForespørsel(
     val dokumentreferanse: String? = null,
     val tittel: String? = null,
     val enhet: String? = null,
-    val språk: String? = null
+    val språk: String? = null,
+    val barnIBehandling: List<String> = emptyList()
 )
 
 data class MottakerTo(
