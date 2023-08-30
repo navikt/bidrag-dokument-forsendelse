@@ -32,7 +32,7 @@ env:
 
   KODEVERK_URL: https://kodeverk.dev-fss-pub.nais.io
 
-  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1500m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0
+  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 
   LAGRE_DIST_INFO_PAGE_SIZE: 100
   LAGRE_DIST_INFO_CRON: "0 */5 * * * ?"

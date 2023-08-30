@@ -6,8 +6,8 @@ metadata:
   labels:
     team: bidrag
   annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: "256m"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-body-size: "512m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
   azure:
     application:
@@ -65,9 +65,9 @@ spec:
             envVarPrefix: DB
   resources:
     limits:
-      memory: 3000Mi
+      memory: 4096Mi
     requests:
-      memory: 1500Mi
+      memory: 2560Mi
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
