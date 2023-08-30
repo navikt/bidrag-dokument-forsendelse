@@ -7,7 +7,7 @@ import no.nav.bidrag.commons.web.config.RestOperationsAzure
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.web.client.RestTemplate
 
@@ -27,7 +27,7 @@ class RestConfig {
 
     @Bean
     fun restTemplate(): RestTemplate {
-        val rf = SimpleClientHttpRequestFactory()
+        val rf = HttpComponentsClientHttpRequestFactory()
         rf.setBufferRequestBody(false)
         return RestTemplate(rf)
     }
