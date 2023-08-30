@@ -68,6 +68,9 @@ spec:
       memory: 4096Mi
     requests:
       memory: 2560Mi
+  replicas:
+      max: 1
+      min: 1
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
