@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
+import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.context.annotation.Scope
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import org.springframework.web.client.RestTemplate
 
 
 @Configuration
@@ -25,10 +26,11 @@ class RestConfig {
             .serializationInclusion(JsonInclude.Include.NON_NULL)
     }
 
-    @Bean
-    fun restTemplate(): RestTemplate {
-        val rf = HttpComponentsClientHttpRequestFactory()
-        rf.setBufferRequestBody(false)
-        return RestTemplate(rf)
-    }
+    @Bean("azureNotBuffer")
+    @Scope("prototype")
+    fun restOperationsJwtBearerNoBuffer(
+        restTemplateBuilder: RestTemplateBuilder,
+        bearerTokenClientInterceptor: BearerTokenClientInterceptor
+    ) = restTemplateBuilder.additionalInterceptors(bearerTokenClientInterceptor).setBufferRequestBody(false).build()
+
 }
