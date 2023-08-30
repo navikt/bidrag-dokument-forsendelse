@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.util.StdDateFormat
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
+import org.apache.hc.client5.http.config.RequestConfig
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Scope
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 
@@ -31,6 +34,16 @@ class RestConfig {
     fun restOperationsJwtBearerNoBuffer(
         restTemplateBuilder: RestTemplateBuilder,
         bearerTokenClientInterceptor: BearerTokenClientInterceptor
-    ) = restTemplateBuilder.additionalInterceptors(bearerTokenClientInterceptor).setBufferRequestBody(false).build()
+    ) = restTemplateBuilder
+        .requestFactory { _ ->
+            val reqFact = HttpComponentsClientHttpRequestFactory(
+                HttpClientBuilder.create()
+                    .setDefaultRequestConfig(RequestConfig.custom().build()).build()
+            )
+            reqFact.setBufferRequestBody(false)
+            reqFact
+        }
+        .additionalInterceptors(bearerTokenClientInterceptor)
+        .build()
 
 }
