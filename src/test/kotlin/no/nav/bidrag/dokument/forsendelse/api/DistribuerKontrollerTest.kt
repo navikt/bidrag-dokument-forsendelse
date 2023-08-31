@@ -518,7 +518,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
-                    "kanal": "LOKAL_UTSKRIFT",
+                    "kanal":"LOKAL_UTSKRIFT",
                     "tema":"BID",
                     "journalposttype":"UTGÅENDE",
                     "referanseId":"$referanseId",

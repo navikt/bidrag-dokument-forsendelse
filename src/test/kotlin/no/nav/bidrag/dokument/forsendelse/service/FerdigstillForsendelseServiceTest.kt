@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -335,8 +336,9 @@ class FerdigstillForsendelseServiceTest {
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.dokumenter.forEach { dok ->
-                        dok.fysiskDokument shouldBe DOKUMENT_FIL.toByteArray()
+                    it.dokumenter.forEachIndexed { i, dok ->
+                        dok.fysiskDokument shouldBe null
+                        dok.dokumentreferanse shouldBeIn listOf("BIF2", "BIF1")
                     }
                 }
             )
