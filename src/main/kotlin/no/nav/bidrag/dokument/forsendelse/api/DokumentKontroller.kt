@@ -34,6 +34,21 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
             .body(fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse))
     }
 
+    @GetMapping("/dokumentreferanse/{dokumentreferanse}")
+    @Operation(
+        summary = "Hent fysisk dokument som byte",
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    fun hentDokumentForReferanse(@PathVariable dokumentreferanse: String): ResponseEntity<ByteArray> {
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "inline; filename=$dokumentreferanse.pdf"
+            )
+            .body(fysiskDokumentService.hentDokument(dokumentreferanse))
+    }
+
     @RequestMapping(
         *["/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}", "/dokument/{forsendelseIdMedPrefix}"],
         method = [RequestMethod.OPTIONS]
@@ -47,5 +62,17 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
         @PathVariable(required = false) dokumentreferanse: String?
     ): List<DokumentMetadata> {
         return fysiskDokumentService.hentDokumentMetadata(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
+    }
+
+    @RequestMapping(
+        *["/dokumentreferanse/{dokumentreferanse}"],
+        method = [RequestMethod.OPTIONS]
+    )
+    @Operation(
+        summary = "Hent metadata om dokument",
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    fun hentDokumentMetadataForReferanse(@PathVariable dokumentreferanse: String): List<DokumentMetadata> {
+        return fysiskDokumentService.hentDokumentMetadataForReferanse(dokumentreferanse)
     }
 }

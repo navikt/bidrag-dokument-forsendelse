@@ -59,6 +59,10 @@ class DokumentTjeneste(
         return dokumentRepository.hentDokumenterMedDokumentreferanse(dokumentreferanse, dokumentreferanse.utenPrefiks.toLong())
     }
 
+    fun hentDokument(dokumentreferanse: String): Dokument? {
+        return dokumentRepository.findByDokumentId(dokumentreferanse.utenPrefiks.toLong())
+    }
+
     fun hentDokumenterSomHarStatusBestillingFeilet(): List<Dokument> {
         return dokumentRepository.hentDokumenterSomHarStatusBestillingFeilet()
     }

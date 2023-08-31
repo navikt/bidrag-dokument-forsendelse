@@ -9,6 +9,8 @@ interface DokumentRepository : CrudRepository<Dokument, Long> {
     @Query("select d from dokument d where d.dokumentreferanseOriginal = :dokumentreferanse or d.dokumentId = :dokumentId")
     fun hentDokumenterMedDokumentreferanse(dokumentreferanse: String, dokumentId: Long?): List<Dokument>
 
+    fun findByDokumentId(dokumentId: Long?): Dokument?
+
     @Query("select d from dokument d where d.dokumentStatus = 'BESTILLING_FEILET' and d.slettetTidspunkt is null and d.forsendelse.status = 'UNDER_PRODUKSJON'")
     fun hentDokumenterSomHarStatusBestillingFeilet(): List<Dokument>
 
