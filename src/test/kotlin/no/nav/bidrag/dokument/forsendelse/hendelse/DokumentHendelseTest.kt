@@ -310,7 +310,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
                         "\"tittel\":\"Forsendelse notat\"," +
                         "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
                         "\"dokumenter\":[" +
-                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}]," +
+                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
                         "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
                         "\"datoDokument\":\"2022-01-05T01:02:03\"," +
                         "\"tema\":\"BID\"," +
@@ -320,8 +320,6 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
                         "\"saksbehandlerIdent\":\"Z999444\"" +
                         "}"
             )
-
-            stubUtils.Valider().hentDokumentKalt(forsendelseEtter.forsendelseIdMedPrefix, forsendelseEtter.dokumenter[0].dokumentreferanse)
         }
     }
 }
