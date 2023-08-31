@@ -64,10 +64,11 @@ spec:
           - name: bidrag-dokument-forsendelse
             envVarPrefix: DB
   resources:
-    limits:
-      memory: 2048Mi
     requests:
-      memory: 1024Mi
+      cpu: 1500m
+      memory: 2048Mi
+    limits:
+      memory: 4096Mi
   replicas:
       max: 1
       min: 1
