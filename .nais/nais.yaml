@@ -70,8 +70,8 @@ spec:
     limits:
       memory: 4096Mi
   replicas:
-      max: {{min_replicas}}
-      min: 4
+      min: {{min_replicas}}
+      max: 4
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
