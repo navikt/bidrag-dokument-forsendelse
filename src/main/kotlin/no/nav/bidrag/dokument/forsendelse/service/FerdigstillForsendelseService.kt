@@ -86,7 +86,6 @@ class FerdigstillForsendelseService(
                     brevkode = it.dokumentmalId,
                     tittel = if (it.tilknyttetSom === DokumentTilknyttetSom.HOVEDDOKUMENT) hovedtittelMedBeskjed else it.tittel,
                     dokumentreferanse = it.dokumentreferanse,
-//                    fysiskDokument = fysiskDokumentService.hentFysiskDokument(it)
                 )
             },
             tilknyttSaker = listOf(forsendelse.saksnummer),
