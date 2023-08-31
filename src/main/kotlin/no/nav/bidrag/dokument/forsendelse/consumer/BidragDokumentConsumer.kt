@@ -21,7 +21,7 @@ import java.net.URI
 @Service
 class BidragDokumentConsumer(
     @Value("\${BIDRAG_DOKUMENT_URL}") val url: URI,
-    @Qualifier("azureNotBuffer") private val restTemplate: RestOperations
+    @Qualifier("azure") private val restTemplate: RestOperations
 ) : AbstractRestClient(restTemplate, "bidrag-dokument") {
 
     private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
