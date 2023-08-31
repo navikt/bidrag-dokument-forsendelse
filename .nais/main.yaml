@@ -42,7 +42,7 @@ env:
   GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/bucket-dokument-encryption
   GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/clientside_document_encryption
 
-  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
+  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx2048m --Xms2048m XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 database:
   dbname: bidrag-dokument-forsendelse-main
   autoResize: false
