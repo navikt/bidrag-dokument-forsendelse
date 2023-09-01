@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.Ordering
 import io.mockk.every
@@ -14,6 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
@@ -40,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.LocalDateTime
 
 @ExtendWith(SpringExtension::class)
 class OpprettForsendelseServiceTest {
@@ -372,5 +375,27 @@ class OpprettForsendelseServiceTest {
                 }
             )
         }
+    }
+
+    @Test
+    fun `Skal feile hvis dokumentdato er senere enn dagens dato`() {
+        every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
+            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
+                "Tittel notat",
+                DokumentMalType.NOTAT
+            )
+        )
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "Tittel notat",
+                    dokumentmalId = DOKUMENTMAL_NOTAT,
+                    dokumentDato = LocalDateTime.now().plusDays(1)
+                )
+            ),
+        )
+        val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
+        result.message shouldBe "Dokumentdato kan ikke være senere enn dagens dato"
     }
 }

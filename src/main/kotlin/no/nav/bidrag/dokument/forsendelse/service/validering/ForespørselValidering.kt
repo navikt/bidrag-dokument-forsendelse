@@ -103,6 +103,10 @@ object ForespørselValidering {
             )
         }
 
+        if (this.dokumentDato != null && this.dokumentDato.isAfter(LocalDateTime.now())) {
+            feilmeldinger.add("Dokumentdato kan ikke være senere enn dagens dato")
+        }
+
         if (feilmeldinger.isNotEmpty() && throwWhenInvalid) {
             throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
         }
