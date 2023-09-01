@@ -47,6 +47,21 @@ class FysiskDokumentService(
         throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
     }
 
+    fun hentDokument(dokumentreferanse: String): ByteArray {
+        val dokument = dokumentTjeneste.hentDokument(dokumentreferanse)
+            ?: fantIkkeDokument(-1, dokumentreferanse)
+        val forsendelse = dokument.forsendelse
+
+        tilgangskontrollService.sjekkTilgangForsendelse(forsendelse)
+
+        if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
+            return dokumentStorageService.hentFil(dokument.filsti)
+        }
+
+        val arkivSystem = dokument.arkivsystem
+        throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId ${forsendelse.forsendelseId} fra arkivsystem = $arkivSystem")
+    }
+
     fun hentFysiskDokument(dokumentMetadata: DokumentMetadata): ByteArray {
         return if (dokumentMetadata.arkivsystem == DokumentArkivSystemDto.BIDRAG) {
             hentDokument(
@@ -101,6 +116,17 @@ class FysiskDokumentService(
 
         if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             log.info { "Dokument $dokumentreferanse i forsendelse $forsendelseId og er symlink til dokument ${dokument.dokumentreferanseOriginal} i forsendelse ${dokument.journalpostIdOriginal}" }
+            return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal)
+        }
+
+        return listOf(mapTilDokumentMetadata(dokument))
+    }
+
+    fun hentDokumentMetadataForReferanse(dokumentreferanse: String): List<DokumentMetadata> {
+        val dokument = dokumentTjeneste.hentDokument(dokumentreferanse) ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse")
+
+        if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+            log.info { "Dokument $dokumentreferanse er symlink til dokument ${dokument.dokumentreferanseOriginal} i forsendelse ${dokument.journalpostIdOriginal}" }
             return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal)
         }
 

@@ -1,5 +1,6 @@
 name: bidrag-dokument-forsendelse
 bucket_name: bidrag-dokument-forsendelse-prod
+min_replicas: 2
 ingresses:
   - https://bidrag-dokument-forsendelse.intern.nav.no
 env:
@@ -40,7 +41,7 @@ env:
   OPPDATER_DIST_STATUS_ENABLED: true
   GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-prod-8f72/locations/europe-north1/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 
-  JAVA_OPTS: -Xmx1500m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0
+  JAVA_OPTS: -Xmx1028m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0
 database:
   dbname: bidrag-dokument-forsendelse
   autoResize: false

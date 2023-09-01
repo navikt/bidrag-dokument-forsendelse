@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.ninjasquad.springmockk.SpykBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
@@ -64,6 +65,7 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     @BeforeEach
     fun resetSpys() {
         clearAllMocks()
+        WireMock.resetAllRequests()
     }
 
     private fun opprettForsendelseFerdigstiltIkkeDistribuert(): Forsendelse {
