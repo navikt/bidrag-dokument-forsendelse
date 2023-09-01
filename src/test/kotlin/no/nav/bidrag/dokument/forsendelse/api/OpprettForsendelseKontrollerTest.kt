@@ -4,6 +4,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
@@ -847,5 +848,29 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         responseForsendelse.statusCode shouldBe HttpStatus.OK
         responseForsendelse.body!!.journalpost!!.dokumenter.size shouldBe 2
+    }
+
+    @Test
+    fun `Skal opprette forsendelse med dokumentadato`() {
+        val dokumentdato = LocalDateTime.parse("2021-01-01T01:02:03")
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter = listOf(
+                    OpprettDokumentForespørsel(
+                        tittel = TITTEL_HOVEDDOKUMENT,
+                        dokumentmalId = DOKUMENTMAL_NOTAT,
+                        dokumentDato = dokumentdato
+                    ),
+                )
+            )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+
+        assertSoftly {
+            forsendelse.dokumenter[0].dokumentDato shouldBeEqual dokumentdato
+        }
     }
 }
