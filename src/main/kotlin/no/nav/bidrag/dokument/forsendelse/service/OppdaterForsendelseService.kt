@@ -70,6 +70,7 @@ class OppdaterForsendelseService(
             forsendelseTjeneste.lagre(
                 forsendelse.copy(
                     mottaker = mottaker ?: forsendelse.mottaker,
+                    gjelderIdent = forespørsel.gjelderIdent ?: forsendelse.gjelderIdent,
                     tittel = forespørsel.tittel ?: forsendelse.tittel,
                     språk = forespørsel.språk ?: forsendelse.språk,
                     enhet = forespørsel.enhet ?: forsendelse.enhet,
@@ -281,12 +282,12 @@ class OppdaterForsendelseService(
             oppdaterteDokumenter.filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
                 .any {
                     it.erFraAnnenKilde &&
-                        it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
+                            it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal && it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
                 }
                 .ifTrue {
                     throw UgyldigForespørsel(
                         "Kan ikke legge til samme dokument flere ganger til forsendelse." +
-                            " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
+                                " Original dokument ${originalDokument.dokumentreferanse} med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}"
                     )
                 }
         }
