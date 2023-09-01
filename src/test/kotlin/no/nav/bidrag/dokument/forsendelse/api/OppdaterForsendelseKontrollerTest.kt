@@ -133,12 +133,49 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         assertSoftly {
             oppdatertForsendelse.tittel shouldBe "Ny tittel forsendelse"
             oppdatertForsendelse.enhet shouldBe "4888"
+            oppdatertForsendelse.gjelderIdent shouldBe forsendelse.gjelderIdent
             oppdatertForsendelse.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
             oppdatertForsendelse.mottaker!!.ident shouldBe mottakerId
             oppdatertForsendelse.mottaker!!.navn shouldBe mottakerNavn
             oppdatertForsendelse.mottaker!!.språk shouldBe "EN"
             oppdatertForsendelse.dokumenter.size shouldBe 1
             oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe "Vedtak om barnebidrag"
+        }
+    }
+
+    @Test
+    fun `Skal oppdatere forsendelse som er under opprettelse med annen gjelder`() {
+        val mottakerNavn = "Hans Navnsen"
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = emptyList(),
+                status = ForsendelseStatus.UNDER_OPPRETTELSE
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val gjelderIdent = "41242421421421"
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+            mottaker = MottakerTo(
+                ident = gjelderIdent,
+                navn = mottakerNavn
+            ),
+            gjelderIdent = gjelderIdent,
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    tittel = "Vedtak om barnebidrag",
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE
+                )
+            )
+        )
+        val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+        respons.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.gjelderIdent shouldBe gjelderIdent
         }
     }
 
