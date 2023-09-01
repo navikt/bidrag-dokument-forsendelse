@@ -25,7 +25,7 @@ Denne filen er generert basert på SQL eksport fra Bisys databasen som vist unde
 
 [brevmeny_brevkode.ts](script/brevmeny_brevkode.ts) leser og konverterer SQL eksport til dokument_valg.json fil som igjen brukes av forsendelse koden.
 
-Kjør og eksporter følgende SQL skript til json fil før kjøring av skript
+Kjør og ekspo2rter følgende SQL skript til json fil før kjøring av skript
 
 ```sql
 
