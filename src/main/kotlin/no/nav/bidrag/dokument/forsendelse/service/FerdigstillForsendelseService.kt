@@ -85,7 +85,7 @@ class FerdigstillForsendelseService(
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,
                     tittel = if (it.tilknyttetSom === DokumentTilknyttetSom.HOVEDDOKUMENT) hovedtittelMedBeskjed else it.tittel,
-                    dokumentreferanse = it.dokumentreferanse,
+                    dokumentreferanse = it.dokumentreferanse
                 )
             },
             tilknyttSaker = listOf(forsendelse.saksnummer),

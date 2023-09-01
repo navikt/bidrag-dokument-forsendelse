@@ -393,7 +393,7 @@ class OpprettForsendelseServiceTest {
                     dokumentmalId = DOKUMENTMAL_NOTAT,
                     dokumentDato = LocalDateTime.now().plusDays(1)
                 )
-            ),
+            )
         )
         val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
         result.message shouldBe "Dokumentdato kan ikke være senere enn dagens dato"
