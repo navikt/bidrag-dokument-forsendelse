@@ -131,18 +131,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"," +
-                        "\"barnIBehandling\":[]}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"," +
+                            "\"barnIBehandling\":[]}"
                 )
             }
         }
@@ -173,18 +173,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"," +
-                        "\"barnIBehandling\":[\"123123123123\"]}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"," +
+                            "\"barnIBehandling\":[\"123123123123\"]}"
                 )
             }
         }
@@ -352,7 +352,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
             behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
             behandlingInfo.behandlingType shouldBe null
-            forsendelse.tittel shouldBe "Vedtak om forskudd til bidragsmottaker"
+            forsendelse.tittel shouldBe null
 
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
@@ -362,7 +362,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.status shouldBe JournalpostStatus.UNDER_OPPRETTELSE
-        journalpost.innhold shouldBe "Vedtak om forskudd til bidragsmottaker"
+        journalpost.innhold shouldBe null
     }
 
     @Test

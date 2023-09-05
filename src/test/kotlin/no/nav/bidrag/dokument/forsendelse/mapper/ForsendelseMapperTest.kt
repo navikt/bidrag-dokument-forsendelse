@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -113,6 +114,7 @@ class ForsendelseMapperTest {
     }
 
     @Test
+    @Disabled("Tittel på forsendelse skal alltid være lik hoveddokument")
     fun `Skal mappe forsendelse med forsendelse tittel`() {
         val forsendelse = opprettForsendelse2(
             tittel = "Forsendelse tittel"
@@ -149,6 +151,7 @@ class ForsendelseMapperTest {
     }
 
     @Test
+    @Disabled("Tittel skal være null")
     fun `Skal mappe forsendelse med standard tittel hvis det er ingen dokumenter`() {
         val forsendelse = opprettForsendelse2(
             tittel = null,
@@ -161,6 +164,21 @@ class ForsendelseMapperTest {
         val journalpostResponse = forsendelse.tilJournalpostDto()
         journalpostResponse.innhold shouldBe "Forsendelse 100"
     }
+
+    @Test
+    fun `Skal mappe forsendelse til null hvis det er ingen dokumenter`() {
+        val forsendelse = opprettForsendelse2(
+            tittel = null,
+            dokumenter = emptyList()
+        ).copy(forsendelseId = 100L)
+
+        val forsendelseRespons = forsendelse.tilForsendelseRespons()
+        forsendelseRespons.tittel shouldBe null
+
+        val journalpostResponse = forsendelse.tilJournalpostDto()
+        journalpostResponse.innhold shouldBe null
+    }
+
 
     @Test
     fun `Skal mappe forsendelse med dokumenter i riktig rekkefølge og uten slettet dokumenter`() {

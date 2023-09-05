@@ -321,32 +321,22 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             oppdatertForsendelse.referanseId shouldBe referanseId
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Tittel på forsendelse\"," +
-                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"fysiskDokument\":\"SlZCRVJpMHhMamNnUW1GelpUWTBJR1Z1WTI5a1pYUWdabmx6YVhOcklHUnZhM1Z0Wlc1MA==\"}," +
-                    "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}," +
-                    "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"fysiskDokument\":\"cmVkaWdlcmluZ2RhdGFfUERG\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"$referanseId\"," +
-                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Tittel på hoveddokument\"," +
+                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${forsendelse.dokumenter[0].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"dokumentreferanse\":\"${forsendelse.dokumenter[1].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"dokumentreferanse\":\"${forsendelse.dokumenter[2].dokumentreferanse}\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                        "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
-            stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.hoveddokument!!.dokumentreferanse)
-            stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[0].dokumentreferanse, 0)
-            stubUtils.Valider().hentDokumentKalt(forsendelse.forsendelseIdMedPrefix, forsendelse.dokumenter.vedlegger[1].dokumentreferanse, 0)
-            verify(exactly = 2) {
-                gcpCloudStorage.hentFil(any())
-            }
-            verify(ordering = Ordering.ORDERED) {
-                gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[0].filsti}"))
-                gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[1].filsti}"))
-            }
             verify(ordering = Ordering.ORDERED) {
                 gcpCloudStorage.slettFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[0].filsti}"))
                 gcpCloudStorage.slettFil(eq("dokumenter/${forsendelse.dokumenter.vedlegger[1].filsti}"))

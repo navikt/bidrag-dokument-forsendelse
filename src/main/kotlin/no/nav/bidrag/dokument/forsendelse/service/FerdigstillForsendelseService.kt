@@ -95,7 +95,7 @@ class FerdigstillForsendelseService(
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
             },
-            tittel = forsendelseTittel,
+            tittel = hovedtittel,
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 
