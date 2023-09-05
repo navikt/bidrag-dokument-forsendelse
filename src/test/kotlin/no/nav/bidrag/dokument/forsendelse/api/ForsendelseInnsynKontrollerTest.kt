@@ -590,7 +590,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                 saksnummer = "5435435",
                 dokumenter = listOf(
                     nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        dokumentStatus = DokumentStatus.UNDER_REDIGERING
                     )
                 )
             )

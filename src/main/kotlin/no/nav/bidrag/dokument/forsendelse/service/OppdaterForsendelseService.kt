@@ -71,7 +71,7 @@ class OppdaterForsendelseService(
                 forsendelse.copy(
                     mottaker = mottaker ?: forsendelse.mottaker,
                     gjelderIdent = forespørsel.gjelderIdent ?: forsendelse.gjelderIdent,
-                    tittel = forespørsel.tittel ?: forsendelse.tittel,
+//                    tittel = forespørsel.tittel ?: forsendelse.tittel,
                     språk = forespørsel.språk ?: forsendelse.språk,
                     enhet = forespørsel.enhet ?: forsendelse.enhet,
                     tema = forespørsel.tema?.toForsendelseTema() ?: forsendelse.tema,
@@ -82,8 +82,8 @@ class OppdaterForsendelseService(
         } else {
             forsendelseTjeneste.lagre(
                 forsendelse.copy(
-                    dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel),
-                    tittel = forespørsel.tittel ?: forsendelse.tittel
+                    dokumenter = oppdaterOgOpprettDokumenter(forsendelse, forespørsel)
+//                    tittel = forespørsel.tittel ?: forsendelse.tittel
                 )
             )
         }

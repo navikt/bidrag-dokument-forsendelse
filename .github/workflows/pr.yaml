@@ -60,6 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy main
     needs: build
+    if: github.actor!= 'dependabot[bot]'
     steps:
       - uses: actions/checkout@v3
         with:

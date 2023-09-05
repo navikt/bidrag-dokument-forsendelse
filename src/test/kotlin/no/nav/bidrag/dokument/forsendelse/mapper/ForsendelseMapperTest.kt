@@ -179,7 +179,6 @@ class ForsendelseMapperTest {
         journalpostResponse.innhold shouldBe null
     }
 
-
     @Test
     fun `Skal mappe forsendelse med dokumenter i riktig rekkefølge og uten slettet dokumenter`() {
         val forsendelse = opprettForsendelse2(

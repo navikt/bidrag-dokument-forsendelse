@@ -116,7 +116,6 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             ),
             tema = JournalTema.FAR,
             enhet = "4888",
-            tittel = "Ny tittel forsendelse",
             språk = "EN",
             dokumenter = listOf(
                 OppdaterDokumentForespørsel(
@@ -131,7 +130,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
         assertSoftly {
-            oppdatertForsendelse.tittel shouldBe "Ny tittel forsendelse"
+            oppdatertForsendelse.tittel shouldBe null
             oppdatertForsendelse.enhet shouldBe "4888"
             oppdatertForsendelse.gjelderIdent shouldBe forsendelse.gjelderIdent
             oppdatertForsendelse.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
