@@ -34,10 +34,16 @@ class DistribusjonService(
         return forsendelse.status == ForsendelseStatus.DISTRIBUERT || forsendelse.status == ForsendelseStatus.DISTRIBUERT_LOKALT
     }
 
+    fun størrelseIMb(forsendelseId: Long): Long {
+        return bytesToMb(dokumentStorageService.totalStørrelse(forsendelseId))
+
+    }
+
     fun validerKanDistribuere(forsendelseId: Long) {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
         forsendelse.validerKanDistribuere()
+
     }
 
     @Transactional
@@ -137,5 +143,11 @@ class DistribusjonService(
 
     fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? {
         return bidragDokumentConsumer.hentDistribusjonInfo(journalpostId)
+    }
+
+    fun bytesToMb(bytes: Long): Long {
+        val kilobyte: Long = 1024
+        val megabyte = kilobyte * 1024
+        return bytes / megabyte
     }
 }

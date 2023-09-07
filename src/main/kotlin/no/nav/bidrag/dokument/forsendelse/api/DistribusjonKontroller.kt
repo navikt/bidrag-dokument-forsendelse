@@ -22,6 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam
 @Timed
 class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
 
+    @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/size")
+    @Operation(
+        summary = "Hent størrelse på dokumentene i forsendelsen",
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    fun henStørrelsePåDokumenter(@PathVariable forsendelseIdMedPrefix: ForsendelseId): Long {
+        return distribusjonService.størrelseIMb(forsendelseIdMedPrefix.numerisk)
+    }
+
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/enabled")
     @Operation(
         summary = "Sjekk om forsendelse kan distribueres",
@@ -36,12 +45,12 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
             )
         ]
     )
-    fun kanDistribuere(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<Void> {
+    fun kanDistribuere(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<String> {
         return try {
             distribusjonService.validerKanDistribuere(forsendelseIdMedPrefix.numerisk)
             ResponseEntity.ok().build()
-        } catch (_: Exception) {
-            ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build()
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.message)
         }
     }
 
