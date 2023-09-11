@@ -33,8 +33,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
     @MockkBean
     lateinit var gcpCloudStorage: GcpCloudStorage
-    protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<Unit> {
-        return httpHeaderTestRestTemplate.getForEntity<Unit>("${rootUri()}/journal/distribuer/$forsendelseId/enabled")
+    protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<String> {
+        return httpHeaderTestRestTemplate.getForEntity<String>("${rootUri()}/journal/distribuer/$forsendelseId/enabled")
     }
 
     protected fun utførDistribuerForsendelse(

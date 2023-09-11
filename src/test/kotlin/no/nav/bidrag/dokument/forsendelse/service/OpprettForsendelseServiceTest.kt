@@ -152,7 +152,7 @@ class OpprettForsendelseServiceTest {
     }
 
     @Test
-    fun `Skal opprette forsendelse med forsendelse tittel`() {
+    fun `Skal opprette forsendelse med forsendelse tittel (skal ikke opprette tittel)`() {
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
@@ -174,7 +174,8 @@ class OpprettForsendelseServiceTest {
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
-                    it.tittel shouldBe "Vedtak om bidrag"
+//                    it.tittel shouldBe "Vedtak om bidrag"
+                    it.tittel shouldBe null
                 }
             )
         }
@@ -393,7 +394,7 @@ class OpprettForsendelseServiceTest {
                     dokumentmalId = DOKUMENTMAL_NOTAT,
                     dokumentDato = LocalDateTime.now().plusDays(1)
                 )
-            ),
+            )
         )
         val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
         result.message shouldBe "Dokumentdato kan ikke være senere enn dagens dato"

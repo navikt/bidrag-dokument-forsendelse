@@ -28,4 +28,10 @@ class DokumentStorageService(private val gcpCloudStorage: GcpCloudStorage, priva
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn
         return gcpCloudStorage.hentFil("$FOLDER_NAME/$filenameWithExtension")
     }
+
+    fun totalStørrelse(forsendelseId: Long): Long {
+        return gcpCloudStorage.totalStørrelse(forsendelseId)
+    }
+
+    
 }

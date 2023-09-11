@@ -68,7 +68,8 @@ data class OpprettDokumentForespørsel(
     @Schema(description = "Språket på inneholdet i dokumentet.") val språk: String? = null,
     @Schema(description = "Arkivsystem hvor dokument er lagret", enumAsRef = true) override val arkivsystem: DokumentArkivSystemDto? = null,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy-HH-mm-ss")
-    @Schema(description = "Dato dokument ble opprettet") override val dokumentDato: LocalDateTime? = null,
+    @Schema(description = "Dato dokument ble opprettet")
+    override val dokumentDato: LocalDateTime? = null,
     @Schema(description = "Referansen til dokumentet hvis det er allerede er lagret i arkivsystem. Hvis dette ikke settes opprettes det en ny dokumentreferanse som kan brukes ved opprettelse av dokument") override val dokumentreferanse: String? = null,
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") override val journalpostId: JournalpostId? = null,
     @Schema(description = "DokumentmalId sier noe om dokumentets innhold og oppbygning. (Også kjent som brevkode)") override val dokumentmalId: String? = null,

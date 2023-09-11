@@ -169,7 +169,7 @@ class FerdigstillForsendelseServiceTest {
         verify {
             bidragDokumentConsumer.opprettJournalpost(
                 withArg {
-                    it.tittel shouldBe "Forsendelse tittel"
+                    it.tittel shouldBe "Hoveddokument tittel"
                     it.dokumenter[0].tittel shouldBe "Hoveddokument tittel (dokumentet er sendt per post med vedlegg)"
                 }
             )

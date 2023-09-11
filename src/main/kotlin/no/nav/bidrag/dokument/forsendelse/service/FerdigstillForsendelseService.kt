@@ -85,7 +85,7 @@ class FerdigstillForsendelseService(
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,
                     tittel = if (it.tilknyttetSom === DokumentTilknyttetSom.HOVEDDOKUMENT) hovedtittelMedBeskjed else it.tittel,
-                    dokumentreferanse = it.dokumentreferanse,
+                    dokumentreferanse = it.dokumentreferanse
                 )
             },
             tilknyttSaker = listOf(forsendelse.saksnummer),
@@ -95,7 +95,7 @@ class FerdigstillForsendelseService(
                 ForsendelseTema.FAR -> "FAR"
                 else -> "BID"
             },
-            tittel = forsendelseTittel,
+            tittel = hovedtittel,
             datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
         )
 

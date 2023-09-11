@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Scope
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
-
 @Configuration
 @EnableSecurityConfiguration
 @Import(RestOperationsAzure::class)

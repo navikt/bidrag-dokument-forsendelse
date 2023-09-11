@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -31,7 +32,8 @@ class ForsendelseInnsynService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
-    private val dokumentTjeneste: DokumentTjeneste
+    private val dokumentTjeneste: DokumentTjeneste,
+    private val forsendelseTittelService: ForsendelseTittelService
 ) {
 
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
@@ -55,10 +57,19 @@ class ForsendelseInnsynService(
         val forsendelserFiltrert = forsendelser.filtrerIkkeFerdigstiltEllerArkivert
             .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
             .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-            .map { it.tilJournalpostDto(tilDokumenterMetadata(it.dokumenter)) }
+            .map { tilJournalpostDto(it) }
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
         return forsendelserFiltrert
+    }
+
+    fun tilJournalpostDto(forsendelse: Forsendelse): JournalpostDto {
+        val journalpostDto = forsendelse.tilJournalpostDto(tilDokumenterMetadata(forsendelse.dokumenter))
+        return journalpostDto.innhold.isNullOrEmpty().ifTrue {
+            journalpostDto.copy(
+                innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+            )
+        } ?: journalpostDto
     }
 
     private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> {
@@ -109,6 +120,15 @@ class ForsendelseInnsynService(
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
         return forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+    }
+
+    fun tilForsendelseRespons(forsendelse: Forsendelse): ForsendelseResponsTo {
+        val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+        return forsendelseRespons.tittel.isNullOrEmpty().ifTrue {
+            forsendelseRespons.copy(
+                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+            )
+        } ?: forsendelseRespons
     }
 
     fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {

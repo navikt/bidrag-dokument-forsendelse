@@ -1,14 +1,14 @@
 package no.nav.bidrag.dokument.forsendelse.service.pdf
 
 import mu.KotlinLogging
-import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.Loader
 
 private val log = KotlinLogging.logger {}
 
 class PDFDokumentDetails {
     fun getNumberOfPages(dokumentFil: ByteArray): Int {
         try {
-            PDDocument.load(dokumentFil).use { document ->
+            Loader.loadPDF(dokumentFil).use { document ->
                 val numberOfPages = document.numberOfPages
                 document.close()
                 return numberOfPages

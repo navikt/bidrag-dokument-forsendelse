@@ -258,7 +258,6 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         utførOppdaterForsendelseForespørsel(
             forsendelseIdSomSkalDistribueres.toString(),
             OppdaterForsendelseForespørsel(
-                tittel = "Tittel på forsendelse",
                 dokumenter = listOf(
                     OppdaterDokumentForespørsel(
                         dokumentreferanse = dokumenter[2].dokumentreferanse
@@ -287,20 +286,20 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             responseBody.status shouldBe ForsendelseStatusTo.DISTRIBUERT
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Tittel på forsendelse\"," +
-                        "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
-                        "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
-                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
-                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
-                        "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"$referanseId\"," +
-                        "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Ny tittel dokument fra Joark\"," +
+                    "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
+                    "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
+                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
+                    "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
+                    "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"UTGÅENDE\"," +
+                    "\"referanseId\":\"$referanseId\"," +
+                    "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
+                    "}"
             )
         }
     }
