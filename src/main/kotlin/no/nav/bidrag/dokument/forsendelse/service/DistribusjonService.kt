@@ -35,7 +35,9 @@ class DistribusjonService(
     }
 
     fun størrelseIMb(forsendelseId: Long): Long {
-        return bytesToMb(dokumentStorageService.totalStørrelse(forsendelseId))
+        val fileSize = bytesToMb(dokumentStorageService.totalStørrelse(forsendelseId))
+        log.info { "Forsendelse $forsendelseId har dokumenter på total størrelse $fileSize Mb" }
+        return fileSize.toLong()
 
     }
 
@@ -145,9 +147,9 @@ class DistribusjonService(
         return bidragDokumentConsumer.hentDistribusjonInfo(journalpostId)
     }
 
-    fun bytesToMb(bytes: Long): Long {
-        val kilobyte: Long = 1024
-        val megabyte = kilobyte * 1024
+    fun bytesToMb(bytes: Long): Float {
+        val kilobyte = 1024F
+        val megabyte = kilobyte * 1024F
         return bytes / megabyte
     }
 }
