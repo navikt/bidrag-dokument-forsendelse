@@ -56,6 +56,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         stubUtils.stubTilgangskontrollTema()
         every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiser(any()) } returns Unit
+        every { forsendelseHendelseProdusent.publiserForsendelse(any()) } returns Unit
     }
 
     @AfterEach
