@@ -491,10 +491,11 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat for klage`() {
+    fun `Skal opprette notat med prefiks tittel som inneholder klage`() {
         val soknadId = "12321321"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
             .copy(
+                opprettTittel = true,
                 behandlingInfo = BehandlingInfoDto(
                     soknadId = soknadId,
                     erFattetBeregnet = true,
