@@ -5,6 +5,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.mockk.verify
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.OpprettDokumentDto
@@ -266,6 +267,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
+            verify { forsendelseHendelseProdusent.publiserForsendelse(eq(forsendelse)) }
         }
     }
 
@@ -364,6 +366,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             """.trimIndent().replace("\n", "").replace("  ", "")
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
+            verify { forsendelseHendelseProdusent.publiserForsendelse(eq(forsendelse)) }
         }
     }
 
@@ -394,6 +397,9 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().opprettJournalpostIkkeKalt()
             stubUtils.Valider().bestillDokumentIkkeKalt(HOVEDDOKUMENT_DOKUMENTMAL)
         }
+
+        verify(exactly = 0) { forsendelseHendelseProdusent.publiserForsendelse(eq(forsendelse)) }
+
     }
 
     @Test
@@ -458,6 +464,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             """.trimIndent().replace("\n", "").replace("  ", "")
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", batchId = batchId)
+
+            verify { forsendelseHendelseProdusent.publiserForsendelse(eq(forsendelse)) }
         }
     }
 
@@ -527,6 +535,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             """.trimIndent().replace("\n", "").replace("  ", "")
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
+
+            verify { forsendelseHendelseProdusent.publiserForsendelse(eq(forsendelse)) }
         }
     }
 }

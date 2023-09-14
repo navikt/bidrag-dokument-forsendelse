@@ -18,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
+import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +37,8 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     @MockkBean
     lateinit var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent
 
+    @MockkBean
+    lateinit var forsendelseHendelseProdusent: JournalpostKafkaHendelseProdusent
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
@@ -52,6 +55,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         stubUtils.stubTilgangskontrollPerson()
         stubUtils.stubTilgangskontrollTema()
         every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
+        every { forsendelseHendelseProdusent.publiser(any()) } returns Unit
     }
 
     @AfterEach
