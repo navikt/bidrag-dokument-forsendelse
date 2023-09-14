@@ -131,18 +131,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"," +
-                        "\"barnIBehandling\":[]}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"," +
+                            "\"barnIBehandling\":[]}"
                 )
             }
         }
@@ -173,18 +173,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentKaltMed(
                     HOVEDDOKUMENT_DOKUMENTMAL,
                     "{" +
-                        "\"mottaker\":" +
-                        "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
-                        "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
-                        "\"saksbehandler\":null," +
-                        "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
-                        "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
-                        "\"tittel\":\"${hoveddokument.tittel}\"," +
-                        "\"enhet\":\"${forsendelse.enhet}\"," +
-                        "\"språk\":\"${forsendelse.språk}\"," +
-                        "\"barnIBehandling\":[\"123123123123\"]}"
+                            "\"mottaker\":" +
+                            "{\"ident\":\"${mottaker.ident}\",\"navn\":\"${mottaker.navn}\",\"språk\":\"NB\"," +
+                            "\"adresse\":{\"adresselinje1\":\"Adresselinje1\",\"adresselinje2\":\"Adresselinje2\",\"adresselinje3\":\"Adresselinje3\",\"bruksenhetsnummer\":\"H0305\",\"landkode\":\"NO\",\"landkode3\":\"NOR\",\"postnummer\":\"3040\",\"poststed\":\"Drammen\"}}," +
+                            "\"saksbehandler\":null," +
+                            "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
+                            "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
+                            "\"vedtakId\":null,\"behandlingId\":null," +
+                            "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
+                            "\"tittel\":\"${hoveddokument.tittel}\"," +
+                            "\"enhet\":\"${forsendelse.enhet}\"," +
+                            "\"språk\":\"${forsendelse.språk}\"," +
+                            "\"barnIBehandling\":[\"123123123123\"]}"
                 )
             }
         }
@@ -488,6 +488,39 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
         hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
         hoveddokument.tittel shouldBe "Tittel notat"
+    }
+
+    @Test
+    fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat for klage`() {
+        val soknadId = "12321321"
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
+            .copy(
+                behandlingInfo = BehandlingInfoDto(
+                    soknadId = soknadId,
+                    erFattetBeregnet = true,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    stonadType = StonadType.EKTEFELLEBIDRAG,
+                    vedtakType = VedtakType.KLAGE
+                ),
+                dokumenter = listOf(
+                    OpprettDokumentForespørsel(
+                        tittel = "Tittel notat",
+                        dokumentmalId = DOKUMENTMAL_NOTAT
+                    )
+                )
+            )
+
+        val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
+        response.statusCode shouldBe HttpStatus.OK
+
+        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+        forsendelse.forsendelseType shouldBe ForsendelseType.NOTAT
+
+        forsendelse.dokumenter shouldHaveSize 1
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+        hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+        hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+        hoveddokument.tittel shouldBe "Klage ektefellebidrag, Tittel notat"
     }
 
     @Test
