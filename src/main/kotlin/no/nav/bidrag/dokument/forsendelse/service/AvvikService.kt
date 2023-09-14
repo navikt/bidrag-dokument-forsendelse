@@ -21,7 +21,11 @@ private val log = KotlinLogging.logger {}
 
 @Component
 @Transactional
-class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private val saksbehandlerInfoManager: SaksbehandlerInfoManager) {
+class AvvikService(
+    private val forsendelseTjeneste: ForsendelseTjeneste,
+    private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    private val hendelseBestillingService: ForsendelseHendelseBestillingService
+) {
 
     fun hentAvvik(forsendelseId: Long): List<AvvikType> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
@@ -91,6 +95,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
             )
         )
 
+        hendelseBestillingService.bestill(forsendelseId)
         return true
     }
 
@@ -105,7 +110,7 @@ class AvvikService(private val forsendelseTjeneste: ForsendelseTjeneste, private
                 avbruttTidspunkt = LocalDateTime.now()
             )
         )
-
+        hendelseBestillingService.bestill(forsendelseId)
         return true
     }
 }
