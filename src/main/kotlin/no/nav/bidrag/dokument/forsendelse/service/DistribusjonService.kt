@@ -27,7 +27,8 @@ class DistribusjonService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-    private val dokumentStorageService: DokumentStorageService
+    private val dokumentStorageService: DokumentStorageService,
+    private val hendelseBestillingService: ForsendelseHendelseBestillingService
 ) {
 
     fun harDistribuert(forsendelse: Forsendelse): Boolean {
@@ -71,11 +72,15 @@ class DistribusjonService(
             forsendelse = ferdigstillForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
         }
 
-        return if (distribuerLokalt) {
+        val result = if (distribuerLokalt) {
             bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
         } else {
             bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
         }
+
+        hendelseBestillingService.bestill(forsendelseId)
+
+        return result
     }
 
     private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse, batchId: String?): DistribuerJournalpostResponse {

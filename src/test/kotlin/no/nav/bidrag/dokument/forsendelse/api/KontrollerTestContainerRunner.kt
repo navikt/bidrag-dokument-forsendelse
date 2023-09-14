@@ -3,6 +3,8 @@ package no.nav.bidrag.dokument.forsendelse.api
 import com.google.cloud.NoCredentials
 import com.google.cloud.storage.BucketInfo
 import com.google.cloud.storage.StorageOptions
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import mu.KotlinLogging
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
@@ -17,6 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
+import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -38,6 +41,10 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
 
     @Autowired
     lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
+
+    @MockkBean
+    lateinit var journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent
+
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
@@ -53,6 +60,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         stubUtils.stubTilgangskontrollTema()
         stubUtils.stubTilgangskontrollPerson()
         initBucket()
+        every { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) } returns Unit
     }
 
     fun initBucket(retryCount: Int = 0) {

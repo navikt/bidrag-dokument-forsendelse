@@ -379,7 +379,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -648,7 +647,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -2057,8 +2055,7 @@
         "BI01S36",
         "BI01S46",
         "BI01S62",
-        "BI01S63",
-        "BI01S65"
+        "BI01S63"
       ]
     },
     {
@@ -2184,8 +2181,7 @@
         "BI01S36",
         "BI01S46",
         "BI01S62",
-        "BI01S63",
-        "BI01S65"
+        "BI01S63"
       ]
     },
     {
@@ -2272,8 +2268,7 @@
         "BI01S36",
         "BI01S46",
         "BI01S62",
-        "BI01S63",
-        "BI01S65"
+        "BI01S63"
       ]
     },
     {
@@ -2408,12 +2403,10 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
-        "BI01S64",
-        "BI01S65"
+        "BI01S64"
       ]
     },
     {
@@ -2566,12 +2559,10 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
-        "BI01S64",
-        "BI01S65"
+        "BI01S64"
       ]
     },
     {
@@ -2700,8 +2691,7 @@
         "BI01S36",
         "BI01S46",
         "BI01S62",
-        "BI01S63",
-        "BI01S65"
+        "BI01S63"
       ]
     },
     {
@@ -3089,12 +3079,10 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
-        "BI01S64",
-        "BI01S65"
+        "BI01S64"
       ]
     },
     {
@@ -3177,12 +3165,10 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
-        "BI01S64",
-        "BI01S65"
+        "BI01S64"
       ]
     },
     {
@@ -3713,8 +3699,7 @@
         "BI01S36",
         "BI01S46",
         "BI01S62",
-        "BI01S63",
-        "BI01S65"
+        "BI01S63"
       ]
     },
     {
@@ -3743,8 +3728,7 @@
         "BI01S36",
         "BI01S46",
         "BI01S62",
-        "BI01S63",
-        "BI01S65"
+        "BI01S63"
       ]
     },
     {
@@ -4510,7 +4494,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -4723,7 +4706,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -5239,7 +5221,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -5637,7 +5618,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -5816,7 +5796,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -6026,7 +6005,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -6287,7 +6265,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -6769,7 +6746,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -7247,7 +7223,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -7355,7 +7330,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
@@ -8236,7 +8210,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -8432,7 +8405,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -9765,7 +9737,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -9990,7 +9961,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -11477,7 +11447,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -13054,7 +13023,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -14449,7 +14417,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -23339,12 +23306,10 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S20",
         "BI01S21",
         "BI01S60",
-        "BI01S64",
-        "BI01S65"
+        "BI01S64"
       ]
     },
     {
@@ -23662,7 +23627,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -23769,7 +23733,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]
@@ -23942,7 +23905,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01P17",
         "BI01S60",
         "BI01S64"
       ]

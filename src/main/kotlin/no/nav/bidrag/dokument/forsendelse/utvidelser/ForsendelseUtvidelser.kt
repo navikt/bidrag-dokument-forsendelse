@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.domain.enums.EngangsbelopType
 import no.nav.bidrag.domain.enums.Rolletype
 import no.nav.bidrag.domain.enums.StonadType
+import no.nav.bidrag.domain.enums.VedtakType
 
 val Forsendelse.dokumentDato get() = dokumenter.hoveddokument?.dokumentDato
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
@@ -73,7 +74,7 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behan
         vedtak?.stonadsendringListe?.isNotEmpty()?.ifTrue { vedtak.stonadsendringListe[0].type } ?: behandling?.tilStonadtype() ?: stonadType
     val engangsBelopTypeValue =
         vedtak?.engangsbelopListe?.isNotEmpty()?.ifTrue { vedtak.engangsbelopListe[0].type } ?: behandling?.tilEngangsbelopType() ?: engangsBelopType
-    return when (stonadTypeValue) {
+    val prefiks = when (stonadTypeValue) {
         StonadType.FORSKUDD -> "Forskudd"
         StonadType.BIDRAG -> "Bidrag"
         StonadType.BIDRAG18AAR -> "Bidrag 18 år"
@@ -91,6 +92,11 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behan
             else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
         }
     }
+
+    if (vedtakType == VedtakType.KLAGE) {
+        return "Klage ${prefiks?.lowercase()}".trim()
+    }
+    return prefiks
 }
 
 fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {

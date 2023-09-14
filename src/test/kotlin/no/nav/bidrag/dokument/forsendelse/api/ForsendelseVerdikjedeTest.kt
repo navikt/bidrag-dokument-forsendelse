@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
@@ -15,7 +14,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter
-import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
@@ -40,13 +38,9 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
     @Autowired
     lateinit var dokumentHendelseLytter: DokumentHendelseLytter
 
-    @MockkBean
-    lateinit var journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent
-
     @BeforeEach
     fun initHendelseMock() {
         every { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) } returns Unit
-        every { journalpostKafkaHendelseProdusent.publiser(any()) } returns Unit
     }
 
     @Test
@@ -286,20 +280,20 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             responseBody.status shouldBe ForsendelseStatusTo.DISTRIBUERT
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Ny tittel dokument fra Joark\"," +
-                    "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
-                    "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
-                    "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"$referanseId\"," +
-                    "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Ny tittel dokument fra Joark\"," +
+                        "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
+                        "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
+                        "}"
             )
         }
     }
