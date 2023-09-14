@@ -343,7 +343,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             }
 
             verify {
-                forsendelseHendelseProdusent.publiserForsendelse(withArg {
+                journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
                     it.forsendelseId shouldBe oppdatertForsendelse.forsendelseId
                 })
             }

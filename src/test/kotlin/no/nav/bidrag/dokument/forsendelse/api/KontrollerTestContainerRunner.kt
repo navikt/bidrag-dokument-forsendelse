@@ -43,7 +43,8 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
 
     @MockkBean
-    lateinit var forsendelseHendelseProdusent: JournalpostKafkaHendelseProdusent
+    lateinit var journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent
+
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
@@ -59,7 +60,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         stubUtils.stubTilgangskontrollTema()
         stubUtils.stubTilgangskontrollPerson()
         initBucket()
-        every { forsendelseHendelseProdusent.publiserForsendelse(any()) } returns Unit
+        every { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) } returns Unit
     }
 
     fun initBucket(retryCount: Int = 0) {
