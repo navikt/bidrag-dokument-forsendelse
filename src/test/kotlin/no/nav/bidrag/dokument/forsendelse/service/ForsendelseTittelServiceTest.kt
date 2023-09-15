@@ -76,6 +76,26 @@ class ForsendelseTittelServiceTest {
     }
 
     @Test
+    fun `Skal opprette forsendelse tittel for vedtak om bidrag for type klage`() {
+        val tittel = forsendelseTittelService.opprettForsendelseTittel(
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BM,
+                behandlingInfo = BehandlingInfoDto(
+                    erFattetBeregnet = true,
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    stonadType = StonadType.BIDRAG,
+                    vedtakType = VedtakType.KLAGE
+                )
+            )
+        )
+
+        tittel shouldBe "Vedtak om bidrag klage til bidragsmottaker"
+    }
+
+
+    @Test
     fun `Skal opprette forsendelse tittel for refusjon bidrag`() {
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
             OpprettForsendelseForespørsel(
@@ -186,6 +206,26 @@ class ForsendelseTittelServiceTest {
         )
 
         tittel shouldBe "Orientering/Varsel om bidrag til bidragsmottaker"
+    }
+
+    @Test
+    fun `Skal opprette forsendelse tittel for varsling av bidrag for klage`() {
+        val tittel = forsendelseTittelService.opprettForsendelseTittel(
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BM,
+                behandlingInfo = BehandlingInfoDto(
+                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    erFattetBeregnet = null,
+                    stonadType = null,
+                    behandlingType = StonadType.BIDRAG.name,
+                    vedtakType = VedtakType.KLAGE
+                )
+            )
+        )
+
+        tittel shouldBe "Orientering/Varsel om bidrag klage til bidragsmottaker"
     }
 
     @Test

@@ -267,7 +267,7 @@ class OpprettForsendelseServiceTest {
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
             DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
                 "Tittel notat",
-                DokumentMalType.NOTAT
+                type = DokumentMalType.NOTAT
             )
         )
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
@@ -304,7 +304,7 @@ class OpprettForsendelseServiceTest {
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
             DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
                 "Tittel notat",
-                DokumentMalType.NOTAT
+                type = DokumentMalType.NOTAT
             )
         )
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
@@ -384,7 +384,7 @@ class OpprettForsendelseServiceTest {
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
             DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
                 "Tittel notat",
-                DokumentMalType.NOTAT
+                type = DokumentMalType.NOTAT
             )
         )
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(

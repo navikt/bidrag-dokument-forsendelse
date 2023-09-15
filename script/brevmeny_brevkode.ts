@@ -17,7 +17,7 @@ const brevkoderSomErstattesAvEttBrev = {
   "BI01S15": ["BI01S16"],
   "BI01S12": ["BI01S13"]
 }
-const ignorer_brevkoder = ["BI01P11", "BI01S02", "BI01S10", "BI01S67", "BI01P18", "BI01X01", "BI01X02", "BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70", "BI01S61", "BI01S65 "]
+const ignorer_brevkoder = ["BI01P11", "BI01S02", "BI01S10", "BI01S67", "BI01P18", "BI01X01", "BI01X02", "BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70", "BI01S61", "BI01S65", "BI01P17"]
 brevmeny2jsonData.forEach((data: Record<string, string>) => {
       const result = {
         "stonad": `${data["KODE_STONAD"]?.trim()}`, // HG  -- ER XX hvis urelevant
