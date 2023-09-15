@@ -12,8 +12,8 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingTittelDetaljer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
@@ -45,6 +45,14 @@ class DokumentValgService(
 
     fun hentNotatListe(): Map<String, DokumentMalDetaljer> {
         return notaterBrevkoder.associateWith { mapToMalDetaljer(it) }
+    }
+
+    fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
+        return if (request == null) false
+        else if (request.vedtakType == VedtakType.KLAGE) true
+        else if (request.vedtakId != null) bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.type == VedtakType.KLAGE
+        else if (request.behandlingId != null) behandlingConsumer.hentBehandling(request.behandlingId)?.soknadType == VedtakType.KLAGE
+        else false
     }
 
     fun hentDokumentMalListe(
@@ -128,10 +136,10 @@ class DokumentValgService(
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                it.isVedtaktypeValid(vedtakType, soknadType) &&
-                it.behandlingStatus.isValid(erFattetBeregnet) &&
-                it.forvaltning.isValid(enhet) &&
-                it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+                    it.isVedtaktypeValid(vedtakType, soknadType) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
+                    it.forvaltning.isValid(enhet) &&
+                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
@@ -139,12 +147,45 @@ class DokumentValgService(
         return brevkoder.associateWith { mapToMalDetaljer(it) }.filter { it.value.type != DokumentMalType.NOTAT }
     }
 
-    fun mapToMalDetaljer(malId: String): DokumentMalDetaljer {
+    fun mapToMalDetaljer(malId: String, request: HentDokumentValgRequest? = null): DokumentMalDetaljer {
         val dokumentDetaljer = bestillingConsumer.dokumentmalDetaljer()
         val malInfo = dokumentDetaljer[malId]
         val tittel = malInfo?.beskrivelse ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
         return DokumentMalDetaljer(tittel, malType)
+    }
+
+//    fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {
+//        if (request == null) return emptyList()
+//        val requestUtfylt = hentUtfyltDokumentValgDetaljer(request)
+//        return dokumentValgTittelMap[malId]?.find {
+//            it.vedtakType.contains(requestUtfylt?.vedtakType)
+//        }?.titler ?: emptyList()
+//    }
+
+    private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? {
+        return if (request == null) null
+        else if (request.vedtakId != null) bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let {
+            val behandlingType =
+                if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
+            val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == GrunnlagType.SLUTTBEREGNING_BBM }
+            val erVedtakIkkeTilbakekreving = it.engangsbelopListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+            request.copy(
+                behandlingType = behandlingType,
+                vedtakType = it.type,
+                erFattetBeregnet = erFattetBeregnet,
+                erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
+            )
+        }
+        else if (request.behandlingId != null) behandlingConsumer.hentBehandling(request.behandlingId)?.let {
+            request.copy(
+                behandlingType = it.behandlingType,
+                vedtakType = it.soknadType,
+                erFattetBeregnet = null,
+                erVedtakIkkeTilbakekreving = false
+            )
+        }
+        else request
     }
 
     private fun fetchDokumentValgMapFromFile(): Map<BehandlingType, List<DokumentBehandlingDetaljer>> {
@@ -158,7 +199,30 @@ class DokumentValgService(
                 DokumentBehandlingDetaljer::class.java
             )
             val stringType = objectMapper.typeFactory.constructType(String::class.java)
-            val dokbehtyp = objectMapper.typeFactory.constructType(DokumentBehandling::class.java)
+            objectMapper.readValue(
+                text,
+                objectMapper.typeFactory.constructMapType(
+                    MutableMap::class.java,
+                    stringType,
+                    listType
+                )
+            )
+        } catch (e: IOException) {
+            throw RuntimeException("Kunne ikke laste fil", e)
+        }
+    }
+
+    private fun fetchDokumentValgTitlerMapFromFile(): Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>> {
+        return try {
+            val objectMapper = ObjectMapper(YAMLFactory())
+            objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            val inputstream = ClassPathResource("files/dokument_valg_tittel.json").inputStream
+            val text = String(inputstream.readAllBytes(), StandardCharsets.UTF_8)
+            val listType: JavaType = objectMapper.typeFactory.constructParametricType(
+                MutableList::class.java,
+                DokumentBehandlingTittelDetaljer::class.java
+            )
+            val stringType = objectMapper.typeFactory.constructType(String::class.java)
             objectMapper.readValue(
                 text,
                 objectMapper.typeFactory.constructMapType(

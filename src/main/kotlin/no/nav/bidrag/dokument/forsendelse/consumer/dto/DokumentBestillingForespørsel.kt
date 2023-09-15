@@ -44,7 +44,8 @@ data class DokumentBestillingResponse(
 data class DokumentMalDetaljer(
     val beskrivelse: String,
     val type: DokumentMalType,
-    val kanBestilles: Boolean = false
+    val kanBestilles: Boolean = false,
+    val alternativeTitler: List<String> = emptyList(),
 )
 
 enum class DokumentMalType {

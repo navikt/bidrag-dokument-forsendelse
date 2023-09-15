@@ -87,3 +87,8 @@ data class DokumentBehandlingDetaljer(
     val behandlingStatus: BehandlingStatus,
     val brevkoder: List<String>
 )
+
+data class DokumentBehandlingTittelDetaljer(
+    val vedtakType: List<VedtakType>,
+    val titler: List<String>
+)
