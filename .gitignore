@@ -36,3 +36,4 @@ application-lokal-db-nais-secrets*
 bidrag-dev*
 script/
 !script/brevmeny_brevkode.ts
+!script/brevmeny_brevkode.ts
