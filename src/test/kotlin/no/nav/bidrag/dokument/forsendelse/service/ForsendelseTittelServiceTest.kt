@@ -72,7 +72,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Vedtak om bidrag til bidragsmottaker"
+        tittel shouldBe "Vedtak om barnebidrag til bidragsmottaker"
     }
 
     @Test
@@ -91,7 +91,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Klagevedtak om bidrag til bidragsmottaker"
+        tittel shouldBe "Klagevedtak om barnebidrag til bidragsmottaker"
     }
 
 
@@ -149,7 +149,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Vedtak om bidrag til bidragspliktig"
+        tittel shouldBe "Vedtak om barnebidrag til bidragspliktig"
     }
 
     @Test
@@ -168,7 +168,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Vedtak om bidrag til barn"
+        tittel shouldBe "Vedtak om barnebidrag til barn"
     }
 
     @Test
@@ -225,7 +225,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Orientering/Varsel om mottatt klage på vedtak om bidrag til bidragsmottaker"
+        tittel shouldBe "Orientering/Varsel om klage på vedtak om bidrag til bidragsmottaker"
     }
 
     @Test
@@ -248,7 +248,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Vedtak om bidrag 18 år til bidragsmottaker"
+        tittel shouldBe "Vedtak om barnebidrag 18 år til bidragsmottaker"
     }
 
     @Test

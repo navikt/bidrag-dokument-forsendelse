@@ -75,9 +75,9 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behan
     val engangsBelopTypeValue =
         vedtak?.engangsbelopListe?.isNotEmpty()?.ifTrue { vedtak.engangsbelopListe[0].type } ?: behandling?.tilEngangsbelopType() ?: engangsBelopType
     return when (stonadTypeValue) {
-        StonadType.FORSKUDD -> "Forskudd"
-        StonadType.BIDRAG -> "Bidrag"
-        StonadType.BIDRAG18AAR -> "Bidrag 18 år"
+        StonadType.FORSKUDD -> "Bidragsforskudd"
+        StonadType.BIDRAG -> "Barnebidrag"
+        StonadType.BIDRAG18AAR -> "Barnebidrag 18 år"
         StonadType.EKTEFELLEBIDRAG -> "Ektefellebidrag"
         StonadType.OPPFOSTRINGSBIDRAG -> "Oppfostringbidrag"
         StonadType.MOTREGNING -> "Motregning"
@@ -110,7 +110,7 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, 
     } else {
         stringBuilder.add("Orientering/Varsel")
         if (behandlingType != null) {
-            if (gjelderKlage) stringBuilder.add("om mottatt klage på vedtak om ${behandlingType.lowercase()}")
+            if (gjelderKlage) stringBuilder.add("om klage på vedtak om ${behandlingType.lowercase()}")
             else stringBuilder.add("om ${behandlingType.lowercase()}")
         }
     }
