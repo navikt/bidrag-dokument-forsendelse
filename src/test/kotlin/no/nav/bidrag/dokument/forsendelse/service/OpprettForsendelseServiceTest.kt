@@ -174,8 +174,7 @@ class OpprettForsendelseServiceTest {
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
-//                    it.tittel shouldBe "Vedtak om bidrag"
-                    it.tittel shouldBe null
+                    it.tittel shouldBe "Vedtak om bidrag"
                 }
             )
         }

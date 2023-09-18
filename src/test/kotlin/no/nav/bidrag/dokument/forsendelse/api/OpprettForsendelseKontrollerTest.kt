@@ -352,7 +352,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
             behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
             behandlingInfo.behandlingType shouldBe null
-            forsendelse.tittel shouldBe null
+            forsendelse.tittel shouldBe "Vedtak om forskudd til bidragsmottaker"
 
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
