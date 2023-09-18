@@ -91,7 +91,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Vedtak om bidrag klage til bidragsmottaker"
+        tittel shouldBe "Klagevedtak om bidrag til bidragsmottaker"
     }
 
 
@@ -225,7 +225,7 @@ class ForsendelseTittelServiceTest {
             )
         )
 
-        tittel shouldBe "Orientering/Varsel om bidrag klage til bidragsmottaker"
+        tittel shouldBe "Orientering/Varsel om mottatt klage på vedtak om bidrag til bidragsmottaker"
     }
 
     @Test
