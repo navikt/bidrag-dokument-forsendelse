@@ -352,7 +352,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
             behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
             behandlingInfo.behandlingType shouldBe null
-            forsendelse.tittel shouldBe null
+            forsendelse.tittel shouldBe "Vedtak om bidragsforskudd til bidragsmottaker"
 
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
@@ -362,7 +362,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
         journalpost!!.status shouldBe JournalpostStatus.UNDER_OPPRETTELSE
-        journalpost.innhold shouldBe null
+        journalpost.innhold shouldBe "Vedtak om bidragsforskudd til bidragsmottaker"
     }
 
     @Test

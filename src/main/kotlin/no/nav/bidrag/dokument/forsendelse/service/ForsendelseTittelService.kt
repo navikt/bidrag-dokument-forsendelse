@@ -4,6 +4,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.utvidelser.gjelderKlage
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
@@ -37,6 +38,9 @@ class ForsendelseTittelService(
     fun opprettForsendelseBehandlingPrefiks(forespørsel: OpprettForsendelseForespørsel): String? {
         val vedtak = forespørsel.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
         val behandling = if (vedtak == null) forespørsel.behandlingInfo?.behandlingId?.let { behandlingConsumer.hentBehandling(it) } else null
-        return forespørsel.tilBehandlingInfo()?.tilBeskrivelseBehandlingType(vedtak, behandling)
+        val gjelderKlage = forespørsel.tilBehandlingInfo()?.gjelderKlage(vedtak, behandling) ?: false
+        val klagePostfiks = if (gjelderKlage) " klage" else ""
+        val behandlingType = forespørsel.tilBehandlingInfo()?.tilBeskrivelseBehandlingType(vedtak, behandling)
+        return behandlingType?.let { "$it$klagePostfiks" }
     }
 }

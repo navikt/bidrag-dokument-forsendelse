@@ -74,10 +74,10 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behan
         vedtak?.stonadsendringListe?.isNotEmpty()?.ifTrue { vedtak.stonadsendringListe[0].type } ?: behandling?.tilStonadtype() ?: stonadType
     val engangsBelopTypeValue =
         vedtak?.engangsbelopListe?.isNotEmpty()?.ifTrue { vedtak.engangsbelopListe[0].type } ?: behandling?.tilEngangsbelopType() ?: engangsBelopType
-    val prefiks = when (stonadTypeValue) {
-        StonadType.FORSKUDD -> "Forskudd"
-        StonadType.BIDRAG -> "Bidrag"
-        StonadType.BIDRAG18AAR -> "Bidrag 18 år"
+    return when (stonadTypeValue) {
+        StonadType.FORSKUDD -> "Bidragsforskudd"
+        StonadType.BIDRAG -> "Barnebidrag"
+        StonadType.BIDRAG18AAR -> "Barnebidrag 18 år"
         StonadType.EKTEFELLEBIDRAG -> "Ektefellebidrag"
         StonadType.OPPFOSTRINGSBIDRAG -> "Oppfostringbidrag"
         StonadType.MOTREGNING -> "Motregning"
@@ -92,25 +92,29 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behan
             else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
         }
     }
-
-    if (vedtakType == VedtakType.KLAGE) {
-        return "$prefiks klage"
-    }
-    return prefiks
 }
+
+fun BehandlingInfo.gjelderKlage(vedtak: VedtakDto? = null, behandling: BehandlingDto? = null) =
+    vedtak?.type == VedtakType.KLAGE || behandling?.soknadType == VedtakType.KLAGE || vedtakType == VedtakType.KLAGE
 
 fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {
     val behandlingType = this.tilBeskrivelseBehandlingType(vedtak, behandling)
+    val gjelderKlage = this.gjelderKlage(vedtak, behandling)
 
     val stringBuilder = mutableListOf<String>()
     if (vedtakId.isNotNullOrEmpty() || erFattetBeregnet != null) {
-        stringBuilder.add("Vedtak")
+        if (gjelderKlage) stringBuilder.add("Klagevedtak") else stringBuilder.add("Vedtak")
+        if (behandlingType != null) {
+            stringBuilder.add("om ${behandlingType.lowercase()}")
+        }
     } else {
         stringBuilder.add("Orientering/Varsel")
+        if (behandlingType != null) {
+            if (gjelderKlage) stringBuilder.add("om klage på vedtak om ${behandlingType.lowercase()}")
+            else stringBuilder.add("om ${behandlingType.lowercase()}")
+        }
     }
-    if (behandlingType != null) {
-        stringBuilder.add("om ${behandlingType.lowercase()}")
-    }
+
     if (rolle != null) {
         stringBuilder.add("til ${rolle.toName()?.lowercase()}")
     }
