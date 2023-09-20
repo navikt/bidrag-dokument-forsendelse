@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -14,7 +15,11 @@ import java.time.LocalDateTime
 private val LOGGER = KotlinLogging.logger {}
 
 @Component
-class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, private val bestillingLytter: DokumentBestillingLytter) {
+class DokumentSkedulering(
+    private val dokumentTjeneste: DokumentTjeneste,
+    private val bestillingLytter: DokumentBestillingLytter,
+    private val dokumentConsumer: BidragDokumentConsumer
+) {
 
     @Scheduled(cron = "\${REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE}")
     @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
@@ -27,6 +32,18 @@ class DokumentSkedulering(private val dokumentTjeneste: DokumentTjeneste, privat
     fun bestilleDokumenterUnderProduksjonPåNyttSkeduler() {
         bestillDokumenterUnderProduksjonPåNytt()
     }
+
+//    @Scheduled(cron = "\${REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
+//    @SchedulerLock(name = "oppdaterDokumenterMedFeilStatusSkeduler", lockAtLeastFor = "10m")
+//    fun oppdaterDokumenterMedFeilStatusSkeduler() {
+//        oppdaterDokumenterMedFeilStatus()
+//    }
+//
+//    fun oppdaterDokumenterMedFeilStatus() {
+//        val dokumenter = dokumentConsumer.hentDokumentMetadata()
+//        LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. Prøver å bestille dokumentene på nytt." }
+//        bestill(dokumenter)
+//    }
 
     fun bestillFeiledeDokumenterPåNytt() {
         val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()

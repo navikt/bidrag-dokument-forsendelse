@@ -38,13 +38,26 @@ class DokumentValgService(
     val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10")
     val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
+    val notaterKlage = listOf("BI01P17")
 
     init {
         dokumentValgMap = fetchDokumentValgMapFromFile()
     }
 
-    fun hentNotatListe(): Map<String, DokumentMalDetaljer> {
-        return notaterBrevkoder.associateWith { mapToMalDetaljer(it) }
+    fun hentNotatListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
+        return if (erKlage(request)) (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
+        else notaterBrevkoder.associateWith { mapToMalDetaljer(it) }
+    }
+
+    fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
+        return if (request == null) false
+        else if (request.erKlage()) true
+        else if (!request.vedtakId.isNullOrEmpty())
+            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == VedtakType.KLAGE }
+                ?: false
+        else if (!request.behandlingId.isNullOrEmpty()) behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
+            ?.let { it.soknadType == VedtakType.KLAGE } ?: false
+        else false
     }
 
     fun hentDokumentMalListe(
@@ -128,10 +141,10 @@ class DokumentValgService(
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                it.isVedtaktypeValid(vedtakType, soknadType) &&
-                it.behandlingStatus.isValid(erFattetBeregnet) &&
-                it.forvaltning.isValid(enhet) &&
-                it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+                    it.isVedtaktypeValid(vedtakType, soknadType) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
+                    it.forvaltning.isValid(enhet) &&
+                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }

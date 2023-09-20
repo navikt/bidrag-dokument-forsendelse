@@ -92,7 +92,7 @@ class ForsendelseInnsynKontroller(
 
     @GetMapping("/dokumentvalg/notat")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
-    fun hentDokumentValgNotater(): Map<String, DokumentMalDetaljer> {
-        return dokumentValgService.hentNotatListe()
+    fun hentDokumentValgNotater(@RequestBody(required = false) request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
+        return dokumentValgService.hentNotatListe(request)
     }
 }
