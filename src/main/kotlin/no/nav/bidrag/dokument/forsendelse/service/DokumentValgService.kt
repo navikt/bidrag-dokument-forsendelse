@@ -33,6 +33,7 @@ class DokumentValgService(
 ) {
 
     val dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
+    val dokumentValgTittelMap: Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>>
 
     val standardBrevkoder = listOf("BI01S02", "BI01S10") // BI01S67 - Adresseforespørsel
     val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10")
@@ -41,6 +42,7 @@ class DokumentValgService(
 
     init {
         dokumentValgMap = fetchDokumentValgMapFromFile()
+        dokumentValgTittelMap = fetchDokumentValgTitlerMapFromFile()
     }
 
     fun hentNotatListe(): Map<String, DokumentMalDetaljer> {
@@ -61,11 +63,11 @@ class DokumentValgService(
         if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         if (request.vedtakId != null) {
             return hentDokumentmalListeForVedtakId(request.vedtakId, request.soknadFra, request.enhet, request.soknadType)
-                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
         }
         if (request.behandlingId != null && request.erFattetBeregnet == null) {
             return hentDokumentmalListeForBehandlingId(request.behandlingId, request.soknadFra, request.enhet, request.soknadType)
-                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
         }
         val (soknadType, vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
         return behandlingType?.let {
@@ -79,7 +81,7 @@ class DokumentValgService(
                 soknadType
             )
         }
-            ?: standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+            ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
     }
 
     private fun hentDokumentmalListeForVedtakId(
@@ -144,7 +146,8 @@ class DokumentValgService(
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
                 ?: if (erFattetBeregnet != null) ekstraBrevkoderVedtakFattet else ekstraBrevkoderVedtakIkkeFattet
-        return brevkoder.associateWith { mapToMalDetaljer(it) }.filter { it.value.type != DokumentMalType.NOTAT }
+        return brevkoder.associateWith { mapToMalDetaljer(it, HentDokumentValgRequest(soknadType, vedtakType)) }
+            .filter { it.value.type != DokumentMalType.NOTAT }
     }
 
     fun mapToMalDetaljer(malId: String, request: HentDokumentValgRequest? = null): DokumentMalDetaljer {
@@ -152,16 +155,16 @@ class DokumentValgService(
         val malInfo = dokumentDetaljer[malId]
         val tittel = malInfo?.beskrivelse ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
-        return DokumentMalDetaljer(tittel, malType)
+        return DokumentMalDetaljer(tittel, malType, alternativeTitler = hentAlternativeTitlerForMal(malId, request))
     }
 
-//    fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {
-//        if (request == null) return emptyList()
-//        val requestUtfylt = hentUtfyltDokumentValgDetaljer(request)
-//        return dokumentValgTittelMap[malId]?.find {
-//            it.vedtakType.contains(requestUtfylt?.vedtakType)
-//        }?.titler ?: emptyList()
-//    }
+    fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {
+        if (request == null) return emptyList()
+        val requestUtfylt = hentUtfyltDokumentValgDetaljer(request)
+        return dokumentValgTittelMap[malId]?.find {
+            it.vedtakType.contains(requestUtfylt?.vedtakType)
+        }?.titler ?: emptyList()
+    }
 
     private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? {
         return if (request == null) null

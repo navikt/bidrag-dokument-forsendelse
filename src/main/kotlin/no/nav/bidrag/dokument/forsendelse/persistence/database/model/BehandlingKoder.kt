@@ -89,6 +89,13 @@ data class DokumentBehandlingDetaljer(
 )
 
 data class DokumentBehandlingTittelDetaljer(
-    val vedtakType: List<VedtakType>,
+    val stonadType: StonadType? = null,
+    val engangsbelopType: EngangsbelopType? = null,
+    val soknadType: SoknadTyper = emptyList(),
+    val vedtakType: List<VedtakType> = emptyList(),
+    val soknadFra: List<SoknadFra> = emptyList(),
+    val forvaltning: Forvaltning? = null,
+    val erVedtakIkkeTilbakekreving: Boolean? = false,
+    val behandlingStatus: BehandlingStatus? = null,
     val titler: List<String>
 )
