@@ -813,4 +813,18 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01X02"
         }
     }
+
+    @Test
+    fun `Skal hente notater for klage`() {
+        val dokumentValgListe = dokumentValgService!!.hentNotatListe(HentDokumentValgRequest(vedtakType = VedtakType.KLAGE))
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe shouldContainKey "BI01P17"
+            dokumentValgListe shouldContainKey "BI01P11"
+            dokumentValgListe shouldContainKey "BI01P18"
+            dokumentValgListe shouldContainKey "BI01X01"
+            dokumentValgListe shouldContainKey "BI01X02"
+        }
+    }
 }
