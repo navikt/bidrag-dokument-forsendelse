@@ -257,6 +257,22 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         }
     }
 
+    @Test
+    fun `Skal hente dokumentvalg for notater for klage`() {
+        val dokumentValgResponse = utførHentForsendelseDokumentvalgNotat(HentDokumentValgRequest(vedtakType = VedtakType.KLAGE))
+
+        assertSoftly {
+            dokumentValgResponse.statusCode shouldBe HttpStatus.OK
+            val dokumentValgMap = dokumentValgResponse.body!!
+            dokumentValgMap.size shouldBe 5
+            dokumentValgMap shouldContainKey "BI01P17"
+            dokumentValgMap shouldContainKey "BI01P11"
+            dokumentValgMap shouldContainKey "BI01P18"
+            dokumentValgMap shouldContainKey "BI01X01"
+            dokumentValgMap shouldContainKey "BI01X02"
+        }
+    }
+
     fun utførHentForsendelseDokumentvalg(
         forsendelseId: String
     ): ResponseEntity<Map<String, DokumentMalDetaljer>> {
@@ -265,9 +281,9 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         )
     }
 
-    fun utførHentForsendelseDokumentvalgNotat(): ResponseEntity<Map<String, DokumentMalDetaljer>> {
-        return httpHeaderTestRestTemplate.getForEntity(
-            "${rootUri()}/dokumentvalg/notat"
+    fun utførHentForsendelseDokumentvalgNotat(request: HentDokumentValgRequest? = null): ResponseEntity<Map<String, DokumentMalDetaljer>> {
+        return httpHeaderTestRestTemplate.postForEntity(
+            "${rootUri()}/dokumentvalg/notat", request?.let { HttpEntity(request) }
         )
     }
 
