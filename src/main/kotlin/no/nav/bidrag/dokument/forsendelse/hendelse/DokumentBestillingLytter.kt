@@ -18,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokume
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
@@ -106,11 +107,18 @@ class DokumentBestillingLytter(
             val dokumentMalId = dokument.dokumentmalId!!
             meterRegistry.counter(
                 DOKUMENTMAL_COUNTER_NAME,
-                "dokumentMalId", dokumentMalId,
-                "type", forsendelse.forsendelseType.name,
-                "spraak", dokument.språk ?: forsendelse.språk,
-                "enhet", forsendelse.enhet,
-                "tema", forsendelse.tema.name
+                "dokumentMalId",
+                dokumentMalId,
+                "type",
+                forsendelse.forsendelseType.name,
+                "spraak",
+                dokument.språk ?: forsendelse.språk,
+                "enhet",
+                forsendelse.enhet,
+                "tema",
+                forsendelse.tema.name,
+                "tittel",
+                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel
             ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
