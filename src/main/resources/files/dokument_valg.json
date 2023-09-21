@@ -1911,6 +1911,25 @@
     },
     {
       "soknadType": [
+        "OPPHOR"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "erVedtakIkkeTilbakekreving": false,
+      "stonadType": "BIDRAG",
+      "vedtakType": [
+        "OPPHØR"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
         "ENDRING",
         "INNKREVINGSGRUNNLAG",
         "OPPHOR",
@@ -1921,7 +1940,6 @@
         "BARN_18_AAR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
-        "NAV_BIDRAG",
         "VERGE"
       ],
       "erVedtakIkkeTilbakekreving": false,
