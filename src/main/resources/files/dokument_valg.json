@@ -1921,6 +1921,7 @@
         "BARN_18_AAR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
+        "NAV_BIDRAG",
         "VERGE"
       ],
       "erVedtakIkkeTilbakekreving": false,
@@ -2064,7 +2065,6 @@
         "EGET_TILTAK",
         "ENDRING",
         "KLAGE",
-        "OPPHOR",
         "REVURDERING",
         "SOKNAD"
       ],
@@ -2081,7 +2081,6 @@
         "ENDRING",
         "FASTSETTELSE",
         "KLAGE",
-        "OPPHØR",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",
