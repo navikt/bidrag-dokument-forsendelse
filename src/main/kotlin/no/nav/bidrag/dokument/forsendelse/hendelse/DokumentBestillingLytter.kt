@@ -118,7 +118,7 @@ class DokumentBestillingLytter(
                 "tema",
                 forsendelse.tema.name,
                 "tittel",
-                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) null else dokument.tittel
+                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel
             ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
