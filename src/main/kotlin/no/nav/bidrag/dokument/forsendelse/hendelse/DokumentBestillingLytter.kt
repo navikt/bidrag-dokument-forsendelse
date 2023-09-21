@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
@@ -34,8 +35,11 @@ class DokumentBestillingLytter(
     val forsendelseRepository: ForsendelseRepository,
     val dokumentTjeneste: DokumentTjeneste,
     val dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent,
-    val saksbehandlerInfoManager: SaksbehandlerInfoManager
+    val saksbehandlerInfoManager: SaksbehandlerInfoManager,
+    val meterRegistry: MeterRegistry
 ) {
+
+    private val DOKUMENTMAL_COUNTER_NAME = "forsendelse_dokumentmal_opprettet"
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -49,6 +53,7 @@ class DokumentBestillingLytter(
 
         try {
             val arkivSystem = sendBestilling(forsendelse, dokument)
+            measureBestilling(forsendelse, dokument)
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
                     arkivsystem = when (arkivSystem) {
@@ -93,6 +98,23 @@ class DokumentBestillingLytter(
             dokumentKafkaHendelseProdusent.publiser(tilKafkaMelding(forsendelse, dokument))
         }
         return null
+
+    }
+
+    private fun measureBestilling(forsendelse: Forsendelse, dokument: Dokument) {
+        try {
+            val dokumentMalId = dokument.dokumentmalId!!
+            meterRegistry.counter(
+                DOKUMENTMAL_COUNTER_NAME,
+                "dokumentMalId", dokumentMalId,
+                "type", forsendelse.forsendelseType.name,
+                "språk", dokument.språk ?: forsendelse.språk,
+                "enhet", forsendelse.enhet,
+                "tema", forsendelse.tema.name
+            ).increment()
+        } catch (e: Exception) {
+            LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
+        }
     }
 
     private fun tilKafkaMelding(forsendelse: Forsendelse, dokument: Dokument): DokumentHendelse {
