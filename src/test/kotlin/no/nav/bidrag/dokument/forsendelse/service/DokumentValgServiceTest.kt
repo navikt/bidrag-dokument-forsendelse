@@ -771,6 +771,26 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for BIDRAG med vedtaktype OMGJØRING`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                soknadType = "OMGJORING",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = true
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01B50"
+            dokumentValgListe shouldContainKey "BI01G50"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for bidrag varsel med soknad type EGET_TILTAK fra NAV_BIDRAG`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
