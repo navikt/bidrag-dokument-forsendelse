@@ -108,7 +108,7 @@ class DokumentBestillingLytter(
                 DOKUMENTMAL_COUNTER_NAME,
                 "dokumentMalId", dokumentMalId,
                 "type", forsendelse.forsendelseType.name,
-                "språk", dokument.språk ?: forsendelse.språk,
+                "spraak", dokument.språk ?: forsendelse.språk,
                 "enhet", forsendelse.enhet,
                 "tema", forsendelse.tema.name
             ).increment()
