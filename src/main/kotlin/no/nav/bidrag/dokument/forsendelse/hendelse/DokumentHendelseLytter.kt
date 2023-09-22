@@ -53,20 +53,20 @@ class DokumentHendelseLytter(
                     if (erFerdigstilt) "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
                     else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
                 }
-//                if (erFerdigstilt) {
-//                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
-//                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
-//                        dokumentTjeneste.lagreDokument(
-//                            dokument.copy(
-//                                dokumentStatus = DokumentStatus.FERDIGSTILT,
-//                                ferdigstiltTidspunkt = LocalDateTime.now(),
-//                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
-//                            )
-//                        )
-//                    }
-//                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
-//                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
-//                }
+                if (erFerdigstilt) {
+                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
+                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
+                        dokumentTjeneste.lagreDokument(
+                            dokument.copy(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                ferdigstiltTidspunkt = LocalDateTime.now(),
+                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
+                            )
+                        )
+                    }
+                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
+                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+                }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
             }
