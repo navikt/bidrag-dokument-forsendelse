@@ -54,16 +54,18 @@ class DokumentHendelseLytter(
                     else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
                 }
 //                if (erFerdigstilt) {
-//                    val dokument = dokumentTjeneste.lagreDokument(
-//                        it.copy(
-//                            dokumentStatus = DokumentStatus.FERDIGSTILT,
-//                            ferdigstiltTidspunkt = LocalDateTime.now(),
-//                            ferdigstiltAvIdent = FORSENDELSE_APP_ID
+//                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
+//                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
+//                        dokumentTjeneste.lagreDokument(
+//                            dokument.copy(
+//                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+//                                ferdigstiltTidspunkt = LocalDateTime.now(),
+//                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
+//                            )
 //                        )
-//                    )
-//
-//                    sendJournalposthendelseHvisKlarForDistribusjon(listOf(dokument))
-//                    ferdigstillHvisForsendelseErNotat(listOf(dokument))
+//                    }
+//                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
+//                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
 //                }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
