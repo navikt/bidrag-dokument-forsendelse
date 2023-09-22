@@ -33,6 +33,11 @@ class BidragDokumentConsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun erFerdigstilt(dokumentreferanse: String): Boolean {
+        return getForNonNullEntity(createUri("/dokumentreferanse/$dokumentreferanse/erFerdigstilt"))
+    }
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun hentDokumentMetadata(journalpostId: String, dokumentId: String?): List<DokumentMetadata> {
         return optionsForEntity(
             UriComponentsBuilder.fromUri(url)
