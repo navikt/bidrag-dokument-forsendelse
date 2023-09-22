@@ -1,12 +1,15 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.transaction.Transactional
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
 import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -19,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -27,10 +31,48 @@ private val log = KotlinLogging.logger {}
 @Component
 class DokumentHendelseLytter(
     val objectMapper: ObjectMapper,
+    val bidragDokumentConsumer: BidragDokumentConsumer,
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
     val ferdigstillForsendelseService: FerdigstillForsendelseService
 ) {
+
+    @Scheduled(cron = "\${OPPDATER_STATUS_DOKUMENTER_CRON}")
+    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
+    @Transactional
+    fun oppdaterStatusPaFerdigstilteDokumenter() {
+        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(500)
+        log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
+
+        dokumenter.forEach {
+            log.info { "Sjekker om dokument ${it.dokumentreferanse} er ferdigstilt" }
+            try {
+                val erFerdigstilt = bidragDokumentConsumer.erFerdigstilt(it.dokumentreferanse)
+
+                log.info {
+                    if (erFerdigstilt) "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
+                    else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
+                }
+//                if (erFerdigstilt) {
+//                    val dokument = dokumentTjeneste.lagreDokument(
+//                        it.copy(
+//                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+//                            ferdigstiltTidspunkt = LocalDateTime.now(),
+//                            ferdigstiltAvIdent = FORSENDELSE_APP_ID
+//                        )
+//                    )
+//
+//                    sendJournalposthendelseHvisKlarForDistribusjon(listOf(dokument))
+//                    ferdigstillHvisForsendelseErNotat(listOf(dokument))
+//                }
+            } catch (e: Exception) {
+                log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
+            }
+
+        }
+
+    }
+
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {
