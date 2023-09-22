@@ -19,6 +19,6 @@ interface DokumentRepository : CrudRepository<Dokument, Long> {
     @Query("select d from dokument d where d.dokumentStatus = 'UNDER_PRODUKSJON' and d.slettetTidspunkt is null and d.forsendelse.status = 'UNDER_PRODUKSJON'")
     fun hentDokumenterSomHarStatusUnderProduksjon(): List<Dokument>
 
-    @Query("select d from dokument d where d.forsendelse.status = 'UNDER_PRODUKSJON' and d.slettetTidspunkt is null and d.dokumentStatus = 'UNDER_REDIGERING' and d.opprettetTidspunkt >= :newerThan and d.opprettetTidspunkt <= :olderThan order by d.opprettetTidspunkt asc")
-    fun hentDokumentIkkeFerdigstiltFørOgEterDato(pageable: Pageable, newerThan: LocalDateTime, olderThan: LocalDateTime): List<Dokument>
+    @Query("select d from dokument d where d.forsendelse.status = 'UNDER_PRODUKSJON' and d.slettetTidspunkt is null and d.dokumentStatus = 'UNDER_REDIGERING' and d.opprettetTidspunkt <= :olderThan order by d.opprettetTidspunkt desc")
+    fun hentDokumentIkkeFerdigstiltFørDato(pageable: Pageable, olderThan: LocalDateTime): List<Dokument>
 }
