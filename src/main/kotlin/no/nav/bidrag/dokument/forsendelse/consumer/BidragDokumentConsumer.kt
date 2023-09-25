@@ -32,7 +32,7 @@ class BidragDokumentConsumer(
         return postForEntity(createUri("/journalpost/JOARK"), opprettJournalpostRequest)
     }
 
-    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    @Retryable(value = [Exception::class], maxAttempts = 2, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun erFerdigstilt(dokumentreferanse: String): Boolean {
         return getForNonNullEntity(createUri("/dokumentreferanse/$dokumentreferanse/erFerdigstilt"))
     }

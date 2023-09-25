@@ -38,10 +38,10 @@ class DokumentHendelseLytter(
 ) {
 
     @Scheduled(cron = "\${OPPDATER_STATUS_DOKUMENTER_CRON}")
-    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
+    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteEllerFerdigproduserteDokumenter", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterStatusPaFerdigstilteDokumenter() {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(100)
+        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigeringEllerUnderProduksjon(50)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
         dokumenter.forEach {
@@ -53,28 +53,43 @@ class DokumentHendelseLytter(
                     if (erFerdigstilt) "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
                     else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
                 }
-//                if (erFerdigstilt) {
-//                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
-//                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
-//                        dokumentTjeneste.lagreDokument(
-//                            dokument.copy(
-//                                dokumentStatus = DokumentStatus.FERDIGSTILT,
-//                                ferdigstiltTidspunkt = LocalDateTime.now(),
-//                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
-//                            )
-//                        )
-//                    }
-//                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
-//                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
-//                }
+                if (erFerdigstilt) {
+                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
+                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
+                        dokumentTjeneste.lagreDokument(
+                            dokument.copy(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                ferdigstiltTidspunkt = LocalDateTime.now(),
+                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
+                            )
+                        )
+                    }
+                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
+                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+                } else if (it.dokumentStatus == DokumentStatus.UNDER_PRODUKSJON) {
+                    log.info { "Dokument ${it.dokumentreferanse} er ikke ferdigstilt men har status UNDER_PRODUKSJON. Oppdaterer status til UNDER_REDIGERING" }
+                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
+                    dokumenterForReferanse.map { dokument ->
+                        dokumentTjeneste.lagreDokument(
+                            dokument.copy(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+                                    it.arkivsystem
+                                } else DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                metadata = run {
+                                    val metadata = it.metadata
+                                    metadata.lagreProdusertTidspunkt(LocalDateTime.now())
+                                    metadata.copy()
+                                },
+                            )
+                        )
+                    }
+                }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
             }
-
         }
-
     }
-
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {

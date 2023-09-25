@@ -73,10 +73,10 @@ class DokumentTjeneste(
         return dokumentRepository.hentDokumenterSomHarStatusUnderProduksjon()
     }
 
-    fun hentDokumenterSomErUnderRedigering(limit: Int): List<Dokument> {
+    fun hentDokumenterSomErUnderRedigeringEllerUnderProduksjon(limit: Int): List<Dokument> {
         return dokumentRepository.hentDokumentIkkeFerdigstiltFørDato(
             Pageable.ofSize(limit),
-            LocalDateTime.now().minusDays(1)
+            LocalDateTime.now().minusHours(6)
         )
     }
 
