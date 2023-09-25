@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
@@ -21,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -35,11 +37,11 @@ class DokumentHendelseLytter(
     val ferdigstillForsendelseService: FerdigstillForsendelseService
 ) {
 
-    //    @Scheduled(cron = "\${OPPDATER_STATUS_DOKUMENTER_CRON}")
-//    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
+    @Scheduled(cron = "\${OPPDATER_STATUS_DOKUMENTER_CRON}")
+    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterStatusPaFerdigstilteDokumenter() {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(500)
+        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(100)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
         dokumenter.forEach {
@@ -51,20 +53,20 @@ class DokumentHendelseLytter(
                     if (erFerdigstilt) "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
                     else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
                 }
-                if (erFerdigstilt) {
-                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
-                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
-                        dokumentTjeneste.lagreDokument(
-                            dokument.copy(
-                                dokumentStatus = DokumentStatus.FERDIGSTILT,
-                                ferdigstiltTidspunkt = LocalDateTime.now(),
-                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
-                            )
-                        )
-                    }
-                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
-                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
-                }
+//                if (erFerdigstilt) {
+//                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
+//                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
+//                        dokumentTjeneste.lagreDokument(
+//                            dokument.copy(
+//                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+//                                ferdigstiltTidspunkt = LocalDateTime.now(),
+//                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
+//                            )
+//                        )
+//                    }
+//                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
+//                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+//                }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
             }
