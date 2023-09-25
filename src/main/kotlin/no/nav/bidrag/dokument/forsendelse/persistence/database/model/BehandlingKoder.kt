@@ -76,6 +76,13 @@ fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType
     return vedtakType.contains(vt)
 }
 
+fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
+    if (st == "EGET_TILTAK" || st == "OMGJORING") {
+        return soknadType.contains(st)
+    }
+    return vedtakType.contains(vt)
+}
+
 data class DokumentBehandlingDetaljer(
     val stonadType: StonadType? = null,
     val engangsbelopType: EngangsbelopType? = null,
@@ -96,6 +103,6 @@ data class DokumentBehandlingTittelDetaljer(
     val soknadFra: List<SoknadFra> = emptyList(),
     val forvaltning: Forvaltning? = null,
     val erVedtakIkkeTilbakekreving: Boolean? = false,
-    val behandlingStatus: BehandlingStatus? = null,
+    val behandlingStatus: BehandlingStatus,
     val titler: List<String>
 )

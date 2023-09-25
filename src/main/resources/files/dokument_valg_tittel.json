@@ -2,12 +2,42 @@
   "BI01S02": [
     {
       "vedtakType": [
-        "KLAGE"
+        "INNKREVING"
       ],
+      "behandlingStatus": "IKKE_FATTET",
+      "engangsbelopType": "SAERTILSKUDD",
+      "soknadFra": [],
       "titler": [
-        "Vedtak klage forskudd tittel 1",
-        "Vedtak klage forskudd tittel 2",
-        "Vedtak klage forskudd tittel 3"
+        "Varsel innkreving bidrag til særlige utgifter",
+        "Orientering innkreving bidrag til særlige utgifter"
+      ]
+    },
+    {
+      "vedtakType": [
+        "INNKREVING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [],
+      "titler": [
+        "Orientering om innkreving",
+        "Innkreving orientering til søker"
+      ]
+    },
+    {
+      "vedtakType": [
+        "REVURDERING"
+      ],
+      "soknadType": [
+        "BEGRENSET_REVURDERING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [],
+      "titler": [
+        "Varsel begrenset revurdering av bidrag",
+        "Endring eget tiltak pga bidragsforskudd",
+        "Fastsettelse eget tiltak pga bidragsforskudd"
       ]
     }
   ]

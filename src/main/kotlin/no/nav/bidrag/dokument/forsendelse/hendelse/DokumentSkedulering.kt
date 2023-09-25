@@ -33,18 +33,6 @@ class DokumentSkedulering(
         bestillDokumenterUnderProduksjonPåNytt()
     }
 
-//    @Scheduled(cron = "\${REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
-//    @SchedulerLock(name = "oppdaterDokumenterMedFeilStatusSkeduler", lockAtLeastFor = "10m")
-//    fun oppdaterDokumenterMedFeilStatusSkeduler() {
-//        oppdaterDokumenterMedFeilStatus()
-//    }
-//
-//    fun oppdaterDokumenterMedFeilStatus() {
-//        val dokumenter = dokumentConsumer.hentDokumentMetadata()
-//        LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. Prøver å bestille dokumentene på nytt." }
-//        bestill(dokumenter)
-//    }
-
     fun bestillFeiledeDokumenterPåNytt() {
         val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
         LOGGER.info { "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. Prøver å bestille dokumentene på nytt." }

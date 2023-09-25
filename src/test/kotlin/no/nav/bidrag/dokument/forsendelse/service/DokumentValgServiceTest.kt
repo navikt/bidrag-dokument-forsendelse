@@ -3,6 +3,8 @@ package no.nav.bidrag.dokument.forsendelse.service
 import StubUtils
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -22,6 +24,7 @@ import no.nav.bidrag.domain.enums.EngangsbelopType
 import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.enums.VedtakType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -866,6 +869,72 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01P18"
             dokumentValgListe shouldContainKey "BI01X01"
             dokumentValgListe shouldContainKey "BI01X02"
+        }
+    }
+
+    @Nested
+    inner class HentDokumentmalerMedAlternativeTitlerTest {
+        @Test
+        fun `Skal hente alternative titler for dokumentvalg for revurdering av bidrag`() {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = VedtakType.REVURDERING,
+                    soknadType = "BEGRENSET_REVURDERING",
+                    behandlingType = StonadType.BIDRAG.name,
+                    soknadFra = SoknadFra.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                )
+            )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 13
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 1
+                fritekstBrev.alternativeTitler shouldContain "Varsel begrenset revurdering av bidrag"
+            }
+        }
+
+        @Test
+        fun `Skal hente alternative titler for dokumentvalg for innkreving særtilskudd`() {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = VedtakType.INNKREVING,
+                    behandlingType = EngangsbelopType.SAERTILSKUDD.name,
+                    soknadFra = SoknadFra.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                )
+            )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 2
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 2
+                fritekstBrev.alternativeTitler shouldContain "Varsel innkreving bidrag til særlige utgifter"
+                fritekstBrev.alternativeTitler shouldContain "Orientering innkreving bidrag til særlige utgifter"
+            }
+        }
+
+        @Test
+        fun `Skal hente alternative titler for dokumentvalg for innkreving bidrag`() {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = VedtakType.INNKREVING,
+                    behandlingType = StonadType.BIDRAG.name,
+                    soknadFra = SoknadFra.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                )
+            )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 2
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 2
+                fritekstBrev.alternativeTitler shouldContain "Orientering om innkreving"
+                fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            }
         }
     }
 }
