@@ -18,7 +18,9 @@ import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.exists
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 class DokumentTjeneste(
@@ -69,6 +71,13 @@ class DokumentTjeneste(
 
     fun hentDokumenterSomHarStatusUnderProduksjon(): List<Dokument> {
         return dokumentRepository.hentDokumenterSomHarStatusUnderProduksjon()
+    }
+
+    fun hentDokumenterSomErUnderRedigering(limit: Int): List<Dokument> {
+        return dokumentRepository.hentDokumentIkkeFerdigstiltFørDato(
+            Pageable.ofSize(limit),
+            LocalDateTime.now().minusDays(1)
+        )
     }
 
     private fun bestillDokumentHvisNødvendig(dokument: Dokument) {

@@ -750,6 +750,47 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for BIDRAG med vedtaktype OPPHØR`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.OPPHØR,
+                soknadType = "OPPHOR",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = false
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01G01"
+            dokumentValgListe shouldContainKey "BI01G02"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for BIDRAG med vedtaktype OMGJØRING`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                soknadType = "OMGJORING",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = true
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01B50"
+            dokumentValgListe shouldContainKey "BI01G50"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for bidrag varsel med soknad type EGET_TILTAK fra NAV_BIDRAG`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
@@ -807,6 +848,20 @@ class DokumentValgServiceTest {
 
         assertSoftly {
             dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01P11"
+            dokumentValgListe shouldContainKey "BI01P18"
+            dokumentValgListe shouldContainKey "BI01X01"
+            dokumentValgListe shouldContainKey "BI01X02"
+        }
+    }
+
+    @Test
+    fun `Skal hente notater for klage`() {
+        val dokumentValgListe = dokumentValgService!!.hentNotatListe(HentDokumentValgRequest(vedtakType = VedtakType.KLAGE))
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe shouldContainKey "BI01P17"
             dokumentValgListe shouldContainKey "BI01P11"
             dokumentValgListe shouldContainKey "BI01P18"
             dokumentValgListe shouldContainKey "BI01X01"

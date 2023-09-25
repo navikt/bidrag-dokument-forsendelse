@@ -1,8 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.repository
 
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
+import java.time.LocalDateTime
 
 interface DokumentRepository : CrudRepository<Dokument, Long> {
 
@@ -16,4 +18,7 @@ interface DokumentRepository : CrudRepository<Dokument, Long> {
 
     @Query("select d from dokument d where d.dokumentStatus = 'UNDER_PRODUKSJON' and d.slettetTidspunkt is null and d.forsendelse.status = 'UNDER_PRODUKSJON'")
     fun hentDokumenterSomHarStatusUnderProduksjon(): List<Dokument>
+
+    @Query("select d from dokument d where d.forsendelse.status = 'UNDER_PRODUKSJON' and d.slettetTidspunkt is null and d.dokumentStatus = 'UNDER_REDIGERING' and d.opprettetTidspunkt <= :olderThan order by d.opprettetTidspunkt desc")
+    fun hentDokumentIkkeFerdigstiltFørDato(pageable: Pageable, olderThan: LocalDateTime): List<Dokument>
 }

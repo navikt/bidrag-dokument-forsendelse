@@ -1911,6 +1911,25 @@
     },
     {
       "soknadType": [
+        "OPPHOR"
+      ],
+      "soknadFra": [
+        "NAV_BIDRAG"
+      ],
+      "erVedtakIkkeTilbakekreving": false,
+      "stonadType": "BIDRAG",
+      "vedtakType": [
+        "OPPHØR"
+      ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
         "ENDRING",
         "INNKREVINGSGRUNNLAG",
         "OPPHOR",
@@ -2064,7 +2083,6 @@
         "EGET_TILTAK",
         "ENDRING",
         "KLAGE",
-        "OPPHOR",
         "REVURDERING",
         "SOKNAD"
       ],
@@ -2081,7 +2099,6 @@
         "ENDRING",
         "FASTSETTELSE",
         "KLAGE",
-        "OPPHØR",
         "REVURDERING"
       ],
       "behandlingStatus": "FATTET_MANUELT",

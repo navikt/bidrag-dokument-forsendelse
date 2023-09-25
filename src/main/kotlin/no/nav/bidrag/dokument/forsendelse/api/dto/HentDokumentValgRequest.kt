@@ -16,4 +16,6 @@ data class HentDokumentValgRequest(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val enhet: String? = null
-)
+) {
+    fun erKlage() = vedtakType == VedtakType.KLAGE || soknadType == VedtakType.KLAGE.name
+}
