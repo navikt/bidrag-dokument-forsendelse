@@ -275,17 +275,12 @@ class DokumentValgServiceTest {
         )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 13
+            dokumentValgListe.size shouldBe 7
             dokumentValgListe shouldContainKey "BI01S06"
             dokumentValgListe shouldContainKey "BI01S07"
-            dokumentValgListe shouldContainKey "BI01S31"
-            dokumentValgListe shouldContainKey "BI01S32"
-            dokumentValgListe shouldContainKey "BI01S34"
             dokumentValgListe shouldContainKey "BI01S35"
-            dokumentValgListe shouldContainKey "BI01S36"
             dokumentValgListe shouldContainKey "BI01S46"
             dokumentValgListe shouldContainKey "BI01S62"
-            dokumentValgListe shouldContainKey "BI01S63"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
         }
@@ -805,18 +800,12 @@ class DokumentValgServiceTest {
         )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 13
+            dokumentValgListe.size shouldBe 7
             dokumentValgListe shouldContainKey "BI01S06"
             dokumentValgListe shouldContainKey "BI01S07"
-            dokumentValgListe shouldContainKey "BI01S31"
-            dokumentValgListe shouldContainKey "BI01S32"
-            dokumentValgListe shouldContainKey "BI01S33"
-            dokumentValgListe shouldContainKey "BI01S34"
             dokumentValgListe shouldContainKey "BI01S35"
-            dokumentValgListe shouldContainKey "BI01S36"
             dokumentValgListe shouldContainKey "BI01S46"
             dokumentValgListe shouldContainKey "BI01S62"
-            dokumentValgListe shouldContainKey "BI01S63"
             dokumentValgListe shouldContainKey "BI01S10"
         }
     }
@@ -887,11 +876,13 @@ class DokumentValgServiceTest {
             )
 
             assertSoftly {
-                dokumentValgListe.size shouldBe 13
+                dokumentValgListe.size shouldBe 7
                 dokumentValgListe shouldContainKey "BI01S02"
                 val fritekstBrev = dokumentValgListe["BI01S02"]!!
-                fritekstBrev.alternativeTitler shouldHaveSize 1
+                fritekstBrev.alternativeTitler shouldHaveSize 3
                 fritekstBrev.alternativeTitler shouldContain "Varsel begrenset revurdering av bidrag"
+                fritekstBrev.alternativeTitler shouldContain "Endring eget tiltak pga bidragsforskudd"
+                fritekstBrev.alternativeTitler shouldContain "Fastsettelse eget tiltak pga bidragsforskudd"
             }
         }
 
@@ -928,7 +919,7 @@ class DokumentValgServiceTest {
             )
 
             assertSoftly {
-                dokumentValgListe.size shouldBe 2
+                dokumentValgListe.size shouldBe 3
                 dokumentValgListe shouldContainKey "BI01S02"
                 val fritekstBrev = dokumentValgListe["BI01S02"]!!
                 fritekstBrev.alternativeTitler shouldHaveSize 2

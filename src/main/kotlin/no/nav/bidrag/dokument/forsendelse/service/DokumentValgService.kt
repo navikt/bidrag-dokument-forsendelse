@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingTittelDetaljer
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTilbakekrevingLik
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
 import no.nav.bidrag.domain.enums.GrunnlagType
@@ -136,7 +137,7 @@ class DokumentValgService(
                     listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
                     it.behandlingStatus.isValid(request.erFattetBeregnet) &&
                     (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
-                    (it.erVedtakIkkeTilbakekreving == request.erVedtakIkkeTilbakekreving)
+                    it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
         }?.titler ?: emptyList()
     }
 

@@ -2066,15 +2066,9 @@
       "brevkoder": [
         "BI01S06",
         "BI01S07",
-        "BI01S31",
-        "BI01S32",
-        "BI01S33",
-        "BI01S34",
         "BI01S35",
-        "BI01S36",
         "BI01S46",
-        "BI01S62",
-        "BI01S63"
+        "BI01S62"
       ]
     },
     {
@@ -2190,15 +2184,9 @@
       "brevkoder": [
         "BI01S06",
         "BI01S07",
-        "BI01S31",
-        "BI01S32",
-        "BI01S33",
-        "BI01S34",
         "BI01S35",
-        "BI01S36",
         "BI01S46",
-        "BI01S62",
-        "BI01S63"
+        "BI01S62"
       ]
     },
     {
@@ -2277,15 +2265,9 @@
       "brevkoder": [
         "BI01S06",
         "BI01S07",
-        "BI01S31",
-        "BI01S32",
-        "BI01S33",
-        "BI01S34",
         "BI01S35",
-        "BI01S36",
         "BI01S46",
-        "BI01S62",
-        "BI01S63"
+        "BI01S62"
       ]
     },
     {
@@ -2636,8 +2618,7 @@
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01S22",
-        "BI01S23",
-        "BI01S32"
+        "BI01S23"
       ]
     },
     {
@@ -2700,15 +2681,9 @@
       "brevkoder": [
         "BI01S06",
         "BI01S07",
-        "BI01S31",
-        "BI01S32",
-        "BI01S33",
-        "BI01S34",
         "BI01S35",
-        "BI01S36",
         "BI01S46",
-        "BI01S62",
-        "BI01S63"
+        "BI01S62"
       ]
     },
     {
@@ -2780,8 +2755,7 @@
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01S22",
-        "BI01S23",
-        "BI01S32"
+        "BI01S23"
       ]
     },
     {
@@ -3708,15 +3682,9 @@
       "brevkoder": [
         "BI01S06",
         "BI01S07",
-        "BI01S31",
-        "BI01S32",
-        "BI01S33",
-        "BI01S34",
         "BI01S35",
-        "BI01S36",
         "BI01S46",
-        "BI01S62",
-        "BI01S63"
+        "BI01S62"
       ]
     },
     {
@@ -3737,15 +3705,9 @@
       "brevkoder": [
         "BI01S06",
         "BI01S07",
-        "BI01S31",
-        "BI01S32",
-        "BI01S33",
-        "BI01S34",
         "BI01S35",
-        "BI01S36",
         "BI01S46",
-        "BI01S62",
-        "BI01S63"
+        "BI01S62"
       ]
     },
     {
@@ -6513,7 +6475,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S33",
         "BI01S35"
       ]
     },
@@ -6597,7 +6558,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S33",
         "BI01S35"
       ]
     },
@@ -6673,7 +6633,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S33",
         "BI01S35"
       ]
     },
@@ -7033,7 +6992,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S33",
         "BI01S35"
       ]
     },
@@ -7074,7 +7032,6 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S33",
         "BI01S35"
       ]
     },
