@@ -76,6 +76,18 @@ fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType
     return vedtakType.contains(vt)
 }
 
+fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
+    if (st == "EGET_TILTAK" || st == "OMGJORING") {
+        return soknadType.contains(st)
+    }
+    return vedtakType.contains(vt)
+}
+
+fun DokumentBehandlingTittelDetaljer.erVedtakTilbakekrevingLik(erVedtakIkkeTilbakekreving: Boolean?): Boolean {
+    if (erVedtakIkkeTilbakekreving == null) return this.erVedtakIkkeTilbakekreving == false
+    return this.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+}
+
 data class DokumentBehandlingDetaljer(
     val stonadType: StonadType? = null,
     val engangsbelopType: EngangsbelopType? = null,
@@ -83,7 +95,19 @@ data class DokumentBehandlingDetaljer(
     val vedtakType: List<VedtakType>,
     val soknadFra: List<SoknadFra>,
     val forvaltning: Forvaltning,
-    val erVedtakIkkeTilbakekreving: Boolean? = false,
+    val erVedtakIkkeTilbakekreving: Boolean = false,
     val behandlingStatus: BehandlingStatus,
     val brevkoder: List<String>
+)
+
+data class DokumentBehandlingTittelDetaljer(
+    val stonadType: StonadType? = null,
+    val engangsbelopType: EngangsbelopType? = null,
+    val soknadType: SoknadTyper = emptyList(),
+    val vedtakType: List<VedtakType> = emptyList(),
+    val soknadFra: List<SoknadFra> = emptyList(),
+    val forvaltning: Forvaltning? = null,
+    val erVedtakIkkeTilbakekreving: Boolean? = false,
+    val behandlingStatus: BehandlingStatus,
+    val titler: List<String>
 )

@@ -15,6 +15,7 @@ import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.toForsendels
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
+import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -218,7 +219,7 @@ class OppdaterForsendelseService(
             .map {
                 if (it.dokumentreferanse == dokumentreferanse) {
                     it.copy(
-                        tittel = forespørsel.tittel ?: it.tittel,
+                        tittel = forespørsel.tittel?.fjernKontrollTegn() ?: it.tittel,
                         dokumentDato = forespørsel.dokumentDato ?: it.dokumentDato
                     )
                 } else {
@@ -247,7 +248,7 @@ class OppdaterForsendelseService(
             .mapIndexed { indeks, it ->
                 val eksisterendeDokument = forsendelse.dokumenter.hentDokument(it.dokumentreferanse)
                 eksisterendeDokument?.copy(
-                    tittel = it.tittel ?: eksisterendeDokument.tittel,
+                    tittel = it.tittel?.fjernKontrollTegn() ?: eksisterendeDokument.tittel,
                     rekkefølgeIndeks = indeks,
                     dokumentDato = if (indeks == 0 && forsendelse.erNotat) {
                         forespørsel.dokumentDato

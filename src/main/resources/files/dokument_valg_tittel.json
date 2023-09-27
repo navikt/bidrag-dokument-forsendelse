@@ -1,0 +1,27 @@
+{
+  "BI01S02": [
+    {
+      "vedtakType": [
+        "INNKREVING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "engangsbelopType": "SAERTILSKUDD",
+      "soknadFra": [],
+      "titler": [
+        "Varsel innkreving bidrag til særlige utgifter",
+        "Orientering innkreving bidrag til særlige utgifter"
+      ]
+    },
+    {
+      "vedtakType": [
+        "INNKREVING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [],
+      "titler": [
+        "Innkreving orientering til søker"
+      ]
+    }
+  ]
+}

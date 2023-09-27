@@ -3,6 +3,8 @@ package no.nav.bidrag.dokument.forsendelse.service
 import StubUtils
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -22,6 +24,7 @@ import no.nav.bidrag.domain.enums.EngangsbelopType
 import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.enums.VedtakType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -272,17 +275,12 @@ class DokumentValgServiceTest {
         )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 13
+            dokumentValgListe.size shouldBe 7
             dokumentValgListe shouldContainKey "BI01S06"
             dokumentValgListe shouldContainKey "BI01S07"
-            dokumentValgListe shouldContainKey "BI01S31"
-            dokumentValgListe shouldContainKey "BI01S32"
-            dokumentValgListe shouldContainKey "BI01S34"
             dokumentValgListe shouldContainKey "BI01S35"
-            dokumentValgListe shouldContainKey "BI01S36"
             dokumentValgListe shouldContainKey "BI01S46"
             dokumentValgListe shouldContainKey "BI01S62"
-            dokumentValgListe shouldContainKey "BI01S63"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
         }
@@ -802,18 +800,12 @@ class DokumentValgServiceTest {
         )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 13
+            dokumentValgListe.size shouldBe 7
             dokumentValgListe shouldContainKey "BI01S06"
             dokumentValgListe shouldContainKey "BI01S07"
-            dokumentValgListe shouldContainKey "BI01S31"
-            dokumentValgListe shouldContainKey "BI01S32"
-            dokumentValgListe shouldContainKey "BI01S33"
-            dokumentValgListe shouldContainKey "BI01S34"
             dokumentValgListe shouldContainKey "BI01S35"
-            dokumentValgListe shouldContainKey "BI01S36"
             dokumentValgListe shouldContainKey "BI01S46"
             dokumentValgListe shouldContainKey "BI01S62"
-            dokumentValgListe shouldContainKey "BI01S63"
             dokumentValgListe shouldContainKey "BI01S10"
         }
     }
@@ -866,6 +858,51 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01P18"
             dokumentValgListe shouldContainKey "BI01X01"
             dokumentValgListe shouldContainKey "BI01X02"
+        }
+    }
+
+    @Nested
+    inner class HentDokumentmalerMedAlternativeTitlerTest {
+
+        @Test
+        fun `Skal hente alternative titler for dokumentvalg for innkreving særtilskudd`() {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = VedtakType.INNKREVING,
+                    behandlingType = EngangsbelopType.SAERTILSKUDD.name,
+                    soknadFra = SoknadFra.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                )
+            )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 2
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 2
+                fritekstBrev.alternativeTitler shouldContain "Varsel innkreving bidrag til særlige utgifter"
+                fritekstBrev.alternativeTitler shouldContain "Orientering innkreving bidrag til særlige utgifter"
+            }
+        }
+
+        @Test
+        fun `Skal hente alternative titler for dokumentvalg for innkreving bidrag`() {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = VedtakType.INNKREVING,
+                    behandlingType = StonadType.BIDRAG.name,
+                    soknadFra = SoknadFra.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                )
+            )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 3
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 1
+                fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            }
         }
     }
 }
