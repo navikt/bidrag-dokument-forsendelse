@@ -863,28 +863,6 @@ class DokumentValgServiceTest {
 
     @Nested
     inner class HentDokumentmalerMedAlternativeTitlerTest {
-        @Test
-        fun `Skal hente alternative titler for dokumentvalg for revurdering av bidrag`() {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = VedtakType.REVURDERING,
-                    soknadType = "BEGRENSET_REVURDERING",
-                    behandlingType = StonadType.BIDRAG.name,
-                    soknadFra = SoknadFra.NAV_BIDRAG,
-                    erFattetBeregnet = null,
-                )
-            )
-
-            assertSoftly {
-                dokumentValgListe.size shouldBe 7
-                dokumentValgListe shouldContainKey "BI01S02"
-                val fritekstBrev = dokumentValgListe["BI01S02"]!!
-                fritekstBrev.alternativeTitler shouldHaveSize 3
-                fritekstBrev.alternativeTitler shouldContain "Varsel begrenset revurdering av bidrag"
-                fritekstBrev.alternativeTitler shouldContain "Endring eget tiltak pga bidragsforskudd"
-                fritekstBrev.alternativeTitler shouldContain "Fastsettelse eget tiltak pga bidragsforskudd"
-            }
-        }
 
         @Test
         fun `Skal hente alternative titler for dokumentvalg for innkreving særtilskudd`() {
@@ -922,8 +900,7 @@ class DokumentValgServiceTest {
                 dokumentValgListe.size shouldBe 3
                 dokumentValgListe shouldContainKey "BI01S02"
                 val fritekstBrev = dokumentValgListe["BI01S02"]!!
-                fritekstBrev.alternativeTitler shouldHaveSize 2
-                fritekstBrev.alternativeTitler shouldContain "Orientering om innkreving"
+                fritekstBrev.alternativeTitler shouldHaveSize 1
                 fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             }
         }

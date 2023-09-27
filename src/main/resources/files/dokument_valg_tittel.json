@@ -20,24 +20,7 @@
       "stonadType": "BIDRAG",
       "soknadFra": [],
       "titler": [
-        "Orientering om innkreving",
         "Innkreving orientering til søker"
-      ]
-    },
-    {
-      "vedtakType": [
-        "REVURDERING"
-      ],
-      "soknadType": [
-        "BEGRENSET_REVURDERING"
-      ],
-      "behandlingStatus": "IKKE_FATTET",
-      "stonadType": "BIDRAG",
-      "soknadFra": [],
-      "titler": [
-        "Varsel begrenset revurdering av bidrag",
-        "Endring eget tiltak pga bidragsforskudd",
-        "Fastsettelse eget tiltak pga bidragsforskudd"
       ]
     }
   ]
