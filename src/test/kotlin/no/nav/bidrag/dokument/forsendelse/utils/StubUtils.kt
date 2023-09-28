@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
+import no.nav.bidrag.dokument.dto.AvvikType
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
@@ -302,6 +303,15 @@ class StubUtils {
         )
     }
 
+    fun stubMarkerSomIngenDistribusjon(journalpostId: String) {
+        WireMock.stubFor(
+            WireMock.post(WireMock.urlEqualTo("/dokument/journal/$journalpostId/avvik")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+            )
+        )
+    }
+
     private fun jsonToString(data: Any): String {
         return try {
             objectMapper.writeValueAsString(data)
@@ -317,6 +327,13 @@ class StubUtils {
                 WireMock.urlMatching("/vedtak/vedtak/$vedtakId")
             )
             WireMock.verify(antallGanger, verify)
+        }
+
+        fun markSomIngenDistribusjonUtført(journalpostId: String) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/journal/$journalpostId/avvik")
+            )
+            verify.withRequestBody(ContainsPattern(AvvikType.MANGLER_ADRESSE.name))
         }
 
         fun hentBehandlingKalt(behandlingId: String, antallGanger: Int = 1) {

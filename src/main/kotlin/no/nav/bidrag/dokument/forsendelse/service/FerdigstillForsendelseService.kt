@@ -38,16 +38,18 @@ class FerdigstillForsendelseService(
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun ferdigstillOgHentForsendelse(
         forsendelseId: Long,
-        lokalUtskrift: Boolean = false
+        lokalUtskrift: Boolean = false,
+        ingenDistribusjon: Boolean = false,
     ): Forsendelse? {
-        ferdigstillForsendelse(forsendelseId, lokalUtskrift)
+        ferdigstillForsendelse(forsendelseId, lokalUtskrift, ingenDistribusjon)
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
     }
 
     @Transactional
     fun ferdigstillForsendelse(
         forsendelseId: Long,
-        lokalUtskrift: Boolean = false
+        lokalUtskrift: Boolean = false,
+        ingenDistribusjon: Boolean = false,
     ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
@@ -79,7 +81,7 @@ class FerdigstillForsendelseService(
                 ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
                 ForsendelseType.NOTAT -> JournalpostType.NOTAT
             },
-            kanal = if (lokalUtskrift) MottakUtsendingKanal.LOKAL_UTSKRIFT else null,
+            kanal = if (lokalUtskrift) MottakUtsendingKanal.LOKAL_UTSKRIFT else if (ingenDistribusjon) MottakUtsendingKanal.INGEN_DISTRIBUSJON else null,
             dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
                 OpprettDokumentDto(
                     brevkode = it.dokumentmalId,
