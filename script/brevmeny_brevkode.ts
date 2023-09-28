@@ -11,15 +11,33 @@ const skipBrevkode = ["BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI
 
 const brevkoderSomErstattesAvEttBrev = {
   "BI01S52": ["BI01S53"],
-  "BI01S54": ["BI01S55", "BI01S56", "BI01S57", "BI01S58"],
+  // "BI01S54": ["BI01S55", "BI01S56", "BI01S57", "BI01S58"],
   "BI01S47": ["BI01S48", "BI01S49"],
   "BI01S27": ["BI01S28", "BI01S29", "BI01S30", "BI01S45"],
   "BI01S15": ["BI01S16"],
   "BI01S12": ["BI01S13"]
 }
+
+interface IBrevalg {
+  stonad: string;
+  vedtakType: string;
+  saksttype: string;
+  behandlingStatus: string;
+  soknadGruppe: string;
+  stonadType: string;
+  soknadType: string[];
+  soknadFra: string[];
+  brevkode: string[];
+  erKlageEnhet: string;
+  erVedtakIkkeTilbakekreving: boolean;
+  erFattetVedtak: boolean;
+  erManuelBeregning: boolean;
+  tittel: string;
+}
+
 const ignorer_brevkoder = ["BI01P11", "BI01S02", "BI01S10", "BI01S67", "BI01P18", "BI01X01", "BI01X02", "BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70", "BI01S61", "BI01S65", "BI01P17", "BI01S31", "BI01S32", "BI01S33", "BI01S34", "BI01S36", "BI01S63"]
 brevmeny2jsonData.forEach((data: Record<string, string>) => {
-      const result = {
+      const result: IBrevalg = {
         "stonad": `${data["KODE_STONAD"]?.trim()}`, // HG  -- ER XX hvis urelevant
         "sakstype": `${data["KODE_SAKSTYPE"]?.trim()}`, // UG  -- Er XX hvis urelevant
         "soknadGruppe": `${kodemapper.soknadGruppeToName(data["KODE_SOKN_GR"]?.trim())}`, // StønadType eller EngangsbeløpType
@@ -110,7 +128,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
   // }, [])
   const mergedValues4 = mergedValues2.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualByVedtakType(filterObj, currObj) && isEqualBySoknadFra(filterObj, currObj) && isEqualByBrevkode(filterObj, currObj) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualByVedtakType(filterObj, currObj, false) && isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
 
     if (existingObject) {
       delete existingObject.erManuelBeregning
@@ -152,6 +170,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     return prevValues
   }, [])
 
+
   const behandlingType = mergedValuesVedtakType2[0].stonadType ?? mergedValuesVedtakType2[0].engangsbelopType ?? mergedValuesVedtakType2[0].soknadGruppe
   existingVedtakType[behandlingType] = mergedValuesVedtakType2.map((v) => ({
     ...v,
@@ -182,6 +201,39 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
   return existingVedtakType;
 }, {})
 
+
+function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string, IBrevalg[]> {
+  // 20.09.2023 - Etter fattet vedtak om opphør av bidrag så kom det bare forslag om varselbrev istedenfor vedtaksbrev. Dette skal fikse feilen
+  mapValues["BIDRAG"].push({
+    "soknadType": [
+      "OPPHOR"
+    ],
+    "soknadFra": [
+      "NAV_BIDRAG"
+    ],
+    "erVedtakIkkeTilbakekreving": false,
+    "stonadType": "BIDRAG",
+    "vedtakType": [
+      "OPPHØR"
+    ],
+    "behandlingStatus": "FATTET_MANUELT",
+    "forvaltning": "BIDRAG",
+    "brevkoder": [
+      "BI01G01",
+      "BI01G02"
+    ]
+  })
+  mapValues["BIDRAG"] = mapValues["BIDRAG"].reduce((previousValue, currentValue) => {
+    if (currentValue.vedtakType.includes("OPPHØR") && currentValue.brevkoder.length == 1 && currentValue.brevkoder.includes("BI01S07") && currentValue.soknadFra.includes("NAV_BIDRAG")) {
+      currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "OPPHØR")
+      currentValue.soknadType = currentValue.soknadType.filter((v) => v != "OPPHOR")
+    }
+    previousValue.push(currentValue)
+    return previousValue
+  }, [])
+  return mapValues
+}
+
 function settSammenBrevkoder(brevkoder: string[]): string[] {
   let brevkoderSattSammen = [...brevkoder]
   Object.keys(brevkoderSomErstattesAvEttBrev).forEach((brevkodeSomErstattesMed) => {
@@ -195,4 +247,5 @@ function settSammenBrevkoder(brevkoder: string[]): string[] {
   return [...new Set(brevkoderSattSammen)]
 }
 
-fs.writeFileSync('../src/main/resources/files/dokument_valg.json', JSON.stringify(dokumentValgKtBySoknadGruppe, null, 2));
+
+fs.writeFileSync('../src/main/resources/files/dokument_valg.json', JSON.stringify(manueltFjernetBrevkoder(dokumentValgKtBySoknadGruppe), null, 2));
