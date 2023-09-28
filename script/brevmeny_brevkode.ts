@@ -228,6 +228,11 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
       currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "OPPHØR")
       currentValue.soknadType = currentValue.soknadType.filter((v) => v != "OPPHOR")
     }
+    // Begrenset revurdering av bidrag skal ikke vise brev S06 men S22 og S23
+    if (currentValue.soknadType.includes("BEGRENSET_REVURDERING") && currentValue.behandlingStatus == "IKKE_FATTET" && currentValue.brevkoder.length == 1 && currentValue.brevkoder.includes("BI01S06") && currentValue.soknadFra.includes("NAV_BIDRAG")) {
+      currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "REVURDERING")
+      currentValue.soknadType = currentValue.soknadType.filter((v) => v != "BEGRENSET_REVURDERING")
+    }
     previousValue.push(currentValue)
     return previousValue
   }, [])

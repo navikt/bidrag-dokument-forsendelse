@@ -2110,7 +2110,6 @@
     },
     {
       "soknadType": [
-        "BEGRENSET_REVURDERING",
         "EGET_TILTAK",
         "ENDRING",
         "KLAGE",
@@ -2131,8 +2130,7 @@
         "ENDRING",
         "FASTSETTELSE",
         "KLAGE",
-        "OPPHØR",
-        "REVURDERING"
+        "OPPHØR"
       ],
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",

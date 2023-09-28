@@ -70,14 +70,14 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
 typealias SoknadTyper = List<SoknadType>
 
 fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
-    if (st == "EGET_TILTAK" || st == "OMGJORING") {
+    if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING") {
         return soknadType.contains(st)
     }
     return vedtakType.contains(vt)
 }
 
 fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
-    if (st == "EGET_TILTAK" || st == "OMGJORING") {
+    if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING") {
         return soknadType.contains(st)
     }
     return vedtakType.contains(vt)

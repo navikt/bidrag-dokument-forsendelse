@@ -284,6 +284,27 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for varsling begrenset revurdering bidrag`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.REVURDERING,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                soknadType = "BEGRENSET_REVURDERING",
+                behandlingType = StonadType.BIDRAG.name,
+                erFattetBeregnet = null
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01S22"
+            dokumentValgListe shouldContainKey "BI01S23"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for vedtak revurdering bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
