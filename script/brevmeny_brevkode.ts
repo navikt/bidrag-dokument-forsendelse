@@ -11,7 +11,7 @@ const skipBrevkode = ["BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI
 
 const brevkoderSomErstattesAvEttBrev = {
   "BI01S52": ["BI01S53"],
-  "BI01S54": ["BI01S55", "BI01S56", "BI01S57", "BI01S58"],
+  // "BI01S54": ["BI01S55", "BI01S56", "BI01S57", "BI01S58"],
   "BI01S47": ["BI01S48", "BI01S49"],
   "BI01S27": ["BI01S28", "BI01S29", "BI01S30", "BI01S45"],
   "BI01S15": ["BI01S16"],
@@ -128,7 +128,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
   // }, [])
   const mergedValues4 = mergedValues2.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualByVedtakType(filterObj, currObj) && isEqualBySoknadFra(filterObj, currObj) && isEqualByBrevkode(filterObj, currObj) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualByVedtakType(filterObj, currObj, false) && isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
 
     if (existingObject) {
       delete existingObject.erManuelBeregning
@@ -169,6 +169,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     }
     return prevValues
   }, [])
+
 
   const behandlingType = mergedValuesVedtakType2[0].stonadType ?? mergedValuesVedtakType2[0].engangsbelopType ?? mergedValuesVedtakType2[0].soknadGruppe
   existingVedtakType[behandlingType] = mergedValuesVedtakType2.map((v) => ({
@@ -226,6 +227,11 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
     if (currentValue.vedtakType.includes("OPPHØR") && currentValue.brevkoder.length == 1 && currentValue.brevkoder.includes("BI01S07") && currentValue.soknadFra.includes("NAV_BIDRAG")) {
       currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "OPPHØR")
       currentValue.soknadType = currentValue.soknadType.filter((v) => v != "OPPHOR")
+    }
+    // Begrenset revurdering av bidrag skal ikke vise brev S06 men S22 og S23
+    if (currentValue.soknadType.includes("BEGRENSET_REVURDERING") && currentValue.behandlingStatus == "IKKE_FATTET" && currentValue.brevkoder.length == 1 && currentValue.brevkoder.includes("BI01S06") && currentValue.soknadFra.includes("NAV_BIDRAG")) {
+      currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "REVURDERING")
+      currentValue.soknadType = currentValue.soknadType.filter((v) => v != "BEGRENSET_REVURDERING")
     }
     previousValue.push(currentValue)
     return previousValue
