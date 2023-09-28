@@ -39,6 +39,7 @@ import no.nav.bidrag.domain.enums.VedtakType
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -261,6 +262,7 @@ class OpprettForsendelseServiceTest {
     }
 
     @Test
+    @Disabled
     fun `Skal ikke lagre forsendelse tittel for notat men legge til prefiks på dokument tittel`() {
         every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(

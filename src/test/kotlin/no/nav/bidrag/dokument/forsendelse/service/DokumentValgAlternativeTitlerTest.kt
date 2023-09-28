@@ -35,14 +35,21 @@ class DokumentValgAlternativeTitlerTest {
     @MockkBean
     lateinit var bidragBehandlingConsumer: BidragBehandlingConsumer
 
+    @MockkBean
+    lateinit var tittelService: ForsendelseTittelService
+
     var dokumentValgService: DokumentValgService? = null
 
     @BeforeEach
     fun init() {
-        dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer)
+        dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
+        every { tittelService.hentTittelMedPrefiks(any<String>(), any()) } answers {
+            val tittel = firstArg<String>()
+            tittel
+        }
     }
 
     @Test

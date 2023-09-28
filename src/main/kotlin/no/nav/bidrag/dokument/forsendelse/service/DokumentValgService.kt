@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
+import no.nav.bidrag.dokument.forsendelse.api.dto.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
@@ -28,7 +29,8 @@ import java.nio.charset.StandardCharsets
 class DokumentValgService(
     val bestillingConsumer: BidragDokumentBestillingConsumer,
     val bidragVedtakConsumer: BidragVedtakConsumer,
-    val behandlingConsumer: BidragBehandlingConsumer
+    val behandlingConsumer: BidragBehandlingConsumer,
+    val tittelService: ForsendelseTittelService
 ) {
 
     val FRITEKSTBREV = "BI01S02"
@@ -47,8 +49,8 @@ class DokumentValgService(
     }
 
     fun hentNotatListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
-        return if (erKlage(request)) (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it) }
-        else notaterBrevkoder.associateWith { mapToMalDetaljer(it) }
+        return if (erKlage(request)) (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it, request, true) }
+        else notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
     }
 
     fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
@@ -121,11 +123,12 @@ class DokumentValgService(
             .filter { it.value.type != DokumentMalType.NOTAT }
     }
 
-    fun mapToMalDetaljer(malId: String, request: HentDokumentValgRequest? = null): DokumentMalDetaljer {
+    fun mapToMalDetaljer(malId: String, request: HentDokumentValgRequest? = null, leggTilPrefiksPåTittel: Boolean = false): DokumentMalDetaljer {
         val dokumentDetaljer = bestillingConsumer.dokumentmalDetaljer()
         val malInfo = dokumentDetaljer[malId]
-        val tittel = malInfo?.beskrivelse ?: "Ukjent"
+        val originalTittel = malInfo?.beskrivelse ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
+        val tittel = if (leggTilPrefiksPåTittel) tittelService.hentTittelMedPrefiks(originalTittel, request?.tilBehandlingInfo()) else originalTittel
         return DokumentMalDetaljer(tittel, malType, alternativeTitler = hentAlternativeTitlerForMal(malId, request))
     }
 

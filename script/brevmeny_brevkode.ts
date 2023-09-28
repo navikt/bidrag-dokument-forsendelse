@@ -236,6 +236,14 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
     previousValue.push(currentValue)
     return previousValue
   }, [])
+  mapValues["ETTERGIVELSE"] = mapValues["ETTERGIVELSE"].reduce((previousValue, currentValue) => {
+    // Legg til brev S21 og S22 på klage for ettergivelse
+    if (currentValue.soknadType.includes("KLAGE") && currentValue.behandlingStatus == "IKKE_FATTET" && currentValue.forvaltning == "BIDRAG") {
+      currentValue.brevkoder = ["BI01S20", "BI01S21", ...currentValue.brevkoder]
+    }
+    previousValue.push(currentValue)
+    return previousValue
+  }, [])
   return mapValues
 }
 
