@@ -432,7 +432,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal opprette forsendelse som notat med tittel som beskriver behandling`() {
+    fun `Skal opprette forsendelse som notat`() {
         val soknadId = "12321321"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
             .copy(
@@ -445,7 +445,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 ),
                 dokumenter = listOf(
                     OpprettDokumentForespørsel(
-                        tittel = "Tittel notat",
+                        tittel = "Ektefellebidrag, Tittel notat",
                         dokumentmalId = DOKUMENTMAL_NOTAT
                     )
                 ),
