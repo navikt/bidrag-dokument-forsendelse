@@ -786,6 +786,28 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for klage ettergivelse fra bidragspliktig`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                behandlingType = EngangsbelopType.ETTERGIVELSE.name,
+                soknadFra = SoknadFra.BIDRAGSPLIKTIG
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 6
+            dokumentValgListe shouldContainKey "BI01S20"
+            dokumentValgListe shouldContainKey "BI01S21"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S60"
+            dokumentValgListe shouldContainKey "BI01S64"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+
+    @Test
     fun `Skal hente dokumentvalg for BIDRAG med vedtaktype OPPHØR`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(

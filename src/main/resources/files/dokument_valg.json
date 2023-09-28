@@ -13127,6 +13127,8 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
+        "BI01S20",
+        "BI01S21",
         "BI01S60",
         "BI01S64"
       ]
