@@ -38,11 +38,15 @@ class DokumentValgServiceTest {
     @MockkBean
     lateinit var bidragBehandlingConsumer: BidragBehandlingConsumer
 
+    @MockkBean
+    lateinit var sakService: SakService
+    var tittelService: ForsendelseTittelService? = null
     var dokumentValgService: DokumentValgService? = null
 
     @BeforeEach
     fun init() {
-        dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer)
+        dokumentValgService = DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
@@ -957,6 +961,41 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01P18"
             dokumentValgListe shouldContainKey "BI01X01"
             dokumentValgListe shouldContainKey "BI01X02"
+
+        }
+    }
+
+    @Test
+    fun `Skal hente notater for klage med prefiks tittel`() {
+        val dokumentValgListe = dokumentValgService!!.hentNotatListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = StonadType.EKTEFELLEBIDRAG
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe["BI01P17"]!!.beskrivelse shouldBe "Ektefellebidrag klage, Innstilling til klageinstans"
+        }
+    }
+
+    @Test
+    fun `Skal hente notater med prefiks tittel`() {
+        val dokumentValgListe = dokumentValgService!!.hentNotatListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                erFattetBeregnet = true,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                stonadType = StonadType.EKTEFELLEBIDRAG
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe["BI01P11"]!!.beskrivelse shouldBe "Ektefellebidrag, NOTAT P11 T"
         }
     }
 

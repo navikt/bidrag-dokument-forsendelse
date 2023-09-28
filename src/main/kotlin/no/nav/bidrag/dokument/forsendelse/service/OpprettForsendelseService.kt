@@ -67,13 +67,13 @@ class OpprettForsendelseService(
         forsendelseType: ForsendelseType
     ): List<OpprettDokumentForespørsel> {
         val dokumenter = forespørsel.dokumenter
-        val skalLeggeTilPrefiksPåNotatTittel = forsendelseType == ForsendelseType.NOTAT && dokumenter.size == 1 && forespørsel.opprettTittel == true
-        if (skalLeggeTilPrefiksPåNotatTittel) {
-            val originalTittel = dokumenter[0].tittel
-            val tittelPrefiks = forsendelseTittelService.opprettForsendelseBehandlingPrefiks(forespørsel)
-            val nyTittel = tittelPrefiks?.let { "$it, $originalTittel" } ?: originalTittel
-            return dokumenter.map { it.copy(tittel = nyTittel) }
-        }
+//        val skalLeggeTilPrefiksPåNotatTittel = forsendelseType == ForsendelseType.NOTAT && dokumenter.size == 1 && forespørsel.opprettTittel == true
+//        if (skalLeggeTilPrefiksPåNotatTittel) {
+//            val originalTittel = dokumenter[0].tittel
+//            val tittelPrefiks = forsendelseTittelService.opprettForsendelseBehandlingPrefiks(forespørsel.tilBehandlingInfo())
+//            val nyTittel = tittelPrefiks?.let { "$it, $originalTittel" } ?: originalTittel
+//            return dokumenter.map { it.copy(tittel = nyTittel) }
+//        }
 
         return dokumenter
     }

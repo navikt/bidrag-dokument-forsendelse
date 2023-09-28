@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.gjelderKlage
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
@@ -35,12 +36,17 @@ class ForsendelseTittelService(
         return forespørsel.tilBehandlingInfo()?.tilBeskrivelse(gjelderRolle?.type, vedtak, behandling)
     }
 
-    fun opprettForsendelseBehandlingPrefiks(forespørsel: OpprettForsendelseForespørsel): String? {
-        val vedtak = forespørsel.behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
-        val behandling = if (vedtak == null) forespørsel.behandlingInfo?.behandlingId?.let { behandlingConsumer.hentBehandling(it) } else null
-        val gjelderKlage = forespørsel.tilBehandlingInfo()?.gjelderKlage(vedtak, behandling) ?: false
+    fun opprettForsendelseBehandlingPrefiks(behandlingInfo: BehandlingInfo?): String? {
+        val vedtak = behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) }
+        val behandling = if (vedtak == null) behandlingInfo?.behandlingId?.let { behandlingConsumer.hentBehandling(it) } else null
+        val gjelderKlage = behandlingInfo?.gjelderKlage(vedtak, behandling) ?: false
         val klagePostfiks = if (gjelderKlage) " klage" else ""
-        val behandlingType = forespørsel.tilBehandlingInfo()?.tilBeskrivelseBehandlingType(vedtak, behandling)
+        val behandlingType = behandlingInfo?.tilBeskrivelseBehandlingType(vedtak, behandling)
         return behandlingType?.let { "$it$klagePostfiks" }
+    }
+
+    fun hentTittelMedPrefiks(originalTittel: String, forespørsel: BehandlingInfo?): String {
+        val tittelPrefiks = opprettForsendelseBehandlingPrefiks(forespørsel)
+        return tittelPrefiks?.let { "$it, $originalTittel" } ?: originalTittel
     }
 }

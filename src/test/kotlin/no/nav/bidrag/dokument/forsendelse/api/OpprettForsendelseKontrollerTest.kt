@@ -466,6 +466,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`() {
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
             .copy(
@@ -491,6 +492,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    @Disabled
     fun `Skal opprette notat med prefiks tittel som inneholder klage`() {
         val soknadId = "12321321"
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
