@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.util.UriComponentsBuilder
 import java.time.LocalDateTime
 
 class DistribuerKontrollerTest : KontrollerTestRunner() {
@@ -41,10 +42,14 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
     protected fun utførDistribuerForsendelse(
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
-        batchId: String? = null
+        batchId: String? = null,
+        ingenDistribusjon: Boolean? = false,
     ): ResponseEntity<DistribuerJournalpostResponse> {
+        val url = UriComponentsBuilder.fromUriString("${rootUri()}/journal/distribuer/$forsendelseId")
+        batchId?.let { url.queryParam("batchId", it) }
+        ingenDistribusjon?.let { url.queryParam("ingenDistribusjon", it) }
         return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
-            "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
+            url.toUriString(),
             forespørsel?.let { HttpEntity(it) }
         )
     }
@@ -552,6 +557,81 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             """.trimIndent().replace("\n", "").replace("  ", "")
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
+
+            verify {
+                forsendelseHendelseProdusent.publiserForsendelse(withArg {
+                    it.forsendelseId shouldBe forsendelse.forsendelseId
+                })
+            }
+        }
+    }
+
+    @Test
+    fun `skal distribuere forsendelse som ingen distribusjon`() {
+        val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
+        val nyJournalpostId = "21313331231"
+        stubUtils.stubHentDokument()
+        stubUtils.stubBestillDistribusjon(bestillingId)
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
+                    nyttDokument(
+                        journalpostId = null,
+                        dokumentreferanseOriginal = null,
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        tittel = "Tittel vedlegg",
+                        dokumentMalId = "BI100",
+                        rekkefølgeIndeks = 1
+                    )
+                )
+            )
+        )
+
+        stubUtils.stubOpprettJournalpost(
+            nyJournalpostId,
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+        )
+
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, DistribuerJournalpostRequest(), ingenDistribusjon = true)
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
+
+        assertSoftly {
+            oppdatertForsendelse.distribusjonBestillingsId shouldBe null
+            oppdatertForsendelse.distribusjonKanal shouldBe DistribusjonKanal.INGEN_DISTRIBUSJON
+            oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
+            oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
+
+            oppdatertForsendelse.dokumenter.forEach {
+                it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
+            }
+
+            @Language("Json")
+            val expectedJson = """
+                {
+                    "skalFerdigstilles":true,
+                    "tittel":"Tittel på hoveddokument",
+                    "gjelderIdent":"${forsendelse.gjelderIdent}",
+                    "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
+                    "dokumenter":[
+                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                    ],
+                    "tilknyttSaker":["${forsendelse.saksnummer}"],
+                    "kanal":"INGEN_DISTRIBUSJON",
+                    "tema":"BID",
+                    "journalposttype":"UTGÅENDE",
+                    "referanseId":"$referanseId",
+                    "journalførendeEnhet":"${forsendelse.enhet}"
+                }
+            """.trimIndent().replace("\n", "").replace("  ", "")
+            stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
+            stubUtils.Valider().bestillDistribusjonIkkeKalt("JOARK-$nyJournalpostId")
 
             verify {
                 forsendelseHendelseProdusent.publiserForsendelse(withArg {

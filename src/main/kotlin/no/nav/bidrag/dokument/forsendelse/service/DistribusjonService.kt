@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
@@ -28,7 +29,8 @@ class DistribusjonService(
     private val bidragDokumentConsumer: BidragDokumentConsumer,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val dokumentStorageService: DokumentStorageService,
-    private val hendelseBestillingService: ForsendelseHendelseBestillingService
+    private val hendelseBestillingService: ForsendelseHendelseBestillingService,
+    private val meterRegistry: MeterRegistry
 ) {
 
     fun harDistribuert(forsendelse: Forsendelse): Boolean {
@@ -53,10 +55,11 @@ class DistribusjonService(
     fun distribuer(
         forsendelseId: Long,
         distribuerJournalpostRequest: DistribuerJournalpostRequest?,
-        batchId: String?
+        batchId: String?,
+        ingenDistribusjon: Boolean
     ): DistribuerJournalpostResponse {
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
-        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt og batchId=$batchId" }
+        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt, ingenDistribusjon=$ingenDistribusjon og batchId=$batchId" }
 
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
@@ -70,19 +73,40 @@ class DistribusjonService(
         validerKanDistribuere(forsendelseId)
 
         if (forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
-            forsendelse = ferdigstillForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt)!!
+            forsendelse = ferdigstillForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt, ingenDistribusjon)!!
         }
 
-        val result = if (distribuerLokalt) {
+        val result = if (ingenDistribusjon) markerSomIngenDistribusjon(forsendelse)
+        else if (distribuerLokalt) {
             bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
         } else {
             bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
         }
 
         hendelseBestillingService.bestill(forsendelseId)
-        log.info { "Har bestilt distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt og batchId=$batchId og sendt ut hendelse" }
+        log.info { "Har bestilt distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt, ingenDistribusjon=$ingenDistribusjon og batchId=$batchId og sendt ut hendelse" }
 
         return result
+    }
+
+    private fun markerSomIngenDistribusjon(forsendelse: Forsendelse): DistribuerJournalpostResponse {
+        measureIngenDistribusjon(forsendelse)
+        forsendelseTjeneste.lagre(
+            forsendelse.copy(
+                distribuertAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
+                distribuertTidspunkt = LocalDateTime.now(),
+                status = ForsendelseStatus.DISTRIBUERT,
+                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
+                    ?: forsendelse.endretAvIdent,
+                endretTidspunkt = LocalDateTime.now(),
+                distribusjonKanal = DistribusjonKanal.INGEN_DISTRIBUSJON
+            )
+        )
+        log.info { "Forsendelsen ferdigstilt uten distribusjon. Forsendelse og Journalpost markert som ikke distribuert med kanal INGEN_DISTRIBUSJON." }
+        return DistribuerJournalpostResponse(
+            bestillingsId = null,
+            journalpostId = forsendelse.journalpostIdFagarkiv ?: ""
+        )
     }
 
     private fun bestillLokalDistribusjon(forsendelseId: Long, forsendelse: Forsendelse, batchId: String?): DistribuerJournalpostResponse {
@@ -148,6 +172,14 @@ class DistribusjonService(
             }
 
         return resultat
+    }
+
+    private fun measureIngenDistribusjon(forsendelse: Forsendelse) {
+        meterRegistry.counter(
+            "forsendelse_ingen_distribusjon",
+            "enhet", forsendelse.enhet,
+            "tema", forsendelse.tema.name,
+        ).increment()
     }
 
     fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? {
