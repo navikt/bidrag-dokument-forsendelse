@@ -102,7 +102,7 @@ class DistribusjonService(
                 distribusjonKanal = DistribusjonKanal.INGEN_DISTRIBUSJON
             )
         )
-        log.info { "Forsendelsen ble bestilt som ingen distribusjon. Forsendelse og Journalpost markert som ingen distribusjon." }
+        log.info { "Forsendelsen ferdigstilt uten distribusjon. Forsendelse og Journalpost markert som ikke distribuert med kanal INGEN_DISTRIBUSJON." }
         return DistribuerJournalpostResponse(
             bestillingsId = null,
             journalpostId = forsendelse.journalpostIdFagarkiv ?: ""
