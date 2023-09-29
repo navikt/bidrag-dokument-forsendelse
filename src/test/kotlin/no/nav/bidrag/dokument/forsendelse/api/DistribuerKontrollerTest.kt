@@ -592,7 +592,6 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             nyJournalpostId,
             forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
         )
-        stubUtils.stubMarkerSomIngenDistribusjon(nyJournalpostId)
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, DistribuerJournalpostRequest(), ingenDistribusjon = true)
 
