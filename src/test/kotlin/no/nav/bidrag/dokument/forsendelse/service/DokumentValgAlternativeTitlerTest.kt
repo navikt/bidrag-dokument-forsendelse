@@ -120,7 +120,7 @@ class DokumentValgAlternativeTitlerTest {
     fun `Skal hente alternative titler for dokumentvalg for vedtak av eget tiltak bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.INNKREVING,
+                vedtakType = VedtakType.ENDRING,
                 soknadType = "EGET_TILTAK",
                 behandlingType = StonadType.BIDRAG.name,
                 soknadFra = SoknadFra.NAV_BIDRAG,

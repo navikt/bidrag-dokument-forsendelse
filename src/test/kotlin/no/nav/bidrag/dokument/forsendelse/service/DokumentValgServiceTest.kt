@@ -938,6 +938,50 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for vedtak av eget tiltak bidrag - ikke beregnet`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = false,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01S07"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak av eget tiltak bidrag - beregnet`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.ENDRING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = true,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01B01"
+            dokumentValgListe shouldContainKey "BI01B04"
+            dokumentValgListe shouldContainKey "BI01B05"
+            dokumentValgListe shouldContainKey "BI01B20"
+            dokumentValgListe shouldContainKey "BI01B21"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente notater`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe()
 
