@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
-import no.nav.bidrag.commons.web.config.RestTemplateBuilderBean
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder
@@ -20,7 +19,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 @Configuration
 @EnableSecurityConfiguration
-@Import(RestOperationsAzure::class, RestTemplateBuilderBean::class)
+@Import(RestOperationsAzure::class)
 class RestConfig {
 
     @Bean

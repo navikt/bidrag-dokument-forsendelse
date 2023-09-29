@@ -12,6 +12,7 @@ import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock
 import no.nav.bidrag.commons.web.CorrelationIdFilter
 import no.nav.bidrag.commons.web.DefaultCorsFilter
+import no.nav.bidrag.commons.web.MdcFilter
 import no.nav.bidrag.commons.web.UserMdcFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -29,7 +30,7 @@ import javax.sql.DataSource
 @Configuration
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "30m")
-@Import(CorrelationIdFilter::class, DefaultCorsFilter::class, UserMdcFilter::class)
+@Import(CorrelationIdFilter::class, DefaultCorsFilter::class, UserMdcFilter::class, MdcFilter::class)
 class DefaultConfiguration {
 
     @Bean
