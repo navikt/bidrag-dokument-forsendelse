@@ -92,4 +92,48 @@ class DokumentValgAlternativeTitlerTest {
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
         }
     }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for varsel av eget tiltak bidrag`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.INNKREVING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = null,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 7
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 3
+            fritekstBrev.alternativeTitler shouldContain "Varsel om offentlig tilbakekreving"
+            fritekstBrev.alternativeTitler shouldContain "Orientering om offentlig tilbakekreving"
+            fritekstBrev.alternativeTitler shouldContain "Varsel om endring av barnebidrag barnetillegg"
+        }
+    }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for vedtak av eget tiltak bidrag`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.INNKREVING,
+                soknadType = "EGET_TILTAK",
+                behandlingType = StonadType.BIDRAG.name,
+                soknadFra = SoknadFra.NAV_BIDRAG,
+                erFattetBeregnet = false,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om offentlig tilbakekreving"
+        }
+    }
 }

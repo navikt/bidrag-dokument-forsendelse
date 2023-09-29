@@ -22,6 +22,32 @@
       "titler": [
         "Innkreving orientering til søker"
       ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [
+        "EGET_TILTAK"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [],
+      "titler": [
+        "Varsel om offentlig tilbakekreving",
+        "Orientering om offentlig tilbakekreving",
+        "Varsel om endring av barnebidrag barnetillegg"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [
+        "EGET_TILTAK"
+      ],
+      "behandlingStatus": "FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [],
+      "titler": [
+        "Vedtak om offentlig tilbakekreving"
+      ]
     }
   ]
 }
