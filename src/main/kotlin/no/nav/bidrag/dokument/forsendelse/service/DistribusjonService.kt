@@ -59,7 +59,7 @@ class DistribusjonService(
         ingenDistribusjon: Boolean
     ): DistribuerJournalpostResponse {
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
-        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt og batchId=$batchId" }
+        log.info { "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt, ingenDistribusjon=$ingenDistribusjon og batchId=$batchId" }
 
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 

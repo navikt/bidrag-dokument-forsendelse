@@ -46,7 +46,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         ingenDistribusjon: Boolean? = false,
     ): ResponseEntity<DistribuerJournalpostResponse> {
         val url = UriComponentsBuilder.fromUriString("${rootUri()}/journal/distribuer/$forsendelseId")
-        batchId?.let { url.queryParam(batchId, it) }
+        batchId?.let { url.queryParam("batchId", it) }
         ingenDistribusjon?.let { url.queryParam("ingenDistribusjon", it) }
         return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             url.toUriString(),
