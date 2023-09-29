@@ -1,8 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.consumer
 
-import no.nav.bidrag.commons.web.EnhetFilter.Companion.X_ENHET_HEADER
 import no.nav.bidrag.commons.web.client.AbstractRestClient
-import no.nav.bidrag.dokument.dto.BehandleAvvikshendelseResponse
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
 import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
 import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
@@ -11,11 +9,8 @@ import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
 import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
-import no.nav.bidrag.transport.dokument.AvvikType
-import no.nav.bidrag.transport.dokument.Avvikshendelse
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -35,13 +30,6 @@ class BidragDokumentConsumer(
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
         return postForEntity(createUri("/journalpost/JOARK"), opprettJournalpostRequest)
-    }
-
-    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun markerIngenDistribusjon(journalpostId: String, enhet: String): BehandleAvvikshendelseResponse? {
-        val header = HttpHeaders()
-        header.add(X_ENHET_HEADER, enhet)
-        return postForEntity(createUri("/journal/$journalpostId/avvik"), Avvikshendelse(AvvikType.MANGLER_ADRESSE), header)
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
