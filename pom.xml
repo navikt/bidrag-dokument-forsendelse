@@ -17,7 +17,7 @@
     <java.version>17</java.version>
     <bidrag-dokument-dto.version>1.6.41</bidrag-dokument-dto.version>
     <kotlin.version>1.9.0</kotlin.version>
-    <bidrag-commons.version>20230510130746_8b93e85</bidrag-commons.version>
+    <bidrag-commons.version>20231002151454_eab4a7b</bidrag-commons.version>
     <bidrag-transport.version>20230821134807_d0642b9</bidrag-transport.version>
     <bidrag-domain.version>20230817134109_ada9d45</bidrag-domain.version>
     <logback-encoder.version>7.4</logback-encoder.version>

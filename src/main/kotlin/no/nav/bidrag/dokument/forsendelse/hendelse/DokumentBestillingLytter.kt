@@ -53,6 +53,11 @@ class DokumentBestillingLytter(
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 
         try {
+            if (erStatiskDokument(dokument.dokumentmalId)) {
+                oppdaterStatusForStatiskDokument(dokument)
+                return
+            }
+
             val arkivSystem = sendBestilling(forsendelse, dokument)
             measureBestilling(forsendelse, dokument)
             dokumentTjeneste.lagreDokument(
@@ -84,6 +89,20 @@ class DokumentBestillingLytter(
             )
             LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }
         }
+    }
+
+    private fun oppdaterStatusForStatiskDokument(dokument: Dokument) {
+        dokumentTjeneste.lagreDokument(
+            dokument.copy(
+                arkivsystem = DokumentArkivSystem.BIDRAG,
+                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                metadata = run {
+                    val metadata = dokument.metadata
+                    metadata.markerSomStatiskDokument()
+                    metadata.copy()
+                }
+            )
+        )
     }
 
     private fun sendBestilling(forsendelse: Forsendelse, dokument: Dokument): DokumentArkivSystemDto? {
@@ -136,6 +155,10 @@ class DokumentBestillingLytter(
 
     private fun kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
         return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.kanBestilles ?: false
+    }
+
+    private fun erStatiskDokument(dokumentMal: String): Boolean {
+        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
     }
 
     private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel {

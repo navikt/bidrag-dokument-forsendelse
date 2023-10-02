@@ -53,6 +53,11 @@ class DokumentValgService(
         else notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
     }
 
+    fun hentVedleggListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
+        return if (erKlage(request)) (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it, request, true) }
+        else notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
+    }
+
     fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
         return if (request == null) false
         else if (request.erKlage()) true
@@ -129,7 +134,7 @@ class DokumentValgService(
         val originalTittel = malInfo?.beskrivelse ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
         val tittel = if (leggTilPrefiksPåTittel) tittelService.hentTittelMedPrefiks(originalTittel, request?.tilBehandlingInfo()) else originalTittel
-        return DokumentMalDetaljer(tittel, malType, alternativeTitler = hentAlternativeTitlerForMal(malId, request))
+        return DokumentMalDetaljer(tittel, type = malType, alternativeTitler = hentAlternativeTitlerForMal(malId, request))
     }
 
     fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {
