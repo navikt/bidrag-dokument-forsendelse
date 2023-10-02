@@ -153,7 +153,7 @@ class FysiskDokumentService(
 
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
-        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
+        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT || dokument.arkivsystem == DokumentArkivSystem.BIDRAG) {
             DokumentMetadata(
                 journalpostId = dokument.forsendelseIdMedPrefix,
                 dokumentreferanse = dokument.dokumentreferanse,
@@ -172,7 +172,7 @@ class FysiskDokumentService(
                 status = dokument.tilDokumentStatusDto(),
                 arkivsystem = dokument.tilArkivSystemDto()
             )
-        } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE || dokument.arkivsystem == DokumentArkivSystem.BIDRAG) {
+        } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal).first()
         } else if (dokument.arkivsystem == DokumentArkivSystem.UKJENT) {
             DokumentMetadata(
