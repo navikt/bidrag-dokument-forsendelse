@@ -19,9 +19,11 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_3
@@ -261,6 +263,14 @@ class StubUtils {
         dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
         dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_2] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
         dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_3] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_STATISK_VEDLEGG] = DokumentMalDetaljer(
+            "Dokument statisk vedlegg",
+            DokumentMalType.UTGÅENDE,
+            true,
+            statiskInnhold = true,
+            innholdType = DokumentmalInnholdType.SKJEMA,
+            tilhorerEnheter = listOf("4860")
+        )
         WireMock.stubFor(
             WireMock.get(WireMock.urlEqualTo("/bestilling/dokumentmal/detaljer")).willReturn(
                 aClosedJsonResponse()
@@ -284,6 +294,19 @@ class StubUtils {
                             )
                         )
                     )
+            )
+        )
+    }
+
+    fun stubHentDokumetFraBestill(
+        dokumentmalId: String,
+        status: HttpStatus = HttpStatus.OK
+    ) {
+        WireMock.stubFor(
+            WireMock.post(WireMock.urlMatching("/bestilling/dokument/$dokumentmalId")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(status.value())
+                    .withBody(DOKUMENT_FIL.toByteArray())
             )
         )
     }
@@ -367,6 +390,11 @@ class StubUtils {
                 WireMock.urlMatching("/dokument/journal/distribuer/$journalpostId")
             )
             WireMock.verify(0, verify)
+        }
+
+        fun hentDokumentFraBestillingKalt(dokumentmalId: String) {
+            val verify = WireMock.postRequestedFor(WireMock.urlMatching("/bestilling/dokument/$dokumentmalId"))
+            WireMock.verify(verify)
         }
 
         fun hentPersonKaltMed(fnr: String?) {

@@ -1,517 +1,1105 @@
 {
   "BI01P11": {
+    "tittel": "NOTAT P11 T",
     "beskrivelse": "NOTAT P11 T",
     "type": "NOTAT",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01P18": {
+    "tittel": "Saksbehandlingsnotat",
     "beskrivelse": "Saksbehandlingsnotat",
     "type": "NOTAT",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01X01": {
+    "tittel": "REFERAT FRA SAMTALE",
     "beskrivelse": "REFERAT FRA SAMTALE",
     "type": "NOTAT",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01X02": {
+    "tittel": "ELEKTRONISK DIALOG",
     "beskrivelse": "ELEKTRONISK DIALOG",
     "type": "NOTAT",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S10": {
+    "tittel": "Oversendelse av informasjon",
     "beskrivelse": "Oversendelse av informasjon",
     "type": "UTGÅENDE",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S67": {
+    "tittel": "ADRESSEFORESPØRSEL",
     "beskrivelse": "ADRESSEFORESPØRSEL",
     "type": "UTGÅENDE",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S02": {
+    "tittel": "Fritekstbrev",
     "beskrivelse": "Fritekstbrev",
     "type": "UTGÅENDE",
-    "kanBestilles": true
+    "kanBestilles": true,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01A50": {
+    "tittel": "Klage - Vedtak bidragsforskudd",
     "beskrivelse": "Klage - Vedtak bidragsforskudd",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01A01": {
+    "tittel": "Vedtak bidragsforskudd",
     "beskrivelse": "Vedtak bidragsforskudd",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01A04": {
-    "beskrivelse": "Revurdering forskudd settes ned",
+    "tittel": "Revurdering av bidragsforskudd",
+    "beskrivelse": "Revurdering av bidragsforskudd",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S08": {
+    "tittel": "Varsel revurd forskudd",
     "beskrivelse": "Varsel revurd forskudd",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S27": {
-    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "tittel": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
+    "beskrivelse": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S28": {
+    "tittel": "Varsel opphør av bidragsforskudd tilbake i tid",
     "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S29": {
+    "tittel": "Varsel opphør av bidragsforskudd tilbake i tid",
     "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S30": {
+    "tittel": "Varsel opphør av bidragsforskudd tilbake i tid",
     "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01G01": {
+    "tittel": "Vedtak innkrev. barnebidrag og gjeld",
     "beskrivelse": "Vedtak innkrev. barnebidrag og gjeld",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01G02": {
+    "tittel": "Vedtak innkreving opphør",
     "beskrivelse": "Vedtak innkreving opphør",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S19": {
+    "tittel": "Innkreving varsel til motparten",
     "beskrivelse": "Innkreving varsel til motparten",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B50": {
+    "tittel": "Klage - Vedtak barnebidrag",
     "beskrivelse": "Klage - Vedtak barnebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01G50": {
+    "tittel": "Klage - vedtak innkreving",
     "beskrivelse": "Klage - vedtak innkreving",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01P17": {
-    "beskrivelse": "Innstilling til klageinstans",
-    "type": "UTGÅENDE",
-    "kanBestilles": false
+    "tittel": "Uttalelse til klageinstans",
+    "beskrivelse": "Uttalelse til klageinstans",
+    "type": "NOTAT",
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S20": {
+    "tittel": "NAV har mottatt klage på vedtak",
     "beskrivelse": "NAV har mottatt klage på vedtak",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S21": {
+    "tittel": "Du har klaget på vedtaket",
     "beskrivelse": "Du har klaget på vedtaket",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S60": {
+    "tittel": "Infobrev til partene oversendelse klageinstans",
     "beskrivelse": "Infobrev til partene oversendelse klageinstans",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S61": {
+    "tittel": "Innhenting opplysninger paragraf 10 i barnelova",
     "beskrivelse": "Innhenting opplysninger paragraf 10 i barnelova",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S64": {
+    "tittel": "Varsel klage fvt 35",
     "beskrivelse": "Varsel klage fvt 35",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S65": {
+    "tittel": "Varsel om motregning",
     "beskrivelse": "Varsel om motregning",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B10": {
+    "tittel": "Opphørsvedtak",
     "beskrivelse": "Opphørsvedtak",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S07": {
-    "beskrivelse": "Fastsettelse eget tiltak varsel til BP",
+    "tittel": "Varsel om begrenset revurdering av barnebidrag",
+    "beskrivelse": "Varsel om begrenset revurdering av barnebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B01": {
+    "tittel": "Vedtak barnebidrag",
     "beskrivelse": "Vedtak barnebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B04": {
+    "tittel": "Revurdering Bidrags pga forskudd",
     "beskrivelse": "Revurdering Bidrags pga forskudd",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B20": {
+    "tittel": "Vedtak utland skjønn fastsettelse",
     "beskrivelse": "Vedtak utland skjønn fastsettelse",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B21": {
+    "tittel": "Vedtak utland skjønn endring",
     "beskrivelse": "Vedtak utland skjønn endring",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S06": {
-    "beskrivelse": "Varsel eget tiltak nyfødt barn",
+    "tittel": "Varsel om fastsettelse av barnebidrag fra barnets fødsel",
+    "beskrivelse": "Varsel om fastsettelse av barnebidrag fra barnets fødsel",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S31": {
+    "tittel": "Fasts. eget tiltak uten innkr varsel til partene",
     "beskrivelse": "Fasts. eget tiltak uten innkr varsel til partene",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S32": {
+    "tittel": "Fastsettelse eget tiltak varsel til BM",
     "beskrivelse": "Fastsettelse eget tiltak varsel til BM",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S33": {
+    "tittel": "Endring varsel eget tiltak pga 25%",
     "beskrivelse": "Endring varsel eget tiltak pga 25%",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S34": {
+    "tittel": "Endring varsel eget tiltak pga barnetillegg",
     "beskrivelse": "Endring varsel eget tiltak pga barnetillegg",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S35": {
-    "beskrivelse": "Endring varsel eget tiltak pga forholds fordel",
+    "tittel": "Varsel om endring av barnebidraget på grunn av forholdsmessig fordeling",
+    "beskrivelse": "Varsel om endring av barnebidraget på grunn av forholdsmessig fordeling",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S36": {
+    "tittel": "Endring varsel eget tiltak pga forsørgingstillegg",
     "beskrivelse": "Endring varsel eget tiltak pga forsørgingstillegg",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S46": {
-    "beskrivelse": "Varsel oppfostringsbidrag forholdsmessig fordeling",
+    "tittel": "Varsel om endring av oppfostringsbidraget på grunn av forholdsmessig fordeling",
+    "beskrivelse": "Varsel om endring av oppfostringsbidraget på grunn av forholdsmessig fordeling",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S62": {
-    "beskrivelse": "Fastsettelse bidrag barnetillegg varsel partene",
+    "tittel": "Varsel om fastsettelse av barnebidrag til den bidragspliktiges barnetillegg",
+    "beskrivelse": "Varsel om fastsettelse av barnebidrag til den bidragspliktiges barnetillegg",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S63": {
+    "tittel": "Fastsettelse bidrag forsørgingstillegg varsel",
     "beskrivelse": "Fastsettelse bidrag forsørgingstillegg varsel",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S22": {
-    "beskrivelse": "Revurd bidrag pga FO til BM",
+    "tittel": "Revurdering bidrag pga bidragsforskudd til bidragsmottaker",
+    "beskrivelse": "Revurdering bidrag pga bidragsforskudd til bidragsmottaker",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S23": {
-    "beskrivelse": "Revurd bidrag pga FO til BP",
+    "tittel": "Revurdering bidrag pga bidragsforskudd til bidragspliktig",
+    "beskrivelse": "Revurdering bidrag pga bidragsforskudd til bidragspliktig",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S01": {
+    "tittel": "NAV har mottatt søknad om barnebidrag",
     "beskrivelse": "NAV har mottatt søknad om barnebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S12": {
+    "tittel": "Du har søkt om barnebidrag",
     "beskrivelse": "Du har søkt om barnebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S52": {
+    "tittel": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S53": {
+    "tittel": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S13": {
+    "tittel": "Du har søkt om barnebidrag",
     "beskrivelse": "Du har søkt om barnebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B02": {
+    "tittel": "Vedtak tilleggsbidrag",
     "beskrivelse": "Vedtak tilleggsbidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S05": {
+    "tittel": "NAV har mottatt søknad om sletting av bidragsgjeld",
     "beskrivelse": "NAV har mottatt søknad om sletting av bidragsgjeld",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S14": {
+    "tittel": "Du har søkt om endring av barnebidraget",
     "beskrivelse": "Du har søkt om endring av barnebidraget",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S26": {
+    "tittel": "Endring varsel til motparten",
     "beskrivelse": "Endring varsel til motparten",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S47": {
+    "tittel": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S48": {
+    "tittel": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S49": {
+    "tittel": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01I50": {
+    "tittel": "Klage - vedtak ektefellebidrag",
     "beskrivelse": "Klage - vedtak ektefellebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01I01": {
+    "tittel": "Vedtak ektefellebidrag",
     "beskrivelse": "Vedtak ektefellebidrag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S43": {
+    "tittel": "Fastsettelse ektefellebidrag orientering",
     "beskrivelse": "Fastsettelse ektefellebidrag orientering",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S44": {
+    "tittel": "Fastsettelse ektefellebidrag varsel til BP",
     "beskrivelse": "Fastsettelse ektefellebidrag varsel til BP",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S37": {
+    "tittel": "Bortfall ektefellebidrag BP død orientering til BM",
     "beskrivelse": "Bortfall ektefellebidrag BP død orientering til BM",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S38": {
+    "tittel": "Bortfall ektefellebidrag orientering til partene",
     "beskrivelse": "Bortfall ektefellebidrag orientering til partene",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S39": {
+    "tittel": "Bortfall ektefellebidrag nytt ekteskap orientering",
     "beskrivelse": "Bortfall ektefellebidrag nytt ekteskap orientering",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S41": {
+    "tittel": "Vedtak - bortfall nytt ekteskap",
     "beskrivelse": "Vedtak - bortfall nytt ekteskap",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S42": {
+    "tittel": "Endring ektefellebidrag orientering til søkeren",
     "beskrivelse": "Endring ektefellebidrag orientering til søkeren",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S45": {
-    "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
+    "tittel": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
+    "beskrivelse": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01H01": {
+    "tittel": "Farskap innkalling mor",
     "beskrivelse": "Farskap innkalling mor",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01H03": {
+    "tittel": "Melding om blodprøver i farskapsak",
     "beskrivelse": "Melding om blodprøver i farskapsak",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01H04": {
+    "tittel": "Pålegg om å framstille barn for å gi blodprøve",
     "beskrivelse": "Pålegg om å framstille barn for å gi blodprøve",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01H05": {
+    "tittel": "Pålegg om blodprøve i farskapssak",
     "beskrivelse": "Pålegg om blodprøve i farskapssak",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01H02": {
+    "tittel": "Innkalling farskapssak oppgitt far",
     "beskrivelse": "Innkalling farskapssak oppgitt far",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01J50": {
+    "tittel": "Klage - vedtak gebyr",
     "beskrivelse": "Klage - vedtak gebyr",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S03": {
-    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år",
+    "tittel": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel",
+    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01K50": {
+    "tittel": "Klage - vedtak tilbakekreving",
     "beskrivelse": "Klage - vedtak tilbakekreving",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01A05": {
+    "tittel": "Vedtak ikke tilbakekreving",
     "beskrivelse": "Vedtak ikke tilbakekreving",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01G04": {
+    "tittel": "Vedtak innkreving særtilskudd",
     "beskrivelse": "Vedtak innkreving særtilskudd",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01E50": {
+    "tittel": "Klage - vedtak bidrag til særlige utgifter",
     "beskrivelse": "Klage - vedtak bidrag til særlige utgifter",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01E01": {
+    "tittel": "Vedtak bidrag til særlige utgifter",
     "beskrivelse": "Vedtak bidrag til særlige utgifter",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01E02": {
+    "tittel": "Vedtak særtilskudd avslag",
     "beskrivelse": "Vedtak særtilskudd avslag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01E03": {
+    "tittel": "Vedtak bidrag til særlige utgifter tannregulering",
     "beskrivelse": "Vedtak bidrag til særlige utgifter tannregulering",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S04": {
+    "tittel": "NAV har mottatt søknad om bidrag til særlige utgifter",
     "beskrivelse": "NAV har mottatt søknad om bidrag til særlige utgifter",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S18": {
+    "tittel": "Du har søkt om bidrag til særlige utgifter",
     "beskrivelse": "Du har søkt om bidrag til særlige utgifter",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01F50": {
+    "tittel": "Klage - vedtak ettergivelse gjeld",
     "beskrivelse": "Klage - vedtak ettergivelse gjeld",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01F01": {
+    "tittel": "Vedtak ettergivelse innvilget",
     "beskrivelse": "Vedtak ettergivelse innvilget",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01F02": {
+    "tittel": "Vedtak ettergivelse avslag",
     "beskrivelse": "Vedtak ettergivelse avslag",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S17": {
+    "tittel": "Informasjon om din søknad om sletting av bidragsgjeld",
     "beskrivelse": "Informasjon om din søknad om sletting av bidragsgjeld",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S50": {
+    "tittel": "Ettergivelse oppfostringsbidrag orientering til BP",
     "beskrivelse": "Ettergivelse oppfostringsbidrag orientering til BP",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S51": {
+    "tittel": "Ettergivelse oppfostringsbidrag varsel kommune",
     "beskrivelse": "Ettergivelse oppfostringsbidrag varsel kommune",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01A02": {
+    "tittel": "Vedtak tilbakekreving",
     "beskrivelse": "Vedtak tilbakekreving",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S54": {
-    "beskrivelse": "Varsel om tilbakekreving av bidragsforskudd",
+    "tittel": "Varsel om tilbakekreving av bidragsforskudd - inntekt",
+    "beskrivelse": "Varsel om tilbakekreving av bidragsforskudd - inntekt",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S55": {
-    "beskrivelse": "Varsel tilb.kr. paragraf 2 - partene bor sammen",
+    "tittel": "Varsel tilbakekreving av bidragsforskudd - partene bor sammen",
+    "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - partene bor sammen",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S56": {
-    "beskrivelse": "Varsel tilb.kr. paragraf 2 ikke opphold i Riket",
+    "tittel": "Varsel tilbakekreving av bidragsforskudd - ikke opphold i Riket",
+    "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - ikke opphold i Riket",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S57": {
-    "beskrivelse": "Varsel tilb.kr. NAV paragraf 3 direkte betalinger",
+    "tittel": "Varsel tilbakekreving av bidragsforskudd - direkte betalinger",
+    "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - direkte betalinger",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S58": {
-    "beskrivelse": "Varsel tilb.kr. NAV paragraf 6 ikke omsorg",
+    "tittel": "Varsel tilbakekreving av bidragsforskudd - ikke omsorg",
+    "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - ikke omsorg",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S59": {
+    "tittel": "Informasjon om din søknad om sletting av bidragsgjeld",
     "beskrivelse": "Informasjon om din søknad om sletting av bidragsgjeld",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S24": {
-    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år",
+    "tittel": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - innhenting av opplysninger",
+    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - innhenting av opplysninger",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B03": {
+    "tittel": "Vedtak barnebidrag etter fylte 18 år",
     "beskrivelse": "Vedtak barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S15": {
+    "tittel": "Du har søkt om barnebidrag etter fylte 18 år",
     "beskrivelse": "Du har søkt om barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S16": {
+    "tittel": "Du har søkt om barnebidrag etter fylte 18 år",
     "beskrivelse": "Du har søkt om barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B11": {
+    "tittel": "Vedtak tilleggsbidrag over 18 år",
     "beskrivelse": "Vedtak tilleggsbidrag over 18 år",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01B05": {
+    "tittel": "VEDTAK AUTOMATISK JUSTERING BARNEBIDRAG",
     "beskrivelse": "VEDTAK AUTOMATISK JUSTERING BARNEBIDRAG",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
   },
   "BI01S09": {
+    "tittel": "Varsel om opphør barnebidrag etter fylte 18 år",
     "beskrivelse": "Varsel om opphør barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
-    "kanBestilles": false
+    "kanBestilles": false,
+    "statiskInnhold": false,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": []
+  },
+  "VARSEL_BM_EN": {
+    "tittel": "Response to Advance Notice Regarding Child Support Form for Custodial Parent",
+    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker (EN)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VARSEL_BP_EN": {
+    "tittel": "Response to Advance Notice Regarding Child Support Form for Non-Custodial Parent",
+    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig (EN)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VARSEL_BM_NB": {
+    "tittel": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker",
+    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VARSEL_BP_NB": {
+    "tittel": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig",
+    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "SVARSKJEMA_BP_FR": {
+    "tittel": "Réponse à l’avis concernant pension alimentaire pour enfant(s) - formulaire de réponse pour le parent débiteur",
+    "beskrivelse": "Svarskjema bidragspliktig (FR)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "SKJEMA",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "SVARSKJEMA_BP_PL": {
+    "tittel": "Formularz dla rodzica zobowiązanego do płacenia alimentów",
+    "beskrivelse": "Svarskjema bidragspliktig (PL)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "SKJEMA",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "SVARSKJEMA_BP_DE": {
+    "tittel": "Antwortformular für Unterhaltspflichtige",
+    "beskrivelse": "Svarskjema bidragspliktig (DE)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "SKJEMA",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VARSEL_EN": {
+    "tittel": "Attachment to advance notice. Claim for child support when one of the parties resides abroad",
+    "beskrivelse": "Vedlegg til forhåndsvarsel (EN)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VARSEL_NB": {
+    "tittel": "Vedlegg til forhåndsvarsel. Krav om barnebidrag når en av partene bor i utlandet",
+    "beskrivelse": "Vedlegg til forhåndsvarsel",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VARSEL_DE": {
+    "tittel": "Anlage Zur Mitteilung",
+    "beskrivelse": "Vedlegg til forhåndsvarsel (DE)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VARSEL",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VEDTAK_BM_EN": {
+    "tittel": "Information to the custodial parent when one of the parties is living abroad",
+    "beskrivelse": "Vedlegg til vedtak bidragsmottaker (EN)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VEDTAK_BM_NB": {
+    "tittel": "Orientering til bidragsmottakeren når en av partene bor i utlandet",
+    "beskrivelse": "Vedlegg til vedtak bidragsmottaker",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VEDTAK_BM_DE": {
+    "tittel": "Orientierung für den Unterhaltsempfänger, wenn eine der Parteien im Ausland lebt",
+    "beskrivelse": "Vedlegg til vedtak bidragsmottaker (DE)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VEDTAK_BP_EN": {
+    "tittel": "Information to the non−custodial parent when one of the parties is living abroad",
+    "beskrivelse": "Vedlegg til vedtak bidragspliktig (EN)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VEDTAK_BP_DE": {
+    "tittel": "Orientierung für den Unterhaltspflichtigen, wenn eine der Parteien im Ausland lebt",
+    "beskrivelse": "Vedlegg til vedtak bidragspliktig (DE)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "tilhorerEnheter": [
+      "4865"
+    ]
+  },
+  "VEDLEGG_VEDTAK_BP_NB": {
+    "tittel": "Orientering til den bidragspliktige når en av partene bor i utlandet",
+    "beskrivelse": "Vedlegg til vedtak bidragspliktig",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "statiskInnhold": true,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "tilhorerEnheter": [
+      "4865"
+    ]
   }
 }

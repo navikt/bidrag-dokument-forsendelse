@@ -159,7 +159,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap shouldContainKey "BI01S10"
 
             dokumentValgMap["BI01S08"]!!.beskrivelse shouldBe "Varsel revurd forskudd"
-            dokumentValgMap["BI01S27"]!!.beskrivelse shouldBe "Varsel opphør av bidragsforskudd tilbake i tid"
+            dokumentValgMap["BI01S27"]!!.beskrivelse shouldBe "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
             stubUtils.Valider().hentBehandlingKalt(behandlingId)

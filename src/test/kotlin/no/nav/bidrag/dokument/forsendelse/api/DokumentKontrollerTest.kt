@@ -9,8 +9,10 @@ import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
 import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENT_FIL
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
@@ -329,4 +331,32 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
 
         respons.statusCode shouldBe HttpStatus.FORBIDDEN
     }
+
+    @Test
+    fun `skal hente statisk dokument`() {
+        stubUtils.stubHentDokumetFraBestill(DOKUMENTMAL_STATISK_VEDLEGG)
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.FERDIGSTILT,
+                        arkivsystem = DokumentArkivSystem.BIDRAG,
+                        dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG,
+                        metadata = run {
+                            val metadata = DokumentMetadataDo()
+                            metadata.markerSomStatiskDokument()
+                            metadata
+                        }
+                    )
+                )
+            )
+        )
+
+        val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
+        stubUtils.Valider().hentDokumentFraBestillingKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+        respons.statusCode shouldBe HttpStatus.OK
+        respons.headers.contentDisposition.filename shouldBe "${forsendelse.dokumenter[0].dokumentreferanse}.pdf"
+        respons.body shouldBe DOKUMENT_FIL.toByteArray()
+    }
+
 }

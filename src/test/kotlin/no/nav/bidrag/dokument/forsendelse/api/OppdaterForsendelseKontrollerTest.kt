@@ -19,6 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
@@ -488,6 +489,38 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             forsendelseFraRespons.dokumenter shouldHaveSize 2
             forsendelseFraRespons.dokumenter[0].tittel shouldBe vedlegg1.tittel
             forsendelseFraRespons.dokumenter[1].tittel shouldBe vedlegg2.tittel
+        }
+    }
+
+    @Test
+    fun `Skal legge til statisk vedlegg på forsendelse`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+            tittel = TITTEL_VEDLEGG_1,
+            dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG
+        )
+
+        val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+            oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
+            oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
         }
     }
 

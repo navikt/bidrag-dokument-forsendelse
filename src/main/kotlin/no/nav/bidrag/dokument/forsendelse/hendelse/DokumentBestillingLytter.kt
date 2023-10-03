@@ -92,6 +92,7 @@ class DokumentBestillingLytter(
     }
 
     private fun oppdaterStatusForStatiskDokument(dokument: Dokument) {
+        LOGGER.info { "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} knyttet til forsendelse ${dokument.forsendelseId} er statisk vedlegg. Ferdigstiller dokument." }
         dokumentTjeneste.lagreDokument(
             dokument.copy(
                 arkivsystem = DokumentArkivSystem.BIDRAG,

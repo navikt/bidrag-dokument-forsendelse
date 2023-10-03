@@ -53,11 +53,6 @@ class DokumentValgService(
         else notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
     }
 
-    fun hentVedleggListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
-        return if (erKlage(request)) (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it, request, true) }
-        else notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
-    }
-
     fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
         return if (request == null) false
         else if (request.erKlage()) true
