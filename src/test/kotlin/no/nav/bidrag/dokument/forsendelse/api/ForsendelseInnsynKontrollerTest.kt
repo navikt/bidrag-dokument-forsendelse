@@ -26,6 +26,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_LANDKODE
+import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_LANDKODE3
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTNUMMER
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_POSTSTED
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
@@ -113,7 +114,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             adresse.postnummer shouldBe ADRESSE_POSTNUMMER
             adresse.poststed shouldBe ADRESSE_POSTSTED
             adresse.landkode shouldBe ADRESSE_LANDKODE
-            adresse.landkode3 shouldBe null
+            adresse.landkode3 shouldBe ADRESSE_LANDKODE3
             dokumenter shouldHaveSize 2
         }
 

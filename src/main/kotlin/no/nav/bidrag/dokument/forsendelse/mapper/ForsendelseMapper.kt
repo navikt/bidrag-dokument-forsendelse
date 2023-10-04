@@ -227,7 +227,8 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
                     adresselinje3 = adresse.adresselinje3,
                     poststed = adresse.poststed,
                     postnummer = adresse.postnummer,
-                    landkode = adresse.landkode
+                    landkode = adresse.landkode,
+                    landkode3 = adresse.landkode3
                 )
             }
         )
