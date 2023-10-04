@@ -31,6 +31,7 @@ data class OppdaterDokumentForespørsel(
     @Schema(description = "JournalpostId til dokumentet hvis det er allerede er lagret i arkivsystem") override val journalpostId: JournalpostId? = null,
     override val dokumentmalId: String? = null,
     override val dokumentreferanse: String? = null,
+    @Schema(description = "Språket på innholdet i dokumentet") val språk: String? = null,
     override val tittel: String? = null,
     val fjernTilknytning: Boolean? = false
 ) : DokumentForespørsel()

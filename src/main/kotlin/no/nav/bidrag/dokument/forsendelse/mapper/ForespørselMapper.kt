@@ -102,6 +102,7 @@ object ForespørselMapper {
             tittel = tittel ?: "",
             dokumentreferanse = dokumentreferanse,
             dokumentmalId = dokumentmalId,
+            språk = språk,
             journalpostId = journalpostId,
             dokumentDato = dokumentDato,
             arkivsystem = this.arkivsystem

@@ -22,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.erFerdigstiltStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -55,6 +56,7 @@ class DokumentBestillingLytter(
         try {
             if (erStatiskDokument(dokument.dokumentmalId)) {
                 oppdaterStatusForStatiskDokument(dokument)
+                measureBestilling(forsendelse, dokument)
                 return
             }
 
@@ -138,7 +140,8 @@ class DokumentBestillingLytter(
                 "tema",
                 forsendelse.tema.name,
                 "tittel",
-                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel
+                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel,
+                "er_statisk_dokument", if (dokument.erFerdigstiltStatiskDokument()) "true" else "false"
             ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
