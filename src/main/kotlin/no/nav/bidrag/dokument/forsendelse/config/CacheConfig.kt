@@ -38,6 +38,7 @@ class CacheConfig {
             Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
         )
         caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
+        caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMALDETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_TEMA_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())

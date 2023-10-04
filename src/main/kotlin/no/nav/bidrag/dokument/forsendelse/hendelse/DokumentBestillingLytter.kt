@@ -22,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
+import no.nav.bidrag.dokument.forsendelse.service.erFerdigstiltStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -53,6 +54,12 @@ class DokumentBestillingLytter(
         if (dokument.dokumentmalId.isNullOrEmpty()) throw KunneIkkBestilleDokument("Dokument med dokumentreferanse $dokumentreferanse mangler dokumentmalId")
 
         try {
+            if (erStatiskDokument(dokument.dokumentmalId)) {
+                oppdaterStatusForStatiskDokument(dokument)
+                measureBestilling(forsendelse, dokument)
+                return
+            }
+
             val arkivSystem = sendBestilling(forsendelse, dokument)
             measureBestilling(forsendelse, dokument)
             dokumentTjeneste.lagreDokument(
@@ -84,6 +91,21 @@ class DokumentBestillingLytter(
             )
             LOGGER.error(e) { "Det skjedde en feil ved bestilling av dokumentmal ${dokument.dokumentmalId} for dokumentreferanse $dokumentreferanse og forsendelseId $forsendelseId: ${e.message}" }
         }
+    }
+
+    private fun oppdaterStatusForStatiskDokument(dokument: Dokument) {
+        LOGGER.info { "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} knyttet til forsendelse ${dokument.forsendelseId} er statisk vedlegg. Ferdigstiller dokument." }
+        dokumentTjeneste.lagreDokument(
+            dokument.copy(
+                arkivsystem = DokumentArkivSystem.BIDRAG,
+                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                metadata = run {
+                    val metadata = dokument.metadata
+                    metadata.markerSomStatiskDokument()
+                    metadata.copy()
+                }
+            )
+        )
     }
 
     private fun sendBestilling(forsendelse: Forsendelse, dokument: Dokument): DokumentArkivSystemDto? {
@@ -118,7 +140,8 @@ class DokumentBestillingLytter(
                 "tema",
                 forsendelse.tema.name,
                 "tittel",
-                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel
+                if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel,
+                "er_statisk_dokument", if (dokument.erFerdigstiltStatiskDokument()) "true" else "false"
             ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
@@ -136,6 +159,10 @@ class DokumentBestillingLytter(
 
     private fun kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
         return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.kanBestilles ?: false
+    }
+
+    private fun erStatiskDokument(dokumentMal: String): Boolean {
+        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
     }
 
     private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel {

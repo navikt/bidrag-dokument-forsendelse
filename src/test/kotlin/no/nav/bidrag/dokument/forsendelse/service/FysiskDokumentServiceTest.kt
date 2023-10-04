@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -36,6 +37,9 @@ class FysiskDokumentServiceTest {
     @MockkBean
     lateinit var dokumentStorageService: DokumentStorageService
 
+    @MockkBean
+    lateinit var bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
+
     lateinit var fysiskDokumentService: FysiskDokumentService
 
     @BeforeEach
@@ -44,6 +48,7 @@ class FysiskDokumentServiceTest {
             forsendelseTjeneste,
             dokumentTjeneste,
             bidragDokumentConsumer,
+            bidragDokumentBestillingConsumer,
             tilgangskontrollService,
             dokumentStorageService
         )

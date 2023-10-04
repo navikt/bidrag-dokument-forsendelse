@@ -18,7 +18,9 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.service.erFerdigstiltStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
@@ -26,6 +28,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_B
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_1
+import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_VEDLEGG_2
 import no.nav.bidrag.dokument.forsendelse.utils.er
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
@@ -404,11 +407,15 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal slette dokument med ekstern referanse fra forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
-            +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
-        }
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0),
+                    nyttDokument(rekkefølgeIndeks = 1),
+                    nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
+                )
+            )
+        )
 
         val forsendelseId = forsendelse.forsendelseId!!
 
@@ -492,16 +499,20 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
-    fun `Skal legge til dokument på forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
-        }
+    fun `Skal legge til statisk vedlegg på forsendelse`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
 
         val forsendelseId = forsendelse.forsendelseId!!
 
         val opprettDokumentForespørsel = OpprettDokumentForespørsel(
             tittel = TITTEL_VEDLEGG_1,
-            dokumentmalId = DOKUMENTMAL_UTGÅENDE_2
+            dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG
         )
 
         val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
@@ -513,6 +524,143 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.size shouldBe 2
             oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
             oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+            oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
+            oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+        }
+    }
+
+    @Test
+    fun `Skal legge til og slette statisk dokument på forsendelse`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "Tittel hoveddok"),
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = hoveddokument.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = TITTEL_VEDLEGG_1,
+                    dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG,
+                ),
+            )
+        )
+        val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+        respons.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
+        assertSoftly {
+            dokumenter.size shouldBe 2
+
+            dokumenter[0].tittel shouldBe "Tittel hoveddok"
+            dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
+            dokumenter[1].erFerdigstiltStatiskDokument() shouldBe true
+
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+        }
+
+        val responsSlett = utførOppdaterForsendelseForespørsel(
+            forsendelse.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+                dokumenter = listOf(
+                    OppdaterDokumentForespørsel(
+                        dokumentreferanse = hoveddokument.dokumentreferanse
+                    ),
+                    OppdaterDokumentForespørsel(
+                        fjernTilknytning = true,
+                        dokumentreferanse = dokumenter[1].dokumentreferanse
+                    ),
+                )
+            )
+        )
+        responsSlett.statusCode shouldBe HttpStatus.OK
+        val oppdatertForsendelseEtterSlett = testDataManager.hentForsendelse(forsendelseId)!!
+        oppdatertForsendelseEtterSlett.dokumenter.size shouldBe 1
+    }
+
+    @Test
+    fun `Skal oppdatere og legge til dokumenter på forsendelse`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "Tittel hoveddok"),
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+
+        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
+            dokumenter = listOf(
+                OppdaterDokumentForespørsel(
+                    dokumentreferanse = hoveddokument.dokumentreferanse
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = TITTEL_VEDLEGG_1,
+                    dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG,
+                    språk = "DE"
+                ),
+                OppdaterDokumentForespørsel(
+                    tittel = TITTEL_VEDLEGG_2,
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE,
+                ),
+            )
+        )
+        val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
+        respons.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 3
+
+            val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
+            dokumenter[0].tittel shouldBe "Tittel hoveddok"
+            dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
+            dokumenter[1].språk shouldBe "DE"
+            dokumenter[2].tittel shouldBe TITTEL_VEDLEGG_2
+            dokumenter[2].språk shouldBe "NB"
+
+            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+        }
+    }
+
+    @Test
+    fun `Skal legge til dokument på forsendelse`() {
+        val forsendelse = testDataManager.opprettOgLagreForsendelse {
+            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+        }
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+            tittel = TITTEL_VEDLEGG_1,
+            dokumentmalId = DOKUMENTMAL_UTGÅENDE_2,
+            språk = "DE"
+        )
+
+        val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+            oppdatertForsendelse.dokumenter.vedlegger[0].språk shouldBe "DE"
             stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE_2)
         }
     }

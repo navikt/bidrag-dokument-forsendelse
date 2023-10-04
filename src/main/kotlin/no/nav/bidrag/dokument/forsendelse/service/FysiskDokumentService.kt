@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentFormatDto
 import no.nav.bidrag.dokument.dto.DokumentMetadata
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
@@ -23,11 +24,16 @@ import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
 
+
+fun Dokument.erFerdigstiltStatiskDokument() =
+    arkivsystem == DokumentArkivSystem.BIDRAG && dokumentStatus == DokumentStatus.FERDIGSTILT && metadata.erStatiskDokument()
+
 @Component
 class FysiskDokumentService(
     val forsendelseTjeneste: ForsendelseTjeneste,
     val dokumentTjeneste: DokumentTjeneste,
     val bidragDokumentConsumer: BidragDokumentConsumer,
+    val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer,
     val tilgangskontrollService: TilgangskontrollService,
     val dokumentStorageService: DokumentStorageService
 ) {
@@ -43,8 +49,16 @@ class FysiskDokumentService(
             return dokumentStorageService.hentFil(dokument.filsti)
         }
 
+        if (dokument.erFerdigstiltStatiskDokument()) {
+            return hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
+        }
+
         val arkivSystem = dokument.arkivsystem
         throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
+    }
+
+    fun hentStatiskDokument(malId: String): ByteArray? {
+        return bidragDokumentBestillingConsumer.hentDokument(malId)
     }
 
     fun hentDokument(dokumentreferanse: String): ByteArray {
@@ -56,6 +70,10 @@ class FysiskDokumentService(
 
         if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
             return dokumentStorageService.hentFil(dokument.filsti)
+        }
+
+        if (dokument.erFerdigstiltStatiskDokument()) {
+            return hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(-1, dokumentreferanse)
         }
 
         val arkivSystem = dokument.arkivsystem
@@ -135,7 +153,7 @@ class FysiskDokumentService(
 
     private fun mapTilDokumentMetadata(dokument: Dokument): DokumentMetadata {
         val dokumentreferanse = if (dokument.erFraAnnenKilde) dokument.dokumentreferanseOriginal else dokument.dokumentreferanse
-        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
+        return if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT || dokument.arkivsystem == DokumentArkivSystem.BIDRAG) {
             DokumentMetadata(
                 journalpostId = dokument.forsendelseIdMedPrefix,
                 dokumentreferanse = dokument.dokumentreferanse,

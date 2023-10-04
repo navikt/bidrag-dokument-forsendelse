@@ -42,11 +42,25 @@ data class DokumentBestillingResponse(
 )
 
 data class DokumentMalDetaljer(
-    val beskrivelse: String,
+    val tittel: String,
     val type: DokumentMalType,
     val kanBestilles: Boolean = false,
+    val beskrivelse: String = tittel,
+    val statiskInnhold: Boolean = false,
+    val innholdType: DokumentmalInnholdType? = null,
+    val språk: List<String> = emptyList(),
+    val tilhorerEnheter: List<String> = emptyList(),
     val alternativeTitler: List<String> = emptyList(),
 )
+
+enum class DokumentmalInnholdType {
+    VARSEL,
+    VEDTAK,
+    VEDLEGG_VEDTAK,
+    VEDLEGG_VARSEL,
+    SKJEMA,
+}
+
 
 enum class DokumentMalType {
     UTGÅENDE,

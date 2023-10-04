@@ -236,7 +236,7 @@ class OppdaterForsendelseService(
     ): List<Dokument> {
         if (forespørsel.dokumenter.isEmpty()) return forsendelse.dokumenter
         val logiskSlettetDokumenterFraForespørsel =
-            forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde }
+            forsendelse.dokumenter.filter { forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde && !it.metadata.erStatiskDokument() }
                 .map {
                     it.copy(
                         slettetTidspunkt = LocalDate.now()
