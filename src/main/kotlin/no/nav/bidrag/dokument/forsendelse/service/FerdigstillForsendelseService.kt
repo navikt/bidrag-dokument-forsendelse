@@ -61,7 +61,7 @@ class FerdigstillForsendelseService(
         val hovedtittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
 
         val referanseId = forsendelse.opprettReferanseId()
-        val dokumentDato = forsendelse.dokumentDato?.let { capDateOnToday(it) }
+        val dokumentDato = forsendelse.dokumentDato?.let { begrensDokumentdatoTilIdagEllerTidligere(it) }
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
                 AvsenderMottakerDto(
@@ -123,7 +123,7 @@ class FerdigstillForsendelseService(
         return respons
     }
 
-    fun capDateOnToday(date: LocalDateTime): LocalDateTime {
+    fun begrensDokumentdatoTilIdagEllerTidligere(date: LocalDateTime): LocalDateTime {
         return if (date.isAfter(LocalDateTime.now())) LocalDateTime.now() else date
     }
 
