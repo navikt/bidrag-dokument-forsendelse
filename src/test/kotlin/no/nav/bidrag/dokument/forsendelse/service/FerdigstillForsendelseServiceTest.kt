@@ -344,4 +344,39 @@ class FerdigstillForsendelseServiceTest {
             )
         }
     }
+
+    @Test
+    fun `skal opprette forsendelse med dokumentdato i dag hvis dokumentdato er satt i fram i tid`() {
+        val opprettetTidspunkt = LocalDateTime.parse("2021-01-01T01:02:03")
+        val dokumentDato = LocalDateTime.now().plusDays(2)
+        val forsendelse = opprettForsendelse2(
+            tittel = null,
+            erNotat = true,
+            dokumenter = listOf(
+                nyttDokument(
+                    dokumentStatus = DokumentStatus.FERDIGSTILT,
+                    rekkefølgeIndeks = 0,
+                    tittel = "Hoveddokument tittel",
+                    dokumentDato = dokumentDato
+                ).copy(dokumentId = 1L),
+            )
+        ).copy(forsendelseId = 123L, opprettetTidspunkt = opprettetTidspunkt)
+        every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
+        ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
+
+        verify {
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.datoDokument!! shouldHaveSameDayAs LocalDateTime.now()
+                }
+            )
+
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.dokumenter[0].dokumentDato!! shouldHaveSameDayAs LocalDateTime.now()
+
+                }
+            )
+        }
+    }
 }

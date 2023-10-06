@@ -2,7 +2,17 @@
 
 const fs = require('fs');
 const kodemapper = require('./kodemapper');
-
+const brevkoderSomKreverInnkrevingDetaljer = [
+  "BI01B22",
+  "BI01S05",
+  "BI01S17",
+  "BI01F01",
+  "BI01G50",
+  "BI01G02",
+  "BI01G01",
+  "BI01F50",
+  "BI01F02"
+]
 const brevmeny2 = fs.readFileSync('./brevmeny_export_5.json', 'utf8')
 const brevmeny2jsonData = JSON.parse(brevmeny2)
 

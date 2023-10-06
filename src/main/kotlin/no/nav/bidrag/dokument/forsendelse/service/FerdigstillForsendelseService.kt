@@ -61,6 +61,7 @@ class FerdigstillForsendelseService(
         val hovedtittelMedBeskjed = if (lokalUtskrift) opprettTittelMedBeskjedForLokalUtskrift(hovedtittel) else hovedtittel
 
         val referanseId = forsendelse.opprettReferanseId()
+        val dokumentDato = forsendelse.dokumentDato?.let { begrensDokumentdatoTilIdagEllerTidligere(it) }
         val opprettJournalpostRequest = OpprettJournalpostRequest(
             avsenderMottaker = if (!forsendelse.erNotat) {
                 AvsenderMottakerDto(
@@ -97,7 +98,7 @@ class FerdigstillForsendelseService(
                 else -> "BID"
             },
             tittel = hovedtittel,
-            datoDokument = if (forsendelse.erNotat) forsendelse.dokumentDato else null
+            datoDokument = if (forsendelse.erNotat) dokumentDato else null
         )
 
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
@@ -108,7 +109,8 @@ class FerdigstillForsendelseService(
                 status = ForsendelseStatus.FERDIGSTILT,
                 dokumenter = forsendelse.dokumenter.mapIndexed { i, it ->
                     it.copy(
-                        dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null
+                        dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null,
+                        dokumentDato = if (forsendelse.erNotat && dokumentDato != null) dokumentDato else it.dokumentDato
                     )
                 },
                 ferdigstiltTidspunkt = LocalDateTime.now(),
@@ -119,6 +121,10 @@ class FerdigstillForsendelseService(
         log.info { "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. Opprettet journalpostId=${respons.journalpostId}." }
 
         return respons
+    }
+
+    fun begrensDokumentdatoTilIdagEllerTidligere(date: LocalDateTime): LocalDateTime {
+        return if (date.isAfter(LocalDateTime.now())) LocalDateTime.now() else date
     }
 
     fun opprettTittelMedBeskjedForLokalUtskrift(tittel: String): String {
