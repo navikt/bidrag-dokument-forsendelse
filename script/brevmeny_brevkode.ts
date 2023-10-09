@@ -243,6 +243,10 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
       currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "REVURDERING")
       currentValue.soknadType = currentValue.soknadType.filter((v) => v != "BEGRENSET_REVURDERING")
     }
+
+    if (currentValue.soknadType.includes("BEGRENSET_REVURDERING") && currentValue.behandlingStatus == "IKKE_FATTET") {
+      currentValue.brevkoder = [...new Set(["BI01S07", "BI01S22", "BI01S23", ...currentValue.brevkoder])]
+    }
     previousValue.push(currentValue)
     return previousValue
   }, [])

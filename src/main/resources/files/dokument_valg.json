@@ -2252,6 +2252,9 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
+        "BI01S07",
+        "BI01S22",
+        "BI01S23",
         "BI01S06"
       ]
     },
@@ -2730,6 +2733,7 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
+        "BI01S07",
         "BI01S22",
         "BI01S23"
       ]
@@ -2750,8 +2754,10 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S06",
         "BI01S07",
+        "BI01S22",
+        "BI01S23",
+        "BI01S06",
         "BI01S35",
         "BI01S46",
         "BI01S62"
@@ -2775,6 +2781,9 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
+        "BI01S07",
+        "BI01S22",
+        "BI01S23",
         "BI01S06"
       ]
     },
@@ -2846,6 +2855,7 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
+        "BI01S07",
         "BI01S22",
         "BI01S23"
       ]
@@ -2867,6 +2877,9 @@
       "behandlingStatus": "IKKE_FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
+        "BI01S07",
+        "BI01S22",
+        "BI01S23",
         "BI01S06"
       ]
     },
