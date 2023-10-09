@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.consumer
 
 import no.nav.bidrag.commons.web.client.AbstractRestClient
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.DOKUMENTMALDETALJER_CACHE
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.DOKUMENTMALER_CACHE
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
@@ -53,7 +54,7 @@ class BidragDokumentBestillingConsumer(
             ?: emptyList()
     }
 
-    //    @Cacheable(DOKUMENTMALDETALJER_CACHE)
+    @Cacheable(DOKUMENTMALDETALJER_CACHE)
     fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
         return getForEntity(createUri("/dokumentmal/detaljer"))
             ?: emptyMap()
