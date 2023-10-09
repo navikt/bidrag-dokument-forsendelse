@@ -400,4 +400,25 @@ class OpprettForsendelseServiceTest {
         val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
         result.message shouldBe "Dokumentdato kan ikke være senere enn dagens dato"
     }
+
+    @Test
+    fun `Skal feile hvis tittel er lengre enn 500 tegn`() {
+        every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
+            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
+                "Tittel notat",
+                type = DokumentMalType.NOTAT
+            )
+        )
+        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
+            dokumenter = listOf(
+                OpprettDokumentForespørsel(
+                    tittel = "12345".repeat(101),
+                    dokumentmalId = DOKUMENTMAL_NOTAT,
+                )
+            )
+        )
+        val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
+        result.message shouldBe "Tittel på dokument 0 kan ikke være lengre enn 500 tegn (tittel har lengde på 505 tegn)"
+    }
 }
