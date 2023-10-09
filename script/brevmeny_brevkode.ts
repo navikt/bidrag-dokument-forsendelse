@@ -45,7 +45,7 @@ interface IBrevalg {
   tittel: string;
 }
 
-const ignorer_brevkoder = ["BI01P11", "BI01S02", "BI01S10", "BI01S67", "BI01P18", "BI01X01", "BI01X02", "BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70", "BI01S61", "BI01S65", "BI01P17", "BI01S31", "BI01S32", "BI01S33", "BI01S34", "BI01S36", "BI01S63"]
+const ignorer_brevkoder = ["BI01P11", "BI01S02", "BI01S10", "BI01S67", "BI01P18", "BI01X01", "BI01X02", "BI01B02", "BI01B11", "BI01E03", "BI01S25", "BI01S67", "BI01S68", "BI01S70", "BI01S61", "BI01S65", "BI01P17", "BI01S31", "BI01S32", "BI01S33", "BI01S34", "BI01S36", "BI01S63", "BI01S23"]
 brevmeny2jsonData.forEach((data: Record<string, string>) => {
       const result: IBrevalg = {
         "stonad": `${data["KODE_STONAD"]?.trim()}`, // HG  -- ER XX hvis urelevant
@@ -245,7 +245,7 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
     }
 
     if (currentValue.soknadType.includes("BEGRENSET_REVURDERING") && currentValue.behandlingStatus == "IKKE_FATTET") {
-      currentValue.brevkoder = [...new Set(["BI01S07", "BI01S22", "BI01S23", ...currentValue.brevkoder])]
+      currentValue.brevkoder = [...new Set(["BI01S07", "BI01S22", ...currentValue.brevkoder])]
     }
     previousValue.push(currentValue)
     return previousValue
