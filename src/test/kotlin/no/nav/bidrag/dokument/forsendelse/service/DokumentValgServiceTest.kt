@@ -1024,7 +1024,7 @@ class DokumentValgServiceTest {
 
         assertSoftly {
             dokumentValgListe.size shouldBe 5
-            dokumentValgListe["BI01P17"]!!.beskrivelse shouldBe "Ektefellebidrag klage, Uttalelse til klageinstans"
+            dokumentValgListe["BI01P17"]!!.tittel shouldBe "Ektefellebidrag klage, Uttalelse til klageinstans"
         }
     }
 
@@ -1041,7 +1041,7 @@ class DokumentValgServiceTest {
 
         assertSoftly {
             dokumentValgListe.size shouldBe 4
-            dokumentValgListe["BI01P11"]!!.beskrivelse shouldBe "Ektefellebidrag, NOTAT P11 T"
+            dokumentValgListe["BI01P11"]!!.tittel shouldBe "Ektefellebidrag, NOTAT P11 T"
         }
     }
 
