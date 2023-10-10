@@ -1,8 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import mu.KotlinLogging
 import no.nav.bidrag.commons.cache.EnableUserCache
 import no.nav.bidrag.commons.cache.InvaliderCacheFørStartenAvArbeidsdag
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.cache.caffeine.CaffeineCacheManager
@@ -10,6 +12,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import java.util.concurrent.TimeUnit
+
+private val log = KotlinLogging.logger {}
 
 @Configuration
 @EnableCaching
@@ -31,15 +35,20 @@ class CacheConfig {
     }
 
     @Bean
-    fun cacheManager(): CacheManager {
+    fun cacheManager(@Value("\${NAIS_CLUSTER_NAME:dev-gcp}") clusterName: String): CacheManager {
+        val isProd = clusterName.startsWith("prod")
         val caffeineCacheManager = CaffeineCacheManager()
         caffeineCacheManager.registerCustomCache(
             PERSON_SPRAAK_CACHE,
             Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
         )
+        val dokumentMalerCache = if (isProd) Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS)
+        else Caffeine.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES)
+
+        log.info { "Bruker cache $dokumentMalerCache for dokumentmaler. Kjører i cluster $clusterName" }
         caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
-        caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
-        caffeineCacheManager.registerCustomCache(DOKUMENTMALDETALJER_CACHE, Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, dokumentMalerCache.build())
+        caffeineCacheManager.registerCustomCache(DOKUMENTMALDETALJER_CACHE, dokumentMalerCache.build())
         caffeineCacheManager.registerCustomCache(TILGANG_TEMA_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
