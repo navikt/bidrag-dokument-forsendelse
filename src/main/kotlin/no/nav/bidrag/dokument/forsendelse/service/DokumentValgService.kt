@@ -126,10 +126,15 @@ class DokumentValgService(
     fun mapToMalDetaljer(malId: String, request: HentDokumentValgRequest? = null, leggTilPrefiksPåTittel: Boolean = false): DokumentMalDetaljer {
         val dokumentDetaljer = bestillingConsumer.dokumentmalDetaljer()
         val malInfo = dokumentDetaljer[malId]
-        val originalTittel = malInfo?.beskrivelse ?: "Ukjent"
+        val originalTittel = malInfo?.tittel ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
         val tittel = if (leggTilPrefiksPåTittel) tittelService.hentTittelMedPrefiks(originalTittel, request?.tilBehandlingInfo()) else originalTittel
-        return DokumentMalDetaljer(tittel, type = malType, alternativeTitler = hentAlternativeTitlerForMal(malId, request))
+        return DokumentMalDetaljer(
+            tittel,
+            beskrivelse = malInfo?.beskrivelse ?: tittel,
+            type = malType,
+            alternativeTitler = hentAlternativeTitlerForMal(malId, request)
+        )
     }
 
     fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {

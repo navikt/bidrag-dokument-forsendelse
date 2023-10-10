@@ -61,6 +61,10 @@ object ForespørselValidering {
             "Tittel på dokument kan ikke være tom"
         )
         feilmeldinger.validerErSann(
+            this.tittel != null && this.tittel.length < 500,
+            "Tittel på dokument kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel?.length} tegn)"
+        )
+        feilmeldinger.validerErSann(
             this.dokumentreferanse == null || this.dokumentreferanse == dokumentreferanse,
             "Dokumentreferanse $dokumentreferanse i forespørsel stemmer ikke med dokumentreferanse i inneholdet på forespørsel ${this.dokumentreferanse}"
         )
@@ -86,6 +90,10 @@ object ForespørselValidering {
         feilmeldinger.validerIkkeNullEllerTom(
             this.tittel,
             "Tittel på dokument ${index ?: ""} kan ikke være tom".replace("  ", "")
+        )
+        feilmeldinger.validerErSann(
+            this.tittel.length < 500,
+            "Tittel på dokument ${index ?: ""} kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel.length} tegn)"
         )
         if (this.dokumentreferanse.isNotNullOrEmpty() || this.journalpostId.isNotNullOrEmpty()) {
             feilmeldinger.validerErSann(
