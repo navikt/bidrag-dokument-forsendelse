@@ -42,7 +42,7 @@ class CacheConfig {
             PERSON_SPRAAK_CACHE,
             Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
         )
-        val dokumentMalerCache = if (isProd) Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS)
+        val dokumentMalerCache = if (isProd) Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS)
         else Caffeine.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES)
 
         log.info { "Bruker cache $dokumentMalerCache for dokumentmaler. Kjører i cluster $clusterName" }
