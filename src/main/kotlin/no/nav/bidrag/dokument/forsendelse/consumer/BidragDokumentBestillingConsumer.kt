@@ -56,7 +56,6 @@ class BidragDokumentBestillingConsumer(
 
     @Cacheable(DOKUMENTMALDETALJER_CACHE)
     fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
-        return getForEntity(createUri("/dokumentmal/detaljer"))
-            ?: emptyMap()
+        return getForEntity(createUri("/dokumentmal/detaljer")) ?: emptyMap()
     }
 }

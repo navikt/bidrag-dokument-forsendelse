@@ -48,6 +48,7 @@ data class DokumentMalDetaljer(
     val beskrivelse: String = tittel,
     val statiskInnhold: Boolean = false,
     val innholdType: DokumentmalInnholdType? = null,
+    val gruppeVisningsnavn: String? = null,
     val språk: List<String> = emptyList(),
     val tilhorerEnheter: List<String> = emptyList(),
     val alternativeTitler: List<String> = emptyList(),
