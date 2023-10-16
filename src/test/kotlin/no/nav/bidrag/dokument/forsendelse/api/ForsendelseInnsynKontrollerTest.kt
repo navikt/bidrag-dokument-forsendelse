@@ -7,11 +7,6 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import no.nav.bidrag.dokument.dto.AktorDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.JournalpostDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
@@ -48,6 +43,11 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.string.TEMA_BIDRAG
+import no.nav.bidrag.transport.dokument.AktorDto
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.JournalpostDto
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.LocalDate

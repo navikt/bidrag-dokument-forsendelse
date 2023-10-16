@@ -4,11 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
-import no.nav.bidrag.dokument.dto.AvvikType
-import no.nav.bidrag.dokument.dto.Avvikshendelse
-import no.nav.bidrag.dokument.dto.DokumentMetadata
-import no.nav.bidrag.dokument.dto.JournalpostDto
-import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -19,6 +14,11 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
+import no.nav.bidrag.transport.dokument.AvvikType
+import no.nav.bidrag.transport.dokument.Avvikshendelse
+import no.nav.bidrag.transport.dokument.DokumentMetadata
+import no.nav.bidrag.transport.dokument.JournalpostDto
+import no.nav.bidrag.transport.dokument.JournalpostResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired

@@ -3,10 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
-import no.nav.bidrag.dokument.dto.DistribuerTilAdresse
-import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
@@ -17,6 +13,10 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.validerKanDistribuere
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostRequest
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
+import no.nav.bidrag.transport.dokument.DistribuerTilAdresse
+import no.nav.bidrag.transport.dokument.DistribusjonInfoDto
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 

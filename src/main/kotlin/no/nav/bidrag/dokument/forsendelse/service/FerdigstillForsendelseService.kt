@@ -2,13 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDto
-import no.nav.bidrag.dokument.dto.AvsenderMottakerDtoIdType
-import no.nav.bidrag.dokument.dto.JournalpostType
-import no.nav.bidrag.dokument.dto.MottakUtsendingKanal
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.dto.OpprettJournalpostRequest
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
@@ -23,6 +16,13 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
+import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
+import no.nav.bidrag.transport.dokument.JournalpostType
+import no.nav.bidrag.transport.dokument.MottakUtsendingKanal
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettJournalpostRequest
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 

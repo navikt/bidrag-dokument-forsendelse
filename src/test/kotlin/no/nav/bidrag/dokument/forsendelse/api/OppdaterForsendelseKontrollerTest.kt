@@ -8,7 +8,6 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.Ordering
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
@@ -37,6 +36,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
+import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus

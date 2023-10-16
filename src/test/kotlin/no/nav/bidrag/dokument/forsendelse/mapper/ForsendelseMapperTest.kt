@@ -3,8 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.mapper
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -12,6 +10,8 @@ import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

@@ -2,7 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResponsDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
@@ -26,6 +25,7 @@ import no.nav.bidrag.dokument.forsendelse.service.pdf.PDFDokumentDetails
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
+import no.nav.bidrag.transport.dokument.DokumentMetadata
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -72,9 +72,9 @@ class RedigerDokumentService(
         forsendelse.validerKanEndreForsendelse()
         log.info {
             "Ferdigstiller dokument $dokumentreferanse i forsendelse $forsendelseId med dokumentstørrelse ${
-            bytesIntoHumanReadable(
-                ferdigstillDokumentRequest.fysiskDokument.size.toLong()
-            )
+                bytesIntoHumanReadable(
+                    ferdigstillDokumentRequest.fysiskDokument.size.toLong()
+                )
             }"
         }
         val oppdatertForsendelse = forsendelseTjeneste.lagre(

@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.consumer.dto
 
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 
 data class DokumentBestillingForespørsel(
     val mottaker: MottakerTo? = null,

@@ -3,11 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
-import no.nav.bidrag.dokument.dto.HendelseType
-import no.nav.bidrag.dokument.dto.JournalpostHendelse
-import no.nav.bidrag.dokument.dto.JournalpostStatus
-import no.nav.bidrag.dokument.dto.JournalpostType
-import no.nav.bidrag.dokument.dto.Sporingsdata
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
@@ -18,6 +13,11 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erUtgående
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
+import no.nav.bidrag.transport.dokument.HendelseType
+import no.nav.bidrag.transport.dokument.JournalpostHendelse
+import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.JournalpostType
+import no.nav.bidrag.transport.dokument.Sporingsdata
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.retry.annotation.Backoff
@@ -59,25 +59,25 @@ class JournalpostKafkaHendelseProdusent(
                     ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE.name
                 },
                 status = when (forsendelse.status) {
-                    ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT.name
-                    ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR.name
-                    ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT.name
+                    ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT
+                    ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
+                    ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
                     ForsendelseStatus.FERDIGSTILT -> if (forsendelse.distribusjonKanal == DistribusjonKanal.INGEN_DISTRIBUSJON) {
-                        ForsendelseStatus.DISTRIBUERT.name
+                        JournalpostStatus.DISTRIBUERT
                     } else if (forsendelse.erUtgående) {
-                        JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name
+                        JournalpostStatus.KLAR_FOR_DISTRIBUSJON
                     } else {
-                        JournalpostStatus.FERDIGSTILT.name
+                        JournalpostStatus.FERDIGSTILT
                     }
 
                     ForsendelseStatus.UNDER_PRODUKSJON ->
                         if (forsendelse.dokumenter.erAlleFerdigstilt) {
-                            if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name else JournalpostStatus.FERDIGSTILT.name
+                            if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
                         } else {
-                            JournalpostStatus.UNDER_PRODUKSJON.name
+                            JournalpostStatus.UNDER_PRODUKSJON
                         }
 
-                    ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_PRODUKSJON.name
+                    ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_PRODUKSJON
                 }
             )
         )

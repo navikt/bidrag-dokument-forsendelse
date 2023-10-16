@@ -5,10 +5,6 @@ import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkeLeseMeldingFraHendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
@@ -20,6 +16,10 @@ import no.nav.bidrag.dokument.forsendelse.service.FerdigstillForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentHendelse
+import no.nav.bidrag.transport.dokument.DokumentHendelseType
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener

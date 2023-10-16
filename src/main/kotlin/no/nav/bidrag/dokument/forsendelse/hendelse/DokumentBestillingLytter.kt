@@ -4,9 +4,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
@@ -24,6 +21,9 @@ import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.erFerdigstiltStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentHendelse
+import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener

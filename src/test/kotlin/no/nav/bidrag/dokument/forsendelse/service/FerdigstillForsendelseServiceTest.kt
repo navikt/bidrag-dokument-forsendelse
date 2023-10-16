@@ -7,8 +7,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
@@ -23,6 +21,8 @@ import no.nav.bidrag.dokument.forsendelse.utils.NY_JOURNALPOSTID
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettAdresseDo
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

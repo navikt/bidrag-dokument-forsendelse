@@ -2,9 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.AvvikType
-import no.nav.bidrag.dokument.dto.Avvikshendelse
-import no.nav.bidrag.dokument.dto.Fagomrade
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigAvvikForForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ugyldigAvviksForespørsel
@@ -14,6 +11,9 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreTilFagområde
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentFagområde
+import no.nav.bidrag.transport.dokument.AvvikType
+import no.nav.bidrag.transport.dokument.Avvikshendelse
+import no.nav.bidrag.transport.dokument.Fagomrade
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 

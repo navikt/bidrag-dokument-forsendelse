@@ -1,9 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentFormatDto
-import no.nav.bidrag.dokument.dto.DokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
@@ -20,6 +17,9 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentFormatDto
+import no.nav.bidrag.transport.dokument.DokumentMetadata
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}

@@ -8,13 +8,6 @@ import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
-import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentMetadata
-import no.nav.bidrag.dokument.dto.JournalpostStatus
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
@@ -41,6 +34,13 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.FulltNavn
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
+import no.nav.bidrag.transport.dokument.DistribusjonInfoDto
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentMetadata
+import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.Assert
 import org.springframework.core.io.ClassPathResource

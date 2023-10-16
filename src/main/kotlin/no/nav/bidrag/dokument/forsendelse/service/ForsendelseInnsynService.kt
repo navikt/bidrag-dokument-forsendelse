@@ -1,8 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import mu.KotlinLogging
-import no.nav.bidrag.dokument.dto.JournalpostDto
-import no.nav.bidrag.dokument.dto.JournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
@@ -20,6 +18,8 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.transport.dokument.JournalpostDto
+import no.nav.bidrag.transport.dokument.JournalpostResponse
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}

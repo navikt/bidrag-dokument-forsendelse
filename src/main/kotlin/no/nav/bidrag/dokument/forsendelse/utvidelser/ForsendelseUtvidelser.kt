@@ -45,10 +45,10 @@ fun Forsendelse.kanDistribueres(): Boolean {
 
 fun Rolletype.toName(): String? {
     return when (this) {
-        Rolletype.BM -> "Bidragsmottaker"
-        Rolletype.BP -> "Bidragspliktig"
-        Rolletype.BA -> "Barn"
-        Rolletype.RM -> "Reel mottaker"
+        Rolletype.BIDRAGSMOTTAKER -> "Bidragsmottaker"
+        Rolletype.BIDRAGSPLIKTIG -> "Bidragspliktig"
+        Rolletype.BARN -> "Barn"
+        Rolletype.REELMOTTAKER -> "Reel mottaker"
         else -> null
     }
 }

@@ -6,7 +6,7 @@
     "snyk-protect": "snyk protect",
     "dev": "concurrently \"tsc --watch\" \"cross-env-shell NODE_ENV=development ts-node src/server.ts\"",
     "start2": "ts-node jsontokt.ts",
-    "start": "ts-node brevmeny_brevkode.ts",
+    "start": "ts-node brevmeny_brevkode.ts ",
     "start3": "ts-node prefiks_kt_generator.ts"
   },
   "devDependencies": {

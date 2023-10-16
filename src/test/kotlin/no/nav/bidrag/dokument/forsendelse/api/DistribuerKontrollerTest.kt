@@ -6,9 +6,6 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostRequest
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
@@ -25,6 +22,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.med
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostRequest
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
@@ -198,8 +198,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "tema":"FAR",
@@ -261,8 +261,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "tema":"BID",
@@ -366,8 +366,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Dokument knyttet til forsendelse 1","brevkode":"$DOKUMENTMAL_UTGÅENDE","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Dokument knyttet til forsendelse 2","brevkode":"$DOKUMENTMAL_UTGÅENDE","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Dokument knyttet til forsendelse 1","brevkode":"$DOKUMENTMAL_UTGÅENDE","dokumentmalId":"$DOKUMENTMAL_UTGÅENDE","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Dokument knyttet til forsendelse 2","brevkode":"$DOKUMENTMAL_UTGÅENDE","dokumentmalId":"$DOKUMENTMAL_UTGÅENDE","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "tema":"BID",
@@ -449,8 +449,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Statisk vedlegg","brevkode":"$DOKUMENTMAL_STATISK_VEDLEGG","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Dokument knyttet til forsendelse 1","brevkode":"$DOKUMENTMAL_UTGÅENDE","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Statisk vedlegg","brevkode":"$DOKUMENTMAL_STATISK_VEDLEGG","dokumentmalId":"$DOKUMENTMAL_STATISK_VEDLEGG","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Dokument knyttet til forsendelse 1","brevkode":"$DOKUMENTMAL_UTGÅENDE","dokumentmalId":"$DOKUMENTMAL_UTGÅENDE","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "tema":"BID",
@@ -555,8 +555,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "tema":"BID",
@@ -629,8 +629,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Tittel på hoveddokument (dokumentet er sendt per post med vedlegg)","brevkode":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Tittel på hoveddokument (dokumentet er sendt per post med vedlegg)","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "kanal":"LOKAL_UTSKRIFT",
@@ -704,8 +704,8 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "gjelderIdent":"${forsendelse.gjelderIdent}",
                     "avsenderMottaker":{"navn":"${forsendelse.mottaker?.navn}","ident":"${forsendelse.mottaker?.ident}","type":"FNR","adresse":null},
                     "dokumenter":[
-                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
-                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
+                        {"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                        {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}
                     ],
                     "tilknyttSaker":["${forsendelse.saksnummer}"],
                     "kanal":"INGEN_DISTRIBUSJON",
