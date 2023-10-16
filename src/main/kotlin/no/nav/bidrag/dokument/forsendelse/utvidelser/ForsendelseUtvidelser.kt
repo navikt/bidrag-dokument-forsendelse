@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
-import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
@@ -13,6 +12,7 @@ import no.nav.bidrag.domain.enums.EngangsbelopType
 import no.nav.bidrag.domain.enums.Rolletype
 import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 
 val Forsendelse.dokumentDato get() = dokumenter.hoveddokument?.dokumentDato
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT

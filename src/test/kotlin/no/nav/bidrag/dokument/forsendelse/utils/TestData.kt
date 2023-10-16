@@ -2,10 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.utils
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.bidrag.behandling.felles.dto.vedtak.EngangsbelopDto
-import no.nav.bidrag.behandling.felles.dto.vedtak.GrunnlagDto
-import no.nav.bidrag.behandling.felles.dto.vedtak.StonadsendringDto
-import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
@@ -41,6 +37,10 @@ import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.Enhetsnummer
 import no.nav.bidrag.domain.string.Saksnummer
 import no.nav.bidrag.domain.tid.OpprettetDato
+import no.nav.bidrag.transport.behandling.vedtak.response.EngangsbelopDto
+import no.nav.bidrag.transport.behandling.vedtak.response.GrunnlagDto
+import no.nav.bidrag.transport.behandling.vedtak.response.StonadsendringDto
+import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentFormatDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
