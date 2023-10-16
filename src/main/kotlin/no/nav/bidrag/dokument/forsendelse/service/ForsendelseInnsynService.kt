@@ -144,7 +144,7 @@ class ForsendelseInnsynService(
                     erFattetBeregnet = it.erFattetBeregnet,
                     erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
                     enhet = forsendelse.enhet,
-                    soknadType = it.soknadType
+                    soknadType = it.soknadType,
                 )
 
             )

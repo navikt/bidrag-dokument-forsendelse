@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
 import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
 import no.nav.bidrag.dokument.dto.DokumentHendelse
@@ -20,7 +21,9 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.kanDistribueres
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -32,14 +35,19 @@ class DokumentHendelseLytter(
     val bidragDokumentConsumer: BidragDokumentConsumer,
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
-    val ferdigstillForsendelseService: FerdigstillForsendelseService
+    val ferdigstillForsendelseService: FerdigstillForsendelseService,
+    @Value("\${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean
 ) {
 
-    //    @Scheduled(cron = "\${OPPDATER_STATUS_DOKUMENTER_CRON}")
-//    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
+    /**
+     * Sjekker om dokumenter som har status UNDER_REDIGERING er ferdigstilt eller ikke og ferdigstiller dokumentet hvis de er det
+     * Denne feilen kan oppstå hvis kvittering fra brevserver ikke blir sendt på ritkig måte pga feil i verdikjeden.
+     */
+    @Scheduled(cron = "\${SYNKRONISER_STATUS_DOKUMENTER_CRON}")
+    @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterStatusPaFerdigstilteDokumenter() {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(500)
+        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(100)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
         dokumenter.forEach {
@@ -51,7 +59,7 @@ class DokumentHendelseLytter(
                     if (erFerdigstilt) "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
                     else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
                 }
-                if (erFerdigstilt) {
+                if (erFerdigstilt && synkroniserDokumentStatusEnabled) {
                     val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
                     val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
                         dokumentTjeneste.lagreDokument(
@@ -64,6 +72,8 @@ class DokumentHendelseLytter(
                     }
                     sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
                     ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+                } else if (erFerdigstilt) {
+                    log.info { "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på: synkroniserDokumentStatusEnabled = $synkroniserDokumentStatusEnabled" }
                 }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }

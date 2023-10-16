@@ -76,7 +76,7 @@ class DokumentTjeneste(
     fun hentDokumenterSomErUnderRedigering(limit: Int): List<Dokument> {
         return dokumentRepository.hentDokumentIkkeFerdigstiltFørDato(
             Pageable.ofSize(limit),
-            LocalDateTime.now().minusDays(1)
+            LocalDateTime.now().minusHours(12)
         )
     }
 

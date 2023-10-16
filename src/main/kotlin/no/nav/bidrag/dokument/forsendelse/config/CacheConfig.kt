@@ -43,7 +43,7 @@ class CacheConfig {
             Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
         )
         val dokumentMalerCache = if (isProd) Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS)
-        else Caffeine.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES)
+        else Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
 
         log.info { "Bruker cache $dokumentMalerCache for dokumentmaler. Kjører i cluster $clusterName" }
         caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
