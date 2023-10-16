@@ -78,6 +78,21 @@ fun Dokument.tilOpprettDokumentForespørsel() =
         arkivsystem = this.tilArkivSystemDto()
     )
 
+
+private fun Forsendelse.tilJournalpostStatus() = when (this.status) {
+    ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
+    ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
+    ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
+    ForsendelseStatus.FERDIGSTILT -> if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
+    ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt) {
+        if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
+    } else {
+        JournalpostStatus.UNDER_PRODUKSJON
+    }
+
+    ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_OPPRETTELSE
+}
+
 fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) = JournalpostDto(
     avsenderMottaker = this.mottaker?.let {
         AvsenderMottakerDto(
@@ -116,32 +131,8 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
         ForsendelseType.UTGÅENDE -> DokumentType.UTGÅENDE
     },
     journalfortAv = if (opprettetAvIdent == "bisys") "Bisys (Automatisk jobb)" else opprettetAvIdent,
-    journalstatus = when (this.status) {
-        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
-        ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
-        ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
-        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
-        ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt) {
-            if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
-        } else {
-            JournalpostStatus.UNDER_PRODUKSJON
-        }
-
-        ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_OPPRETTELSE
-    }.kode,
-    status = when (this.status) {
-        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
-        ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
-        ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
-        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
-        ForsendelseStatus.UNDER_PRODUKSJON -> if (this.dokumenter.erAlleFerdigstilt) {
-            if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
-        } else {
-            JournalpostStatus.UNDER_PRODUKSJON
-        }
-
-        ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_OPPRETTELSE
-    },
+    journalstatus = tilJournalpostStatus().kode,
+    status = tilJournalpostStatus(),
     journalpostId = forsendelseIdMedPrefix,
     dokumentDato = if (erNotat) this.dokumentDato?.toLocalDate() ?: this.opprettetTidspunkt.toLocalDate() else this.opprettetTidspunkt.toLocalDate(),
     journalfortDato = this.opprettetTidspunkt.toLocalDate(),
