@@ -20,6 +20,7 @@ BIDRAG_VEDTAK_URL: http://localhost:${wiremock.server.port}/vedtak
 BIDRAG_BEHANDLING_URL: http://localhost:${wiremock.server.port}/behandling
 KAFKA_BROKERS: localhost:9093
 KAFKA_MAX_RETRY: 0
+SYNKRONISER_STATUS_DOKUMENTER_ENABLED: true
 BUCKET_NAME: bidrag-dokument-forsendelse-local
 GCP_HOST: http://0.0.0.0:4443
 GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key

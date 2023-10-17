@@ -266,6 +266,7 @@ fun nyttDokument(
     rekkefølgeIndeks: Int = 0,
     slettet: Boolean = false,
     dokumentDato: LocalDateTime = LocalDateTime.now(),
+    opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     metadata: DokumentMetadataDo = DokumentMetadataDo()
 ): Dokument {
     val forsendelse = opprettForsendelse2()
@@ -280,7 +281,8 @@ fun nyttDokument(
         forsendelse = forsendelse,
         rekkefølgeIndeks = rekkefølgeIndeks,
         slettetTidspunkt = if (slettet) LocalDate.now() else null,
-        dokumentDato = dokumentDato
+        dokumentDato = dokumentDato,
+        opprettetTidspunkt = opprettetTidspunkt
 
     )
 }

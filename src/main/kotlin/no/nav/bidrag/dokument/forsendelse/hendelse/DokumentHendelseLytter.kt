@@ -46,6 +46,10 @@ class DokumentHendelseLytter(
     @Scheduled(cron = "\${SYNKRONISER_STATUS_DOKUMENTER_CRON}")
     @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
     @Transactional
+    fun oppdaterStatusPaFerdigstilteDokumenterSkeduler() {
+        oppdaterStatusPaFerdigstilteDokumenter()
+    }
+
     fun oppdaterStatusPaFerdigstilteDokumenter() {
         val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(100)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
@@ -80,7 +84,6 @@ class DokumentHendelseLytter(
             }
 
         }
-
     }
 
 

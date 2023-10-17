@@ -185,6 +185,16 @@ class StubUtils {
         )
     }
 
+    fun stubSjekkErDokumentFerdigstilt(dokumentreferanse: String, erFerdigstilt: Boolean) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/dokument/dokumentreferanse/$dokumentreferanse/erFerdigstilt")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(erFerdigstilt.toString())
+            )
+        )
+    }
+
     fun stubHentDokument() {
         WireMock.stubFor(
             WireMock.get(WireMock.urlMatching("/dokument/dokument/(.*)")).willReturn(
@@ -423,6 +433,20 @@ class StubUtils {
                 WireMock.urlMatching("/bestilling/bestill/$dokumentmal")
             )
             verifyContains(verify, *contains)
+        }
+
+        fun stubSjekkErDokumentFerdigstiltKaltMed(dokumentreferanse: String) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/dokumentreferanse/$dokumentreferanse/erFerdigstilt")
+            )
+            verifyContains(verify)
+        }
+
+        fun stubSjekkErDokumentFerdigstiltIkkeKaltMed(dokumentreferanse: String) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/dokumentreferanse/$dokumentreferanse/erFerdigstilt")
+            )
+            WireMock.verify(0, verify)
         }
 
         fun bestillDokumentIkkeKalt(dokumentmal: String) {
