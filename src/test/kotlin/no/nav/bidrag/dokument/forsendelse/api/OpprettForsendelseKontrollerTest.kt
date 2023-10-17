@@ -8,8 +8,6 @@ import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.dto.JournalpostStatus
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
@@ -52,6 +50,8 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekk
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
 import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.dokument.JournalpostStatus
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

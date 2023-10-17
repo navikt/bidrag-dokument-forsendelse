@@ -8,9 +8,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.dto.JournalpostStatus
-import no.nav.bidrag.dokument.dto.JournalpostType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -23,6 +20,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.JournalpostType
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -214,7 +214,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
         val hendelse = readFromJournalpostTopic()
         hendelse shouldNotBe null
-        hendelse!!.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON.name
+        hendelse!!.status shouldBe JournalpostStatus.KLAR_FOR_DISTRIBUSJON
         hendelse.journalpostId shouldBe forsendelse1.forsendelseIdMedPrefix
         hendelse.tema shouldBe forsendelse1.tema.name
         hendelse.enhet shouldBe forsendelse1.enhet
@@ -306,19 +306,19 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
             val referanseId = forsendelseEtter.opprettReferanseId()
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Forsendelse notat\"," +
-                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
-                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"NOTAT\"," +
-                    "\"referanseId\":\"$referanseId\"," +
-                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                    "\"saksbehandlerIdent\":\"Z999444\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Forsendelse notat\"," +
+                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
+                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"NOTAT\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                        "\"saksbehandlerIdent\":\"Z999444\"" +
+                        "}"
             )
         }
     }

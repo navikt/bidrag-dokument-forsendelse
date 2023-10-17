@@ -5,8 +5,6 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
@@ -26,6 +24,8 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.domain.enums.StonadType
 import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -286,8 +286,8 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                         "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
                         "\"dokumenter\":[" +
                         "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
-                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
-                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentmalId\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
                         "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
                         "\"tema\":\"BID\"," +
                         "\"journalposttype\":\"UTGÅENDE\"," +

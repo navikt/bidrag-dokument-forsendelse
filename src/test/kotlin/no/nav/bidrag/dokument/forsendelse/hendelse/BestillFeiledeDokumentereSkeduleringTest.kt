@@ -7,7 +7,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.Ordering
 import io.mockk.every
 import io.mockk.verify
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -20,6 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_B
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

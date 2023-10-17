@@ -31,31 +31,12 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
         }
     }
 
-    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentSkedulering.bestillFeiledeDokumenterPåNyttSkeduler(..))")
-    fun leggKorreleringsIdPåSkedulering(joinPoint: JoinPoint) {
+    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.*.*(..))")
+    fun leggtilHendelseSporingId(joinPoint: JoinPoint) {
+        if (MDC.get(CORRELATION_ID_HEADER) != null) return
         val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
-        val korrelasjonsId = "${tilfeldigVerdi}_bestillFeiledeDokumenterPaNytt"
-        MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
-    }
-
-    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.lagreDistribusjonsinfoSkeduler(..))")
-    fun leggKorreleringsIdPåForsendelseSkedulering(joinPoint: JoinPoint) {
-        val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
-        val korrelasjonsId = "${tilfeldigVerdi}_lagreDistribusjoninfo"
-        MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
-    }
-
-    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.oppdaterDistribusjonstatusSkeduler(..))")
-    fun leggKorreleringsIdPåForsendelseOppdaterDistribusjonstatusSkedulering(joinPoint: JoinPoint) {
-        val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
-        val korrelasjonsId = "${tilfeldigVerdi}_oppdaterDistribusjonstatus"
-        MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
-    }
-
-    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.bestilleDokumenterUnderProduksjonPåNyttSkeduler(..))")
-    fun leggKorreleringsIdPåbestilleDokumenterUnderProduksjonPaNyttSkeduler(joinPoint: JoinPoint) {
-        val tilfeldigVerdi = UUID.randomUUID().toString().subSequence(0, 8)
-        val korrelasjonsId = "${tilfeldigVerdi}_bestilleDokumenterUnderProduksjonPaNyttSkeduler"
+        val methodName = joinPoint.signature.name.replace("[^A-Za-z0-9 ]".toRegex(), "") // Fjern norske bokstaver fra metodenavn
+        val korrelasjonsId = "${tilfeldigVerdi}_$methodName"
         MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
     }
 
@@ -69,18 +50,9 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
         }
     }
 
-    @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter.*(..))")
-    fun clearCorrelationIdFromKafkaListener(joinPoint: JoinPoint) {
+    @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.*.*(..))")
+    fun clearCorrelationId(joinPoint: JoinPoint) {
         MDC.clear()
     }
 
-    @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentSkedulering.*(..))")
-    fun clearCorrelationIdFromScheduler(joinPoint: JoinPoint) {
-        MDC.clear()
-    }
-
-    @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering.*(..))")
-    fun clearCorrelationIdFromForsendlseScheduler(joinPoint: JoinPoint) {
-        MDC.clear()
-    }
 }

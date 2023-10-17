@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.service.validering
 
-import no.nav.bidrag.dokument.dto.Fagomrade
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
@@ -19,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.transport.dokument.Fagomrade
 import java.time.LocalDateTime
 
 object ForespørselValidering {

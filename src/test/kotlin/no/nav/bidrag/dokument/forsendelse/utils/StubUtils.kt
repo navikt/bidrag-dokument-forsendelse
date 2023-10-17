@@ -7,14 +7,6 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
-import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
-import no.nav.bidrag.dokument.dto.DistribuerJournalpostResponse
-import no.nav.bidrag.dokument.dto.DistribusjonInfoDto
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentMetadata
-import no.nav.bidrag.dokument.dto.JournalpostStatus
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
@@ -41,6 +33,14 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.FulltNavn
+import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
+import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
+import no.nav.bidrag.transport.dokument.DistribusjonInfoDto
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentMetadata
+import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.Assert
 import org.springframework.core.io.ClassPathResource
@@ -181,6 +181,16 @@ class StubUtils {
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withBody(inputstream.readAllBytes())
+            )
+        )
+    }
+
+    fun stubSjekkErDokumentFerdigstilt(dokumentreferanse: String, erFerdigstilt: Boolean) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlMatching("/dokument/dokumentreferanse/$dokumentreferanse/erFerdigstilt")).willReturn(
+                aClosedJsonResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withBody(erFerdigstilt.toString())
             )
         )
     }
@@ -423,6 +433,20 @@ class StubUtils {
                 WireMock.urlMatching("/bestilling/bestill/$dokumentmal")
             )
             verifyContains(verify, *contains)
+        }
+
+        fun stubSjekkErDokumentFerdigstiltKaltMed(dokumentreferanse: String) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/dokumentreferanse/$dokumentreferanse/erFerdigstilt")
+            )
+            verifyContains(verify)
+        }
+
+        fun stubSjekkErDokumentFerdigstiltIkkeKaltMed(dokumentreferanse: String) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/dokumentreferanse/$dokumentreferanse/erFerdigstilt")
+            )
+            WireMock.verify(0, verify)
         }
 
         fun bestillDokumentIkkeKalt(dokumentmal: String) {

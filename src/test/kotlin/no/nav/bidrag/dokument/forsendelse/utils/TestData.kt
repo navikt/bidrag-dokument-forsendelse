@@ -2,18 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.utils
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.bidrag.behandling.felles.dto.vedtak.EngangsbelopDto
-import no.nav.bidrag.behandling.felles.dto.vedtak.GrunnlagDto
-import no.nav.bidrag.behandling.felles.dto.vedtak.StonadsendringDto
-import no.nav.bidrag.behandling.felles.dto.vedtak.VedtakDto
-import no.nav.bidrag.dokument.dto.DokumentArkivSystemDto
-import no.nav.bidrag.dokument.dto.DokumentFormatDto
-import no.nav.bidrag.dokument.dto.DokumentHendelse
-import no.nav.bidrag.dokument.dto.DokumentHendelseType
-import no.nav.bidrag.dokument.dto.DokumentMetadata
-import no.nav.bidrag.dokument.dto.DokumentStatusDto
-import no.nav.bidrag.dokument.dto.OpprettDokumentDto
-import no.nav.bidrag.dokument.dto.OpprettJournalpostResponse
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
@@ -49,6 +37,18 @@ import no.nav.bidrag.domain.ident.PersonIdent
 import no.nav.bidrag.domain.string.Enhetsnummer
 import no.nav.bidrag.domain.string.Saksnummer
 import no.nav.bidrag.domain.tid.OpprettetDato
+import no.nav.bidrag.transport.behandling.vedtak.response.EngangsbelopDto
+import no.nav.bidrag.transport.behandling.vedtak.response.GrunnlagDto
+import no.nav.bidrag.transport.behandling.vedtak.response.StonadsendringDto
+import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
+import no.nav.bidrag.transport.dokument.DokumentFormatDto
+import no.nav.bidrag.transport.dokument.DokumentHendelse
+import no.nav.bidrag.transport.dokument.DokumentHendelseType
+import no.nav.bidrag.transport.dokument.DokumentMetadata
+import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.transport.sak.BidragssakDto
 import no.nav.bidrag.transport.sak.RolleDto
 import org.junit.Assert
@@ -266,6 +266,7 @@ fun nyttDokument(
     rekkefølgeIndeks: Int = 0,
     slettet: Boolean = false,
     dokumentDato: LocalDateTime = LocalDateTime.now(),
+    opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     metadata: DokumentMetadataDo = DokumentMetadataDo()
 ): Dokument {
     val forsendelse = opprettForsendelse2()
@@ -280,7 +281,8 @@ fun nyttDokument(
         forsendelse = forsendelse,
         rekkefølgeIndeks = rekkefølgeIndeks,
         slettetTidspunkt = if (slettet) LocalDate.now() else null,
-        dokumentDato = dokumentDato
+        dokumentDato = dokumentDato,
+        opprettetTidspunkt = opprettetTidspunkt
 
     )
 }
@@ -433,9 +435,9 @@ fun opprettSak(): BidragssakDto {
         saksstatus = Bidragssakstatus.IN,
         ukjentPart = UkjentPart(false),
         roller = listOf(
-            RolleDto(PersonIdent(GJELDER_IDENT_BM), Rolletype.BM),
-            RolleDto(PersonIdent(GJELDER_IDENT_BP), Rolletype.BP),
-            RolleDto(PersonIdent(GJELDER_IDENT_BA), Rolletype.BA)
+            RolleDto(PersonIdent(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
+            RolleDto(PersonIdent(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
+            RolleDto(PersonIdent(GJELDER_IDENT_BA), Rolletype.BARN)
         )
     )
 }
