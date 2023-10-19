@@ -45,6 +45,7 @@ data class DokumentMalDetaljer(
     val tittel: String,
     val type: DokumentMalType,
     val kanBestilles: Boolean = false,
+    val redigerbar: Boolean = false,
     val beskrivelse: String = tittel,
     val statiskInnhold: Boolean = false,
     val innholdType: DokumentmalInnholdType? = null,
@@ -59,6 +60,7 @@ enum class DokumentmalInnholdType {
     VEDTAK,
     VEDLEGG_VEDTAK,
     VEDLEGG_VARSEL,
+    VEDLEGG,
     SKJEMA,
 }
 

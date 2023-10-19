@@ -5,11 +5,13 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENT_FIL
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
@@ -354,6 +356,62 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
 
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
         stubUtils.Valider().hentDokumentFraBestillingKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+        respons.statusCode shouldBe HttpStatus.OK
+        respons.headers.contentDisposition.filename shouldBe "${forsendelse.dokumenter[0].dokumentreferanse}.pdf"
+        respons.body shouldBe DOKUMENT_FIL.toByteArray()
+    }
+
+    @Test
+    fun `skal hente statisk dokument redigerbar`() {
+        stubUtils.stubHentDokumetFraBestill(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                        arkivsystem = DokumentArkivSystem.BIDRAG,
+                        dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
+                        metadata = run {
+                            val metadata = DokumentMetadataDo()
+                            metadata.markerSomStatiskDokument()
+                            metadata.markerSomSkjema()
+                            metadata
+                        }
+                    )
+                )
+            )
+        )
+
+        val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
+        stubUtils.Valider().hentDokumentFraBestillingKalt(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
+        respons.statusCode shouldBe HttpStatus.OK
+        respons.headers.contentDisposition.filename shouldBe "${forsendelse.dokumenter[0].dokumentreferanse}.pdf"
+        respons.body shouldBe DOKUMENT_FIL.toByteArray()
+    }
+
+    @Test
+    fun `skal hente statisk dokument redigerbar fra bucket hvis kontrollert`() {
+        stubUtils.stubHentDokumetFraBestill(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(
+                        dokumentStatus = DokumentStatus.KONTROLLERT,
+                        arkivsystem = DokumentArkivSystem.BIDRAG,
+                        dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
+                        metadata = run {
+                            val metadata = DokumentMetadataDo()
+                            metadata.markerSomStatiskDokument()
+                            metadata.markerSomSkjema()
+                            metadata
+                        }
+                    )
+                )
+            )
+        )
+
+        val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
+        verify(exactly = 1) { gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter[0].filsti}")) }
         respons.statusCode shouldBe HttpStatus.OK
         respons.headers.contentDisposition.filename shouldBe "${forsendelse.dokumenter[0].dokumentreferanse}.pdf"
         respons.body shouldBe DOKUMENT_FIL.toByteArray()

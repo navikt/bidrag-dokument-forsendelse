@@ -262,6 +262,7 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
             dokumentmalId = it.dokumentmalId,
             arkivsystem = it.tilArkivSystemDto(),
             redigeringMetadata = it.metadata.hentRedigeringmetadata(),
+            erSkjema = it.metadata.erSkjema(),
             dokumentDato = it.dokumentDato,
             status = it.tilDokumentStatusTo()
         )

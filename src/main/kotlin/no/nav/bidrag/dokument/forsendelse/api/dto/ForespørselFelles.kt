@@ -43,6 +43,7 @@ data class DokumentRespons(
     val journalpostId: String? = null,
     val dokumentmalId: String? = null,
     val redigeringMetadata: String? = null,
+    val erSkjema: Boolean = false,
     val status: DokumentStatusTo? = null,
     @Schema(enumAsRef = true) val arkivsystem: DokumentArkivSystemDto? = null
 )

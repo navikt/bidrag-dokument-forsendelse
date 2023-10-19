@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component
 private val log = KotlinLogging.logger {}
 
 
-fun Dokument.erFerdigstiltStatiskDokument() =
-    arkivsystem == DokumentArkivSystem.BIDRAG && dokumentStatus == DokumentStatus.FERDIGSTILT && metadata.erStatiskDokument()
+fun Dokument.erStatiskDokument() =
+    arkivsystem == DokumentArkivSystem.BIDRAG && metadata.erStatiskDokument()
 
 @Component
 class FysiskDokumentService(
@@ -49,7 +49,7 @@ class FysiskDokumentService(
             return dokumentStorageService.hentFil(dokument.filsti)
         }
 
-        if (dokument.erFerdigstiltStatiskDokument()) {
+        if (dokument.erStatiskDokument()) {
             return hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
         }
 
@@ -72,7 +72,7 @@ class FysiskDokumentService(
             return dokumentStorageService.hentFil(dokument.filsti)
         }
 
-        if (dokument.erFerdigstiltStatiskDokument()) {
+        if (dokument.erStatiskDokument()) {
             return hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(-1, dokumentreferanse)
         }
 

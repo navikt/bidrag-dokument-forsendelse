@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
@@ -19,7 +20,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
-import no.nav.bidrag.dokument.forsendelse.service.erFerdigstiltStatiskDokument
+import no.nav.bidrag.dokument.forsendelse.service.erStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
@@ -94,18 +95,35 @@ class DokumentBestillingLytter(
     }
 
     private fun oppdaterStatusForStatiskDokument(dokument: Dokument) {
-        LOGGER.info { "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} knyttet til forsendelse ${dokument.forsendelseId} er statisk vedlegg. Ferdigstiller dokument." }
-        dokumentTjeneste.lagreDokument(
-            dokument.copy(
-                arkivsystem = DokumentArkivSystem.BIDRAG,
-                dokumentStatus = DokumentStatus.FERDIGSTILT,
-                metadata = run {
-                    val metadata = dokument.metadata
-                    metadata.markerSomStatiskDokument()
-                    metadata.copy()
-                }
+        if (erRedigerbar(dokument.dokumentmalId!!)) {
+            LOGGER.info { "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} knyttet til forsendelse ${dokument.forsendelseId} er statisk vedlegg som er redigerbar. Setter status til MÅ_KONTROLLERES." }
+            dokumentTjeneste.lagreDokument(
+                dokument.copy(
+                    arkivsystem = DokumentArkivSystem.BIDRAG,
+                    dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                    metadata = run {
+                        val metadata = dokument.metadata
+                        metadata.markerSomStatiskDokument()
+                        if (erSkjema(dokument.dokumentmalId)) metadata.markerSomSkjema()
+                        metadata.copy()
+                    }
+                )
             )
-        )
+        } else {
+            LOGGER.info { "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} knyttet til forsendelse ${dokument.forsendelseId} er statisk vedlegg. Ferdigstiller dokument." }
+            dokumentTjeneste.lagreDokument(
+                dokument.copy(
+                    arkivsystem = DokumentArkivSystem.BIDRAG,
+                    dokumentStatus = DokumentStatus.FERDIGSTILT,
+                    metadata = run {
+                        val metadata = dokument.metadata
+                        metadata.markerSomStatiskDokument()
+                        metadata.copy()
+                    }
+                )
+            )
+        }
+
     }
 
     private fun sendBestilling(forsendelse: Forsendelse, dokument: Dokument): DokumentArkivSystemDto? {
@@ -141,7 +159,7 @@ class DokumentBestillingLytter(
                 forsendelse.tema.name,
                 "tittel",
                 if (dokumentMalId == "BI01S02") "Fritekstbrev" else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) "Notat" else dokument.tittel,
-                "er_statisk_dokument", if (dokument.erFerdigstiltStatiskDokument()) "true" else "false"
+                "er_statisk_dokument", if (dokument.erStatiskDokument()) "true" else "false"
             ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
@@ -163,6 +181,14 @@ class DokumentBestillingLytter(
 
     private fun erStatiskDokument(dokumentMal: String): Boolean {
         return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
+    }
+
+    private fun erRedigerbar(dokumentMal: String): Boolean {
+        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.redigerbar ?: false
+    }
+
+    private fun erSkjema(dokumentMal: String): Boolean {
+        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.innholdType == DokumentmalInnholdType.SKJEMA
     }
 
     private fun tilForespørsel(forsendelse: Forsendelse, dokument: Dokument): DokumentBestillingForespørsel {
