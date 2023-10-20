@@ -131,6 +131,7 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
     private val DOKUMENT_DETALJER_KEY = "dokument_detaljer"
     private val DOKUMENT_BESTILT_TIDSPUNKT = "dokument_bestilt_tidspunkt"
     private val ER_STATISK_DOKUMENT = "er_statisk_dokument"
+    private val ER_SKJEMA = "er_skjema"
     private val DOKUMENT_PRODUSERT_TIDSPUNKT = "dokument_produsert_tidspunkt"
     private val DOKUMENT_BESTILT_ANTALL_GANGER = "dokument_bestilt_antall_ganger"
     private val objectMapper = ObjectMapper().findAndRegisterModules()
@@ -139,6 +140,11 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
         update(ER_STATISK_DOKUMENT, "true")
     }
 
+    fun markerSomSkjema() {
+        update(ER_SKJEMA, "true")
+    }
+
+    fun erSkjema() = get(ER_SKJEMA) == "true"
     fun erStatiskDokument() = get(ER_STATISK_DOKUMENT) == "true"
 
     fun inkrementerBestiltAntallGanger() {

@@ -16,6 +16,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_3
@@ -278,6 +279,15 @@ class StubUtils {
             DokumentMalType.UTGÅENDE,
             true,
             statiskInnhold = true,
+            innholdType = DokumentmalInnholdType.SKJEMA,
+            tilhorerEnheter = listOf("4860")
+        )
+        dokumentMalDetaljerMap[DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR] = DokumentMalDetaljer(
+            "Dokument statisk vedlegg",
+            DokumentMalType.UTGÅENDE,
+            true,
+            statiskInnhold = true,
+            redigerbar = true,
             innholdType = DokumentmalInnholdType.SKJEMA,
             tilhorerEnheter = listOf("4860")
         )

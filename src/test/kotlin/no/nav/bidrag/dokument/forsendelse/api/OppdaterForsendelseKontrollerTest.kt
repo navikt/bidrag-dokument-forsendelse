@@ -17,9 +17,10 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.service.erFerdigstiltStatiskDokument
+import no.nav.bidrag.dokument.forsendelse.service.erStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
+import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
@@ -531,6 +532,40 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
     }
 
     @Test
+    fun `Skal legge til statisk vedlegg på forsendelse som er redigerbar skjema`() {
+        val forsendelse = testDataManager.lagreForsendelse(
+            opprettForsendelse2(
+                dokumenter = listOf(
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                )
+            )
+        )
+
+        val forsendelseId = forsendelse.forsendelseId!!
+
+        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
+            tittel = TITTEL_VEDLEGG_1,
+            dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR
+        )
+
+        val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
+        responseNyDokument.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+
+        assertSoftly {
+            oppdatertForsendelse.dokumenter.size shouldBe 2
+            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+            oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
+            oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
+            oppdatertForsendelse.dokumenter.vedlegger[0].metadata.erSkjema() shouldBe true
+            oppdatertForsendelse.dokumenter.vedlegger[0].metadata.erStatiskDokument() shouldBe true
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
+        }
+    }
+
+    @Test
     fun `Skal legge til og slette statisk dokument på forsendelse`() {
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
@@ -565,7 +600,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
             dokumenter[0].tittel shouldBe "Tittel hoveddok"
             dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
-            dokumenter[1].erFerdigstiltStatiskDokument() shouldBe true
+            dokumenter[1].erStatiskDokument() shouldBe true
 
             stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
         }
