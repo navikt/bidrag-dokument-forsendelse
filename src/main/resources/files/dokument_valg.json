@@ -19402,6 +19402,35 @@
       "brevkoder": [
         "BI01A05"
       ]
+    },
+    {
+      "soknadType": [
+        "KLAGE"
+      ],
+      "soknadFra": [
+        "BARN_18_AAR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "BM_I_ANNEN_SAK",
+        "KLAGE_ANKE",
+        "NORSKE_MYNDIGHET",
+        "TRYGDEETATEN_INNKREVING",
+        "UTENLANDSKE_MYNDIGHET",
+        "VERGE"
+      ],
+      "erVedtakIkkeTilbakekreving": false,
+      "engangsbelopType": "TILBAKEKREVING",
+      "vedtakType": [
+        "KLAGE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01S20",
+        "BI01S21",
+        "BI01S60",
+        "BI01S64"
+      ]
     }
   ],
   "ETTERGIVELSE_TILBAKEKREVING": [
