@@ -233,6 +233,36 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
       "BI01G02"
     ]
   })
+  // 20.10.2023 - Tilbakekreving varsel mangler liste med brevkoder
+  mapValues["TILBAKEKREVING"].push({
+    "soknadType": [
+      "KLAGE"
+    ],
+    "soknadFra": [
+      "BARN_18_AAR",
+      "BIDRAGSMOTTAKER",
+      "BIDRAGSPLIKTIG",
+      "BM_I_ANNEN_SAK",
+      "KLAGE_ANKE",
+      "NORSKE_MYNDIGHET",
+      "TRYGDEETATEN_INNKREVING",
+      "UTENLANDSKE_MYNDIGHET",
+      "VERGE"
+    ],
+    "erVedtakIkkeTilbakekreving": false,
+    "engangsbelopType": "TILBAKEKREVING",
+    "vedtakType": [
+      "KLAGE"
+    ],
+    "behandlingStatus": "IKKE_FATTET",
+    "forvaltning": "BIDRAG",
+    "brevkoder": [
+      "BI01S20",
+      "BI01S21",
+      "BI01S60",
+      "BI01S64"
+    ]
+  })
   mapValues["BIDRAG"] = mapValues["BIDRAG"].reduce((previousValue, currentValue) => {
     if (currentValue.vedtakType.includes("OPPHØR") && currentValue.brevkoder.length == 1 && currentValue.brevkoder.includes("BI01S07") && currentValue.soknadFra.includes("NAV_BIDRAG")) {
       currentValue.vedtakType = currentValue.vedtakType.filter((v) => v != "OPPHØR")

@@ -960,6 +960,49 @@ class DokumentValgServiceTest {
     }
 
     @Test
+    fun `Skal hente dokumentvalg for varsel klage tilbakekreving`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadType = "KLAGE",
+                behandlingType = StonadType.FORSKUDD.name,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                erFattetBeregnet = null,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 6
+            dokumentValgListe shouldContainKey "BI01S20"
+            dokumentValgListe shouldContainKey "BI01S21"
+            dokumentValgListe shouldContainKey "BI01S60"
+            dokumentValgListe shouldContainKey "BI01S64"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
+    fun `Skal hente dokumentvalg for vedtak klage tilbakekreving`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = VedtakType.KLAGE,
+                soknadType = "KLAGE",
+                behandlingType = EngangsbelopType.TILBAKEKREVING.name,
+                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                erFattetBeregnet = false,
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 3
+            dokumentValgListe shouldContainKey "BI01K50"
+            dokumentValgListe shouldContainKey "BI01S02"
+            dokumentValgListe shouldContainKey "BI01S10"
+        }
+    }
+
+    @Test
     fun `Skal hente dokumentvalg for vedtak av eget tiltak bidrag - beregnet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(

@@ -70,7 +70,7 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
 typealias SoknadTyper = List<SoknadType>
 
 fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
-    if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING") {
+    if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING" || st == "KLAGE") {
         return soknadType.contains(st)
     }
     return vedtakType.contains(vt)
