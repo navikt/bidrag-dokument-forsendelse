@@ -2,6 +2,8 @@ package no.nav.bidrag.dokument.forsendelse.api
 
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -11,13 +13,19 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.RedigerDokumentService
+import no.nav.bidrag.dokument.forsendelse.service.pdf.validerPDFA
+import no.nav.security.token.support.core.api.Protected
+import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
-@ForsendelseApiKontroller
+@RestController
+@Protected
 @RequestMapping("/api/forsendelse/redigering")
 @Timed
 class RedigerDokumentKontroller(
@@ -99,5 +107,23 @@ class RedigerDokumentKontroller(
     ): DokumentRedigeringMetadataResponsDto {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return redigerDokumentService.hentDokumentredigeringMetadata(forsendelseId, dokumentreferanse)
+    }
+
+    @PostMapping("/validerPDF")
+    @Operation(
+        summary = "Hent dokument redigering metadata",
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        content = [Content(
+            mediaType = "application/pdf",
+            schema = Schema(type = "string", format = "binary")
+        )]
+    )
+    @Unprotected
+    fun validerPDF(
+        @RequestBody pdf: ByteArray
+    ): String? {
+        return validerPDFA(pdf)
     }
 }
