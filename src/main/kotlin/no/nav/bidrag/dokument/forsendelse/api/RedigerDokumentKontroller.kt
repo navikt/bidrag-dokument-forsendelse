@@ -15,7 +15,6 @@ import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.RedigerDokumentService
 import no.nav.bidrag.dokument.forsendelse.service.pdf.validerPDFA
 import no.nav.security.token.support.core.api.Protected
-import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -111,7 +110,7 @@ class RedigerDokumentKontroller(
 
     @PostMapping("/validerPDF")
     @Operation(
-        summary = "Hent dokument redigering metadata",
+        summary = "Valider om PDF er gyldig PDF/A dokument. Respons vil gi hva som ikke er gyldig hvis ikke gyldig PDF/A.",
         security = [SecurityRequirement(name = "bearer-key")]
     )
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -120,7 +119,6 @@ class RedigerDokumentKontroller(
             schema = Schema(type = "string", format = "binary")
         )]
     )
-    @Unprotected
     fun validerPDF(@RequestBody pdf: ByteArray): String? {
         return validerPDFA(pdf)
     }
