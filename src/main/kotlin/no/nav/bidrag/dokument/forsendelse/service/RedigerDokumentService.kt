@@ -124,6 +124,7 @@ class RedigerDokumentService(
         ferdigstillDokumentRequest: FerdigstillDokumentRequest
     ): List<Dokument> {
         val (fysiskDokument, redigeringMetadata) = ferdigstillDokumentRequest
+//        erGyldigPDFA(ferdigstillDokumentRequest.fysiskDokument, dokumentreferanse)
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {

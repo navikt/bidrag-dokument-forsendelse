@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
+import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
@@ -115,6 +116,8 @@ class DokumentBestillingLytter(
                 dokument.copy(
                     arkivsystem = DokumentArkivSystem.BIDRAG,
                     dokumentStatus = DokumentStatus.FERDIGSTILT,
+                    ferdigstiltTidspunkt = LocalDateTime.now(),
+                    ferdigstiltAvIdent = TokenUtils.hentSaksbehandlerIdent(),
                     metadata = run {
                         val metadata = dokument.metadata
                         metadata.markerSomStatiskDokument()

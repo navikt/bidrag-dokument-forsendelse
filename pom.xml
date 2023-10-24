@@ -34,6 +34,7 @@
     <google-api-extention.version>2.32.0</google-api-extention.version>
     <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
     <grpc.version>1.57.2</grpc.version>
+    <pdfbox.version>3.0.0</pdfbox.version>
     <skipOwasp>false</skipOwasp>
 
   </properties>
@@ -83,10 +84,22 @@
       <artifactId>nv-i18n</artifactId>
       <version>1.29</version>
     </dependency>
+
+    <!--  PDF  -->
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
-      <version>3.0.0</version>
+      <version>${pdfbox.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>xmpbox</artifactId>
+      <version>${pdfbox.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.verapdf</groupId>
+      <artifactId>validation-model-jakarta</artifactId>
+      <version>1.24.1</version>
     </dependency>
 
     <!--Spring-->
