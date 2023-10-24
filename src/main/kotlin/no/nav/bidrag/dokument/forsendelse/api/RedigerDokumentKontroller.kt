@@ -121,9 +121,7 @@ class RedigerDokumentKontroller(
         )]
     )
     @Unprotected
-    fun validerPDF(
-        @RequestBody pdf: ByteArray
-    ): String? {
+    fun validerPDF(@RequestBody pdf: ByteArray): String? {
         return validerPDFA(pdf)
     }
 }

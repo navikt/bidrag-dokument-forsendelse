@@ -22,7 +22,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.pdf.PDFDokumentDetails
-import no.nav.bidrag.dokument.forsendelse.service.pdf.erGyldigPDFA
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
@@ -125,7 +124,7 @@ class RedigerDokumentService(
         ferdigstillDokumentRequest: FerdigstillDokumentRequest
     ): List<Dokument> {
         val (fysiskDokument, redigeringMetadata) = ferdigstillDokumentRequest
-        val erGyldigDokument = erGyldigPDFA(ferdigstillDokumentRequest.fysiskDokument, dokumentreferanse)
+//        erGyldigPDFA(ferdigstillDokumentRequest.fysiskDokument, dokumentreferanse)
         val oppdaterteDokumenter = forsendelse.dokumenter
             .map {
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {
