@@ -16,7 +16,7 @@ jobs:
 
   run-tests-for-opprett-oppgave-main:
     runs-on: ubuntu-latest
-    name: "Run tests: opprett-forsendels e"
+    name: "Run tests: opprett-forsendels ee"
     needs: build-deploy
 
     env:
