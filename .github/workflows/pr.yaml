@@ -8,7 +8,7 @@ env:
 
 jobs:
   build-deploy:
-    uses: navikt/bidrag-workflow/.github/workflows/pr.yaml@v1
+    uses: navikt/bidrag-workflow/.github/workflows/pr.yaml@main
     secrets: inherit
 
   run-tests-for-opprett-oppgave-main:
