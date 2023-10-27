@@ -15,7 +15,7 @@ jobs:
 
   run-tests-for-opprett-oppgave-feature:
     runs-on: ubuntu-latest
-    name: "Run tests: opprett-forsendelse"
+    name: "Run tests: opprett-forsendelse2"
     needs: build-deploy
 
     env:
