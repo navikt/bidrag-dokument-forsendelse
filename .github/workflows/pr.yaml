@@ -15,12 +15,13 @@ jobs:
     uses: navikt/bidrag-workflow/.github/workflows/deploy.yaml@main
     secrets: inherit
     with:
-      nais_vars_file_name: main
+      nais_variabler_filnavn: main.yaml
 
   run-tests-for-opprett-oppgave-main:
     runs-on: ubuntu-latest
     name: "Run tests: opprett-forsendels"
     needs: build-deploy
+    if: ${{ always() && needs.build-deploy.outputs.deploy_suksess == 'true' }}
 
     env:
       INGRESS_DOKUMENT_FORSENDELSE: https://bidrag-dokument-forsendelse.dev.intern.nav.no
