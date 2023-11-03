@@ -77,7 +77,10 @@ class DokumentHendelseLytter(
                     sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
                     ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
                 } else if (erFerdigstilt) {
-                    log.info { "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på: synkroniserDokumentStatusEnabled = $synkroniserDokumentStatusEnabled" }
+                    log.info {
+                        "Dokument ${it.dokumentreferanse} med forsendelseid ${it.forsendelse.forsendelseId} har status ${it.dokumentStatus} men er ferdigstilt. " +
+                                "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                    }
                 }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }

@@ -27,6 +27,7 @@ GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
 GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-local/locations/localhost/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 GCP_CREDENTIALS_PATH: fake_service_account.json
 DISABLE_CLIENTSIDE_ENCRYPTION: true
+HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED: true
 no.nav.security.jwt:
   client:
     registration:

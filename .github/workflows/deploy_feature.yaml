@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Run tests: opprett-forsendelse"
     needs: build-deploy
+    if: ${{ always() && needs.build-deploy.outputs.deploy_suksess == 'true' }}
 
     env:
       INGRESS_DOKUMENT_FORSENDELSE: https://bidrag-dokument-forsendelse-feature.dev.intern.nav.no
