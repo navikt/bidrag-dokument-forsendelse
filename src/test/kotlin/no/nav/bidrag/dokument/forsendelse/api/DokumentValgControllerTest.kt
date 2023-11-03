@@ -7,16 +7,16 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
@@ -30,9 +30,9 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             opprettForsendelse2().copy(
                 behandlingInfo = BehandlingInfo(
                     erFattetBeregnet = true,
-                    stonadType = StonadType.BIDRAG,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    stonadType = Stønadstype.BIDRAG,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -67,9 +67,9 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             opprettForsendelse2(
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfo(
-                    engangsBelopType = EngangsbelopType.TILBAKEKREVING,
-                    vedtakType = VedtakType.KLAGE,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    engangsBelopType = Engangsbeløptype.TILBAKEKREVING,
+                    vedtakType = Vedtakstype.KLAGE,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     erFattetBeregnet = false,
                     erVedtakIkkeTilbakekreving = true
                 )
@@ -99,14 +99,14 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfo(
                     vedtakId = vedtakId,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER
                 )
             )
         )
         stubUtils.stubVedtak(
             opprettVedtakDto().copy(
-                type = VedtakType.FASTSETTELSE,
-                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.FORSKUDD))
+                type = Vedtakstype.FASTSETTELSE,
+                stønadsendringListe = listOf(opprettStonadsEndringDto().copy(type = Stønadstype.FORSKUDD))
 
             )
         )
@@ -135,15 +135,15 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfo(
                     behandlingId = behandlingId,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER
                 )
             )
         )
         stubUtils.stubBehandling(
             opprettBehandlingDto().copy(
-                soknadType = VedtakType.REVURDERING,
-                behandlingType = StonadType.FORSKUDD.name,
-                soknadFraType = SoknadFra.NAV_BIDRAG
+                soknadType = Vedtakstype.REVURDERING,
+                behandlingType = Stønadstype.FORSKUDD.name,
+                soknadFraType = SøktAvType.NAV_BIDRAG
 
             )
         )
@@ -187,12 +187,12 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         val vedtakId = "123213213"
         stubUtils.stubVedtak(
             opprettVedtakDto().copy(
-                type = VedtakType.FASTSETTELSE,
-                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.FORSKUDD))
+                type = Vedtakstype.FASTSETTELSE,
+                stønadsendringListe = listOf(opprettStonadsEndringDto().copy(type = Stønadstype.FORSKUDD))
 
             )
         )
-        val dokumentValgResponse = utførHentDokumentvalg(HentDokumentValgRequest(vedtakId = vedtakId, soknadFra = SoknadFra.BIDRAGSMOTTAKER))
+        val dokumentValgResponse = utførHentDokumentvalg(HentDokumentValgRequest(vedtakId = vedtakId, soknadFra = SøktAvType.BIDRAGSMOTTAKER))
 
         assertSoftly {
             dokumentValgResponse.statusCode shouldBe HttpStatus.OK
@@ -214,16 +214,16 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         val vedtakId = "123213213"
         stubUtils.stubVedtak(
             opprettVedtakDto().copy(
-                type = VedtakType.FASTSETTELSE,
-                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.FORSKUDD))
+                type = Vedtakstype.FASTSETTELSE,
+                stønadsendringListe = listOf(opprettStonadsEndringDto().copy(type = Stønadstype.FORSKUDD))
 
             )
         )
         val dokumentValgResponse = utførHentDokumentvalg(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.FASTSETTELSE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.FORSKUDD.name,
+                vedtakType = Vedtakstype.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.FORSKUDD.name,
                 erFattetBeregnet = true
             )
         )
@@ -259,7 +259,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente dokumentvalg for notater for klage`() {
-        val dokumentValgResponse = utførHentForsendelseDokumentvalgNotat(HentDokumentValgRequest(vedtakType = VedtakType.KLAGE))
+        val dokumentValgResponse = utførHentForsendelseDokumentvalgNotat(HentDokumentValgRequest(vedtakType = Vedtakstype.KLAGE))
 
         assertSoftly {
             dokumentValgResponse.statusCode shouldBe HttpStatus.OK

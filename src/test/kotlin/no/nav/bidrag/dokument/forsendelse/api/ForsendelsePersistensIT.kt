@@ -31,9 +31,10 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.awaitility.kotlin.await
@@ -77,11 +78,11 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                 erVedtakIkkeTilbakekreving = true,
                 erFattetBeregnet = true,
                 behandlingType = "BEHANDLING_TYPE",
-                engangsBelopType = EngangsbelopType.TILBAKEKREVING,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                engangsBelopType = Engangsbeløptype.TILBAKEKREVING,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 soknadType = "EGET_TILTAK",
-                stonadType = StonadType.FORSKUDD,
-                vedtakType = VedtakType.FASTSETTELSE,
+                stonadType = Stønadstype.FORSKUDD,
+                vedtakType = Vedtakstype.FASTSETTELSE,
                 barnIBehandling = listOf("13231231312", "43124324234")
             )
         )
@@ -101,11 +102,11 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             behandlingInfo.behandlingId shouldBe "2342323"
             behandlingInfo.erVedtakIkkeTilbakekreving shouldBe true
             behandlingInfo.erFattetBeregnet shouldBe true
-            behandlingInfo.engangsBelopType shouldBe EngangsbelopType.TILBAKEKREVING
+            behandlingInfo.engangsBelopType shouldBe Engangsbeløptype.TILBAKEKREVING
             behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
             behandlingInfo.soknadType shouldBe "EGET_TILTAK"
-            behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
-            behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+            behandlingInfo.stonadType shouldBe Stønadstype.FORSKUDD
+            behandlingInfo.vedtakType shouldBe Vedtakstype.FASTSETTELSE
             behandlingInfo.barnIBehandling shouldContain "13231231312"
             behandlingInfo.barnIBehandling shouldContain "43124324234"
         }

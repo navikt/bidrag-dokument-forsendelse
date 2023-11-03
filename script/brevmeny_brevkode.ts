@@ -62,9 +62,9 @@ brevmeny2jsonData.forEach((data: Record<string, string>) => {
       }
       if (ignorer_brevkoder.includes(result.brevkode[0])) return
       const soknadGruppe = result.soknadGruppe
-      result.stonadType = kodemapper.soknadGruppeToStonadType(result.soknadGruppe)
+      result.stonadType = kodemapper.soknadGruppeToStønadstype(result.soknadGruppe)
       result.engangsbelopType = kodemapper.soknadGruppeToEngangsbelopType(result.soknadGruppe)
-      result.vedtakType = [kodemapper.soknadTypeToVedtakType(result.soknadType[0])]
+      result.vedtakType = [kodemapper.soknadTypeToVedtakstype(result.soknadType[0])]
 
       const existing = dokumentValgListeBySoknadGruppe.get(soknadGruppe)
       if (existing) {
@@ -90,16 +90,16 @@ const isEqual = (obj1, obj2, key) => {
 const isEqualBySoknadFra = (obj1, obj2, byContains) => byContains == false ? isEqual(obj1, obj2, "soknadFra") : isEqualContains(obj1, obj2, "soknadFra")
 const isEqualBySoknadGruppe = (obj1, obj2) => isEqual(obj1, obj2, "soknadGruppe")
 const isEqualByBrevkode = (obj1, obj2, byContains) => byContains == false ? isEqual(obj1, obj2, "brevkode") : isEqualContains(obj1, obj2, "brevkode")
-const isEqualByVedtakType = (obj1, obj2, byContains) => byContains == false ? isEqual(obj1, obj2, "soknadType") : isEqualContains(obj1, obj2, "soknadType")
+const isEqualByVedtakstype = (obj1, obj2, byContains) => byContains == false ? isEqual(obj1, obj2, "soknadType") : isEqualContains(obj1, obj2, "soknadType")
 
 
-const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe).reduce((existingVedtakType, [soknadGruppe, value]) => {
+const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe).reduce((existingVedtakstype, [soknadGruppe, value]) => {
 
   const values = Array.from(value)
 
   const mergedValuesBrevkode = values.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualBySoknadFra(filterObj, currObj) && isEqualByVedtakType(filterObj, currObj) && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erManuelBeregning == currObj.erManuelBeregning && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualBySoknadFra(filterObj, currObj) && isEqualByVedtakstype(filterObj, currObj) && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erManuelBeregning == currObj.erManuelBeregning && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
 
     if (existingObject) {
       existingObject.brevkode = Array.from(new Set([...existingObject.brevkode, ...currObj.brevkode].sort()))
@@ -112,7 +112,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
 
   const mergedValues2 = mergedValuesBrevkode.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualByVedtakType(filterObj, currObj) && isEqualBySoknadFra(filterObj, currObj) && isEqualByBrevkode(filterObj, currObj) && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erManuelBeregning == currObj.erManuelBeregning && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualByVedtakstype(filterObj, currObj) && isEqualBySoknadFra(filterObj, currObj) && isEqualByBrevkode(filterObj, currObj) && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erManuelBeregning == currObj.erManuelBeregning && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
     if (currObj.erVedtakIkkeTilbakekreving && currObj.vedtakType == "KLAGE") {
       prevValues.push(currObj)
       return prevValues
@@ -127,7 +127,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
 
   // const mergedValues3 = mergedValues2.reduce((prevValues, currObj) => {
   //   const existingObject = prevValues
-  //   .find((filterObj) => isEqualByVedtakType(filterObj, currObj) && isEqualBySoknadFra(filterObj, currObj) && isEqualByBrevkode(filterObj, currObj) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erManuelBeregning == currObj.erManuelBeregning)
+  //   .find((filterObj) => isEqualByVedtakstype(filterObj, currObj) && isEqualBySoknadFra(filterObj, currObj) && isEqualByBrevkode(filterObj, currObj) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erManuelBeregning == currObj.erManuelBeregning)
   //
   //   if (existingObject) {
   //     delete existingObject.erFattetVedtak
@@ -138,7 +138,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
   // }, [])
   const mergedValues4 = mergedValues2.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualByVedtakType(filterObj, currObj, false) && isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualByVedtakstype(filterObj, currObj, false) && isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet == currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
 
     if (existingObject) {
       delete existingObject.erManuelBeregning
@@ -148,7 +148,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     return prevValues
   }, [])
 
-  const mergedValuesVedtakType1 = mergedValues4.reduce((prevValues, currObj) => {
+  const mergedValuesVedtakstype1 = mergedValues4.reduce((prevValues, currObj) => {
     const existingObject = prevValues
     .find((filterObj) => isEqualBySoknadFra(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
 
@@ -165,9 +165,9 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     return prevValues
   }, [])
 
-  const mergedValuesVedtakType2 = mergedValuesVedtakType1.reduce((prevValues, currObj) => {
+  const mergedValuesVedtakstype2 = mergedValuesVedtakstype1.reduce((prevValues, currObj) => {
     const existingObject = prevValues
-    .find((filterObj) => isEqualByVedtakType(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
+    .find((filterObj) => isEqualByVedtakstype(filterObj, currObj, false) && isEqualByBrevkode(filterObj, currObj, false) && filterObj.erKlageEnhet === currObj.erKlageEnhet && filterObj.erFattetVedtak == currObj.erFattetVedtak && filterObj.erVedtakIkkeTilbakekreving == currObj.erVedtakIkkeTilbakekreving)
     if (currObj.erVedtakIkkeTilbakekreving && currObj.vedtakType == "KLAGE") {
       prevValues.push(currObj)
       return prevValues
@@ -181,8 +181,8 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
   }, [])
 
 
-  const behandlingType = mergedValuesVedtakType2[0].stonadType ?? mergedValuesVedtakType2[0].engangsbelopType ?? mergedValuesVedtakType2[0].soknadGruppe
-  existingVedtakType[behandlingType] = mergedValuesVedtakType2.map((v) => ({
+  const behandlingType = mergedValuesVedtakstype2[0].stonadType ?? mergedValuesVedtakstype2[0].engangsbelopType ?? mergedValuesVedtakstype2[0].soknadGruppe
+  existingVedtakstype[behandlingType] = mergedValuesVedtakstype2.map((v) => ({
     ...v,
     // soknadType: v.soknadType[0],
     // soknadFra: v.soknadFra[0],
@@ -208,7 +208,7 @@ const dokumentValgKtBySoknadGruppe = Array.from(dokumentValgListeBySoknadGruppe)
     brevkoder: settSammenBrevkoder(v.brevkoder)
   }))
 
-  return existingVedtakType;
+  return existingVedtakstype;
 }, {})
 
 

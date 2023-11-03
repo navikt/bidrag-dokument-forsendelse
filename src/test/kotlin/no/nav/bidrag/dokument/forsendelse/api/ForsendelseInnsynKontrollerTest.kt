@@ -16,7 +16,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottak
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
@@ -41,8 +40,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettAdresseDo
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.string.TEMA_BIDRAG
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.streng.TEMA_BIDRAG
 import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
@@ -159,10 +159,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
                 tittel = "Forsendelse tittel",
                 behandlingInfo = BehandlingInfo(
                     vedtakId = vedtakId,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     soknadId = soknadId,
                     behandlingId = behandlingId,
-                    stonadType = StonadType.BIDRAG
+                    stonadType = Stønadstype.BIDRAG
                 ),
                 dokumenter = listOf(
                     nyttDokument(
@@ -189,7 +189,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             behandlingInfo!!.behandlingId shouldBe behandlingId
             behandlingInfo.soknadId shouldBe soknadId
             behandlingInfo.vedtakId shouldBe vedtakId
-            behandlingInfo.behandlingType shouldBe StonadType.BIDRAG.name
+            behandlingInfo.behandlingType shouldBe Stønadstype.BIDRAG.name
             behandlingInfo.barnIBehandling!! shouldHaveSize 0
         }
     }

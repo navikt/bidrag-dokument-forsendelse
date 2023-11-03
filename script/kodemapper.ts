@@ -165,7 +165,7 @@ export function soknadGruppeToEngangsbelopType(kode: string) {
   return null
 }
 
-export function soknadGruppeToStonadType(kode: string) {
+export function soknadGruppeToStønadstype(kode: string) {
   if (kode == "FORSKUDD") {
     return "FORSKUDD"
   } else if (["BIDRAG", "BIDRAG_TILLEGGSBIDRAG", "TILLEGGSBIDRAG"].includes(kode)) {
@@ -182,7 +182,7 @@ export function soknadGruppeToStonadType(kode: string) {
   return null
 }
 
-export function soknadTypeToVedtakType(kode: string, soknadFra: string) {
+export function soknadTypeToVedtakstype(kode: string, soknadFra: string) {
   if (kode == "SOKNAD") {
     return "FASTSETTELSE"
   } else if (["INNKREVINGSGRUNNLAG", "PRIVAT_AVTALE"].includes(kode)) {

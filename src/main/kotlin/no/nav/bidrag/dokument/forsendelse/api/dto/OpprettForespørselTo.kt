@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadType
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import java.time.LocalDateTime
 
@@ -42,14 +42,14 @@ data class BehandlingInfoDto(
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val soknadId: String? = null,
-    @Schema(enumAsRef = true) val engangsBelopType: EngangsbelopType? = null,
-    @Schema(enumAsRef = true) val stonadType: StonadType? = null,
+    @Schema(enumAsRef = true) val engangsBelopType: Engangsbeløptype? = null,
+    @Schema(enumAsRef = true) val stonadType: Stønadstype? = null,
     @Schema(description = "Brukes bare hvis stonadType og engangsbelopType er null") val behandlingType: BehandlingType? = null,
-    @Schema(enumAsRef = true) val vedtakType: VedtakType? = null,
+    @Schema(enumAsRef = true) val vedtakType: Vedtakstype? = null,
     @Schema(enumAsRef = true, description = "Soknadtype er gamle kodeverdier som er erstattet av vedtaktype.") val soknadType: SoknadType? = null,
     val erFattetBeregnet: Boolean? = null,
     @Schema(description = "Hvis resultatkoden fra BBM er IT så skal denne være sann") val erVedtakIkkeTilbakekreving: Boolean? = null,
-    @Schema(enumAsRef = true) val soknadFra: SoknadFra? = null,
+    @Schema(enumAsRef = true) val soknadFra: SøktAvType? = null,
     val barnIBehandling: List<String> = emptyList()
 )
 

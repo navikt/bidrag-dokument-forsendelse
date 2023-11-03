@@ -9,7 +9,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BA
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
@@ -20,9 +19,10 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -65,9 +65,9 @@ class ForsendelseTittelServiceTest {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.BIDRAG,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.BIDRAG,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -84,9 +84,9 @@ class ForsendelseTittelServiceTest {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.BIDRAG,
-                    vedtakType = VedtakType.KLAGE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.BIDRAG,
+                    vedtakType = Vedtakstype.KLAGE
                 )
             )
         )
@@ -104,9 +104,9 @@ class ForsendelseTittelServiceTest {
                 gjelderIdent = GJELDER_IDENT_BP,
                 behandlingInfo = BehandlingInfoDto(
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                    soknadFra = SøktAvType.BIDRAGSPLIKTIG,
                     behandlingType = "REFUSJON_BIDRAG",
-                    vedtakType = VedtakType.FASTSETTELSE
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -123,9 +123,9 @@ class ForsendelseTittelServiceTest {
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     behandlingType = "REISEKOSTNADER",
-                    vedtakType = VedtakType.FASTSETTELSE
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -142,9 +142,9 @@ class ForsendelseTittelServiceTest {
                 gjelderIdent = GJELDER_IDENT_BP,
                 behandlingInfo = BehandlingInfoDto(
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.BIDRAG,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.BIDRAG,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -161,9 +161,9 @@ class ForsendelseTittelServiceTest {
                 gjelderIdent = GJELDER_IDENT_BA,
                 behandlingInfo = BehandlingInfoDto(
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.BIDRAG,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.BIDRAG,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -176,11 +176,11 @@ class ForsendelseTittelServiceTest {
         val forsendelse = opprettForsendelse2(
             gjelderIdent = GJELDER_IDENT_BM,
             behandlingInfo = BehandlingInfo(
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 erFattetBeregnet = true,
                 stonadType = null,
                 behandlingType = "AVSKRIVNING",
-                vedtakType = VedtakType.FASTSETTELSE
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
@@ -196,11 +196,11 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     erFattetBeregnet = null,
                     stonadType = null,
-                    behandlingType = StonadType.BIDRAG.name,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 )
             )
         )
@@ -216,11 +216,11 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     erFattetBeregnet = null,
                     stonadType = null,
-                    behandlingType = StonadType.BIDRAG.name,
-                    vedtakType = VedtakType.KLAGE
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    vedtakType = Vedtakstype.KLAGE
                 )
             )
         )
@@ -231,9 +231,9 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette forsendelse tittel for vedtak av bidrag 18 år fra vedtakid`() {
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto().copy(
-            type = VedtakType.FASTSETTELSE,
-            stonadsendringListe = listOf(
-                opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR)
+            type = Vedtakstype.FASTSETTELSE,
+            stønadsendringListe = listOf(
+                opprettStonadsEndringDto().copy(type = Stønadstype.BIDRAG18AAR)
             )
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
@@ -242,7 +242,7 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     vedtakId = "123213"
                 )
             )
@@ -254,10 +254,10 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette forsendelse tittel for vedtak særtilskudd fra vedtakid`() {
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto().copy(
-            type = VedtakType.FASTSETTELSE,
-            stonadsendringListe = emptyList(),
-            engangsbelopListe = listOf(
-                opprettEngangsbelopDto().copy(type = EngangsbelopType.SAERTILSKUDD)
+            type = Vedtakstype.FASTSETTELSE,
+            stønadsendringListe = emptyList(),
+            engangsbeløpListe = listOf(
+                opprettEngangsbelopDto().copy(type = Engangsbeløptype.SAERTILSKUDD)
             )
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
@@ -266,7 +266,7 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     vedtakId = "123213",
                     behandlingId = "123123213"
                 )
@@ -280,7 +280,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette behandling tittel for varsling av bidrag 18 år fra vedtakid`() {
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingType = StonadType.EKTEFELLEBIDRAG.name
+            behandlingType = Stønadstype.EKTEFELLEBIDRAG.name
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
             OpprettForsendelseForespørsel(
@@ -288,7 +288,7 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     behandlingId = "123213"
                 )
             )
@@ -308,7 +308,7 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     behandlingId = "123213"
                 )
             )
@@ -328,8 +328,8 @@ class ForsendelseTittelServiceTest {
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
                 behandlingInfo = BehandlingInfoDto(
-                    behandlingType = StonadType.FORSKUDD.name,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                    behandlingType = Stønadstype.FORSKUDD.name,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                     behandlingId = "123213"
                 )
             )

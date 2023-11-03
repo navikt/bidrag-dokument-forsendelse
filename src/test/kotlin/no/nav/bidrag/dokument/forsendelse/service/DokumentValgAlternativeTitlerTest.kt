@@ -12,12 +12,12 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -57,9 +57,9 @@ class DokumentValgAlternativeTitlerTest {
     fun `Skal hente alternative titler for dokumentvalg for innkreving særtilskudd`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.INNKREVING,
-                behandlingType = EngangsbelopType.SAERTILSKUDD.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                vedtakType = Vedtakstype.INNKREVING,
+                behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = null,
             )
         )
@@ -78,9 +78,9 @@ class DokumentValgAlternativeTitlerTest {
     fun `Skal hente alternative titler for dokumentvalg for innkreving bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.INNKREVING,
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                vedtakType = Vedtakstype.INNKREVING,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = null,
             )
         )
@@ -98,10 +98,10 @@ class DokumentValgAlternativeTitlerTest {
     fun `Skal hente alternative titler for dokumentvalg for varsel av eget tiltak bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.INNKREVING,
+                vedtakType = Vedtakstype.INNKREVING,
                 soknadType = "EGET_TILTAK",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = null,
             )
         )
@@ -121,10 +121,10 @@ class DokumentValgAlternativeTitlerTest {
     fun `Skal hente alternative titler for dokumentvalg for vedtak av eget tiltak bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
+                vedtakType = Vedtakstype.ENDRING,
                 soknadType = "EGET_TILTAK",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = false,
             )
         )

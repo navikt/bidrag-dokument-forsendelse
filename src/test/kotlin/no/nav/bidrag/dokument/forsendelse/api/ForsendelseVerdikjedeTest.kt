@@ -14,7 +14,6 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.TITTEL_HOVEDDOKUMENT
@@ -22,8 +21,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.jsonToString
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -52,9 +52,9 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                 behandlingInfo = BehandlingInfoDto(
                     soknadId = "123213",
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.FORSKUDD,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.FORSKUDD,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 ),
                 dokumenter = listOf(
                     OpprettDokumentForespørsel(
@@ -93,9 +93,9 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                 behandlingInfo = BehandlingInfoDto(
                     soknadId = "123213",
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.FORSKUDD,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.FORSKUDD,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 ),
                 dokumenter = listOf(
                     OpprettDokumentForespørsel(
