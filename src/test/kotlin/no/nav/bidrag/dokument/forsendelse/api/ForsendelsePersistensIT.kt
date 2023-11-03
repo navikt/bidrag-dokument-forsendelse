@@ -23,7 +23,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
@@ -103,7 +102,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             behandlingInfo.erVedtakIkkeTilbakekreving shouldBe true
             behandlingInfo.erFattetBeregnet shouldBe true
             behandlingInfo.engangsBelopType shouldBe Engangsbeløptype.TILBAKEKREVING
-            behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+            behandlingInfo.soknadFra shouldBe SøktAvType.BIDRAGSMOTTAKER
             behandlingInfo.soknadType shouldBe "EGET_TILTAK"
             behandlingInfo.stonadType shouldBe Stønadstype.FORSKUDD
             behandlingInfo.vedtakType shouldBe Vedtakstype.FASTSETTELSE

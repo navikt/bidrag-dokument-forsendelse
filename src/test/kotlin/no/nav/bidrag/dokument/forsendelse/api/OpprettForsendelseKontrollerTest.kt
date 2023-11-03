@@ -19,7 +19,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTil
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
@@ -222,7 +221,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 val behandlingInfo = forsendelse.behandlingInfo!!
                 behandlingInfo.soknadId shouldBe soknadId
                 behandlingInfo.erFattetBeregnet shouldBe true
-                behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+                behandlingInfo.soknadFra shouldBe SøktAvType.BIDRAGSMOTTAKER
                 behandlingInfo.stonadType shouldBe Stønadstype.FORSKUDD
                 behandlingInfo.vedtakType shouldBe Vedtakstype.FASTSETTELSE
                 behandlingInfo.behandlingType shouldBe null
@@ -349,7 +348,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             val behandlingInfo = forsendelse.behandlingInfo!!
             behandlingInfo.soknadId shouldBe soknadId
             behandlingInfo.erFattetBeregnet shouldBe true
-            behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
+            behandlingInfo.soknadFra shouldBe SøktAvType.BIDRAGSMOTTAKER
             behandlingInfo.stonadType shouldBe Stønadstype.FORSKUDD
             behandlingInfo.vedtakType shouldBe Vedtakstype.FASTSETTELSE
             behandlingInfo.behandlingType shouldBe null
