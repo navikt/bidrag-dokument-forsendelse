@@ -18,8 +18,8 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBeh
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTilbakekrevingLik
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
-import no.nav.bidrag.domain.enums.GrunnlagType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Grunnlagstype
+import no.nav.bidrag.domene.enums.Vedtakstype
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
@@ -59,10 +59,10 @@ class DokumentValgService(
         return if (request == null) false
         else if (request.erKlage()) true
         else if (!request.vedtakId.isNullOrEmpty())
-            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == VedtakType.KLAGE }
+            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == Vedtakstype.KLAGE }
                 ?: false
         else if (!request.behandlingId.isNullOrEmpty()) behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
-            ?.let { it.soknadType == VedtakType.KLAGE } ?: false
+            ?.let { it.soknadType == Vedtakstype.KLAGE } ?: false
         else false
     }
 
@@ -82,15 +82,15 @@ class DokumentValgService(
         else if (request.vedtakId != null && hentDetaljerFraVedtakBehandlingEnabled) bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)
             ?.let {
                 val behandlingType =
-                    if (it.stonadsendringListe.isNotEmpty()) it.stonadsendringListe[0].type.name else it.engangsbelopListe[0].type.name
-                val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == GrunnlagType.SLUTTBEREGNING_BBM }
-                val erVedtakIkkeTilbakekreving = it.engangsbelopListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+                    if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
+                val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
+                val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
                 request.copy(
                     behandlingType = behandlingType,
                     vedtakType = it.type,
                     erFattetBeregnet = erFattetBeregnet,
                     erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
-                    enhet = request.enhet ?: it.enhetId,
+                    enhet = request.enhet ?: it.enhetsnummer.verdi,
                 )
             }
         else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) behandlingConsumer.hentBehandling(

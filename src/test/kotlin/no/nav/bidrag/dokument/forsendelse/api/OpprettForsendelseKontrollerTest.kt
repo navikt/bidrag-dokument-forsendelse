@@ -19,7 +19,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTil
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE1
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE2
 import no.nav.bidrag.dokument.forsendelse.utils.ADRESSE_ADRESSELINJE3
@@ -48,8 +47,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.vedlegger
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.JournalpostStatus
 import org.awaitility.kotlin.await
@@ -204,9 +204,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo = BehandlingInfoDto(
                 soknadId = soknadId,
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                stonadType = StonadType.FORSKUDD,
-                vedtakType = VedtakType.FASTSETTELSE
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                stonadType = Stønadstype.FORSKUDD,
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
 
@@ -221,9 +221,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 val behandlingInfo = forsendelse.behandlingInfo!!
                 behandlingInfo.soknadId shouldBe soknadId
                 behandlingInfo.erFattetBeregnet shouldBe true
-                behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
-                behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
-                behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+                behandlingInfo.soknadFra shouldBe SøktAvType.BIDRAGSMOTTAKER
+                behandlingInfo.stonadType shouldBe Stønadstype.FORSKUDD
+                behandlingInfo.vedtakType shouldBe Vedtakstype.FASTSETTELSE
                 behandlingInfo.behandlingType shouldBe null
                 forsendelse.tittel shouldBe null
             }
@@ -329,9 +329,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             behandlingInfo = BehandlingInfoDto(
                 soknadId = "123213",
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                stonadType = StonadType.FORSKUDD,
-                vedtakType = VedtakType.FASTSETTELSE
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                stonadType = Stønadstype.FORSKUDD,
+                vedtakType = Vedtakstype.FASTSETTELSE
             ),
             opprettTittel = true
         )
@@ -348,9 +348,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             val behandlingInfo = forsendelse.behandlingInfo!!
             behandlingInfo.soknadId shouldBe soknadId
             behandlingInfo.erFattetBeregnet shouldBe true
-            behandlingInfo.soknadFra shouldBe SoknadFra.BIDRAGSMOTTAKER
-            behandlingInfo.stonadType shouldBe StonadType.FORSKUDD
-            behandlingInfo.vedtakType shouldBe VedtakType.FASTSETTELSE
+            behandlingInfo.soknadFra shouldBe SøktAvType.BIDRAGSMOTTAKER
+            behandlingInfo.stonadType shouldBe Stønadstype.FORSKUDD
+            behandlingInfo.vedtakType shouldBe Vedtakstype.FASTSETTELSE
             behandlingInfo.behandlingType shouldBe null
             forsendelse.tittel shouldBe "Vedtak om bidragsforskudd til bidragsmottaker"
 
@@ -439,9 +439,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 behandlingInfo = BehandlingInfoDto(
                     soknadId = soknadId,
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.EKTEFELLEBIDRAG,
-                    vedtakType = VedtakType.FASTSETTELSE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.EKTEFELLEBIDRAG,
+                    vedtakType = Vedtakstype.FASTSETTELSE
                 ),
                 dokumenter = listOf(
                     OpprettDokumentForespørsel(
@@ -501,9 +501,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                 behandlingInfo = BehandlingInfoDto(
                     soknadId = soknadId,
                     erFattetBeregnet = true,
-                    soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                    stonadType = StonadType.EKTEFELLEBIDRAG,
-                    vedtakType = VedtakType.KLAGE
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    stonadType = Stønadstype.EKTEFELLEBIDRAG,
+                    vedtakType = Vedtakstype.KLAGE
                 ),
                 dokumenter = listOf(
                     OpprettDokumentForespørsel(

@@ -21,25 +21,26 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
-import no.nav.bidrag.domain.bool.LevdeAdskilt
-import no.nav.bidrag.domain.bool.UkjentPart
-import no.nav.bidrag.domain.enums.Bidragssakstatus
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.GrunnlagType
-import no.nav.bidrag.domain.enums.Innkreving
-import no.nav.bidrag.domain.enums.Rolletype
-import no.nav.bidrag.domain.enums.Sakskategori
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakKilde
-import no.nav.bidrag.domain.enums.VedtakType
-import no.nav.bidrag.domain.ident.PersonIdent
-import no.nav.bidrag.domain.string.Enhetsnummer
-import no.nav.bidrag.domain.string.Saksnummer
-import no.nav.bidrag.domain.tid.OpprettetDato
-import no.nav.bidrag.transport.behandling.vedtak.response.EngangsbelopDto
+import no.nav.bidrag.domene.bool.LevdeAdskilt
+import no.nav.bidrag.domene.bool.UkjentPart
+import no.nav.bidrag.domene.enums.Beslutningstype
+import no.nav.bidrag.domene.enums.Bidragssakstatus
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Grunnlagstype
+import no.nav.bidrag.domene.enums.Innkrevingstype
+import no.nav.bidrag.domene.enums.Rolletype
+import no.nav.bidrag.domene.enums.Sakskategori
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakskilde
+import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.ident.Personident
+import no.nav.bidrag.domene.streng.Enhetsnummer
+import no.nav.bidrag.domene.streng.Saksnummer
+import no.nav.bidrag.domene.tid.OpprettetDato
+import no.nav.bidrag.transport.behandling.vedtak.response.EngangsbeløpDto
 import no.nav.bidrag.transport.behandling.vedtak.response.GrunnlagDto
-import no.nav.bidrag.transport.behandling.vedtak.response.StonadsendringDto
+import no.nav.bidrag.transport.behandling.vedtak.response.StønadsendringDto
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentFormatDto
@@ -363,9 +364,9 @@ fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> 
 
 fun opprettBehandlingDto(): BehandlingDto {
     return BehandlingDto(
-        behandlingType = StonadType.FORSKUDD.name,
-        soknadFraType = SoknadFra.BIDRAGSMOTTAKER,
-        soknadType = VedtakType.ENDRING,
+        behandlingType = Stønadstype.FORSKUDD.name,
+        soknadFraType = SøktAvType.BIDRAGSMOTTAKER,
+        soknadType = Vedtakstype.ENDRING,
         saksnummer = SAKSNUMMER,
         behandlerEnhet = JOURNALFØRENDE_ENHET
     )
@@ -373,38 +374,39 @@ fun opprettBehandlingDto(): BehandlingDto {
 
 fun opprettVedtakDto(): VedtakDto {
     return VedtakDto(
-        kilde = VedtakKilde.AUTOMATISK,
-        type = VedtakType.FASTSETTELSE,
-        stonadsendringListe = listOf(opprettStonadsEndringDto()),
-        engangsbelopListe = emptyList(),
+        kilde = Vedtakskilde.AUTOMATISK,
+        type = Vedtakstype.FASTSETTELSE,
+        stønadsendringListe = listOf(opprettStonadsEndringDto()),
+        engangsbeløpListe = emptyList(),
         opprettetAv = "",
         opprettetTidspunkt = LocalDateTime.now(),
-        vedtakTidspunkt = LocalDateTime.now(),
-        enhetId = JOURNALFØRENDE_ENHET,
+        vedtakstidspunkt = LocalDateTime.now(),
+        enhetsnummer = Enhetsnummer(JOURNALFØRENDE_ENHET),
         behandlingsreferanseListe = emptyList(),
         grunnlagListe = listOf(
             GrunnlagDto(
                 innhold = ObjectMapper().createObjectNode(),
-                type = GrunnlagType.SLUTTBEREGNING_BBM,
+                type = Grunnlagstype.SLUTTBEREGNING_BBM,
                 referanse = ""
             )
         ),
         opprettetAvNavn = "",
-        utsattTilDato = LocalDate.now()
+        fastsattILand = "",
+        innkrevingUtsattTilDato = LocalDate.now()
     )
 }
 
-fun opprettEngangsbelopDto(type: EngangsbelopType = EngangsbelopType.SAERTILSKUDD, resultatkode: String = "") = EngangsbelopDto(
+fun opprettEngangsbelopDto(type: Engangsbeløptype = Engangsbeløptype.SAERTILSKUDD, resultatkode: String = "") = EngangsbeløpDto(
     type,
-    sakId = SAKSNUMMER,
-    skyldnerId = "",
-    kravhaverId = "",
-    mottakerId = "",
-    innkreving = Innkreving.JA,
-    endring = false,
-    omgjorVedtakId = 1,
+    sak = Saksnummer(SAKSNUMMER),
+    skyldner = Personident(""),
+    kravhaver = Personident(""),
+    mottaker = Personident(""),
+    innkreving = Innkrevingstype.MED_INNKREVING,
+    beslutning = Beslutningstype.ENDRING,
+    omgjørVedtakId = 1,
     eksternReferanse = "",
-    belop = BigDecimal.ONE,
+    beløp = BigDecimal.ONE,
     delytelseId = "",
     grunnlagReferanseListe = emptyList(),
     referanse = "",
@@ -412,18 +414,19 @@ fun opprettEngangsbelopDto(type: EngangsbelopType = EngangsbelopType.SAERTILSKUD
     valutakode = ""
 )
 
-fun opprettStonadsEndringDto() = StonadsendringDto(
-    StonadType.BIDRAG,
-    sakId = SAKSNUMMER,
-    skyldnerId = "",
-    kravhaverId = "",
-    mottakerId = "",
-    innkreving = Innkreving.JA,
-    endring = false,
+fun opprettStonadsEndringDto() = StønadsendringDto(
+    Stønadstype.BIDRAG,
+    sak = Saksnummer(SAKSNUMMER),
+    skyldner = Personident(""),
+    kravhaver = Personident(""),
+    mottaker = Personident(""),
+    innkreving = Innkrevingstype.MED_INNKREVING,
+    beslutning = Beslutningstype.ENDRING,
     periodeListe = emptyList(),
-    omgjorVedtakId = 1,
+    omgjørVedtakId = 1,
     eksternReferanse = "",
-    indeksreguleringAar = ""
+    førsteIndeksreguleringsår = 2044,
+    grunnlagReferanseListe = emptyList()
 )
 
 fun opprettSak(): BidragssakDto {
@@ -436,9 +439,9 @@ fun opprettSak(): BidragssakDto {
         saksstatus = Bidragssakstatus.IN,
         ukjentPart = UkjentPart(false),
         roller = listOf(
-            RolleDto(PersonIdent(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
-            RolleDto(PersonIdent(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
-            RolleDto(PersonIdent(GJELDER_IDENT_BA), Rolletype.BARN)
+            RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
+            RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
+            RolleDto(Personident(GJELDER_IDENT_BA), Rolletype.BARN)
         )
     )
 }

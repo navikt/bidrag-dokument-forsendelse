@@ -18,7 +18,6 @@ import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
@@ -33,10 +32,11 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
-import no.nav.bidrag.domain.ident.PersonIdent
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.ident.Personident
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -93,7 +93,7 @@ class OpprettForsendelseServiceTest {
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangPerson(any()) } returns Unit
         every { saksbehandlerInfoManager.hentSaksbehandler() } returns Saksbehandler(SAKSBEHANDLER_IDENT, SAKSBEHANDLER_NAVN)
-        every { personConsumer.hentPerson(any()) } returns PersonDto(PersonIdent(GJELDER_IDENT))
+        every { personConsumer.hentPerson(any()) } returns PersonDto(Personident(GJELDER_IDENT))
         every { forsendelseTittelService.opprettForsendelseTittel(any<OpprettForsendelseForespørsel>()) } returns "Vedtak om bidrag"
         every { dokumenttjeneste.opprettNyttDokument(any(), any<List<OpprettDokumentForespørsel>>()) } returns emptyList()
         every { forsendelseTjeneste.lagre(any()) } returns opprettForsendelse2()
@@ -109,10 +109,10 @@ class OpprettForsendelseServiceTest {
             dokumenter = emptyList(),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 stonadType = null,
                 behandlingType = "AVSKRIVNING",
-                vedtakType = VedtakType.FASTSETTELSE
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
@@ -133,10 +133,10 @@ class OpprettForsendelseServiceTest {
             dokumenter = emptyList(),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 soknadType = "EGET_TILTAK",
                 behandlingType = "AVSKRIVNING",
-                vedtakType = VedtakType.ENDRING
+                vedtakType = Vedtakstype.ENDRING
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
@@ -165,10 +165,10 @@ class OpprettForsendelseServiceTest {
             gjelderIdent = GJELDER_IDENT_BP,
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 stonadType = null,
-                behandlingType = StonadType.BIDRAG.name,
-                vedtakType = VedtakType.FASTSETTELSE
+                behandlingType = Stønadstype.BIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
@@ -189,10 +189,10 @@ class OpprettForsendelseServiceTest {
             gjelderIdent = GJELDER_IDENT_BP,
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 stonadType = null,
-                behandlingType = StonadType.BIDRAG.name,
-                vedtakType = VedtakType.FASTSETTELSE
+                behandlingType = Stønadstype.BIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
@@ -218,10 +218,10 @@ class OpprettForsendelseServiceTest {
             gjelderIdent = GJELDER_IDENT_BP,
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 stonadType = null,
-                behandlingType = StonadType.BIDRAG.name,
-                vedtakType = VedtakType.FASTSETTELSE
+                behandlingType = Stønadstype.BIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
@@ -245,10 +245,10 @@ class OpprettForsendelseServiceTest {
             ),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 stonadType = null,
-                behandlingType = StonadType.EKTEFELLEBIDRAG.name,
-                vedtakType = VedtakType.FASTSETTELSE
+                behandlingType = Stønadstype.EKTEFELLEBIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
@@ -279,7 +279,7 @@ class OpprettForsendelseServiceTest {
                 )
             ),
             behandlingInfo = BehandlingInfoDto(
-                behandlingType = StonadType.EKTEFELLEBIDRAG.name
+                behandlingType = Stønadstype.EKTEFELLEBIDRAG.name
             ),
             opprettTittel = true
         )
@@ -316,7 +316,7 @@ class OpprettForsendelseServiceTest {
                 )
             ),
             behandlingInfo = BehandlingInfoDto(
-                behandlingType = StonadType.EKTEFELLEBIDRAG.name
+                behandlingType = Stønadstype.EKTEFELLEBIDRAG.name
             ),
             opprettTittel = false
         )
@@ -342,20 +342,20 @@ class OpprettForsendelseServiceTest {
             dokumenter = emptyList(),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                stonadType = StonadType.BIDRAG,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                stonadType = Stønadstype.BIDRAG,
                 behandlingType = "AVSKRIVNING",
-                vedtakType = VedtakType.FASTSETTELSE
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         val opprettForsendelseForespørselEngangsbelop = nyOpprettForsendelseForespørsel().copy(
             dokumenter = emptyList(),
             behandlingInfo = BehandlingInfoDto(
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                engangsBelopType = EngangsbelopType.SAERTILSKUDD,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                engangsBelopType = Engangsbeløptype.SAERTILSKUDD,
                 behandlingType = "AVSKRIVNING",
-                vedtakType = VedtakType.FASTSETTELSE
+                vedtakType = Vedtakstype.FASTSETTELSE
             )
         )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørselStonad)
@@ -365,7 +365,7 @@ class OpprettForsendelseServiceTest {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.behandlingInfo!!.behandlingType shouldBe null
-                    it.behandlingInfo!!.stonadType shouldBe StonadType.BIDRAG
+                    it.behandlingInfo!!.stonadType shouldBe Stønadstype.BIDRAG
                     it.behandlingInfo!!.engangsBelopType shouldBe null
                 }
             )
@@ -373,7 +373,7 @@ class OpprettForsendelseServiceTest {
                 withArg {
                     it.behandlingInfo!!.behandlingType shouldBe null
                     it.behandlingInfo!!.stonadType shouldBe null
-                    it.behandlingInfo!!.engangsBelopType shouldBe EngangsbelopType.SAERTILSKUDD
+                    it.behandlingInfo!!.engangsBelopType shouldBe Engangsbeløptype.SAERTILSKUDD
                 }
             )
         }

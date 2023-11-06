@@ -13,14 +13,14 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsu
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.SoknadFra
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -68,9 +68,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for bidrag søknad som er fastsatt manuelt`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.FASTSETTELSE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = false
             )
         )
@@ -90,9 +90,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for varsel bidrag søknad`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.FASTSETTELSE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = null
             )
         )
@@ -112,9 +112,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for motregning vedtak`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
-                behandlingType = StonadType.MOTREGNING.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                behandlingType = Stønadstype.MOTREGNING.name,
                 erFattetBeregnet = false
             )
         )
@@ -130,9 +130,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for bidrag søknad som er fastsatt beregnet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.FASTSETTELSE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = true
             )
         )
@@ -152,9 +152,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klageenhet av bidrag søknad for endring `() {
         val dokumentValgListeKlageEnhet = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = false,
                 enhet = KLAGE_ANKE_ENHET.ENHET_KLANKE_OSLO_AKERSHUS.kode
             )
@@ -162,9 +162,9 @@ class DokumentValgServiceTest {
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = false
             )
         )
@@ -187,9 +187,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage av bidrag søknad `() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = true
             )
         )
@@ -207,9 +207,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for manuelt beregnet bidrag søknad`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.NAV_BIDRAG,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = false
             )
         )
@@ -226,9 +226,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for manuelt beregnet bidrag søknad behandlet av klageenhet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.NAV_BIDRAG,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = true,
                 enhet = KLAGE_ANKE_ENHET.ENHET_KLANKE_OSLO_AKERSHUS.kode
             )
@@ -247,9 +247,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for varsling bidrag klage`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = null
             )
         )
@@ -269,9 +269,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for varsling revurdering bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.REVURDERING,
-                soknadFra = SoknadFra.NAV_BIDRAG,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.REVURDERING,
+                soknadFra = SøktAvType.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = null
             )
         )
@@ -292,10 +292,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for varsling begrenset revurdering bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.REVURDERING,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                vedtakType = Vedtakstype.REVURDERING,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 soknadType = "BEGRENSET_REVURDERING",
-                behandlingType = StonadType.BIDRAG.name,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = null
             )
         )
@@ -313,9 +313,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak revurdering bidrag`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.REVURDERING,
-                soknadFra = SoknadFra.NAV_BIDRAG,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.REVURDERING,
+                soknadFra = SøktAvType.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = true
             )
         )
@@ -336,9 +336,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak bidrag klage`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = true
             )
         )
@@ -356,9 +356,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for manuelt beregnet bidrag søknad type opphør`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.OPPHØR,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.BIDRAG.name,
+                vedtakType = Vedtakstype.OPPHØR,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.BIDRAG.name,
                 erFattetBeregnet = false
             )
         )
@@ -376,9 +376,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak ikke tilbakekreving`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.NAV_BIDRAG,
-                behandlingType = EngangsbelopType.TILBAKEKREVING.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.NAV_BIDRAG,
+                behandlingType = Engangsbeløptype.TILBAKEKREVING.name,
                 erFattetBeregnet = false,
                 erVedtakIkkeTilbakekreving = true
             )
@@ -396,9 +396,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage til vedtak ikke tilbakekreving`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.NAV_BIDRAG,
-                behandlingType = StonadType.FORSKUDD.name,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.NAV_BIDRAG,
+                behandlingType = Stønadstype.FORSKUDD.name,
                 erFattetBeregnet = false,
                 erVedtakIkkeTilbakekreving = true
             )
@@ -417,14 +417,14 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
-                type = VedtakType.OPPHØR,
-                stonadsendringListe = listOf(opprettStonadsEndringDto().copy(type = StonadType.BIDRAG18AAR))
+                type = Vedtakstype.OPPHØR,
+                stønadsendringListe = listOf(opprettStonadsEndringDto().copy(type = Stønadstype.BIDRAG18AAR))
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.NAV_BIDRAG
+                soknadFra = SøktAvType.NAV_BIDRAG
             )
         )
 
@@ -442,17 +442,17 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
-                type = VedtakType.ENDRING,
-                stonadsendringListe = emptyList(),
-                engangsbelopListe = listOf(
-                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                type = Vedtakstype.ENDRING,
+                stønadsendringListe = emptyList(),
+                engangsbeløpListe = listOf(
+                    opprettEngangsbelopDto(Engangsbeløptype.SAERTILSKUDD)
                 )
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER
             )
         )
 
@@ -471,9 +471,9 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = EngangsbelopType.SAERTILSKUDD.name,
+                vedtakType = Vedtakstype.ENDRING,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
                 erFattetBeregnet = true
             )
         )
@@ -491,18 +491,18 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
-                type = VedtakType.INNKREVING,
-                stonadsendringListe = emptyList(),
+                type = Vedtakstype.INNKREVING,
+                stønadsendringListe = emptyList(),
                 grunnlagListe = emptyList(),
-                engangsbelopListe = listOf(
-                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                engangsbeløpListe = listOf(
+                    opprettEngangsbelopDto(Engangsbeløptype.SAERTILSKUDD)
                 )
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER
             )
         )
 
@@ -520,18 +520,18 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
-                type = VedtakType.ENDRING,
-                stonadsendringListe = emptyList(),
+                type = Vedtakstype.ENDRING,
+                stønadsendringListe = emptyList(),
                 grunnlagListe = emptyList(),
-                engangsbelopListe = listOf(
-                    opprettEngangsbelopDto(EngangsbelopType.TILBAKEKREVING, ResultatKode.IKKE_TILBAKEKREVING)
+                engangsbeløpListe = listOf(
+                    opprettEngangsbelopDto(Engangsbeløptype.TILBAKEKREVING, ResultatKode.IKKE_TILBAKEKREVING)
                 )
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
-                soknadFra = SoknadFra.NAV_BIDRAG
+                soknadFra = SøktAvType.NAV_BIDRAG
             )
         )
 
@@ -549,11 +549,11 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
-                type = VedtakType.KLAGE,
-                stonadsendringListe = emptyList(),
+                type = Vedtakstype.KLAGE,
+                stønadsendringListe = emptyList(),
                 grunnlagListe = emptyList(),
-                engangsbelopListe = listOf(
-                    opprettEngangsbelopDto(EngangsbelopType.TILBAKEKREVING, ResultatKode.IKKE_TILBAKEKREVING)
+                engangsbeløpListe = listOf(
+                    opprettEngangsbelopDto(Engangsbeløptype.TILBAKEKREVING, ResultatKode.IKKE_TILBAKEKREVING)
                 )
             )
 
@@ -561,7 +561,7 @@ class DokumentValgServiceTest {
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
                 behandlingId = "123213",
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER
             )
         )
 
@@ -579,15 +579,15 @@ class DokumentValgServiceTest {
         val behandlingId = "21321321"
         every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns opprettBehandlingDto()
             .copy(
-                soknadType = VedtakType.ENDRING,
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFraType = SoknadFra.BIDRAGSMOTTAKER
+                soknadType = Vedtakstype.ENDRING,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFraType = SøktAvType.BIDRAGSMOTTAKER
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 behandlingId = behandlingId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER
             )
         )
 
@@ -609,17 +609,17 @@ class DokumentValgServiceTest {
         val behandlingId = "21321321"
         every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns opprettBehandlingDto()
             .copy(
-                soknadType = VedtakType.ENDRING,
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFraType = SoknadFra.BIDRAGSMOTTAKER
+                soknadType = Vedtakstype.ENDRING,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFraType = SøktAvType.BIDRAGSMOTTAKER
             )
 
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 behandlingId = behandlingId,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                behandlingType = StonadType.FORSKUDD.name,
-                vedtakType = VedtakType.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.FORSKUDD.name,
+                vedtakType = Vedtakstype.FASTSETTELSE,
                 erFattetBeregnet = true
             )
         )
@@ -637,8 +637,8 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for varsel farskap`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.FASTSETTELSE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                vedtakType = Vedtakstype.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 behandlingType = "FARSKAP",
                 erFattetBeregnet = null
             )
@@ -659,8 +659,8 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak farskap`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.FASTSETTELSE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                vedtakType = Vedtakstype.FASTSETTELSE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 behandlingType = "FARSKAP",
                 erFattetBeregnet = false
             )
@@ -682,8 +682,8 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage farskap`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 behandlingType = "FARSKAP",
                 erFattetBeregnet = false
             )
@@ -701,8 +701,8 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg varsel for klage farskap fra Bidragspliktig`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG,
                 behandlingType = "FARSKAP",
                 erFattetBeregnet = null
             )
@@ -723,8 +723,8 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage farskap fra klage enhet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                vedtakType = Vedtakstype.KLAGE,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 behandlingType = "FARSKAP",
                 enhet = KLAGE_ANKE_ENHET.ENHET_KLANKE_OSLO_AKERSHUS.kode,
                 erFattetBeregnet = false
@@ -744,10 +744,10 @@ class DokumentValgServiceTest {
         val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
             .copy(
-                type = VedtakType.ENDRING,
-                stonadsendringListe = emptyList(),
-                engangsbelopListe = listOf(
-                    opprettEngangsbelopDto(EngangsbelopType.SAERTILSKUDD)
+                type = Vedtakstype.ENDRING,
+                stønadsendringListe = emptyList(),
+                engangsbeløpListe = listOf(
+                    opprettEngangsbelopDto(Engangsbeløptype.SAERTILSKUDD)
                 )
             )
 
@@ -755,7 +755,7 @@ class DokumentValgServiceTest {
             HentDokumentValgRequest(
                 vedtakId = vedtakId,
                 soknadType = "FOLGER_KLAGE",
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER
             )
         )
 
@@ -773,10 +773,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for tilbakekreving varsel med soknad type EGET_TILTAK`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
+                vedtakType = Vedtakstype.ENDRING,
                 soknadType = "EGET_TILTAK",
-                behandlingType = EngangsbelopType.TILBAKEKREVING.name,
-                soknadFra = SoknadFra.NAV_BIDRAG
+                behandlingType = Engangsbeløptype.TILBAKEKREVING.name,
+                soknadFra = SøktAvType.NAV_BIDRAG
             )
         )
 
@@ -796,9 +796,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage ettergivelse fra bidragspliktig`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                behandlingType = EngangsbelopType.ETTERGIVELSE.name,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG
+                vedtakType = Vedtakstype.KLAGE,
+                behandlingType = Engangsbeløptype.ETTERGIVELSE.name,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG
             )
         )
 
@@ -818,10 +818,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for BIDRAG med vedtaktype OPPHØR`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.OPPHØR,
+                vedtakType = Vedtakstype.OPPHØR,
                 soknadType = "OPPHOR",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = false
             )
         )
@@ -840,8 +840,8 @@ class DokumentValgServiceTest {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
                 soknadType = "OMGJORING",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = true
             )
         )
@@ -859,10 +859,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for bidrag varsel med soknad type EGET_TILTAK fra NAV_BIDRAG`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
+                vedtakType = Vedtakstype.ENDRING,
                 soknadType = "EGET_TILTAK",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG
             )
         )
 
@@ -881,10 +881,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for revurdering`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.REVURDERING,
+                vedtakType = Vedtakstype.REVURDERING,
                 soknadType = "BEGRENSET_REVURDERING",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = true
             )
         )
@@ -905,9 +905,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage bidrag uten beregning`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                vedtakType = Vedtakstype.KLAGE,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG,
                 erFattetBeregnet = false
             )
         )
@@ -924,9 +924,9 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for klage bidrag med beregning`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.BIDRAGSPLIKTIG,
+                vedtakType = Vedtakstype.KLAGE,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.BIDRAGSPLIKTIG,
                 erFattetBeregnet = true
             )
         )
@@ -944,10 +944,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak av eget tiltak bidrag - ikke beregnet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
+                vedtakType = Vedtakstype.ENDRING,
                 soknadType = "EGET_TILTAK",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = false,
             )
         )
@@ -964,10 +964,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for varsel klage tilbakekreving`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
+                vedtakType = Vedtakstype.KLAGE,
                 soknadType = "KLAGE",
-                behandlingType = StonadType.FORSKUDD.name,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = Stønadstype.FORSKUDD.name,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 erFattetBeregnet = null,
             )
         )
@@ -987,10 +987,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak klage tilbakekreving`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
+                vedtakType = Vedtakstype.KLAGE,
                 soknadType = "KLAGE",
-                behandlingType = EngangsbelopType.TILBAKEKREVING.name,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
+                behandlingType = Engangsbeløptype.TILBAKEKREVING.name,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
                 erFattetBeregnet = false,
             )
         )
@@ -1007,10 +1007,10 @@ class DokumentValgServiceTest {
     fun `Skal hente dokumentvalg for vedtak av eget tiltak bidrag - beregnet`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
+                vedtakType = Vedtakstype.ENDRING,
                 soknadType = "EGET_TILTAK",
-                behandlingType = StonadType.BIDRAG.name,
-                soknadFra = SoknadFra.NAV_BIDRAG,
+                behandlingType = Stønadstype.BIDRAG.name,
+                soknadFra = SøktAvType.NAV_BIDRAG,
                 erFattetBeregnet = true,
             )
         )
@@ -1042,7 +1042,7 @@ class DokumentValgServiceTest {
 
     @Test
     fun `Skal hente notater for klage`() {
-        val dokumentValgListe = dokumentValgService!!.hentNotatListe(HentDokumentValgRequest(vedtakType = VedtakType.KLAGE))
+        val dokumentValgListe = dokumentValgService!!.hentNotatListe(HentDokumentValgRequest(vedtakType = Vedtakstype.KLAGE))
 
         assertSoftly {
             dokumentValgListe.size shouldBe 5
@@ -1059,10 +1059,10 @@ class DokumentValgServiceTest {
     fun `Skal hente notater for klage med prefiks tittel`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.KLAGE,
+                vedtakType = Vedtakstype.KLAGE,
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                stonadType = StonadType.EKTEFELLEBIDRAG
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                stonadType = Stønadstype.EKTEFELLEBIDRAG
             )
         )
 
@@ -1076,10 +1076,10 @@ class DokumentValgServiceTest {
     fun `Skal hente notater med prefiks tittel`() {
         val dokumentValgListe = dokumentValgService!!.hentNotatListe(
             HentDokumentValgRequest(
-                vedtakType = VedtakType.ENDRING,
+                vedtakType = Vedtakstype.ENDRING,
                 erFattetBeregnet = true,
-                soknadFra = SoknadFra.BIDRAGSMOTTAKER,
-                stonadType = StonadType.EKTEFELLEBIDRAG
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                stonadType = Stønadstype.EKTEFELLEBIDRAG
             )
         )
 

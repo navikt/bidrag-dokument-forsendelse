@@ -1,9 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET_KODER
-import no.nav.bidrag.domain.enums.EngangsbelopType
-import no.nav.bidrag.domain.enums.StonadType
-import no.nav.bidrag.domain.enums.VedtakType
+import no.nav.bidrag.domene.enums.Engangsbeløptype
+import no.nav.bidrag.domene.enums.Stønadstype
+import no.nav.bidrag.domene.enums.SøktAvType
+import no.nav.bidrag.domene.enums.Vedtakstype
 
 // T_BLANKETT.SOKN_FRA_KODE
 enum class SoknadFra(private val kode: String) {
@@ -69,14 +70,14 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
 
 typealias SoknadTyper = List<SoknadType>
 
-fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
+fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: Vedtakstype?, st: SoknadType?): Boolean {
     if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING" || st == "KLAGE") {
         return soknadType.contains(st)
     }
     return vedtakType.contains(vt)
 }
 
-fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(vt: VedtakType?, st: SoknadType?): Boolean {
+fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(vt: Vedtakstype?, st: SoknadType?): Boolean {
     if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING") {
         return soknadType.contains(st)
     }
@@ -89,11 +90,11 @@ fun DokumentBehandlingTittelDetaljer.erVedtakTilbakekrevingLik(erVedtakIkkeTilba
 }
 
 data class DokumentBehandlingDetaljer(
-    val stonadType: StonadType? = null,
-    val engangsbelopType: EngangsbelopType? = null,
+    val stonadType: Stønadstype? = null,
+    val engangsbelopType: Engangsbeløptype? = null,
     val soknadType: SoknadTyper,
-    val vedtakType: List<VedtakType>,
-    val soknadFra: List<SoknadFra>,
+    val vedtakType: List<Vedtakstype>,
+    val soknadFra: List<SøktAvType>,
     val forvaltning: Forvaltning,
     val erVedtakIkkeTilbakekreving: Boolean = false,
     val behandlingStatus: BehandlingStatus,
@@ -101,11 +102,11 @@ data class DokumentBehandlingDetaljer(
 )
 
 data class DokumentBehandlingTittelDetaljer(
-    val stonadType: StonadType? = null,
-    val engangsbelopType: EngangsbelopType? = null,
+    val stonadType: Stønadstype? = null,
+    val engangsbelopType: Engangsbeløptype? = null,
     val soknadType: SoknadTyper = emptyList(),
-    val vedtakType: List<VedtakType> = emptyList(),
-    val soknadFra: List<SoknadFra> = emptyList(),
+    val vedtakType: List<Vedtakstype> = emptyList(),
+    val soknadFra: List<SøktAvType> = emptyList(),
     val forvaltning: Forvaltning? = null,
     val erVedtakIkkeTilbakekreving: Boolean? = false,
     val behandlingStatus: BehandlingStatus,
