@@ -29,7 +29,7 @@
     <flyway.version>9.21.1</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.18.3</testcontainers.version>
-    <shedlock.version>5.7.0</shedlock.version>
+    <shedlock.version>5.9.1</shedlock.version>
     <google-api-extention.version>2.32.0</google-api-extention.version>
     <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
     <grpc.version>1.57.2</grpc.version>
