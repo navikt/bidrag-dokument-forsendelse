@@ -13,7 +13,11 @@ spring:
 #      hibernate:
 #        format_sql: true
 #    show-sql: true
-springdoc.packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
+springdoc:
+  packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
+  swagger-ui:
+    path: /
+    
 spring.main.banner-mode: off
 #springfox.documentation.swagger-ui.base-url: /
 spring.application.name: ${NAIS_APP_NAME:bidrag-dokument-forsendelse}
