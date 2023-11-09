@@ -105,7 +105,7 @@ class StubUtils {
 
     fun stubHentPerson(
         fnr: String? = null,
-        personResponse: PersonDto = PersonDto(Personident(MOTTAKER_IDENT), FulltNavn(MOTTAKER_NAVN), kortNavn = Kortnavn(MOTTAKER_NAVN))
+        personResponse: PersonDto = PersonDto(Personident(MOTTAKER_IDENT), FulltNavn(MOTTAKER_NAVN), kortnavn = Kortnavn(MOTTAKER_NAVN))
     ) {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/person/informasjon"))
