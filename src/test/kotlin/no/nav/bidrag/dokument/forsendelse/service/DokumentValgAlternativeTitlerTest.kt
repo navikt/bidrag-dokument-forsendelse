@@ -60,7 +60,7 @@ class DokumentValgAlternativeTitlerTest {
                 vedtakType = Vedtakstype.INNKREVING,
                 behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
                 soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = null,
+                erFattetBeregnet = null
             )
         )
 
@@ -81,7 +81,7 @@ class DokumentValgAlternativeTitlerTest {
                 vedtakType = Vedtakstype.INNKREVING,
                 behandlingType = Stønadstype.BIDRAG.name,
                 soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = null,
+                erFattetBeregnet = null
             )
         )
 
@@ -102,7 +102,7 @@ class DokumentValgAlternativeTitlerTest {
                 soknadType = "EGET_TILTAK",
                 behandlingType = Stønadstype.BIDRAG.name,
                 soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = null,
+                erFattetBeregnet = null
             )
         )
 
@@ -125,7 +125,7 @@ class DokumentValgAlternativeTitlerTest {
                 soknadType = "EGET_TILTAK",
                 behandlingType = Stønadstype.BIDRAG.name,
                 soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = false,
+                erFattetBeregnet = false
             )
         )
 

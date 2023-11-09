@@ -34,6 +34,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domene.ident.Personident
 import no.nav.bidrag.domene.streng.FulltNavn
+import no.nav.bidrag.domene.streng.Kortnavn
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
 import no.nav.bidrag.transport.dokument.DistribusjonInfoDto
@@ -104,7 +105,7 @@ class StubUtils {
 
     fun stubHentPerson(
         fnr: String? = null,
-        personResponse: PersonDto = PersonDto(Personident(MOTTAKER_IDENT), FulltNavn(MOTTAKER_NAVN))
+        personResponse: PersonDto = PersonDto(Personident(MOTTAKER_IDENT), FulltNavn(MOTTAKER_NAVN), kortNavn = Kortnavn(MOTTAKER_NAVN))
     ) {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/person/informasjon"))

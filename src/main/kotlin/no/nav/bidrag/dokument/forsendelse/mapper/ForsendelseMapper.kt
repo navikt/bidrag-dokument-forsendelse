@@ -78,7 +78,6 @@ fun Dokument.tilOpprettDokumentForespørsel() =
         arkivsystem = this.tilArkivSystemDto()
     )
 
-
 private fun Forsendelse.tilJournalpostStatus() = when (this.status) {
     ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
     ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR

@@ -54,5 +54,4 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
     fun clearCorrelationId(joinPoint: JoinPoint) {
         MDC.clear()
     }
-
 }

@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
 
-
 fun Dokument.erStatiskDokument() =
     arkivsystem == DokumentArkivSystem.BIDRAG && metadata.erStatiskDokument()
 

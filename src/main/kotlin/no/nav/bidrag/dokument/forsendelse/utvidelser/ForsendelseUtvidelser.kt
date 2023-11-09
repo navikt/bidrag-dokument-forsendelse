@@ -110,8 +110,11 @@ fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, 
     } else {
         stringBuilder.add("Orientering/Varsel")
         if (behandlingType != null) {
-            if (gjelderKlage) stringBuilder.add("om klage på vedtak om ${behandlingType.lowercase()}")
-            else stringBuilder.add("om ${behandlingType.lowercase()}")
+            if (gjelderKlage) {
+                stringBuilder.add("om klage på vedtak om ${behandlingType.lowercase()}")
+            } else {
+                stringBuilder.add("om ${behandlingType.lowercase()}")
+            }
         }
     }
 

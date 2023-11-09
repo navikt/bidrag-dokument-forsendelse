@@ -52,7 +52,7 @@ data class DokumentMalDetaljer(
     val gruppeVisningsnavn: String? = null,
     val språk: List<String> = emptyList(),
     val tilhorerEnheter: List<String> = emptyList(),
-    val alternativeTitler: List<String> = emptyList(),
+    val alternativeTitler: List<String> = emptyList()
 )
 
 enum class DokumentmalInnholdType {
@@ -61,9 +61,8 @@ enum class DokumentmalInnholdType {
     VEDLEGG_VEDTAK,
     VEDLEGG_VARSEL,
     VEDLEGG,
-    SKJEMA,
+    SKJEMA
 }
-
 
 enum class DokumentMalType {
     UTGÅENDE,

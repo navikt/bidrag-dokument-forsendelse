@@ -77,7 +77,7 @@ class GcpCloudStorage(
 
     fun totalStørrelse(forsendelseId: Long): Long {
         return try {
-            storage.list(bucketNavn, Storage.BlobListOption.prefix("dokumenter/forsendelse_${forsendelseId}"))
+            storage.list(bucketNavn, Storage.BlobListOption.prefix("dokumenter/forsendelse_$forsendelseId"))
                 .values.takeIf { it.count() > 0 }
                 ?.map { it.asBlobInfo().size }
                 ?.reduce { acc, size -> acc + size } ?: -1
@@ -85,7 +85,6 @@ class GcpCloudStorage(
             LOGGER.error(e) { "Det skjedde en feil ved henting av dokumentstørrelse for forsendelse $forsendelseId" }
             -1
         }
-
     }
 
     fun slettFil(filnavn: String) {

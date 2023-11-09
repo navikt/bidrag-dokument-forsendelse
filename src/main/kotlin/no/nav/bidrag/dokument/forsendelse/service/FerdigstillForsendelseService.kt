@@ -39,7 +39,7 @@ class FerdigstillForsendelseService(
     fun ferdigstillOgHentForsendelse(
         forsendelseId: Long,
         lokalUtskrift: Boolean = false,
-        ingenDistribusjon: Boolean = false,
+        ingenDistribusjon: Boolean = false
     ): Forsendelse? {
         ferdigstillForsendelse(forsendelseId, lokalUtskrift, ingenDistribusjon)
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
@@ -49,7 +49,7 @@ class FerdigstillForsendelseService(
     fun ferdigstillForsendelse(
         forsendelseId: Long,
         lokalUtskrift: Boolean = false,
-        ingenDistribusjon: Boolean = false,
+        ingenDistribusjon: Boolean = false
     ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()

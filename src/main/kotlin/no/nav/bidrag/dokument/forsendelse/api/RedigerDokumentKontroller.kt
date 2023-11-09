@@ -114,10 +114,12 @@ class RedigerDokumentKontroller(
         security = [SecurityRequirement(name = "bearer-key")]
     )
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-        content = [Content(
-            mediaType = "application/pdf",
-            schema = Schema(type = "string", format = "binary")
-        )]
+        content = [
+            Content(
+                mediaType = "application/pdf",
+                schema = Schema(type = "string", format = "binary")
+            )
+        ]
     )
     fun validerPDF(@RequestBody pdf: ByteArray): String? {
         return validerPDFA(pdf)

@@ -45,7 +45,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null,
-        ingenDistribusjon: Boolean? = false,
+        ingenDistribusjon: Boolean? = false
     ): ResponseEntity<DistribuerJournalpostResponse> {
         val url = UriComponentsBuilder.fromUriString("${rootUri()}/journal/distribuer/$forsendelseId")
         batchId?.let { url.queryParam("batchId", it) }
@@ -277,9 +277,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         }
 
         verify {
-            forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse.forsendelseId
-            })
+            forsendelseHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse.forsendelseId
+                }
+            )
         }
     }
 
@@ -379,9 +381,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             verify {
-                forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId
-                })
+                forsendelseHendelseProdusent.publiserForsendelse(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId
+                    }
+                )
             }
         }
     }
@@ -462,9 +466,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             verify {
-                forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId
-                })
+                forsendelseHendelseProdusent.publiserForsendelse(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId
+                    }
+                )
             }
         }
     }
@@ -498,11 +504,12 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         }
 
         verify(exactly = 0) {
-            forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse.forsendelseId
-            })
+            forsendelseHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse.forsendelseId
+                }
+            )
         }
-
     }
 
     @Test
@@ -569,9 +576,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", batchId = batchId)
 
             verify {
-                forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId
-                })
+                forsendelseHendelseProdusent.publiserForsendelse(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId
+                    }
+                )
             }
         }
     }
@@ -644,9 +653,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId", "\"lokalUtskrift\":true")
 
             verify {
-                forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId
-                })
+                forsendelseHendelseProdusent.publiserForsendelse(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId
+                    }
+                )
             }
         }
     }
@@ -719,9 +730,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDistribusjonIkkeKalt("JOARK-$nyJournalpostId")
 
             verify {
-                forsendelseHendelseProdusent.publiserForsendelse(withArg {
-                    it.forsendelseId shouldBe forsendelse.forsendelseId
-                })
+                forsendelseHendelseProdusent.publiserForsendelse(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse.forsendelseId
+                    }
+                )
             }
         }
     }
