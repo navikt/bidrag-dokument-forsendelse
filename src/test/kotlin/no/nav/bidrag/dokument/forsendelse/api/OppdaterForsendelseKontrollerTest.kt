@@ -570,7 +570,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 dokumenter = listOf(
-                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "Tittel hoveddok"),
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "Tittel hoveddok")
                 )
             )
         )
@@ -585,8 +585,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                 ),
                 OppdaterDokumentForespørsel(
                     tittel = TITTEL_VEDLEGG_1,
-                    dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG,
-                ),
+                    dokumentmalId = DOKUMENTMAL_STATISK_VEDLEGG
+                )
             )
         )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
@@ -606,7 +606,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         }
 
         val responsSlett = utførOppdaterForsendelseForespørsel(
-            forsendelse.forsendelseIdMedPrefix, OppdaterForsendelseForespørsel(
+            forsendelse.forsendelseIdMedPrefix,
+            OppdaterForsendelseForespørsel(
                 dokumenter = listOf(
                     OppdaterDokumentForespørsel(
                         dokumentreferanse = hoveddokument.dokumentreferanse
@@ -614,7 +615,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                     OppdaterDokumentForespørsel(
                         fjernTilknytning = true,
                         dokumentreferanse = dokumenter[1].dokumentreferanse
-                    ),
+                    )
                 )
             )
         )
@@ -628,7 +629,7 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 dokumenter = listOf(
-                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "Tittel hoveddok"),
+                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "Tittel hoveddok")
                 )
             )
         )
@@ -648,8 +649,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                 ),
                 OppdaterDokumentForespørsel(
                     tittel = TITTEL_VEDLEGG_2,
-                    dokumentmalId = DOKUMENTMAL_UTGÅENDE,
-                ),
+                    dokumentmalId = DOKUMENTMAL_UTGÅENDE
+                )
             )
         )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)

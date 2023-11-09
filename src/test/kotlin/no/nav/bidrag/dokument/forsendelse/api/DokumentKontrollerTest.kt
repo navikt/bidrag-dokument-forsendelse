@@ -416,5 +416,4 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
         respons.headers.contentDisposition.filename shouldBe "${forsendelse.dokumenter[0].dokumentreferanse}.pdf"
         respons.body shouldBe DOKUMENT_FIL.toByteArray()
     }
-
 }

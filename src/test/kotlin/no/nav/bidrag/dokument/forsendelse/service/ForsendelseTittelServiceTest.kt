@@ -94,7 +94,6 @@ class ForsendelseTittelServiceTest {
         tittel shouldBe "Klagevedtak om barnebidrag til bidragsmottaker"
     }
 
-
     @Test
     fun `Skal opprette forsendelse tittel for refusjon bidrag`() {
         val tittel = forsendelseTittelService.opprettForsendelseTittel(

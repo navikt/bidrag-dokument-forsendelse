@@ -41,14 +41,12 @@ class DistribusjonService(
         val fileSize = bytesToMb(dokumentStorageService.totalStørrelse(forsendelseId))
         log.info { "Forsendelse $forsendelseId har dokumenter på total størrelse $fileSize Mb" }
         return fileSize.toLong()
-
     }
 
     fun validerKanDistribuere(forsendelseId: Long) {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
         forsendelse.validerKanDistribuere()
-
     }
 
     @Transactional
@@ -76,8 +74,9 @@ class DistribusjonService(
             forsendelse = ferdigstillForsendelseService.ferdigstillOgHentForsendelse(forsendelseId, distribuerLokalt, ingenDistribusjon)!!
         }
 
-        val result = if (ingenDistribusjon) markerSomIngenDistribusjon(forsendelse)
-        else if (distribuerLokalt) {
+        val result = if (ingenDistribusjon) {
+            markerSomIngenDistribusjon(forsendelse)
+        } else if (distribuerLokalt) {
             bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
         } else {
             bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
@@ -177,8 +176,10 @@ class DistribusjonService(
     private fun measureIngenDistribusjon(forsendelse: Forsendelse) {
         meterRegistry.counter(
             "forsendelse_ingen_distribusjon",
-            "enhet", forsendelse.enhet,
-            "tema", forsendelse.tema.name,
+            "enhet",
+            forsendelse.enhet,
+            "tema",
+            forsendelse.tema.name
         ).increment()
     }
 

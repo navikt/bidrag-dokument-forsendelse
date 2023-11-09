@@ -32,6 +32,4 @@ class DokumentStorageService(private val gcpCloudStorage: GcpCloudStorage, priva
     fun totalStørrelse(forsendelseId: Long): Long {
         return gcpCloudStorage.totalStørrelse(forsendelseId)
     }
-
-    
 }

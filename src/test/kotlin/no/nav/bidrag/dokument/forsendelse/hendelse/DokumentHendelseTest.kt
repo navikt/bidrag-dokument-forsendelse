@@ -306,19 +306,19 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
             val referanseId = forsendelseEtter.opprettReferanseId()
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Forsendelse notat\"," +
-                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"NOTAT\"," +
-                        "\"referanseId\":\"$referanseId\"," +
-                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                        "\"saksbehandlerIdent\":\"Z999444\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Forsendelse notat\"," +
+                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"NOTAT\"," +
+                    "\"referanseId\":\"$referanseId\"," +
+                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                    "\"saksbehandlerIdent\":\"Z999444\"" +
+                    "}"
             )
         }
     }

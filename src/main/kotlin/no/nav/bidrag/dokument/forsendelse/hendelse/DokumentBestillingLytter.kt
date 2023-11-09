@@ -126,7 +126,6 @@ class DokumentBestillingLytter(
                 )
             )
         }
-
     }
 
     private fun sendBestilling(forsendelse: Forsendelse, dokument: Dokument): DokumentArkivSystemDto? {
@@ -142,7 +141,6 @@ class DokumentBestillingLytter(
             dokumentKafkaHendelseProdusent.publiser(tilKafkaMelding(forsendelse, dokument))
         }
         return null
-
     }
 
     private fun measureBestilling(forsendelse: Forsendelse, dokument: Dokument) {

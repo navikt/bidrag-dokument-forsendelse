@@ -414,7 +414,7 @@ class OpprettForsendelseServiceTest {
             dokumenter = listOf(
                 OpprettDokumentForespørsel(
                     tittel = "12345".repeat(101),
-                    dokumentmalId = DOKUMENTMAL_NOTAT,
+                    dokumentmalId = DOKUMENTMAL_NOTAT
                 )
             )
         )

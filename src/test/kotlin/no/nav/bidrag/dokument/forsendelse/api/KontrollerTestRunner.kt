@@ -93,7 +93,6 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         )
     }
 
-
     protected fun utførOppdaterForsendelseForespørsel(
         forsendelseId: String,
         oppdaterForespørsel: OppdaterForsendelseForespørsel

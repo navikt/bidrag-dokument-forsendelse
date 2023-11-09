@@ -813,7 +813,6 @@ class DokumentValgServiceTest {
         }
     }
 
-
     @Test
     fun `Skal hente dokumentvalg for BIDRAG med vedtaktype OPPHØR`() {
         val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
@@ -948,7 +947,7 @@ class DokumentValgServiceTest {
                 soknadType = "EGET_TILTAK",
                 behandlingType = Stønadstype.BIDRAG.name,
                 soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = false,
+                erFattetBeregnet = false
             )
         )
 
@@ -968,7 +967,7 @@ class DokumentValgServiceTest {
                 soknadType = "KLAGE",
                 behandlingType = Stønadstype.FORSKUDD.name,
                 soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                erFattetBeregnet = null,
+                erFattetBeregnet = null
             )
         )
 
@@ -991,7 +990,7 @@ class DokumentValgServiceTest {
                 soknadType = "KLAGE",
                 behandlingType = Engangsbeløptype.TILBAKEKREVING.name,
                 soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                erFattetBeregnet = false,
+                erFattetBeregnet = false
             )
         )
 
@@ -1011,7 +1010,7 @@ class DokumentValgServiceTest {
                 soknadType = "EGET_TILTAK",
                 behandlingType = Stønadstype.BIDRAG.name,
                 soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = true,
+                erFattetBeregnet = true
             )
         )
 
@@ -1051,7 +1050,6 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01P18"
             dokumentValgListe shouldContainKey "BI01X01"
             dokumentValgListe shouldContainKey "BI01X02"
-
         }
     }
 
@@ -1088,5 +1086,4 @@ class DokumentValgServiceTest {
             dokumentValgListe["BI01P11"]!!.tittel shouldBe "Ektefellebidrag, NOTAT P11 T"
         }
     }
-
 }

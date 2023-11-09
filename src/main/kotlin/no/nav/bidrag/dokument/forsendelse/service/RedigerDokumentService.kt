@@ -72,9 +72,9 @@ class RedigerDokumentService(
         forsendelse.validerKanEndreForsendelse()
         log.info {
             "Ferdigstiller dokument $dokumentreferanse i forsendelse $forsendelseId med dokumentstørrelse ${
-                bytesIntoHumanReadable(
-                    ferdigstillDokumentRequest.fysiskDokument.size.toLong()
-                )
+            bytesIntoHumanReadable(
+                ferdigstillDokumentRequest.fysiskDokument.size.toLong()
+            )
             }"
         }
         val oppdatertForsendelse = forsendelseTjeneste.lagre(

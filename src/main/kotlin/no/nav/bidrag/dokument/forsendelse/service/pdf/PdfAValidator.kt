@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-
 private val log = KotlinLogging.logger {}
 
 private val validPdfas = listOf(PDFAFlavour.PDFA_1_A, PDFAFlavour.PDFA_1_B, PDFAFlavour.PDFA_2_A, PDFAFlavour.PDFA_2_B, PDFAFlavour.PDFA_2_U)
@@ -28,7 +27,7 @@ fun erGyldigPDFA(pdfBytes: ByteArray, dokumentreferanse: String): Boolean {
     try {
         VeraGreenfieldFoundryProvider.initialise()
         Foundries.defaultInstance().createParser(ByteArrayInputStream(pdfBytes)).use {
-            //Hvis PDF/A'en ikke er på et av de lovlige foratene hopp over valideringen
+            // Hvis PDF/A'en ikke er på et av de lovlige foratene hopp over valideringen
             if (!validPdfas.contains(it.flavour)) {
                 log.warn { "Dokument $dokumentreferanse er ikke en PDF/A dokument. Den er av typen ${it.flavour}" }
                 return false
@@ -47,13 +46,12 @@ fun erGyldigPDFA(pdfBytes: ByteArray, dokumentreferanse: String): Boolean {
         log.warn(e) { "Det skjedde en feil ved validering av PDF" }
         return false
     }
-
 }
 
 fun validerPDFA(pdfBytes: ByteArray): String? {
     VeraGreenfieldFoundryProvider.initialise()
     Foundries.defaultInstance().createParser(ByteArrayInputStream(pdfBytes)).use {
-        //Hvis PDF/A'en ikke er på et av de lovlige foratene hopp over valideringen
+        // Hvis PDF/A'en ikke er på et av de lovlige foratene hopp over valideringen
         if (!validPdfas.contains(it.flavour)) {
             return null
         }

@@ -358,7 +358,7 @@ class FerdigstillForsendelseServiceTest {
                     rekkefølgeIndeks = 0,
                     tittel = "Hoveddokument tittel",
                     dokumentDato = dokumentDato
-                ).copy(dokumentId = 1L),
+                ).copy(dokumentId = 1L)
             )
         ).copy(forsendelseId = 123L, opprettetTidspunkt = opprettetTidspunkt)
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
@@ -374,7 +374,6 @@ class FerdigstillForsendelseServiceTest {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.dokumenter[0].dokumentDato!! shouldHaveSameDayAs LocalDateTime.now()
-
                 }
             )
         }

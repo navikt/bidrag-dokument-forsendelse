@@ -283,7 +283,8 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
     fun utførHentForsendelseDokumentvalgNotat(request: HentDokumentValgRequest? = null): ResponseEntity<Map<String, DokumentMalDetaljer>> {
         return httpHeaderTestRestTemplate.postForEntity(
-            "${rootUri()}/dokumentvalg/notat", request?.let { HttpEntity(request) }
+            "${rootUri()}/dokumentvalg/notat",
+            request?.let { HttpEntity(request) }
         )
     }
 

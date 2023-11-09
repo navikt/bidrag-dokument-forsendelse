@@ -129,15 +129,21 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
 
         verify(exactly = 3) { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) }
         verify {
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse1.forsendelseId
-            })
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse2.forsendelseId
-            })
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse3.forsendelseId
-            })
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse1.forsendelseId
+                }
+            )
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse2.forsendelseId
+                }
+            )
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse3.forsendelseId
+                }
+            )
         }
     }
 
@@ -199,19 +205,19 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
             val referanseId = forsendelseEtter.opprettReferanseId()
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Forsendelse notat\"," +
-                        "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"$DOKUMENTMAL_NOTAT\",\"dokumentmalId\":\"$DOKUMENTMAL_NOTAT\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
-                        "\"datoDokument\":\"2022-01-05T01:02:03\"," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"NOTAT\"," +
-                        "\"referanseId\":\"$referanseId\"," +
-                        "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
-                        "\"saksbehandlerIdent\":\"Z999444\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Forsendelse notat\"," +
+                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Forsendelse notat\",\"brevkode\":\"$DOKUMENTMAL_NOTAT\",\"dokumentmalId\":\"$DOKUMENTMAL_NOTAT\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                    "\"datoDokument\":\"2022-01-05T01:02:03\"," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"NOTAT\"," +
+                    "\"referanseId\":\"$referanseId\"," +
+                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                    "\"saksbehandlerIdent\":\"Z999444\"" +
+                    "}"
             )
         }
 
@@ -225,9 +231,11 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
 
         verify(exactly = 1) { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) }
         verify {
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse2.forsendelseId
-            })
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse2.forsendelseId
+                }
+            )
         }
     }
 
@@ -345,9 +353,11 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
 
         verify(exactly = 1) { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) }
         verify {
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelse2.forsendelseId
-            })
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse2.forsendelseId
+                }
+            )
         }
     }
 
@@ -425,12 +435,16 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
 
         verify(exactly = 2) { journalpostKafkaHendelseProdusent.publiserForsendelse(any()) }
         verify {
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelseOriginal.forsendelseId
-            })
-            journalpostKafkaHendelseProdusent.publiserForsendelse(withArg {
-                it.forsendelseId shouldBe forsendelseMedLenke.forsendelseId
-            })
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelseOriginal.forsendelseId
+                }
+            )
+            journalpostKafkaHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelseMedLenke.forsendelseId
+                }
+            )
         }
     }
 
@@ -439,7 +453,6 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
         val nyJournalpostId = "1331234412321"
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
-
 
         val forsendelse = testDataManager.lagreForsendelse(
             opprettForsendelse2(

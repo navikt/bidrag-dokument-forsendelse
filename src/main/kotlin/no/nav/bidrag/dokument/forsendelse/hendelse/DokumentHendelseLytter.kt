@@ -60,8 +60,11 @@ class DokumentHendelseLytter(
                 val erFerdigstilt = bidragDokumentConsumer.erFerdigstilt(it.dokumentreferanse)
 
                 log.info {
-                    if (erFerdigstilt) "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
-                    else "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
+                    if (erFerdigstilt) {
+                        "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
+                    } else {
+                        "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
+                    }
                 }
                 if (erFerdigstilt && synkroniserDokumentStatusEnabled) {
                     val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
@@ -79,16 +82,14 @@ class DokumentHendelseLytter(
                 } else if (erFerdigstilt) {
                     log.info {
                         "Dokument ${it.dokumentreferanse} med forsendelseid ${it.forsendelse.forsendelseId} har status ${it.dokumentStatus} men er ferdigstilt. " +
-                                "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                            "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                     }
                 }
             } catch (e: Exception) {
                 log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
             }
-
         }
     }
-
 
     @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {

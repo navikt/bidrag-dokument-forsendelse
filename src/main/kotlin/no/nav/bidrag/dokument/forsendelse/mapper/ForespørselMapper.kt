@@ -34,7 +34,7 @@ object ForespørselMapper {
     }
 
     fun MottakerTo.tilMottakerDo(person: PersonDto?, språk: String) = Mottaker(
-        navn = this.navn ?: person?.navn?.verdi,
+        navn = this.navn ?: person?.kortnavn?.verdi,
         ident = this.ident,
         språk = språk.uppercase(),
         identType = when (this.identType) {

@@ -51,19 +51,27 @@ class DokumentValgService(
     }
 
     fun hentNotatListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
-        return if (erKlage(request)) (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it, request, true) }
-        else notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
+        return if (erKlage(request)) {
+            (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it, request, true) }
+        } else {
+            notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
+        }
     }
 
     fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
-        return if (request == null) false
-        else if (request.erKlage()) true
-        else if (!request.vedtakId.isNullOrEmpty())
+        return if (request == null) {
+            false
+        } else if (request.erKlage()) {
+            true
+        } else if (!request.vedtakId.isNullOrEmpty()) {
             bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == Vedtakstype.KLAGE }
                 ?: false
-        else if (!request.behandlingId.isNullOrEmpty()) behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
-            ?.let { it.soknadType == Vedtakstype.KLAGE } ?: false
-        else false
+        } else if (!request.behandlingId.isNullOrEmpty()) {
+            behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
+                ?.let { it.soknadType == Vedtakstype.KLAGE } ?: false
+        } else {
+            false
+        }
     }
 
     fun hentDokumentMalListe(
@@ -78,34 +86,39 @@ class DokumentValgService(
     }
 
     private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? {
-        return if (request == null) null
-        else if (request.vedtakId != null && hentDetaljerFraVedtakBehandlingEnabled) bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)
-            ?.let {
-                val behandlingType =
-                    if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
-                val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
-                val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+        return if (request == null) {
+            null
+        } else if (request.vedtakId != null && hentDetaljerFraVedtakBehandlingEnabled) {
+            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)
+                ?.let {
+                    val behandlingType =
+                        if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
+                    val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
+                    val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+                    request.copy(
+                        behandlingType = behandlingType,
+                        vedtakType = it.type,
+                        erFattetBeregnet = erFattetBeregnet,
+                        erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
+                        enhet = request.enhet ?: it.enhetsnummer.verdi
+                    )
+                }
+        } else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) {
+            behandlingConsumer.hentBehandling(
+                request.behandlingId
+            )?.let {
                 request.copy(
-                    behandlingType = behandlingType,
-                    vedtakType = it.type,
-                    erFattetBeregnet = erFattetBeregnet,
-                    erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
-                    enhet = request.enhet ?: it.enhetsnummer.verdi,
+                    behandlingType = it.behandlingType,
+                    vedtakType = it.soknadType,
+                    soknadFra = request.soknadFra ?: it.soknadFraType,
+                    erFattetBeregnet = null,
+                    erVedtakIkkeTilbakekreving = false,
+                    enhet = request.enhet ?: it.behandlerEnhet
                 )
             }
-        else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) behandlingConsumer.hentBehandling(
-            request.behandlingId
-        )?.let {
-            request.copy(
-                behandlingType = it.behandlingType,
-                vedtakType = it.soknadType,
-                soknadFra = request.soknadFra ?: it.soknadFraType,
-                erFattetBeregnet = null,
-                erVedtakIkkeTilbakekreving = false,
-                enhet = request.enhet ?: it.behandlerEnhet,
-            )
+        } else {
+            request
         }
-        else request
     }
 
     private fun hentDokumentMalListeForRequest(
@@ -116,10 +129,10 @@ class DokumentValgService(
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                    it.isVedtaktypeValid(vedtakType, soknadType) &&
-                    it.behandlingStatus.isValid(erFattetBeregnet) &&
-                    it.forvaltning.isValid(enhet) &&
-                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+                it.isVedtaktypeValid(vedtakType, soknadType) &&
+                it.behandlingStatus.isValid(erFattetBeregnet) &&
+                it.forvaltning.isValid(enhet) &&
+                it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
@@ -146,11 +159,11 @@ class DokumentValgService(
         if (request == null) return emptyList()
         return dokumentValgTittelMap[malId]?.find {
             (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
-                    it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
-                    listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
-                    it.behandlingStatus.isValid(request.erFattetBeregnet) &&
-                    (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
-                    it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
+                it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
+                listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
+                it.behandlingStatus.isValid(request.erFattetBeregnet) &&
+                (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
+                it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
         }?.titler ?: emptyList()
     }
 
