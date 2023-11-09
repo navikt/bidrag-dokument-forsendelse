@@ -14,7 +14,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>bidrag-dokument-forsendelse</name>
   <properties>
-    <java.version>21</java.version>
+    <java.version>17</java.version>
     <kotlin.version>1.9.20</kotlin.version>
     <bidrag-commons.version>20231103132440_edabbf8</bidrag-commons.version>
     <bidrag-transport.version>20231106083046_e69b4f4</bidrag-transport.version>
@@ -412,7 +412,7 @@
           <args>
             <arg>-Xjsr305=strict</arg>
           </args>
-          <jvmTarget>21</jvmTarget>
+          <jvmTarget>17</jvmTarget>
           <compilerPlugins>
             <plugin>spring</plugin>
             <plugin>jpa</plugin>
