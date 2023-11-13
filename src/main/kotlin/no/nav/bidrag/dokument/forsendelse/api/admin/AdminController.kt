@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Distribusjo
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
@@ -34,12 +35,12 @@ class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering
 
     @GetMapping("/distribusjon/navno")
     @Operation(
-        summary = "Utfør avvikshåndtering",
+        summary = "Resynk distribuert kanal",
         security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
-    fun distTilNavNoMenHarKanalSentralPrint(): List<ForsendelseMetadata> {
-        return forsendelseSkedulering.resynkDistribusjoninfoNavNo().map {
+    fun distTilNavNoMenHarKanalSentralPrint(@RequestParam(required = false) simulering: Boolean = false): List<ForsendelseMetadata> {
+        return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering).map {
             ForsendelseMetadata(
                 it.forsendelseId,
                 it.journalpostIdFagarkiv,

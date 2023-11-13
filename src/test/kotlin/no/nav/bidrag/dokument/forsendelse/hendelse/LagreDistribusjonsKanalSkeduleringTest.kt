@@ -53,11 +53,12 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         )
     }
 
-    private fun opprettDistribuertForsendelse(distTidspunktMinusHours: Long): Forsendelse {
+    private fun opprettDistribuertForsendelse(distTidspunktMinusHours: Long, kanal: DistribusjonKanal? = null): Forsendelse {
         return testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 distribusjonsTidspunkt = LocalDateTime.now().minusHours(distTidspunktMinusHours),
+                kanal = kanal,
                 dokumenter = listOf(
                     nyttDokument(
                         dokumentreferanseOriginal = null,
@@ -99,6 +100,40 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
             testDataManager.hentForsendelse(forsendelseNavNo)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SDP
             testDataManager.hentForsendelse(forsendelseSentralPrint.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+        }
+    }
+
+    @Test
+    fun `skal resynke distribusjoninfo`() {
+        val forsendelseNavNo1 = opprettDistribuertForsendelse(48, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseNavNo2 = opprettDistribuertForsendelse(23, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseNavNo3 = opprettDistribuertForsendelse(55, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseNavNo4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseSentralUtskrift4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.SENTRAL_UTSKRIFT)
+        opprettDistribuertForsendelse(8)
+        opprettDistribuertForsendelse(7)
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo1.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo2.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo3.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo4.journalpostIdFagarkiv, DistribusjonKanal.NAV_NO.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseSentralUtskrift4.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+
+        skedulering.resynkDistribusjoninfoNavNo()
+
+        stubUtils.Valider().hentDistribusjonInfoKalt(3)
+
+        assertSoftly {
+            testDataManager.hentForsendelse(forsendelseNavNo1.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(forsendelseNavNo2.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
+            testDataManager.hentForsendelse(forsendelseNavNo3.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(forsendelseNavNo4.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
+            testDataManager.hentForsendelse(forsendelseSentralUtskrift4.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
         }
     }
 

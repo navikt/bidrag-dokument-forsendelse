@@ -57,7 +57,7 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
-                                "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                                    "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
                         }
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
@@ -87,11 +87,11 @@ class ForsendelseSkedulering(
      * Hvis forsendelse distribuert til NAVNO ikke blir lest etter 40 timer så sendes forsendelse via sentral print istedenfor.
      * Denne jobben skal resynke kanal som forsendelse ble distribuert til
      */
-    fun resynkDistribusjoninfoNavNo(): List<Forsendelse> {
+    fun resynkDistribusjoninfoNavNo(simulering: Boolean = false): List<Forsendelse> {
         val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(distInfoPageSize)
         LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert til NAV_NO. Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize" }
         return forsendelseListe.mapNotNull {
-            lagreDistribusjonInfo(it)
+            lagreDistribusjonInfo(it, simulering)
         }.filter { it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
     }
 
@@ -103,22 +103,25 @@ class ForsendelseSkedulering(
         }
     }
 
-    private fun lagreDistribusjonInfo(forsendelse: Forsendelse): Forsendelse? {
+    private fun lagreDistribusjonInfo(forsendelse: Forsendelse, simulering: Boolean = false): Forsendelse? {
         return try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
-                distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)?.let { distInfo ->
-                    LOGGER.info {
-                        "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
-                            "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
-                            "${forsendelse.dokumenter.size} dokumenter, " +
-                            "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
-                    }
-                    forsendelseTjeneste.lagre(
-                        forsendelse.copy(
-                            distribusjonKanal = DistribusjonKanal.valueOf(distInfo.kanal)
+                distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
+                    ?.takeIf { forsendelse.distribusjonKanal == null || DistribusjonKanal.valueOf(it.kanal) != forsendelse.distribusjonKanal }
+                    ?.let { distInfo ->
+                        LOGGER.info {
+                            "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
+                                    "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
+                                    "${forsendelse.dokumenter.size} dokumenter, " +
+                                    "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Simulering=$simulering"
+                        }
+                        return if (simulering) forsendelse else forsendelseTjeneste.lagre(
+                            forsendelse.copy(
+                                distribusjonKanal = DistribusjonKanal.valueOf(distInfo.kanal)
+                            )
                         )
-                    )
-                }
+
+                    }
             } else {
                 null
             }
