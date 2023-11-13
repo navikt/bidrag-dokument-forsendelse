@@ -31,6 +31,14 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
     }
 
+    fun hentDistribuerteForsendelserDistribuertTilNavNo(limit: Int): List<Forsendelse> {
+        return forsendelseRepository.hentDistribuerteForsendelseTilNAVNO(
+            Pageable.ofSize(limit),
+            LocalDateTime.now().minusDays(2),
+            LocalDateTime.now().minusDays(100)
+        )
+    }
+
     fun hentFerdigstilteIkkeDistribuert(): List<Forsendelse> {
         return forsendelseRepository.hentFerdigstilteArkivertIJoarkIkkeDistribuert()
     }

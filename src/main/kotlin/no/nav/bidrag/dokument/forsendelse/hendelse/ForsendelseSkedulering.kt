@@ -57,17 +57,15 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
-                                "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                                    "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
                         }
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
                             forsendelse.copy(
-                                status = if (kanal == DistribusjonKanal.LOKAL_UTSKRIFT) {
-                                    ForsendelseStatus.DISTRIBUERT_LOKALT
-                                } else if (kanal == DistribusjonKanal.INGEN_DISTRIBUSJON) {
-                                    ForsendelseStatus.FERDIGSTILT
-                                } else {
-                                    ForsendelseStatus.DISTRIBUERT
+                                status = when (kanal) {
+                                    DistribusjonKanal.LOKAL_UTSKRIFT -> ForsendelseStatus.DISTRIBUERT_LOKALT
+                                    DistribusjonKanal.INGEN_DISTRIBUSJON -> ForsendelseStatus.FERDIGSTILT
+                                    else -> ForsendelseStatus.DISTRIBUERT
                                 },
                                 distribuertTidspunkt = distInfo.distribuertDato ?: LocalDateTime.now(),
                                 distribuertAvIdent = distInfo.distribuertAvIdent ?: forsendelse.distribuertAvIdent,
@@ -85,6 +83,18 @@ class ForsendelseSkedulering(
         }
     }
 
+    /**
+     * Hvis forsendelse distribuert til NAVNO ikke blir lest etter 40 timer så sendes forsendelse via sentral print istedenfor.
+     * Denne jobben skal resynke kanal som forsendelse ble distribuert til
+     */
+    fun resynkDistribusjoninfoNavNo(): List<Forsendelse> {
+        val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(distInfoPageSize)
+        LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert til NAV_NO. Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize" }
+        return forsendelseListe.mapNotNull {
+            lagreDistribusjonInfo(it)
+        }.filter { it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
+    }
+
     fun lagreDistribusjoninfo() {
         val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserUtenDistribusjonKanal(distInfoPageSize)
         LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert men mangler distribusjon kanal. Henter og lagrer distribusjon kanal for forsendelsene. lesStørrelse=$distInfoPageSize" }
@@ -93,15 +103,15 @@ class ForsendelseSkedulering(
         }
     }
 
-    private fun lagreDistribusjonInfo(forsendelse: Forsendelse) {
-        try {
+    private fun lagreDistribusjonInfo(forsendelse: Forsendelse): Forsendelse? {
+        return try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)?.let { distInfo ->
                     LOGGER.info {
                         "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
-                            "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
-                            "${forsendelse.dokumenter.size} dokumenter, " +
-                            "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
+                                "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
+                                "${forsendelse.dokumenter.size} dokumenter, " +
+                                "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}"
                     }
                     forsendelseTjeneste.lagre(
                         forsendelse.copy(
@@ -109,9 +119,10 @@ class ForsendelseSkedulering(
                         )
                     )
                 }
-            }
+            } else null
         } catch (e: Exception) {
             LOGGER.error(e) { "Det skjedde en feil ved lagring av forsendelse distribusjonsinfo for forsendelse ${forsendelse.forsendelseId}" }
+            return null
         }
     }
 }
