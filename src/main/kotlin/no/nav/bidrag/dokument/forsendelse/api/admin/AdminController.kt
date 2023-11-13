@@ -16,6 +16,8 @@ import java.time.LocalDateTime
 data class ForsendelseMetadata(
     val forsendelseId: Long?,
     val joarkJournalpostId: String?,
+    val saksnummer: String?,
+    val enhet: String?,
     val gjelderIdent: String?,
     val mottakerId: String?,
     val saksbehandlerIdent: String?,
@@ -41,6 +43,8 @@ class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering
             ForsendelseMetadata(
                 it.forsendelseId,
                 it.journalpostIdFagarkiv,
+                it.saksnummer,
+                it.enhet,
                 it.gjelderIdent,
                 it.mottaker?.ident,
                 it.distribuertAvIdent,
