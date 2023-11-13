@@ -110,13 +110,15 @@ class ForsendelseSkedulering(
                     ?.takeIf { forsendelse.distribusjonKanal == null || DistribusjonKanal.valueOf(it.kanal) != forsendelse.distribusjonKanal }
                     ?.let { distInfo ->
                         LOGGER.info {
-                            "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
-                                    "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, " +
+                            "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId}" +
+                                    "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +
                                     "${forsendelse.dokumenter.size} dokumenter, " +
-                                    "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Simulering=$simulering"
+                                    "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Forsendelsens kanal var ${forsendelse.distribusjonKanal}. Er simulering=$simulering"
                         }
                         return if (simulering) forsendelse else forsendelseTjeneste.lagre(
                             forsendelse.copy(
+                                bestiltNyDistribusjon = forsendelse.distribusjonKanal != null,
+                                distribusjonBestillingsId = distInfo.bestillingId ?: forsendelse.distribusjonBestillingsId,
                                 distribusjonKanal = DistribusjonKanal.valueOf(distInfo.kanal)
                             )
                         )

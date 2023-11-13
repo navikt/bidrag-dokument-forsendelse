@@ -130,8 +130,11 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
 
         assertSoftly {
             testDataManager.hentForsendelse(forsendelseNavNo1.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(forsendelseNavNo1.forsendelseId!!)?.bestiltNyDistribusjon shouldBe true
             testDataManager.hentForsendelse(forsendelseNavNo2.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
+            testDataManager.hentForsendelse(forsendelseNavNo2.forsendelseId!!)?.bestiltNyDistribusjon shouldBe false
             testDataManager.hentForsendelse(forsendelseNavNo3.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(forsendelseNavNo3.forsendelseId!!)?.bestiltNyDistribusjon shouldBe true
             testDataManager.hentForsendelse(forsendelseNavNo4.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
             testDataManager.hentForsendelse(forsendelseSentralUtskrift4.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
         }
