@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class ForsendelseMetadata(
@@ -43,9 +44,15 @@ class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering
         @RequestParam(
             required = false,
             defaultValue = "true"
-        ) simulering: Boolean = true
+        ) simulering: Boolean = true,
+        @RequestParam(
+            required = false
+        ) earliestDate: LocalDate?,
+        @RequestParam(
+            required = false
+        ) latestDate: LocalDate?
     ): List<ForsendelseMetadata> {
-        return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering).map {
+        return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, latestDate?.atStartOfDay(), earliestDate?.atStartOfDay()).map {
             ForsendelseMetadata(
                 it.forsendelseId,
                 it.journalpostIdFagarkiv,

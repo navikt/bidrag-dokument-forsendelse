@@ -87,8 +87,12 @@ class ForsendelseSkedulering(
      * Hvis forsendelse distribuert til NAVNO ikke blir lest etter 40 timer så sendes forsendelse via sentral print istedenfor.
      * Denne jobben skal resynke kanal som forsendelse ble distribuert til
      */
-    fun resynkDistribusjoninfoNavNo(simulering: Boolean = false): List<Forsendelse> {
-        val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(distInfoPageSize)
+    fun resynkDistribusjoninfoNavNo(
+        simulering: Boolean = false,
+        latestDate: LocalDateTime? = null,
+        earliestDate: LocalDateTime? = null
+    ): List<Forsendelse> {
+        val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(distInfoPageSize, latestDate, earliestDate)
         LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert til NAV_NO. Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize" }
         return forsendelseListe.mapNotNull {
             lagreDistribusjonInfo(it, simulering)
