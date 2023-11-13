@@ -39,7 +39,12 @@ class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering
         security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
-    fun distTilNavNoMenHarKanalSentralPrint(@RequestParam(required = false) simulering: Boolean = false): List<ForsendelseMetadata> {
+    fun distTilNavNoMenHarKanalSentralPrint(
+        @RequestParam(
+            required = false,
+            defaultValue = "true"
+        ) simulering: Boolean = true
+    ): List<ForsendelseMetadata> {
         return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering).map {
             ForsendelseMetadata(
                 it.forsendelseId,
