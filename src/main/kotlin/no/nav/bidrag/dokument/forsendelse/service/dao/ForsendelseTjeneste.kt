@@ -31,11 +31,11 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
     }
 
-    fun hentDistribuerteForsendelserDistribuertTilNavNo(limit: Int, latestDate: LocalDateTime?, earliestDate: LocalDateTime?): List<Forsendelse> {
+    fun hentDistribuerteForsendelserDistribuertTilNavNo(limit: Int, afterDate: LocalDateTime?, beforeDate: LocalDateTime?): List<Forsendelse> {
         return forsendelseRepository.hentDistribuerteForsendelseTilNAVNO(
             Pageable.ofSize(limit),
-            latestDate ?: LocalDateTime.now().minusDays(2),
-            earliestDate ?: LocalDateTime.now().minusDays(100)
+            beforeDate ?: LocalDateTime.now().minusDays(2),
+            afterDate ?: LocalDateTime.now().minusDays(100)
         )
     }
 

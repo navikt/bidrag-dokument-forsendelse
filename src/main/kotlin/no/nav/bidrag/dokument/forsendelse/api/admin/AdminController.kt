@@ -47,12 +47,12 @@ class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering
         ) simulering: Boolean = true,
         @RequestParam(
             required = false
-        ) earliestDate: LocalDate?,
+        ) afterDate: LocalDate?,
         @RequestParam(
             required = false
-        ) latestDate: LocalDate?
+        ) beforeDate: LocalDate?
     ): List<ForsendelseMetadata> {
-        return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, latestDate?.atStartOfDay(), earliestDate?.atStartOfDay()).map {
+        return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay()).map {
             ForsendelseMetadata(
                 it.forsendelseId,
                 it.journalpostIdFagarkiv,
