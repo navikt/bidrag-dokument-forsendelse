@@ -92,7 +92,7 @@ class ForsendelseSkedulering(
         LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert til NAV_NO. Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize" }
         return forsendelseListe.mapNotNull {
             lagreDistribusjonInfo(it, simulering)
-        }.filter { !simulering || it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
+        }.filter { simulering || it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
     }
 
     fun lagreDistribusjoninfo() {
