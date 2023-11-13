@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
+import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
@@ -20,13 +21,14 @@ import org.springframework.test.context.TestPropertySource
 import java.time.LocalDateTime
 
 @TestPropertySource(properties = ["LAGRE_DIST_INFO_PAGE_SIZE=10"])
+@Transactional
 class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     @Autowired
     private lateinit var skedulering: ForsendelseSkedulering
 
     @BeforeEach
     fun setupMocks() {
-        WireMock.resetAllRequests()
+        WireMock.reset()
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
@@ -36,7 +38,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     }
 
     private fun opprettIkkeDistribuertForsendelse(): Forsendelse {
-        return testDataManager.lagreForsendelse(
+        return testDataManager.lagreForsendelseNotNewTransaction(
             opprettForsendelse2(
                 status = ForsendelseStatus.UNDER_PRODUKSJON,
                 dokumenter = listOf(
@@ -53,11 +55,12 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         )
     }
 
-    private fun opprettDistribuertForsendelse(distTidspunktMinusHours: Long): Forsendelse {
-        return testDataManager.lagreForsendelse(
+    private fun opprettDistribuertForsendelse(distTidspunktMinusHours: Long, kanal: DistribusjonKanal? = null): Forsendelse {
+        return testDataManager.lagreForsendelseNotNewTransaction(
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 distribusjonsTidspunkt = LocalDateTime.now().minusHours(distTidspunktMinusHours),
+                kanal = kanal,
                 dokumenter = listOf(
                     nyttDokument(
                         dokumentreferanseOriginal = null,
@@ -103,6 +106,43 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     }
 
     @Test
+    fun `skal resynke distribusjoninfo`() {
+        val forsendelseNavNo1 = opprettDistribuertForsendelse(48, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseNavNo2 = opprettDistribuertForsendelse(23, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseNavNo3 = opprettDistribuertForsendelse(55, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseNavNo4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.NAV_NO)
+        val forsendelseSentralUtskrift4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.SENTRAL_UTSKRIFT)
+        opprettDistribuertForsendelse(8)
+        opprettDistribuertForsendelse(7)
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+        opprettIkkeDistribuertForsendelse()
+
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo1.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo2.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo3.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseNavNo4.journalpostIdFagarkiv, DistribusjonKanal.NAV_NO.name)
+        stubUtils.stubHentDistribusjonInfo(forsendelseSentralUtskrift4.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
+
+        skedulering.resynkDistribusjoninfoNavNo()
+
+        stubUtils.Valider().hentDistribusjonInfoKalt(3)
+
+        assertSoftly {
+            testDataManager.hentForsendelse(forsendelseNavNo1.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(forsendelseNavNo1.forsendelseId!!)?.bestiltNyDistribusjon shouldBe true
+            testDataManager.hentForsendelse(forsendelseNavNo2.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
+            testDataManager.hentForsendelse(forsendelseNavNo2.forsendelseId!!)?.bestiltNyDistribusjon shouldBe false
+            testDataManager.hentForsendelse(forsendelseNavNo3.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(forsendelseNavNo3.forsendelseId!!)?.bestiltNyDistribusjon shouldBe true
+            testDataManager.hentForsendelse(forsendelseNavNo4.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
+            testDataManager.hentForsendelse(forsendelseSentralUtskrift4.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+        }
+    }
+
+    @Test
     fun `skal ikke feile hvis lagring av distribusjoninfo for en forsendelse feiler`() {
         val forsendelseNavNo = opprettDistribuertForsendelse(5).forsendelseId!!
         val forsendelseSDP = opprettDistribuertForsendelse(2)
@@ -130,6 +170,8 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
 
         assertSoftly {
             testDataManager.hentForsendelse(forsendelseNavNo)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
+            testDataManager.hentForsendelse(forsendelseNavNo)?.bestiltNyDistribusjon shouldBe false
+            testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.bestiltNyDistribusjon shouldBe false
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SDP
             testDataManager.hentForsendelse(forsendelseSentralPrint.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
             testDataManager.hentForsendelse(foresendelseFeil.forsendelseId!!)?.distribusjonKanal shouldBe null

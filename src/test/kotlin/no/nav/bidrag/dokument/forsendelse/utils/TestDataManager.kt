@@ -19,6 +19,10 @@ class TestDataManager(val forsendelseRepository: ForsendelseRepository, val doku
         return forsendelseRepository.save(forsendelseToSave)
     }
 
+    fun lagreForsendelseNotNewTransaction(forsendelseToSave: Forsendelse): Forsendelse {
+        return forsendelseRepository.save(forsendelseToSave)
+    }
+
     @OpprettForsendelseTestdataDsl
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun opprettOgLagreForsendelse(setup: ForsendelseBuilder.() -> Unit): Forsendelse {

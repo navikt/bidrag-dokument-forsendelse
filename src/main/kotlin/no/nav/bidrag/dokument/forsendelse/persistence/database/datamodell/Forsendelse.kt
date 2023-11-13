@@ -42,6 +42,7 @@ data class Forsendelse(
     val enhet: String,
     @Enumerated(EnumType.STRING)
     val distribusjonKanal: DistribusjonKanal? = null,
+    val bestiltNyDistribusjon: Boolean = false,
     val språk: String,
     val saksnummer: String,
     val gjelderIdent: String,
