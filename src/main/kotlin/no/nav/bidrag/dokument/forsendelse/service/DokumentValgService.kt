@@ -18,8 +18,8 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBeh
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTilbakekrevingLik
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
-import no.nav.bidrag.domene.enums.Grunnlagstype
-import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
@@ -100,7 +100,7 @@ class DokumentValgService(
                         vedtakType = it.type,
                         erFattetBeregnet = erFattetBeregnet,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
-                        enhet = request.enhet ?: it.enhetsnummer.verdi
+                        enhet = request.enhet ?: it.enhetsnummer?.verdi
                     )
                 }
         } else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) {
@@ -129,10 +129,10 @@ class DokumentValgService(
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                it.isVedtaktypeValid(vedtakType, soknadType) &&
-                it.behandlingStatus.isValid(erFattetBeregnet) &&
-                it.forvaltning.isValid(enhet) &&
-                it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+                    it.isVedtaktypeValid(vedtakType, soknadType) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
+                    it.forvaltning.isValid(enhet) &&
+                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
@@ -159,11 +159,11 @@ class DokumentValgService(
         if (request == null) return emptyList()
         return dokumentValgTittelMap[malId]?.find {
             (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
-                it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
-                listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
-                it.behandlingStatus.isValid(request.erFattetBeregnet) &&
-                (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
-                it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
+                    it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
+                    listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
+                    it.behandlingStatus.isValid(request.erFattetBeregnet) &&
+                    (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
+                    it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
         }?.titler ?: emptyList()
     }
 

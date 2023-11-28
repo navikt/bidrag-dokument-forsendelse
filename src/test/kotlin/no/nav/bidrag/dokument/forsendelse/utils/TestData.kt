@@ -21,23 +21,20 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
-import no.nav.bidrag.domene.bool.LevdeAdskilt
-import no.nav.bidrag.domene.bool.UkjentPart
-import no.nav.bidrag.domene.enums.Beslutningstype
-import no.nav.bidrag.domene.enums.Bidragssakstatus
-import no.nav.bidrag.domene.enums.Engangsbeløptype
-import no.nav.bidrag.domene.enums.Grunnlagstype
-import no.nav.bidrag.domene.enums.Innkrevingstype
-import no.nav.bidrag.domene.enums.Rolletype
-import no.nav.bidrag.domene.enums.Sakskategori
-import no.nav.bidrag.domene.enums.Stønadstype
-import no.nav.bidrag.domene.enums.SøktAvType
-import no.nav.bidrag.domene.enums.Vedtakskilde
-import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
+import no.nav.bidrag.domene.enums.rolle.Rolletype
+import no.nav.bidrag.domene.enums.rolle.SøktAvType
+import no.nav.bidrag.domene.enums.sak.Bidragssakstatus
+import no.nav.bidrag.domene.enums.sak.Sakskategori
+import no.nav.bidrag.domene.enums.vedtak.Beslutningstype
+import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
+import no.nav.bidrag.domene.enums.vedtak.Innkrevingstype
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
+import no.nav.bidrag.domene.enums.vedtak.Vedtakskilde
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.domene.ident.Personident
-import no.nav.bidrag.domene.streng.Enhetsnummer
-import no.nav.bidrag.domene.streng.Saksnummer
-import no.nav.bidrag.domene.tid.OpprettetDato
+import no.nav.bidrag.domene.organisasjon.Enhetsnummer
+import no.nav.bidrag.domene.sak.Saksnummer
 import no.nav.bidrag.transport.behandling.vedtak.response.EngangsbeløpDto
 import no.nav.bidrag.transport.behandling.vedtak.response.GrunnlagDto
 import no.nav.bidrag.transport.behandling.vedtak.response.StønadsendringDto
@@ -392,7 +389,8 @@ fun opprettVedtakDto(): VedtakDto {
         ),
         opprettetAvNavn = "",
         fastsattILand = "",
-        innkrevingUtsattTilDato = LocalDate.now()
+        innkrevingUtsattTilDato = LocalDate.now(),
+        kildeapplikasjon = ""
     )
 }
 
@@ -433,11 +431,11 @@ fun opprettSak(): BidragssakDto {
     return BidragssakDto(
         eierfogd = Enhetsnummer(JOURNALFØRENDE_ENHET),
         kategori = Sakskategori.U,
-        levdeAdskilt = LevdeAdskilt(false),
-        opprettetDato = OpprettetDato(LocalDate.now()),
+        levdeAdskilt = false,
+        opprettetDato = LocalDate.now(),
         saksnummer = Saksnummer(SAKSNUMMER),
         saksstatus = Bidragssakstatus.IN,
-        ukjentPart = UkjentPart(false),
+        ukjentPart = false,
         roller = listOf(
             RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
             RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),

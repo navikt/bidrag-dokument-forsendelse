@@ -21,9 +21,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.jsonToString
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
-import no.nav.bidrag.domene.enums.Stønadstype
-import no.nav.bidrag.domene.enums.SøktAvType
-import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.enums.rolle.SøktAvType
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -280,20 +280,20 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             responseBody.status shouldBe ForsendelseStatusTo.DISTRIBUERT
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                    "\"skalFerdigstilles\":true," +
-                    "\"tittel\":\"Ny tittel dokument fra Joark\"," +
-                    "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
-                    "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                    "\"dokumenter\":[" +
-                    "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
-                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
-                    "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentmalId\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
-                    "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
-                    "\"tema\":\"BID\"," +
-                    "\"journalposttype\":\"UTGÅENDE\"," +
-                    "\"referanseId\":\"$referanseId\"," +
-                    "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
-                    "}"
+                        "\"skalFerdigstilles\":true," +
+                        "\"tittel\":\"Ny tittel dokument fra Joark\"," +
+                        "\"gjelderIdent\":\"${opprettetForsendelseOppdatert.gjelderIdent}\"," +
+                        "\"avsenderMottaker\":{\"navn\":\"${opprettetForsendelseOppdatert.mottaker?.navn}\",\"ident\":\"${opprettetForsendelseOppdatert.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                        "\"dokumenter\":[" +
+                        "{\"tittel\":\"Ny tittel dokument fra Joark\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[2].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[1].dokumentreferanse}\"}," +
+                        "{\"tittel\":\"Ny tittel koblet dokument fra original\",\"brevkode\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentmalId\":\"$DOKUMENTMAL_UTGÅENDE\",\"dokumentreferanse\":\"${opprettetForsendelseOppdatert.dokumenter[0].dokumentreferanse}\"}]," +
+                        "\"tilknyttSaker\":[\"${opprettetForsendelseOppdatert.saksnummer}\"]," +
+                        "\"tema\":\"BID\"," +
+                        "\"journalposttype\":\"UTGÅENDE\"," +
+                        "\"referanseId\":\"$referanseId\"," +
+                        "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
+                        "}"
             )
         }
     }
