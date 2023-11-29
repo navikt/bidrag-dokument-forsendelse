@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import no.nav.bidrag.commons.service.KodeverkKoderBetydningerResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
@@ -54,6 +55,7 @@ class StubUtils {
     private val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
 
     companion object {
+
         fun getDokumentMalDetaljerResponse(): MutableMap<String, DokumentMalDetaljer> {
             val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
             val maldetaljerInputStream = ClassPathResource("__files/maldetaljer/maldetaljer.json").inputStream
@@ -86,6 +88,21 @@ class StubUtils {
                         jsonToString(behandlingDto)
                     )
             )
+        )
+    }
+
+    fun stubKodeverkPostnummerEndepunkt(response: KodeverkKoderBetydningerResponse? = null, status: HttpStatus = HttpStatus.OK) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlPathMatching(".*/kodeverk/Postnummer.*")).willReturn(
+                if (response != null) {
+                    aClosedJsonResponse().withStatus(status.value()).withBody(
+                        ObjectMapper().findAndRegisterModules().writeValueAsString(response),
+                    )
+                } else {
+                    aClosedJsonResponse()
+                        .withBodyFile("kodeverk/kodeverk_postnummer.json")
+                },
+            ),
         )
     }
 
