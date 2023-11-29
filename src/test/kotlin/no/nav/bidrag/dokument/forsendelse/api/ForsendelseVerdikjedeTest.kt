@@ -21,9 +21,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.jsonToString
 import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.utils.opprettHendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
-import no.nav.bidrag.domene.enums.Stønadstype
-import no.nav.bidrag.domene.enums.SøktAvType
-import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.enums.rolle.SøktAvType
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.apache.kafka.clients.consumer.ConsumerRecord

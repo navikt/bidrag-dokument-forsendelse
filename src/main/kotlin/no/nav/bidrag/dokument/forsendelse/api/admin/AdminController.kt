@@ -5,10 +5,16 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter
 import no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering
+import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
+import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
+import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -32,7 +38,11 @@ data class ForsendelseMetadata(
 @Protected
 @RequestMapping("/api/forsendelse/internal")
 @Timed
-class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering) {
+class AdminController(
+    private val forsendelseSkedulering: ForsendelseSkedulering,
+    private val dokumentHendelseLytter: DokumentHendelseLytter,
+    private val forsendelseTjeneste: ForsendelseTjeneste
+) {
 
     @GetMapping("/distribusjon/navno")
     @Operation(
@@ -66,5 +76,25 @@ class AdminController(private val forsendelseSkedulering: ForsendelseSkedulering
                 it.distribusjonKanal
             )
         }
+    }
+
+    @PostMapping("/sjekkOgOppdaterStatus/{forsendelseId}")
+    @Operation(
+        summary = "Sjekk status på dokumentene i forsendelse og oppdater status hvis det er ute av synk",
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
+    fun sjekkOgOppdaterStatus(
+        @PathVariable forsendelseId: ForsendelseId,
+        @RequestParam(
+            required = false,
+            defaultValue = "false"
+        ) oppdaterStatus: Boolean = false
+    ): Boolean {
+        return forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
+            forsendelse.dokumenter.any {
+                dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, oppdaterStatus)
+            }
+        } ?: false
     }
 }

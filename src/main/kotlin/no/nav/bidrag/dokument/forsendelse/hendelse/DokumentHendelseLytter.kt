@@ -55,39 +55,50 @@ class DokumentHendelseLytter(
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
         dokumenter.forEach {
-            log.info { "Sjekker om dokument ${it.dokumentreferanse} er ferdigstilt" }
-            try {
-                val erFerdigstilt = bidragDokumentConsumer.erFerdigstilt(it.dokumentreferanse)
+            sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, synkroniserDokumentStatusEnabled)
+        }
+    }
 
-                log.info {
-                    if (erFerdigstilt) {
-                        "Dokument ${it.dokumentreferanse} er ferdigstilt. Oppdaterer status"
-                    } else {
-                        "Dokument ${it.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
-                    }
-                }
-                if (erFerdigstilt && synkroniserDokumentStatusEnabled) {
-                    val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(it.dokumentreferanse)
-                    val oppdaterteDokumenter = dokumenterForReferanse.map { dokument ->
-                        dokumentTjeneste.lagreDokument(
-                            dokument.copy(
-                                dokumentStatus = DokumentStatus.FERDIGSTILT,
-                                ferdigstiltTidspunkt = LocalDateTime.now(),
-                                ferdigstiltAvIdent = FORSENDELSE_APP_ID
-                            )
-                        )
-                    }
-                    sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
-                    ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
-                } else if (erFerdigstilt) {
-                    log.info {
-                        "Dokument ${it.dokumentreferanse} med forsendelseid ${it.forsendelse.forsendelseId} har status ${it.dokumentStatus} men er ferdigstilt. " +
-                            "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
-                    }
-                }
-            } catch (e: Exception) {
-                log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${it.dokumentreferanse}" }
+    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument, oppdaterStatus: Boolean): Boolean {
+        try {
+            if (dokument.dokumentStatus == DokumentStatus.FERDIGSTILT) {
+                log.info { "Dokument ${dokument.dokumentreferanse} er allerede ferdigstilt" }
+                return true
             }
+
+            log.info { "Sjekker om dokument ${dokument.dokumentreferanse} er ferdigstilt" }
+            val erFerdigstilt = bidragDokumentConsumer.erFerdigstilt(dokument.dokumentreferanse)
+
+            log.info {
+                if (erFerdigstilt) {
+                    "Dokument ${dokument.dokumentreferanse} er ferdigstilt. Oppdaterer status"
+                } else {
+                    "Dokument ${dokument.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
+                }
+            }
+            if (erFerdigstilt && oppdaterStatus) {
+                val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(dokument.dokumentreferanse)
+                val oppdaterteDokumenter = dokumenterForReferanse.map { dokumentForRef ->
+                    dokumentTjeneste.lagreDokument(
+                        dokumentForRef.copy(
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            ferdigstiltTidspunkt = LocalDateTime.now(),
+                            ferdigstiltAvIdent = FORSENDELSE_APP_ID
+                        )
+                    )
+                }
+                sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
+                ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+            } else if (erFerdigstilt) {
+                log.info {
+                    "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
+                        "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                }
+            }
+            return erFerdigstilt
+        } catch (e: Exception) {
+            log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${dokument.dokumentreferanse}" }
+            return false
         }
     }
 

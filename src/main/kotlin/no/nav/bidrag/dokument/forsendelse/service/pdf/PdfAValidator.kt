@@ -11,6 +11,7 @@ import org.apache.xmpbox.schema.PDFAIdentificationSchema
 import org.apache.xmpbox.type.BadFieldValueException
 import org.apache.xmpbox.xml.XmpSerializer
 import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider
+import org.verapdf.gf.model.GFModelParser
 import org.verapdf.pdfa.Foundries
 import org.verapdf.pdfa.PDFAValidator
 import org.verapdf.pdfa.flavours.PDFAFlavour
@@ -57,9 +58,15 @@ fun validerPDFA(pdfBytes: ByteArray): String? {
         }
         val validator = Foundries.defaultInstance().createValidator(it.flavour, false)
         val result = validator.validate(it)
-
+        val pageTree = (it as GFModelParser).pdDocument.catalog.pageTree
+        val pagesCount = pageTree.pageCount
+        val invalidObjects = (0..pagesCount - 1).flatMap { i ->
+            pageTree.getPage(i).resources.xObjectNames.filter { name ->
+                pageTree.getPage(i).resources.getXObject(name) == null
+            }.map { name -> name.value }
+        }
         if (!result.isCompliant) {
-            return "Dokument er ikke en gyldig PDF/A: ${result.readableMessage()}"
+            return "Dokumentet har ugyldig Xobject $invalidObjects Dokument er ikke en gyldig PDF/A: ${result.readableMessage()}"
         }
         return null
     }

@@ -239,7 +239,7 @@ function manueltFjernetBrevkoder(mapValues: Map<string, IBrevalg[]>): Map<string
       "KLAGE"
     ],
     "soknadFra": [
-      "BARN_18_AAR",
+      "BARN_18_ÅR",
       "BIDRAGSMOTTAKER",
       "BIDRAGSPLIKTIG",
       "BM_I_ANNEN_SAK",

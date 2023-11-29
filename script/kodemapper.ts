@@ -20,7 +20,7 @@ export function soknadFraToName(kode: string) {
     case "AS":
       return "BM_I_ANNEN_SAK"
     case "BB":
-      return "BARN_18_AAR"
+      return "BARN_18_ÅR"
     case "ET":
       return "NAV_BIDRAG"
     case "FN":

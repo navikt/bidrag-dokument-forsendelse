@@ -1,10 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET_KODER
-import no.nav.bidrag.domene.enums.Engangsbeløptype
-import no.nav.bidrag.domene.enums.Stønadstype
-import no.nav.bidrag.domene.enums.SøktAvType
-import no.nav.bidrag.domene.enums.Vedtakstype
+import no.nav.bidrag.domene.enums.rolle.SøktAvType
+import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 
 // T_BLANKETT.SOKN_FRA_KODE
 enum class SoknadFra(private val kode: String) {

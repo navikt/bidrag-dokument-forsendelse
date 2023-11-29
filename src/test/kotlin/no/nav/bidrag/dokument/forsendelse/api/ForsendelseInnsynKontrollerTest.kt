@@ -40,9 +40,9 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettAdresseDo
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
-import no.nav.bidrag.domene.enums.Stønadstype
-import no.nav.bidrag.domene.enums.SøktAvType
-import no.nav.bidrag.domene.streng.TEMA_BIDRAG
+import no.nav.bidrag.domene.enums.diverse.Tema
+import no.nav.bidrag.domene.enums.rolle.SøktAvType
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
@@ -99,7 +99,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             forsendelseResponse.status shouldBe ForsendelseStatusTo.UNDER_PRODUKSJON
             forsendelseResponse.behandlingInfo shouldBe null
             forsendelseResponse.dokumentDato!! shouldBeEqual dokumentDato.toLocalDate()
-            forsendelseResponse.tema shouldBe TEMA_BIDRAG.verdi
+            forsendelseResponse.tema shouldBe Tema.TEMA_BIDRAG.verdi
             forsendelseResponse.enhet shouldBe JOURNALFØRENDE_ENHET
             forsendelseResponse.opprettetAvIdent shouldBe SAKSBEHANDLER_IDENT
             forsendelseResponse.opprettetAvNavn shouldBe SAKSBEHANDLER_NAVN

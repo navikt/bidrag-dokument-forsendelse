@@ -142,7 +142,7 @@ class DistribusjonService(
                 adresselinje3 = it.adresselinje3,
                 land = it.landkode,
                 postnummer = it.postnummer,
-                poststed = it.poststed ?: KodeverkService.hentNorskPoststed(it.postnummer, it.landkode)
+                poststed = it.poststed ?: hentNorskPoststed(it.postnummer, it.landkode)
             )
         }
         val resultat = bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", adresse, batchId = batchId)

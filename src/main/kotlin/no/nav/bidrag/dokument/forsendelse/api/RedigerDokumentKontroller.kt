@@ -13,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.RedigerDokumentService
+import no.nav.bidrag.dokument.forsendelse.service.pdf.convertToPDFA
 import no.nav.bidrag.dokument.forsendelse.service.pdf.validerPDFA
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.web.bind.annotation.GetMapping
@@ -123,5 +124,22 @@ class RedigerDokumentKontroller(
     )
     fun validerPDF(@RequestBody pdf: ByteArray): String? {
         return validerPDFA(pdf)
+    }
+
+    @PostMapping("/convertToPDFA")
+    @Operation(
+        summary = "Valider om PDF er gyldig PDF/A dokument. Respons vil gi hva som ikke er gyldig hvis ikke gyldig PDF/A.",
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        content = [
+            Content(
+                mediaType = "application/pdf",
+                schema = Schema(type = "string", format = "binary")
+            )
+        ]
+    )
+    fun convertToPDFA2(@RequestBody pdf: ByteArray): ByteArray? {
+        return convertToPDFA(pdf, "")
     }
 }
