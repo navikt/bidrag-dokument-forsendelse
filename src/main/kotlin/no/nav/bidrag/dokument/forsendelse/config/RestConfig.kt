@@ -2,17 +2,21 @@ package no.nav.bidrag.dokument.forsendelse.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.util.StdDateFormat
+import jakarta.annotation.PostConstruct
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
+import no.nav.bidrag.commons.service.KodeverkProvider
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder
 import org.apache.hc.core5.http.io.SocketConfig
 import org.apache.hc.core5.util.Timeout
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.context.annotation.Scope
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
@@ -20,7 +24,11 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 @Configuration
 @EnableSecurityConfiguration
 @Import(RestOperationsAzure::class)
-class RestConfig {
+class RestConfig(@Value("\${KODEVERK_URL}") kodeverkUrl: String) {
+
+    init {
+        KodeverkProvider.initialiser(kodeverkUrl)
+    }
 
     @Bean
     fun jackson2ObjectMapperBuilder(): Jackson2ObjectMapperBuilder {
@@ -44,4 +52,13 @@ class RestConfig {
         }
         .additionalInterceptors(bearerTokenClientInterceptor)
         .build()
+}
+
+@Profile("nais")
+@Configuration
+class InitKodeverkCache {
+    @PostConstruct
+    fun initKodeverkCache() {
+        KodeverkProvider.initialiserKodeverkCache()
+    }
 }

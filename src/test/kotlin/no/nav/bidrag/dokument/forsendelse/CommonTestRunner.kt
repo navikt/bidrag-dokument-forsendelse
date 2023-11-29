@@ -1,12 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse
 
 import StubUtils
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import no.nav.bidrag.dokument.forsendelse.consumer.KodeverkConsumer
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.KodeverkResponse
 import no.nav.bidrag.dokument.forsendelse.utils.TestDataManager
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
@@ -20,7 +15,6 @@ import org.springframework.context.ApplicationContext
 import org.springframework.core.io.Resource
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.nio.file.Files
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = [BidragDokumentForsendelseTest::class, StubUtils::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,9 +31,6 @@ abstract class CommonTestRunner {
 
     @Autowired
     private lateinit var applicationContext: ApplicationContext
-
-    @MockkBean
-    private lateinit var kodeverkConsumer: KodeverkConsumer
 
     @Value("classpath:__files/kodeverk/kodeverk_kommuner.json")
     private lateinit var kodeverkKommuner: Resource
@@ -64,9 +55,6 @@ abstract class CommonTestRunner {
     }
 
     protected fun mockKodeverk() {
-        val postnummerString = Files.readString(kodeverkPostnummer.file.toPath())
-
-        every { kodeverkConsumer.hentPostnummre() } returns ObjectMapper().findAndRegisterModules()
-            .readValue(postnummerString, KodeverkResponse::class.java)
+        stubUtils.stubKodeverkPostnummerEndepunkt()
     }
 }
