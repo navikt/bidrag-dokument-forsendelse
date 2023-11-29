@@ -60,7 +60,7 @@ fun validerPDFA(pdfBytes: ByteArray): String? {
         val result = validator.validate(it)
         val pageTree = (it as GFModelParser).pdDocument.catalog.pageTree
         val pagesCount = pageTree.pageCount
-        val invalidObjects = (0..<pagesCount).flatMap { i ->
+        val invalidObjects = (0..pagesCount - 1).flatMap { i ->
             pageTree.getPage(i).resources.xObjectNames.filter { name ->
                 pageTree.getPage(i).resources.getXObject(name) == null
             }.map { name -> name.value }

@@ -321,20 +321,20 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
             oppdatertForsendelse.referanseId shouldBe referanseId
             stubUtils.Valider().opprettJournalpostKaltMed(
                 "{" +
-                        "\"skalFerdigstilles\":true," +
-                        "\"tittel\":\"Tittel på hoveddokument\"," +
-                        "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
-                        "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
-                        "\"dokumenter\":[" +
-                        "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${forsendelse.dokumenter[0].dokumentreferanse}\"}," +
-                        "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"dokumentmalId\":\"BI100\",\"dokumentreferanse\":\"${forsendelse.dokumenter[1].dokumentreferanse}\"}," +
-                        "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"dokumentmalId\":\"BI100\",\"dokumentreferanse\":\"${forsendelse.dokumenter[2].dokumentreferanse}\"}]," +
-                        "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
-                        "\"tema\":\"BID\"," +
-                        "\"journalposttype\":\"UTGÅENDE\"," +
-                        "\"referanseId\":\"$referanseId\"," +
-                        "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                        "}"
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Tittel på hoveddokument\"," +
+                    "\"gjelderIdent\":\"${forsendelse.gjelderIdent}\"," +
+                    "\"avsenderMottaker\":{\"navn\":\"${forsendelse.mottaker?.navn}\",\"ident\":\"${forsendelse.mottaker?.ident}\",\"type\":\"FNR\",\"adresse\":null}," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Tittel på hoveddokument\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${forsendelse.dokumenter[0].dokumentreferanse}\"}," +
+                    "{\"tittel\":\"Tittel vedlegg må kontrolleres\",\"brevkode\":\"BI100\",\"dokumentmalId\":\"BI100\",\"dokumentreferanse\":\"${forsendelse.dokumenter[1].dokumentreferanse}\"}," +
+                    "{\"tittel\":\"Tittel vedlegg må kontrolleres 2\",\"brevkode\":\"BI100\",\"dokumentmalId\":\"BI100\",\"dokumentreferanse\":\"${forsendelse.dokumenter[2].dokumentreferanse}\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelse.saksnummer}\"]," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"UTGÅENDE\"," +
+                    "\"referanseId\":\"$referanseId\"," +
+                    "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
+                    "}"
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             verify(ordering = Ordering.ORDERED) {

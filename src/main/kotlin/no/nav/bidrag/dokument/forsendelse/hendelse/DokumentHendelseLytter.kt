@@ -65,7 +65,7 @@ class DokumentHendelseLytter(
                 log.info { "Dokument ${dokument.dokumentreferanse} er allerede ferdigstilt" }
                 return true
             }
-            
+
             log.info { "Sjekker om dokument ${dokument.dokumentreferanse} er ferdigstilt" }
             val erFerdigstilt = bidragDokumentConsumer.erFerdigstilt(dokument.dokumentreferanse)
 
@@ -92,7 +92,7 @@ class DokumentHendelseLytter(
             } else if (erFerdigstilt) {
                 log.info {
                     "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
-                            "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                        "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
             return erFerdigstilt

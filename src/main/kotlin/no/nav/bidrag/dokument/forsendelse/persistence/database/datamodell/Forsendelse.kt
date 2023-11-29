@@ -82,7 +82,7 @@ data class Forsendelse(
     val dokumenter: List<Dokument> = emptyList(),
     // Unik referanseid som kan brukes til sporing av forsendelsen gjennom verdikjeden. Denne verdien brukes som eksternReferanseId når forsendelsen arkiveres i fagarkivet (JOARK)
     // Denne verdien brukes også som duplikatkontroll slik at samme forsendelse ikke opprettes flere ganger i fagarkivet (må være globalt unik verdi)
-    val referanseId: String? = null,
+    val referanseId: String? = null
 //
 //    @Type(DokumentMetadataDoConverter::class)
 //    @Column(columnDefinition = "hstore", name = "metadata")

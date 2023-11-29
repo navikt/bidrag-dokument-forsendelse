@@ -90,6 +90,5 @@ class AdminController(
                 dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it)
             }
         } ?: false
-
     }
 }
