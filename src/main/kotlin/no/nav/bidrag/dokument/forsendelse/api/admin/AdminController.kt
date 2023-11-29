@@ -84,10 +84,16 @@ class AdminController(
         security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
-    fun sjekkOgOppdaterStatus(@PathVariable forsendelseId: ForsendelseId): Boolean {
+    fun sjekkOgOppdaterStatus(
+        @PathVariable forsendelseId: ForsendelseId,
+        @RequestParam(
+            required = false,
+            defaultValue = "false"
+        ) oppdaterStatus: Boolean = false
+    ): Boolean {
         return forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
             forsendelse.dokumenter.any {
-                dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it)
+                dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, oppdaterStatus)
             }
         } ?: false
     }

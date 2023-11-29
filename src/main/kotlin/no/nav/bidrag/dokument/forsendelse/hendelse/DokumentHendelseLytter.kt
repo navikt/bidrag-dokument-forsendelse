@@ -55,11 +55,11 @@ class DokumentHendelseLytter(
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
         dokumenter.forEach {
-            sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it)
+            sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, synkroniserDokumentStatusEnabled)
         }
     }
 
-    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument): Boolean {
+    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument, oppdaterStatus: Boolean): Boolean {
         try {
             if (dokument.dokumentStatus == DokumentStatus.FERDIGSTILT) {
                 log.info { "Dokument ${dokument.dokumentreferanse} er allerede ferdigstilt" }
@@ -76,7 +76,7 @@ class DokumentHendelseLytter(
                     "Dokument ${dokument.dokumentreferanse} er ikke ferdigstilt. Ignorerer dokument"
                 }
             }
-            if (erFerdigstilt && synkroniserDokumentStatusEnabled) {
+            if (erFerdigstilt && oppdaterStatus) {
                 val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(dokument.dokumentreferanse)
                 val oppdaterteDokumenter = dokumenterForReferanse.map { dokumentForRef ->
                     dokumentTjeneste.lagreDokument(
@@ -92,7 +92,7 @@ class DokumentHendelseLytter(
             } else if (erFerdigstilt) {
                 log.info {
                     "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
-                        "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                            "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
             return erFerdigstilt
