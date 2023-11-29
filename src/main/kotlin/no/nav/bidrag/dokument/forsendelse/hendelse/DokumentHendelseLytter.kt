@@ -59,9 +59,14 @@ class DokumentHendelseLytter(
         }
     }
 
-    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument) {
-        log.info { "Sjekker om dokument ${dokument.dokumentreferanse} er ferdigstilt" }
+    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument): Boolean {
         try {
+            if (dokument.dokumentStatus == DokumentStatus.FERDIGSTILT) {
+                log.info { "Dokument ${dokument.dokumentreferanse} er allerede ferdigstilt" }
+                return true
+            }
+            
+            log.info { "Sjekker om dokument ${dokument.dokumentreferanse} er ferdigstilt" }
             val erFerdigstilt = bidragDokumentConsumer.erFerdigstilt(dokument.dokumentreferanse)
 
             log.info {
@@ -90,8 +95,10 @@ class DokumentHendelseLytter(
                             "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
+            return erFerdigstilt
         } catch (e: Exception) {
             log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${dokument.dokumentreferanse}" }
+            return false
         }
     }
 

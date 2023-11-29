@@ -60,7 +60,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -94,7 +94,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -251,7 +251,7 @@
         "PRIVAT_AVTALE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -361,7 +361,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -412,7 +412,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -438,7 +438,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -502,7 +502,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -563,7 +563,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "FORSKUDD",
@@ -581,7 +581,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "FORSKUDD",
@@ -971,7 +971,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -998,7 +998,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -1179,7 +1179,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "FORSKUDD",
@@ -1197,7 +1197,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "FORSKUDD",
@@ -1539,7 +1539,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "FORSKUDD",
@@ -1557,7 +1557,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "FORSKUDD",
@@ -1869,7 +1869,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -1892,7 +1892,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "VERGE"
       ],
@@ -1918,7 +1918,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -1945,7 +1945,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -2023,7 +2023,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK"
       ],
       "erVedtakIkkeTilbakekreving": false,
@@ -2344,7 +2344,7 @@
         "OPPHOR"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -2367,7 +2367,7 @@
         "OPPHOR"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -2581,7 +2581,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK"
       ],
       "erVedtakIkkeTilbakekreving": false,
@@ -2601,7 +2601,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
@@ -2619,7 +2619,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
@@ -2640,7 +2640,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK"
       ],
       "erVedtakIkkeTilbakekreving": false,
@@ -2665,7 +2665,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK"
       ],
       "erVedtakIkkeTilbakekreving": false,
@@ -2834,7 +2834,7 @@
         "BEGRENSET_REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -2862,7 +2862,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
@@ -2884,7 +2884,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
@@ -2904,7 +2904,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
@@ -3034,7 +3034,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
@@ -3052,7 +3052,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
@@ -3537,7 +3537,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
@@ -3555,7 +3555,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG",
@@ -3811,7 +3811,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "stonadType": "BIDRAG",
@@ -3855,7 +3855,7 @@
         "PRIVAT_AVTALE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -4005,7 +4005,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -4164,7 +4164,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -4189,7 +4189,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -4215,7 +4215,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -4244,7 +4244,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -4597,7 +4597,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -4623,7 +4623,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -4646,7 +4646,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -4775,7 +4775,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
@@ -4793,7 +4793,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
@@ -5015,7 +5015,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
@@ -5033,7 +5033,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
@@ -5159,7 +5159,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
@@ -5177,7 +5177,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "SAERTILSKUDD",
@@ -5233,7 +5233,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -5254,7 +5254,7 @@
         "PRIVAT_AVTALE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -5300,7 +5300,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -5405,7 +5405,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -5431,7 +5431,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -5456,7 +5456,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -5662,7 +5662,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -5722,7 +5722,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -5748,7 +5748,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -5836,7 +5836,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -5853,7 +5853,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -6045,7 +6045,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -6062,7 +6062,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -6256,7 +6256,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -6273,7 +6273,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -6334,7 +6334,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -6441,7 +6441,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -6492,7 +6492,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -6522,7 +6522,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -6547,7 +6547,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "VERGE"
@@ -6782,7 +6782,7 @@
         "ENDRING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "VERGE"
@@ -6826,7 +6826,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -6849,7 +6849,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -6876,7 +6876,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -7007,7 +7007,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
@@ -7025,7 +7025,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
@@ -7141,7 +7141,7 @@
         "BEGRENSET_REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -7161,7 +7161,7 @@
         "BEGRENSET_REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "VERGE"
       ],
@@ -7289,7 +7289,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
@@ -7307,7 +7307,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
@@ -7793,7 +7793,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
@@ -7811,7 +7811,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "BIDRAG18AAR",
@@ -8087,7 +8087,7 @@
         "PRIVAT_AVTALE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8115,7 +8115,7 @@
         "PRIVAT_AVTALE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8143,7 +8143,7 @@
         "OPPHOR"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8170,7 +8170,7 @@
         "OPPHOR"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8197,7 +8197,7 @@
         "OPPHOR"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8224,7 +8224,7 @@
         "KORRIGERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8307,7 +8307,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8338,7 +8338,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -8436,7 +8436,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "GEBYR_SKYLDNER",
@@ -8454,7 +8454,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "GEBYR_SKYLDNER",
@@ -8843,7 +8843,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "GEBYR_SKYLDNER",
@@ -8861,7 +8861,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "GEBYR_SKYLDNER",
@@ -9203,7 +9203,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "GEBYR_SKYLDNER",
@@ -9221,7 +9221,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "GEBYR_SKYLDNER",
@@ -9577,7 +9577,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -9607,7 +9607,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -9645,7 +9645,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -9673,7 +9673,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -9838,7 +9838,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -9976,7 +9976,7 @@
         "REVURDERING"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -10003,7 +10003,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -10020,7 +10020,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -10397,7 +10397,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -10414,7 +10414,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -10737,7 +10737,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -10754,7 +10754,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -11211,7 +11211,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "TRYGDEETATEN_INNKREVING"
@@ -11247,7 +11247,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "TRYGDEETATEN_INNKREVING"
@@ -11674,7 +11674,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "EKTEFELLEBIDRAG",
@@ -11692,7 +11692,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "EKTEFELLEBIDRAG",
@@ -12062,7 +12062,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "EKTEFELLEBIDRAG",
@@ -12080,7 +12080,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "EKTEFELLEBIDRAG",
@@ -12422,7 +12422,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "EKTEFELLEBIDRAG",
@@ -12440,7 +12440,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "EKTEFELLEBIDRAG",
@@ -12937,7 +12937,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -12975,7 +12975,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -13287,7 +13287,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
@@ -13305,7 +13305,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
@@ -13708,7 +13708,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
@@ -13726,7 +13726,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
@@ -14068,7 +14068,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
@@ -14086,7 +14086,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE",
@@ -14370,7 +14370,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -14407,7 +14407,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -14676,7 +14676,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -14693,7 +14693,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -15016,7 +15016,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -15033,7 +15033,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -15356,7 +15356,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -15373,7 +15373,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -15608,7 +15608,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -15648,7 +15648,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NORSKE_MYNDIGHET",
@@ -15876,7 +15876,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -15893,7 +15893,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -16216,7 +16216,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -16233,7 +16233,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -16556,7 +16556,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -16573,7 +16573,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -16808,7 +16808,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -16848,7 +16848,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -17098,7 +17098,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -17115,7 +17115,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -17438,7 +17438,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -17455,7 +17455,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -17778,7 +17778,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -17795,7 +17795,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -18095,7 +18095,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -18134,7 +18134,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -18436,7 +18436,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "TILBAKEKREVING",
@@ -18454,7 +18454,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "TILBAKEKREVING",
@@ -18796,7 +18796,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "TILBAKEKREVING",
@@ -18814,7 +18814,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "TILBAKEKREVING",
@@ -19156,7 +19156,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "TILBAKEKREVING",
@@ -19174,7 +19174,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "TILBAKEKREVING",
@@ -19408,7 +19408,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -19451,7 +19451,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -19490,7 +19490,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -19781,7 +19781,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE_TILBAKEKREVING",
@@ -19799,7 +19799,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE_TILBAKEKREVING",
@@ -20141,7 +20141,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE_TILBAKEKREVING",
@@ -20159,7 +20159,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE_TILBAKEKREVING",
@@ -20501,7 +20501,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE_TILBAKEKREVING",
@@ -20519,7 +20519,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "engangsbelopType": "ETTERGIVELSE_TILBAKEKREVING",
@@ -20767,7 +20767,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -20807,7 +20807,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BIDRAGSPLIKTIG",
         "BM_I_ANNEN_SAK",
@@ -21007,7 +21007,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -21024,7 +21024,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -21347,7 +21347,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -21364,7 +21364,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -21687,7 +21687,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -21704,7 +21704,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -21969,7 +21969,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BIDRAGSMOTTAKER",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
@@ -22011,7 +22011,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "BM_I_ANNEN_SAK",
         "KLAGE_ANKE",
         "NAV_BIDRAG",
@@ -22214,7 +22214,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "MOTREGNING",
@@ -22232,7 +22232,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "MOTREGNING",
@@ -22605,7 +22605,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "MOTREGNING",
@@ -22623,7 +22623,7 @@
         "FOLGER_KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "MOTREGNING",
@@ -22965,7 +22965,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "MOTREGNING",
@@ -22983,7 +22983,7 @@
         "KLAGE_BEGRENSET_SATS"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "stonadType": "MOTREGNING",
@@ -24005,7 +24005,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -24022,7 +24022,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
@@ -24043,7 +24043,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
@@ -24065,7 +24065,7 @@
         "SOKNAD"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
@@ -24087,7 +24087,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -24104,7 +24104,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": true,
       "vedtakType": [
@@ -24121,7 +24121,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
@@ -24141,7 +24141,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR"
+        "BARN_18_ÅR"
       ],
       "erVedtakIkkeTilbakekreving": false,
       "vedtakType": [
@@ -24188,7 +24188,7 @@
         "KLAGE"
       ],
       "soknadFra": [
-        "BARN_18_AAR",
+        "BARN_18_ÅR",
         "VERGE"
       ],
       "erVedtakIkkeTilbakekreving": false,

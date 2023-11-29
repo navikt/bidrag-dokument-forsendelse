@@ -85,12 +85,11 @@ class AdminController(
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
     fun sjekkOgOppdaterStatus(@PathVariable forsendelseId: ForsendelseId): Boolean {
-        forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
-            forsendelse.dokumenter.forEach {
+        return forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
+            forsendelse.dokumenter.any {
                 dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it)
             }
-        }
+        } ?: false
 
-        return true
     }
 }
