@@ -96,13 +96,13 @@ class StubUtils {
             WireMock.get(WireMock.urlPathMatching(".*/kodeverk/Postnummer.*")).willReturn(
                 if (response != null) {
                     aClosedJsonResponse().withStatus(status.value()).withBody(
-                        ObjectMapper().findAndRegisterModules().writeValueAsString(response),
+                        ObjectMapper().findAndRegisterModules().writeValueAsString(response)
                     )
                 } else {
                     aClosedJsonResponse()
                         .withBodyFile("kodeverk/kodeverk_postnummer.json")
-                },
-            ),
+                }
+            )
         )
     }
 

@@ -56,6 +56,5 @@ abstract class CommonTestRunner {
 
     protected fun mockKodeverk() {
         stubUtils.stubKodeverkPostnummerEndepunkt()
-
     }
 }
