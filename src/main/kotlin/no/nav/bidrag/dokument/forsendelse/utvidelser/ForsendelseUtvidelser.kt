@@ -55,7 +55,7 @@ fun Rolletype.toName(): String? {
 
 fun BehandlingDto.tilStønadstype(): Stønadstype? {
     return try {
-        behandlingType.let { Stønadstype.valueOf(it) }
+        behandlingtype.let { Stønadstype.valueOf(it) }
     } catch (e: Exception) {
         null
     }
@@ -63,7 +63,7 @@ fun BehandlingDto.tilStønadstype(): Stønadstype? {
 
 fun BehandlingDto.tilEngangsbeløptype(): Engangsbeløptype? {
     return try {
-        behandlingType.let { Engangsbeløptype.valueOf(it) }
+        behandlingtype.let { Engangsbeløptype.valueOf(it) }
     } catch (e: Exception) {
         null
     }
@@ -95,7 +95,7 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behan
 }
 
 fun BehandlingInfo.gjelderKlage(vedtak: VedtakDto? = null, behandling: BehandlingDto? = null) =
-    vedtak?.type == Vedtakstype.KLAGE || behandling?.soknadType == Vedtakstype.KLAGE || vedtakType == Vedtakstype.KLAGE
+    vedtak?.type == Vedtakstype.KLAGE || behandling?.søknadstype == Vedtakstype.KLAGE || vedtakType == Vedtakstype.KLAGE
 
 fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {
     val behandlingType = this.tilBeskrivelseBehandlingType(vedtak, behandling)

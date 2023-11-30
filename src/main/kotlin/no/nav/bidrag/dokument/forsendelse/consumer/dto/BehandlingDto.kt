@@ -6,11 +6,11 @@ import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 
 data class BehandlingDto(
-    val behandlingType: BehandlingType,
-    val soknadType: Vedtakstype,
+    val behandlingtype: BehandlingType,
+    val søknadstype: Vedtakstype,
     val soknadFraType: SøktAvType,
     val saksnummer: String,
-    val behandlerEnhet: String,
-    @JsonProperty("aarsak")
+    val behandlerenhet: String,
+    @JsonProperty("årsak")
     val aarsakKode: String? = null
 )

@@ -68,7 +68,7 @@ class DokumentValgService(
                 ?: false
         } else if (!request.behandlingId.isNullOrEmpty()) {
             behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
-                ?.let { it.soknadType == Vedtakstype.KLAGE } ?: false
+                ?.let { it.søknadstype == Vedtakstype.KLAGE } ?: false
         } else {
             false
         }
@@ -108,12 +108,12 @@ class DokumentValgService(
                 request.behandlingId
             )?.let {
                 request.copy(
-                    behandlingType = it.behandlingType,
-                    vedtakType = it.soknadType,
+                    behandlingType = it.behandlingtype,
+                    vedtakType = it.søknadstype,
                     soknadFra = request.soknadFra ?: it.soknadFraType,
                     erFattetBeregnet = null,
                     erVedtakIkkeTilbakekreving = false,
-                    enhet = request.enhet ?: it.behandlerEnhet
+                    enhet = request.enhet ?: it.behandlerenhet
                 )
             }
         } else {
@@ -129,10 +129,10 @@ class DokumentValgService(
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
             it.soknadFra.contains(soknadFra) &&
-                it.isVedtaktypeValid(vedtakType, soknadType) &&
-                it.behandlingStatus.isValid(erFattetBeregnet) &&
-                it.forvaltning.isValid(enhet) &&
-                it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+                    it.isVedtaktypeValid(vedtakType, soknadType) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
+                    it.forvaltning.isValid(enhet) &&
+                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
         }
         val brevkoder =
             dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
@@ -159,11 +159,11 @@ class DokumentValgService(
         if (request == null) return emptyList()
         return dokumentValgTittelMap[malId]?.find {
             (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
-                it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
-                listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
-                it.behandlingStatus.isValid(request.erFattetBeregnet) &&
-                (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
-                it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
+                    it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
+                    listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
+                    it.behandlingStatus.isValid(request.erFattetBeregnet) &&
+                    (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
+                    it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
         }?.titler ?: emptyList()
     }
 
