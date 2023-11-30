@@ -68,7 +68,7 @@ class DokumentValgService(
                 ?: false
         } else if (!request.behandlingId.isNullOrEmpty()) {
             behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
-                ?.let { it.soknadType == Vedtakstype.KLAGE } ?: false
+                ?.let { it.søknadstype == Vedtakstype.KLAGE } ?: false
         } else {
             false
         }
@@ -108,12 +108,12 @@ class DokumentValgService(
                 request.behandlingId
             )?.let {
                 request.copy(
-                    behandlingType = it.behandlingType,
-                    vedtakType = it.soknadType,
+                    behandlingType = it.behandlingtype,
+                    vedtakType = it.søknadstype,
                     soknadFra = request.soknadFra ?: it.soknadFraType,
                     erFattetBeregnet = null,
                     erVedtakIkkeTilbakekreving = false,
-                    enhet = request.enhet ?: it.behandlerEnhet
+                    enhet = request.enhet ?: it.behandlerenhet
                 )
             }
         } else {

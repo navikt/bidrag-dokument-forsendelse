@@ -579,8 +579,8 @@ class DokumentValgServiceTest {
         val behandlingId = "21321321"
         every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns opprettBehandlingDto()
             .copy(
-                soknadType = Vedtakstype.ENDRING,
-                behandlingType = Stønadstype.BIDRAG.name,
+                søknadstype = Vedtakstype.ENDRING,
+                behandlingtype = Stønadstype.BIDRAG.name,
                 soknadFraType = SøktAvType.BIDRAGSMOTTAKER
             )
 
@@ -609,8 +609,8 @@ class DokumentValgServiceTest {
         val behandlingId = "21321321"
         every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns opprettBehandlingDto()
             .copy(
-                soknadType = Vedtakstype.ENDRING,
-                behandlingType = Stønadstype.BIDRAG.name,
+                søknadstype = Vedtakstype.ENDRING,
+                behandlingtype = Stønadstype.BIDRAG.name,
                 soknadFraType = SøktAvType.BIDRAGSMOTTAKER
             )
 

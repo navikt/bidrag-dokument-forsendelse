@@ -361,11 +361,11 @@ fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> 
 
 fun opprettBehandlingDto(): BehandlingDto {
     return BehandlingDto(
-        behandlingType = Stønadstype.FORSKUDD.name,
+        behandlingtype = Stønadstype.FORSKUDD.name,
         soknadFraType = SøktAvType.BIDRAGSMOTTAKER,
-        soknadType = Vedtakstype.ENDRING,
+        søknadstype = Vedtakstype.ENDRING,
         saksnummer = SAKSNUMMER,
-        behandlerEnhet = JOURNALFØRENDE_ENHET
+        behandlerenhet = JOURNALFØRENDE_ENHET
     )
 }
 

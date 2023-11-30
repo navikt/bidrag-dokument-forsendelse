@@ -141,8 +141,8 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         )
         stubUtils.stubBehandling(
             opprettBehandlingDto().copy(
-                soknadType = Vedtakstype.REVURDERING,
-                behandlingType = Stønadstype.FORSKUDD.name,
+                søknadstype = Vedtakstype.REVURDERING,
+                behandlingtype = Stønadstype.FORSKUDD.name,
                 soknadFraType = SøktAvType.NAV_BIDRAG
 
             )

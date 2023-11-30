@@ -279,7 +279,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette behandling tittel for varsling av bidrag 18 år fra vedtakid`() {
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingType = Stønadstype.EKTEFELLEBIDRAG.name
+            behandlingtype = Stønadstype.EKTEFELLEBIDRAG.name
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
             OpprettForsendelseForespørsel(
@@ -299,7 +299,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette tittel uten behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingType = "NOT_EXISTING"
+            behandlingtype = "NOT_EXISTING"
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
             OpprettForsendelseForespørsel(
@@ -319,7 +319,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette tittel fra forespørsel behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingType = "NOT_EXISTING"
+            behandlingtype = "NOT_EXISTING"
         )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(
             OpprettForsendelseForespørsel(
