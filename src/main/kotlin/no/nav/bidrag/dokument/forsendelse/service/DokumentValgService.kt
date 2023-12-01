@@ -157,9 +157,14 @@ class DokumentValgService(
 
     fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {
         if (request == null) return emptyList()
-        return dokumentValgTittelMap[malId]?.find {
+        return dokumentValgTittelMap[malId]?.sortedByDescending {
+            it.isVedtaktypeValid(
+                request.vedtakType,
+                request.soknadType
+            ) || it.soknadFra.contains(request.soknadFra)
+        }?.find {
             (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
-                it.isVedtaktypeValid(request.vedtakType, request.soknadType) &&
+                (it.vedtakType.isEmpty() || it.isVedtaktypeValid(request.vedtakType, request.soknadType)) &&
                 listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
                 it.behandlingStatus.isValid(request.erFattetBeregnet) &&
                 (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
