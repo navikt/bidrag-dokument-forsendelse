@@ -48,6 +48,80 @@
       "titler": [
         "Vedtak om offentlig tilbakekreving"
       ]
+    },
+    {
+      "vedtakType": [
+        "FASTSETTELSE",
+        "ENDRING"
+      ],
+      "soknadType": [],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [
+        "BIDRAGSPLIKTIG"
+      ],
+      "titler": [
+        "Innkreving varsel til motparten"
+      ]
+    },
+    {
+      "vedtakType": [
+        "FASTSETTELSE",
+        "ENDRING"
+      ],
+      "soknadType": [],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG18AAR",
+      "soknadFra": [
+        "BIDRAGSPLIKTIG"
+      ],
+      "titler": [
+        "Innkreving varsel til motparten"
+      ]
+    },
+    {
+      "vedtakType": [
+        "FASTSETTELSE",
+        "ENDRING"
+      ],
+      "soknadType": [],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [
+        "BARN_18_ÅR",
+        "BIDRAGSMOTTAKER"
+      ],
+      "titler": [
+        "Innkreving orientering til søker"
+      ]
+    },
+    {
+      "vedtakType": [
+        "FASTSETTELSE",
+        "ENDRING"
+      ],
+      "soknadType": [],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG18AAR",
+      "soknadFra": [
+        "BARN_18_ÅR",
+        "BIDRAGSMOTTAKER"
+      ],
+      "titler": [
+        "Innkreving orientering til søker"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "FORSKUDD",
+      "soknadFra": [
+        "BIDRAGSMOTTAKER"
+      ],
+      "titler": [
+        "Orientering om bidragsforskudd"
+      ]
     }
   ]
 }

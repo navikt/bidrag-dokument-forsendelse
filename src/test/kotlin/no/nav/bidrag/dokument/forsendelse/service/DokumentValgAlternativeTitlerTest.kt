@@ -137,4 +137,125 @@ class DokumentValgAlternativeTitlerTest {
             fritekstBrev.alternativeTitler shouldContain "Vedtak om offentlig tilbakekreving"
         }
     }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for forskudd søkt av BM`() {
+        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+            HentDokumentValgRequest(
+                vedtakType = Vedtakstype.ENDRING,
+                behandlingType = Stønadstype.FORSKUDD.name,
+                soknadFra = SøktAvType.BIDRAGSMOTTAKER
+            )
+        )
+
+        assertSoftly {
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Orientering om bidragsforskudd"
+        }
+    }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for søknad til BM eller 18 åring`() {
+        assertSoftly("Søknad bidrag fra BM") {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER
+                )
+            )
+
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+        }
+
+        assertSoftly("Søknad bidrag fra 18 år") {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.BARN_18_ÅR
+                )
+            )
+
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+        }
+
+        assertSoftly("Søknad bidrag 18 år fra BM") {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG18AAR.name,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER
+                )
+            )
+
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+        }
+
+        assertSoftly("Søknad bidrag 18 år fra 18 åring") {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG18AAR.name,
+                    soknadFra = SøktAvType.BARN_18_ÅR
+                )
+            )
+
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+        }
+    }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for søknad til bidragspliktig`() {
+        assertSoftly("Søknad bidrag fra BM") {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.BIDRAGSPLIKTIG
+                )
+            )
+
+            dokumentValgListe.size shouldBe 5
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
+        }
+
+        assertSoftly("Søknad bidrag fra 18 år") {
+            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG18AAR.name,
+                    soknadFra = SøktAvType.BIDRAGSPLIKTIG
+                )
+            )
+
+            dokumentValgListe.size shouldBe 4
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
+        }
+    }
 }
