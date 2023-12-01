@@ -29,7 +29,7 @@ class BidragVedtakConsumer(
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @BrukerCacheable(CacheConfig.VEDTAK_CACHE)
     fun hentVedtak(vedtakId: String): VedtakDto? {
-        if (hentDetaljerFraVedtakBehandlingEnabled) return null
+        if (!hentDetaljerFraVedtakBehandlingEnabled) return null
         try {
             return getForEntity(createUri("/vedtak/$vedtakId"))
         } catch (e: HttpStatusCodeException) {

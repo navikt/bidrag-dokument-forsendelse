@@ -29,7 +29,7 @@ class BidragBehandlingConsumer(
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @BrukerCacheable(CacheConfig.BEHANDLING_CACHE)
     fun hentBehandling(behandlingId: String): BehandlingDto? {
-        if (hentDetaljerFraVedtakBehandlingEnabled) return null
+        if (!hentDetaljerFraVedtakBehandlingEnabled) return null
         try {
             return getForEntity(createUri("/api/behandling/$behandlingId"))
         } catch (e: HttpStatusCodeException) {
