@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import mu.KotlinLogging
 import no.nav.bidrag.commons.cache.EnableUserCache
 import no.nav.bidrag.commons.cache.InvaliderCacheFørStartenAvArbeidsdag
+import no.nav.bidrag.commons.service.organisasjon.SaksbehandlernavnProvider.Companion.SAKSBEHANDLERINFO_CACHE
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -26,7 +27,6 @@ class CacheConfig {
         const val PERSON_SPRAAK_CACHE = "PERSON_SPRAAK_CACHE"
         const val DOKUMENTMALER_CACHE = "DOKUMENTMALER_CACHE"
         const val DOKUMENTMALDETALJER_CACHE = "DOKUMENTMALDETALJER_CACHE"
-        const val SAKSBEHANDLERINFO_CACHE = "SAKSBEHANDLERINFO_CACHE"
         const val TILGANG_SAK_CACHE = "TILGANG_SAK_CACHE"
         const val VEDTAK_CACHE = "VEDTAK_CACHE"
         const val BEHANDLING_CACHE = "BEHANDLING_CACHE"
@@ -49,6 +49,10 @@ class CacheConfig {
         }
 
         log.info { "Bruker cache $dokumentMalerCache for dokumentmaler. Kjører i cluster $clusterName" }
+        caffeineCacheManager.registerCustomCache(
+            SAKSBEHANDLERINFO_CACHE,
+            Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build()
+        )
         caffeineCacheManager.registerCustomCache(PERSON_CACHE, Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, dokumentMalerCache.build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMALDETALJER_CACHE, dokumentMalerCache.build())
