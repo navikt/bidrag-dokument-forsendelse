@@ -28,7 +28,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
 
     @BeforeEach
     fun setupMocks() {
-        WireMock.reset()
+        WireMock.resetAllRequests()
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
