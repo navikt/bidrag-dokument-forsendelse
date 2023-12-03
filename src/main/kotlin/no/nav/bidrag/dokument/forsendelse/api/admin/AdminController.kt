@@ -9,6 +9,8 @@ import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter
 import no.nav.bidrag.dokument.forsendelse.hendelse.ForsendelseSkedulering
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.security.token.support.core.api.Protected
@@ -46,10 +48,13 @@ class AdminController(
 
     @GetMapping("/distribusjon/navno")
     @Operation(
-        summary = "Resynk distribuert kanal",
+        summary = "Resynk distribusjonkanal for forsendelser som er distribuert via nav.no",
+        description = """
+Resynk distribusjonkanal. Hvis forsendelse er distribuert via nav.no og mottaker ikke har åpnet dokumentet i løpet av 48 timer vil forsendelsen bli redistribuert via sentral print. 
+Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no for å oppdatere til riktig distribusjonstatus. Dette kjøres også som en egen skedulert jobb.
+        """,
         security = [SecurityRequirement(name = "bearer-key")]
     )
-    @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
     fun distTilNavNoMenHarKanalSentralPrint(
         @RequestParam(
             required = false,
@@ -80,7 +85,11 @@ class AdminController(
 
     @PostMapping("/sjekkOgOppdaterStatus/{forsendelseId}")
     @Operation(
-        summary = "Sjekk status på dokumentene i forsendelse og oppdater status hvis det er ute av synk",
+        summary = "Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk",
+        description = """
+Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk. Dette skal brukes hvis feks en dokument er ferdigstilt i midlertidlig brevlager men status i databasen er fortsatt "under redigering"
+Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
+        """,
         security = [SecurityRequirement(name = "bearer-key")]
     )
     @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
@@ -90,11 +99,45 @@ class AdminController(
             required = false,
             defaultValue = "false"
         ) oppdaterStatus: Boolean = false
-    ): Boolean {
+    ): List<Map<String, String?>> {
         return forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
-            forsendelse.dokumenter.any {
+            forsendelse.dokumenter.flatMap {
                 dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, oppdaterStatus)
-            }
-        } ?: false
+            }.map { it.mapToResponse() }
+        } ?: emptyList()
     }
+
+    @PostMapping("/sjekkOgOppdaterStatus")
+    @Operation(
+        summary = "Sjekk status på dokumentene i forsendelser og oppdater status hvis det er ute av synk",
+        description = """
+Sjekk status på dokumentene i forsendelse og oppdater status hvis det er ute av synk. Dette skal brukes hvis feks en dokument er ferdigstilt i midlertidlig brevlager men status i databasen er fortsatt "under redigering"
+Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
+        """,
+        security = [SecurityRequirement(name = "bearer-key")]
+    )
+    fun sjekkOgOppdaterStatus(
+        @RequestParam(
+            required = true,
+            defaultValue = "100"
+        ) limit: Int = 100,
+        @RequestParam(
+            required = false
+        ) afterDate: LocalDate?,
+        @RequestParam(
+            required = false
+        ) beforeDate: LocalDate?
+    ): List<Map<String, String?>> {
+        return dokumentHendelseLytter.oppdaterStatusPaFerdigstilteDokumenter(limit, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay())
+            .map { it.mapToResponse() }
+    }
+}
+
+fun Dokument.mapToResponse(): Map<String, String?> {
+    val node = mutableMapOf<String, String?>()
+    node[Dokument::tittel.name] = tittel
+    node[Dokument::dokumentreferanse.name] = dokumentreferanse
+    node[Dokument::dokumentreferanseFagarkiv.name] = dokumentreferanseFagarkiv
+    node[Forsendelse::journalpostIdFagarkiv.name] = forsendelse.journalpostIdFagarkiv
+    return node.mapValues { it.value ?: "" }
 }

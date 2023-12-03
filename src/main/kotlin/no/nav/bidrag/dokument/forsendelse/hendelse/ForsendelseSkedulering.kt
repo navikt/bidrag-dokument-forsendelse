@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.dokument.forsendelse.model.BIDRAG_DOKUMENT_FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.ForsendelseMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.DistribusjonService
@@ -41,6 +42,13 @@ class ForsendelseSkedulering(
         oppdaterDistribusjonstatus()
     }
 
+    @Scheduled(cron = "\${RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE}")
+    @SchedulerLock(name = "resynkDistribusjoninfoNavNo", lockAtLeastFor = "10m")
+    @Transactional
+    fun resynkDistribusjoninfoNavNoSkeduler() {
+        resynkDistribusjoninfoNavNo()
+    }
+
     fun oppdaterDistribusjonstatus() {
         val forsendelseListe = forsendelseTjeneste.hentFerdigstilteIkkeDistribuert()
         LOGGER.info { "Fant ${forsendelseListe.size} utgående forsendelser som har status FERDIGSTILT. Sjekker om journalposten har blitt distribuert" }
@@ -49,6 +57,10 @@ class ForsendelseSkedulering(
         }
     }
 
+    /**
+     * Sjekk om forsendelse er distribuert hvor journalpost ble opprettet men distribusjon feilet. Da kan saksbehandler distribuere journalpost på nytt manuelt men status ikke bli oppdatert.
+     * Denne jobben synkroniserer distribusjonstatus slik at det stemmer med om hvordan journalposten er distribuert
+     */
     private fun oppdaterForsendelsestatusTilDistribuert(forsendelse: Forsendelse) {
         try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
@@ -57,7 +69,7 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
-                                "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                                    "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
                         }
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
@@ -85,7 +97,7 @@ class ForsendelseSkedulering(
 
     /**
      * Hvis forsendelse distribuert til NAVNO ikke blir lest etter 40 timer så sendes forsendelse via sentral print istedenfor.
-     * Denne jobben skal resynke kanal som forsendelse ble distribuert til
+     * Denne jobben skal resynke kanal som forsendelse ble distribuert til. Dette er mest nyttig for statistikk
      */
     fun resynkDistribusjoninfoNavNo(
         simulering: Boolean = false,
@@ -95,6 +107,15 @@ class ForsendelseSkedulering(
         val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(distInfoPageSize, afterDate, beforeDate)
         LOGGER.info { "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert til NAV_NO. Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize" }
         return forsendelseListe.mapNotNull {
+            forsendelseTjeneste.lagre(
+                it.copy(
+                    metadata = run {
+                        val metadata = it.metadata ?: ForsendelseMetadataDo()
+                        metadata.markerSomSjekketNavNoRedistribusjon()
+                        metadata.copy()
+                    }
+                )
+            )
             lagreDistribusjonInfo(it, simulering)
         }.filter { simulering || it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
     }
@@ -115,9 +136,9 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId}" +
-                                "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +
-                                "${forsendelse.dokumenter.size} dokumenter, " +
-                                "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Forsendelsens kanal var ${forsendelse.distribusjonKanal}. Er simulering=$simulering"
+                                    "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +
+                                    "${forsendelse.dokumenter.size} dokumenter, " +
+                                    "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Forsendelsens kanal var ${forsendelse.distribusjonKanal}. Er simulering=$simulering"
                         }
                         return if (simulering) {
                             forsendelse

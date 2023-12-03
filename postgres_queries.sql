@@ -1,0 +1,8 @@
+select * from forsendelse f inner join public.dokument d on f.forsendelse_id = d.forsendelse_id where f.status = 'UNDER_PRODUKSJON' and d.slettet_tidspunkt is null and d.dokument_status = 'UNDER_REDIGERING' and d.arkivsystem != 'FORSENDELSE' and date_trunc('day', d.opprettet_tidspunkt) <= '2023-11-27';
+select d from dokument d where d.forsendelse.status = 'UNDER_PRODUKSJON' and d.slettetTidspunkt is null and d.dokumentStatus = 'UNDER_REDIGERING' and d.arkivsystem != 'FORSENDELSE' and d.opprettetTidspunkt <= :olderThan order by d.opprettetTidspunkt desc
+
+--- Sjekk for forsendelser som har kanal NAV_NO og ikke er sjekket fra før
+select f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print', f.distribuert_tidspunkt from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjon_kanal = 'NAV_NO' and f.distribuert_tidspunkt <= '2023-12-29 08:55:07.547114' and f.distribuert_tidspunkt >= '2023-11-01 08:55:07.547114' and (f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print' = 'false' or f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print' is null) order by f.distribuert_tidspunkt desc
+
+select * from dokument d inner join public.forsendelse f on f.forsendelse_id = d.forsendelse_id where f.status = 'UNDER_PRODUKSJON' and d.slettet_tidspunkt is null and d.dokument_status = 'UNDER_REDIGERING'
+and d.arkivsystem != 'FORSENDELSE' and d.opprettet_tidspunkt <= now() order by d.opprettet_tidspunkt;

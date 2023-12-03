@@ -21,7 +21,11 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     @Query("select f from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjonKanal is null and f.distribuertTidspunkt <= :olderThan order by f.distribuertTidspunkt asc")
     fun hentDistribuerteForsendelseUtenKanal(pageable: Pageable, olderThan: LocalDateTime): List<Forsendelse>
 
-    @Query("select f from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjonKanal = 'NAV_NO' and f.distribuertTidspunkt <= :beforeDate and f.distribuertTidspunkt >= :afterDate order by f.distribuertTidspunkt asc")
+    @Query(
+        "select * from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjon_kanal = 'NAV_NO' and f.distribuert_tidspunkt <= :beforeDate and f.distribuert_tidspunkt >= :afterDate " +
+            "and (f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print' = 'false' or f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print' is null) order by f.distribuert_tidspunkt desc",
+        nativeQuery = true
+    )
     fun hentDistribuerteForsendelseTilNAVNO(pageable: Pageable, beforeDate: LocalDateTime, afterDate: LocalDateTime): List<Forsendelse>
 
     @Query("select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE' and f.distribusjonKanal is null")
