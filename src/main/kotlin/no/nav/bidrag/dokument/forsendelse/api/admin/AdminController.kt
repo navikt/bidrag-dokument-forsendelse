@@ -66,20 +66,9 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
         @RequestParam(
             required = false
         ) beforeDate: LocalDate?
-    ): List<ForsendelseMetadata> {
+    ): List<Map<String, String?>> {
         return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay()).map {
-            ForsendelseMetadata(
-                it.forsendelseId,
-                it.journalpostIdFagarkiv,
-                it.saksnummer,
-                it.enhet,
-                it.gjelderIdent,
-                it.mottaker?.ident,
-                it.distribuertAvIdent,
-                it.opprettetAvNavn,
-                it.distribuertTidspunkt,
-                it.distribusjonKanal
-            )
+            it.mapToResponse()
         }
     }
 
@@ -133,11 +122,29 @@ Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis 
     }
 }
 
+fun Forsendelse.mapToResponse(): Map<String, String?> {
+    val node = mutableMapOf<String, String?>()
+    node[Forsendelse::forsendelseId.name] = forsendelseId.toString()
+    node[Forsendelse::journalpostIdFagarkiv.name] = journalpostIdFagarkiv
+    node[Forsendelse::saksnummer.name] = saksnummer
+    node[Forsendelse::enhet.name] = mottaker?.ident
+    node[Forsendelse::distribuertAvIdent.name] = distribuertAvIdent
+    node[Forsendelse::opprettetAvNavn.name] = opprettetAvNavn
+    node[Forsendelse::distribuertTidspunkt.name] = distribuertTidspunkt.toString()
+    node[Forsendelse::distribusjonKanal.name] = distribusjonKanal?.name
+    return node.mapValues { it.value ?: "" }
+}
+
 fun Dokument.mapToResponse(): Map<String, String?> {
     val node = mutableMapOf<String, String?>()
     node[Dokument::tittel.name] = tittel
+    node[Dokument::dokumentStatus.name] = dokumentStatus.name
     node[Dokument::dokumentreferanse.name] = dokumentreferanse
     node[Dokument::dokumentreferanseFagarkiv.name] = dokumentreferanseFagarkiv
     node[Forsendelse::journalpostIdFagarkiv.name] = forsendelse.journalpostIdFagarkiv
+    node[Forsendelse::forsendelseId.name] = forsendelse.forsendelseId.toString()
+    node[Forsendelse::forsendelseType.name] = forsendelse.forsendelseType.name
+    node["forsendelseStatus"] = forsendelse.status.name
+    node["saksnummer"] = forsendelse.saksnummer
     return node.mapValues { it.value ?: "" }
 }
