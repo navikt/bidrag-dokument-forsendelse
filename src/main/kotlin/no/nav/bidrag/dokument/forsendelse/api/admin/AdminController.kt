@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.admin
 
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -14,7 +15,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsen
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.security.token.support.core.api.Protected
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -46,7 +46,7 @@ class AdminController(
     private val forsendelseTjeneste: ForsendelseTjeneste
 ) {
 
-    @GetMapping("/distribusjon/navno")
+    @PostMapping("/distribusjon/navno")
     @Operation(
         summary = "Resynk distribusjonkanal for forsendelser som er distribuert via nav.no",
         description = """
@@ -60,9 +60,11 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             required = false,
             defaultValue = "true"
         ) simulering: Boolean = true,
+        @Parameter(name = "afterDate", example = "2023-11-01")
         @RequestParam(
             required = false
         ) afterDate: LocalDate?,
+        @Parameter(name = "beforeDate", example = "2023-12-31")
         @RequestParam(
             required = false
         ) beforeDate: LocalDate?
@@ -77,7 +79,7 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
         summary = "Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk",
         description = """
 Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk. Dette skal brukes hvis feks en dokument er ferdigstilt i midlertidlig brevlager men status i databasen er fortsatt "under redigering"
-Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
+Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
         """,
         security = [SecurityRequirement(name = "bearer-key")]
     )
@@ -101,7 +103,7 @@ Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis 
         summary = "Sjekk status på dokumentene i forsendelser og oppdater status hvis det er ute av synk",
         description = """
 Sjekk status på dokumentene i forsendelse og oppdater status hvis det er ute av synk. Dette skal brukes hvis feks en dokument er ferdigstilt i midlertidlig brevlager men status i databasen er fortsatt "under redigering"
-Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
+Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
         """,
         security = [SecurityRequirement(name = "bearer-key")]
     )
@@ -110,11 +112,13 @@ Denne tjensten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis 
             required = true,
             defaultValue = "100"
         ) limit: Int = 100,
+        @Parameter(name = "afterDate", example = "2023-11-01")
         @RequestParam(
-            required = false
+            required = false,
         ) afterDate: LocalDate?,
+        @Parameter(name = "beforeDate", example = "2023-12-31")
         @RequestParam(
-            required = false
+            required = false,
         ) beforeDate: LocalDate?
     ): List<Map<String, String?>> {
         return dokumentHendelseLytter.oppdaterStatusPaFerdigstilteDokumenter(limit, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay())
