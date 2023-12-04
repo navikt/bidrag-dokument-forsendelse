@@ -47,23 +47,27 @@ class DokumentHendelseLytter(
     @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterStatusPaFerdigstilteDokumenterSkeduler() {
-        oppdaterStatusPaFerdigstilteDokumenter()
+        oppdaterStatusPaFerdigstilteDokumenter(100)
     }
 
-    fun oppdaterStatusPaFerdigstilteDokumenter() {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(100)
+    fun oppdaterStatusPaFerdigstilteDokumenter(
+        limit: Int = 100,
+        afterDate: LocalDateTime? = null,
+        beforeDate: LocalDateTime? = null
+    ): List<Dokument> {
+        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(limit, afterDate, beforeDate)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
-        dokumenter.forEach {
+        return dokumenter.flatMap {
             sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, synkroniserDokumentStatusEnabled)
         }
     }
 
-    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument, oppdaterStatus: Boolean): Boolean {
+    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument, oppdaterStatus: Boolean): List<Dokument> {
         try {
             if (dokument.dokumentStatus == DokumentStatus.FERDIGSTILT) {
                 log.info { "Dokument ${dokument.dokumentreferanse} er allerede ferdigstilt" }
-                return true
+                return emptyList()
             }
 
             log.info { "Sjekker om dokument ${dokument.dokumentreferanse} er ferdigstilt" }
@@ -89,16 +93,17 @@ class DokumentHendelseLytter(
                 }
                 sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
                 ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+                return oppdaterteDokumenter
             } else if (erFerdigstilt) {
                 log.info {
                     "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
                         "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
-            return erFerdigstilt
+            return listOf(dokument)
         } catch (e: Exception) {
             log.error(e) { "Det skjedde en feil ved oppdatering av status på dokument ${dokument.dokumentreferanse}" }
-            return false
+            return emptyList()
         }
     }
 

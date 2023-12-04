@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Behand
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.ForsendelseMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -215,7 +216,8 @@ fun opprettForsendelse2(
     mottaker: Mottaker? = Mottaker(ident = MOTTAKER_IDENT, navn = MOTTAKER_NAVN),
     dokumenter: List<Dokument> = listOf(),
     behandlingInfo: BehandlingInfo? = null,
-    endretAvIdent: String = SAKSBEHANDLER_IDENT
+    endretAvIdent: String = SAKSBEHANDLER_IDENT,
+    metadata: ForsendelseMetadataDo? = null
 ): Forsendelse {
     val forsendelse = Forsendelse(
         forsendelseId = 1L,
@@ -236,7 +238,8 @@ fun opprettForsendelse2(
         journalpostIdFagarkiv = arkivJournalpostId,
         distribusjonBestillingsId = distribusjonBestillingsId,
         distribuertTidspunkt = distribusjonsTidspunkt,
-        distribusjonKanal = kanal
+        distribusjonKanal = kanal,
+        metadata = metadata
     )
 
     dokumenter.forEach { it.forsendelse = forsendelse }

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import net.javacrumbs.shedlock.core.LockProvider
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock
+import no.nav.bidrag.commons.service.organisasjon.EnableSaksbehandlernavnProvider
 import no.nav.bidrag.commons.web.CorrelationIdFilter
 import no.nav.bidrag.commons.web.DefaultCorsFilter
 import no.nav.bidrag.commons.web.MdcFilter
@@ -31,6 +32,7 @@ import javax.sql.DataSource
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "30m")
 @Import(CorrelationIdFilter::class, DefaultCorsFilter::class, UserMdcFilter::class, MdcFilter::class)
+@EnableSaksbehandlernavnProvider
 class DefaultConfiguration {
 
     @Bean

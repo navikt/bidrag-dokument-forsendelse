@@ -40,6 +40,7 @@ env:
   SYNKRONISER_STATUS_DOKUMENTER_ENABLED: false
   REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
   REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 * * * * *"
+  RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE: "0 0 */12 * * ?"
   GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-prod-8f72/locations/europe-north1/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 
   JAVA_OPTS: -Xmx1028m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0

@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -7,6 +8,7 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import no.nav.bidrag.commons.service.AppContext
 import no.nav.bidrag.commons.service.KodeverkKoderBetydningerResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
@@ -273,7 +275,7 @@ class StubUtils {
     }
 
     fun stubHentSaksbehandler() {
-        WireMock.stubFor(
+        AppContext.getBean(WireMockServer::class.java).stubFor(
             WireMock.get(WireMock.urlMatching("/organisasjon/saksbehandler/info/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -411,6 +413,13 @@ class StubUtils {
                 WireMock.urlMatching("/dokument/journal/distribuer/info/(.*)")
             )
             WireMock.verify(antallGanger, verify)
+        }
+
+        fun hentDistribusjonInfoKaltMed(journalpostId: String?) {
+            val verify = WireMock.getRequestedFor(
+                WireMock.urlMatching("/dokument/journal/distribuer/info/$journalpostId")
+            )
+            WireMock.verify(1, verify)
         }
 
         fun bestillDistribusjonKaltMed(journalpostId: String, vararg contains: String, batchId: String? = null) {

@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse
 
 import StubUtils
 import com.github.tomakehurst.wiremock.WireMockServer
+import no.nav.bidrag.commons.service.AppContext
 import no.nav.bidrag.dokument.forsendelse.utils.TestDataManager
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Import
 import org.springframework.core.io.Resource
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -21,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @AutoConfigureWireMock(port = 0)
 @EnableMockOAuth2Server
 @ExtendWith(SpringExtension::class)
+@Import(AppContext::class)
 abstract class CommonTestRunner {
 
     @Autowired

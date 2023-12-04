@@ -1,6 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.hypersistence.utils.hibernate.type.ImmutableType
+import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -15,6 +19,12 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
+import org.hibernate.annotations.Type
+import org.hibernate.engine.spi.SessionFactoryImplementor
+import org.hibernate.engine.spi.SharedSessionContractImplementor
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.Types
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -72,7 +82,74 @@ data class Forsendelse(
     val dokumenter: List<Dokument> = emptyList(),
     // Unik referanseid som kan brukes til sporing av forsendelsen gjennom verdikjeden. Denne verdien brukes som eksternReferanseId når forsendelsen arkiveres i fagarkivet (JOARK)
     // Denne verdien brukes også som duplikatkontroll slik at samme forsendelse ikke opprettes flere ganger i fagarkivet (må være globalt unik verdi)
-    val referanseId: String? = null
+    val referanseId: String? = null,
+
+    @Type(ForsendelseMetadataDoConverter::class)
+    @Column(columnDefinition = "hstore", name = "metadata")
+    val metadata: ForsendelseMetadataDo? = null
 )
 
 fun Forsendelse.opprettReferanseId() = "BIF_${forsendelseId}_${opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)}"
+class ForsendelseMetadataDo : MutableMap<String, String> by hashMapOf() {
+
+    companion object {
+        val SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT = "sjekket_navno_redistribusjon_til_sentral_print"
+        fun from(initValue: Map<String, String> = hashMapOf()): ForsendelseMetadataDo {
+            val dokmap = ForsendelseMetadataDo()
+            dokmap.putAll(initValue)
+            return dokmap
+        }
+    }
+
+    // Indeksert i databasen basert på navn til nøkkelen. (sjekk migrering v1.4.3). Ikke endre uten å lage ny indeks
+    private val SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT = "sjekket_navno_redistribusjon_til_sentral_print"
+    private val objectMapper = ObjectMapper().findAndRegisterModules()
+
+    fun markerSomSjekketNavNoRedistribusjon() {
+        update(SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT, "true")
+    }
+
+    fun harSjekketForNavNoRedistribusjon(): Boolean = get(SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT) == "true"
+
+    private fun update(key: String, value: String?) {
+        remove(key)
+        value?.let { put(key, value) }
+    }
+
+    fun copy(): ForsendelseMetadataDo {
+        return from(this)
+    }
+}
+
+class ForsendelseMetadataDoConverter : ImmutableType<ForsendelseMetadataDo>(ForsendelseMetadataDo::class.java) {
+
+    override fun get(rs: ResultSet, p1: Int, session: SharedSessionContractImplementor?, owner: Any?): ForsendelseMetadataDo? {
+        val map = rs.getObject(p1) as Map<String, String>?
+        return map?.let { ForsendelseMetadataDo.from(it) }
+    }
+
+    override fun set(st: PreparedStatement, value: ForsendelseMetadataDo?, index: Int, session: SharedSessionContractImplementor) {
+        st.setObject(index, value?.toMap())
+    }
+
+    override fun getSqlType(): Int {
+        return Types.OTHER
+    }
+
+    override fun compare(p0: Any?, p1: Any?, p2: SessionFactoryImplementor?): Int {
+        return 0
+    }
+
+    override fun fromStringValue(sequence: CharSequence?): ForsendelseMetadataDo? {
+        return try {
+            sequence?.let { JacksonUtil.fromString(sequence as String, ForsendelseMetadataDo::class.java) }
+        } catch (e: Exception) {
+            throw IllegalArgumentException(
+                String.format(
+                    "Could not transform the [%s] value to a Map!",
+                    sequence
+                )
+            )
+        }
+    }
+}
