@@ -55,7 +55,7 @@ class DokumentHendelseLytter(
         afterDate: LocalDateTime? = null,
         beforeDate: LocalDateTime? = null
     ): List<Dokument> {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(limit)
+        val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(limit, afterDate, beforeDate)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
 
         return dokumenter.flatMap {
@@ -97,7 +97,7 @@ class DokumentHendelseLytter(
             } else if (erFerdigstilt) {
                 log.info {
                     "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
-                        "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                            "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
             return listOf(dokument)
