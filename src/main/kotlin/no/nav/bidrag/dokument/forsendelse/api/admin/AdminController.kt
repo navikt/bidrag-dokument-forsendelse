@@ -120,7 +120,8 @@ fun Forsendelse.mapToResponse(): Map<String, String?> {
     node[Forsendelse::forsendelseId.name] = forsendelseId.toString()
     node[Forsendelse::journalpostIdFagarkiv.name] = journalpostIdFagarkiv
     node[Forsendelse::saksnummer.name] = saksnummer
-    node[Forsendelse::enhet.name] = mottaker?.ident
+    node["mottakerIdent"] = mottaker?.ident
+    node[Forsendelse::enhet.name] = enhet
     node[Forsendelse::distribuertAvIdent.name] = distribuertAvIdent
     node[Forsendelse::opprettetAvNavn.name] = opprettetAvNavn
     node[Forsendelse::distribuertTidspunkt.name] = distribuertTidspunkt.toString()
