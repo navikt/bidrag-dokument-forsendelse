@@ -97,7 +97,7 @@ class DokumentHendelseLytter(
             } else if (erFerdigstilt) {
                 log.info {
                     "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
-                            "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
+                        "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
             return listOf(dokument)
