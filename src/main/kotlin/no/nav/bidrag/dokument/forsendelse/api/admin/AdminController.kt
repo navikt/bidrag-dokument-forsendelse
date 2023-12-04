@@ -12,7 +12,6 @@ import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
-import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,20 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
-import java.time.LocalDateTime
-
-data class ForsendelseMetadata(
-    val forsendelseId: Long?,
-    val joarkJournalpostId: String?,
-    val saksnummer: String?,
-    val enhet: String?,
-    val gjelderIdent: String?,
-    val mottakerId: String?,
-    val saksbehandlerIdent: String?,
-    val saksbehandlerNavn: String?,
-    val distribuertDato: LocalDateTime?,
-    val kanal: DistribusjonKanal?
-)
 
 @RestController
 @Protected
@@ -63,11 +48,13 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
         @Parameter(name = "afterDate", example = "2023-11-01")
         @RequestParam(
             required = false
-        ) afterDate: LocalDate?,
+        )
+        afterDate: LocalDate?,
         @Parameter(name = "beforeDate", example = "2023-12-31")
         @RequestParam(
             required = false
-        ) beforeDate: LocalDate?
+        )
+        beforeDate: LocalDate?
     ): List<Map<String, String?>> {
         return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay()).map {
             it.mapToResponse()
@@ -114,12 +101,14 @@ Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis
         ) limit: Int = 100,
         @Parameter(name = "afterDate", example = "2023-11-01")
         @RequestParam(
-            required = false,
-        ) afterDate: LocalDate?,
+            required = false
+        )
+        afterDate: LocalDate?,
         @Parameter(name = "beforeDate", example = "2023-12-31")
         @RequestParam(
-            required = false,
-        ) beforeDate: LocalDate?
+            required = false
+        )
+        beforeDate: LocalDate?
     ): List<Map<String, String?>> {
         return dokumentHendelseLytter.oppdaterStatusPaFerdigstilteDokumenter(limit, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay())
             .map { it.mapToResponse() }

@@ -69,7 +69,7 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} men journalpost ${forsendelse.journalpostIdFagarkiv} er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. " +
-                                    "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
+                                "Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}"
                         }
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         forsendelseTjeneste.lagre(
@@ -138,9 +138,9 @@ class ForsendelseSkedulering(
                     ?.let { distInfo ->
                         LOGGER.info {
                             "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId}" +
-                                    "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +
-                                    "${forsendelse.dokumenter.size} dokumenter, " +
-                                    "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Forsendelsens kanal var ${forsendelse.distribusjonKanal}. Er simulering=$simulering"
+                                "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +
+                                "${forsendelse.dokumenter.size} dokumenter, " +
+                                "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. Forsendelsens kanal var ${forsendelse.distribusjonKanal}. Er simulering=$simulering"
                         }
                         return if (simulering) {
                             forsendelse
