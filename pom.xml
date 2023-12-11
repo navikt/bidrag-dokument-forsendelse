@@ -25,7 +25,7 @@
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
     <kotest.version>5.6.2</kotest.version>
     <mockk.version>4.0.2</mockk.version>
-    <flyway.version>9.21.1</flyway.version>
+    <flyway.version>10.2.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.18.3</testcontainers.version>
     <shedlock.version>5.7.0</shedlock.version>
