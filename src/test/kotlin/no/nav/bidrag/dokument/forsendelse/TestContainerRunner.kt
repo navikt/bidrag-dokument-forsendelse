@@ -44,10 +44,10 @@ class TestContainerRunner : CommonTestRunner() {
         private fun updateExternalUrlWithContainerUrl(fakeGcsExternalUrl: String) {
             val modifyExternalUrlRequestUri = "$fakeGcsExternalUrl/_internal/config"
             val updateExternalUrlJson = (
-                    "{" +
-                            "\"externalUrl\": \"" + fakeGcsExternalUrl + "\"" +
-                            "}"
-                    )
+                "{" +
+                    "\"externalUrl\": \"" + fakeGcsExternalUrl + "\"" +
+                    "}"
+                )
             val req = HttpRequest.newBuilder()
                 .uri(URI.create(modifyExternalUrlRequestUri))
                 .header("Content-Type", "application/json")
