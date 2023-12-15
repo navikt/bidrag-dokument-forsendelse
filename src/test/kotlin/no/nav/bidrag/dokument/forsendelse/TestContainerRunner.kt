@@ -27,7 +27,6 @@ class TestContainerRunner : CommonTestRunner() {
             withUsername("cloudsqliamuser")
             withPassword("admin")
             portBindings = listOf("7777:5432")
-            start()
         }
 
         @Container
@@ -45,10 +44,10 @@ class TestContainerRunner : CommonTestRunner() {
         private fun updateExternalUrlWithContainerUrl(fakeGcsExternalUrl: String) {
             val modifyExternalUrlRequestUri = "$fakeGcsExternalUrl/_internal/config"
             val updateExternalUrlJson = (
-                "{" +
-                    "\"externalUrl\": \"" + fakeGcsExternalUrl + "\"" +
-                    "}"
-                )
+                    "{" +
+                            "\"externalUrl\": \"" + fakeGcsExternalUrl + "\"" +
+                            "}"
+                    )
             val req = HttpRequest.newBuilder()
                 .uri(URI.create(modifyExternalUrlRequestUri))
                 .header("Content-Type", "application/json")
@@ -66,6 +65,7 @@ class TestContainerRunner : CommonTestRunner() {
         @JvmStatic
         @DynamicPropertySource
         fun postgresqlProperties(registry: DynamicPropertyRegistry) {
+            postgreSqlDb.start()
             registry.add("spring.jpa.database") { "POSTGRESQL" }
             registry.add("spring.datasource.type") { "com.zaxxer.hikari.HikariDataSource" }
             registry.add("spring.flyway.enabled") { true }

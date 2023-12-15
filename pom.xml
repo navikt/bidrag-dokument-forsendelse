@@ -27,7 +27,7 @@
     <mockk.version>4.0.2</mockk.version>
     <flyway.version>10.2.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
-    <testcontainers.version>1.19.1</testcontainers.version>
+    <testcontainers.version>1.19.3</testcontainers.version>
     <shedlock.version>5.9.1</shedlock.version>
     <google-api-extention.version>2.32.0</google-api-extention.version>
     <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
