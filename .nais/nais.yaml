@@ -66,7 +66,6 @@ spec:
             envVarPrefix: DB
   resources:
     requests:
-      cpu: 1000m
       memory: 1024Mi
     limits:
       memory: 4096Mi
