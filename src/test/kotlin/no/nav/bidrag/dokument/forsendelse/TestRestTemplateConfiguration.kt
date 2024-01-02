@@ -1,7 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse
 
 import com.nimbusds.jose.JOSEObjectType
-import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
@@ -24,14 +23,16 @@ class TestRestTemplateConfiguration {
     private lateinit var clientId: String
 
     @Bean
-    fun httpHeaderTestRestTemplate(): HttpHeaderTestRestTemplate {
-        val testRestTemplate = TestRestTemplate(RestTemplateBuilder())
-        val httpHeaderTestRestTemplate = HttpHeaderTestRestTemplate(testRestTemplate)
-        httpHeaderTestRestTemplate.add(HttpHeaders.AUTHORIZATION) { generateBearerToken() }
-        return httpHeaderTestRestTemplate
+    fun httpHeaderTestRestTemplate(): TestRestTemplate {
+        return TestRestTemplate(
+            RestTemplateBuilder().additionalInterceptors({ request, body, execution ->
+                request.headers.add(HttpHeaders.AUTHORIZATION, generateBearerToken())
+                execution.execute(request, body)
+            }),
+        )
     }
 
-//    private fun generateBearerToken(): String {
+    //    private fun generateBearerToken(): String {
 //        val token = mockOAuth2Server.issueToken("aad", SAKSBEHANDLER_IDENT, clientId)
 //        return "Bearer " + token?.serialize()
 //    }

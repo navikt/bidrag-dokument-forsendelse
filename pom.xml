@@ -257,6 +257,20 @@
       <groupId>no.nav.bidrag</groupId>
       <artifactId>bidrag-commons</artifactId>
       <version>${bidrag-commons.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat.embed</groupId>
+          <artifactId>tomcat-embed-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat.embed</groupId>
+          <artifactId>tomcat-embed-el</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>no.nav.bidrag</groupId>
@@ -307,7 +321,11 @@
       <artifactId>kotlinx-serialization-json</artifactId>
       <version>1.6.2</version>
     </dependency>
-
+    <dependency>
+      <groupId>io.getunleash</groupId>
+      <artifactId>unleash-client-java</artifactId>
+      <version>9.2.0</version>
+    </dependency>
     <!--Test-->
     <dependency>
       <groupId>org.awaitility</groupId>
@@ -363,12 +381,6 @@
       <groupId>no.nav.security</groupId>
       <artifactId>token-validation-spring-test</artifactId>
       <version>${token-support.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>no.nav.bidrag</groupId>
-      <artifactId>bidrag-commons-test</artifactId>
-      <version>${bidrag-commons-test.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
