@@ -79,3 +79,6 @@ azure_access_inbound:
   - application: bidrag-behandling-feature
     namespace: bidrag
     cluster: dev-gcp
+unleash:
+  env: development
+  secret_name: bidrag-dokument-forsendelse-unleash-api-token

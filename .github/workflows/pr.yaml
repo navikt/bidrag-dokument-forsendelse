@@ -34,3 +34,17 @@ jobs:
                  ]}' \
                ${{ env.INGRESS_CUCUMBER }}/bidrag-cucumber-cloud/run | tee .cucumber-result
           cat .cucumber-result | grep HTTP/2 | grep -c 200 > /dev/null # fails if count is 0 (http status is not ok, aka http status code is not 200)
+
+  deploy_unleash:
+    runs-on: ubuntu-latest
+    name: Deploy unleash
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy unleash to dev-gcp
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/unleash.yaml
+          VARS: .nais/main.yaml

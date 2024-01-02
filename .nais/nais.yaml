@@ -77,6 +77,8 @@ spec:
   {{#each ingresses as |url|}}
     - {{url}}
   {{/each}}
+  envFrom:
+    - secret: {{unleash.secret_name}}
   env:
   {{#each env}}
      - name: {{@key}}
