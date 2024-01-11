@@ -85,10 +85,7 @@ class DefaultUnleashContextProvider : UnleashContextProvider {
         val userId = MDC.get("user")
         return UnleashContext.builder()
             .userId(userId)
-            .addProperty("consumerApp", MDC.get("applicationKey"))
-            .addProperty("Bidragteamet", userId)
-            .addProperty("inforingsgruppen", userId)
-            .addProperty("testbrukere", userId)
+            .appName(MDC.get("applicationKey"))
             .build()
     }
 }

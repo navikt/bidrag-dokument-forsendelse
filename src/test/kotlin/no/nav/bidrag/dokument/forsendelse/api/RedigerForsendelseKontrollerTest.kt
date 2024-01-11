@@ -21,12 +21,13 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
-
     @MockkBean
     lateinit var gcpCloudStorage: GcpCloudStorage
 
@@ -41,25 +42,28 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
         val journalpostId = "123123213"
         val dokumentreferanse1 = "3123333213213"
         val dokumentreferanse2 = "44124214214"
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                status = ForsendelseStatus.UNDER_PRODUKSJON,
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = journalpostId,
-                        dokumentreferanseOriginal = null,
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel på dokument"
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    status = ForsendelseStatus.UNDER_PRODUKSJON,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = journalpostId,
+                                dokumentreferanseOriginal = null,
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel på dokument",
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val metadataResponse = listOf(
-            opprettDokumentMetadata(journalpostId, dokumentreferanse1),
-            opprettDokumentMetadata(journalpostId, dokumentreferanse2).copy(tittel = "Tittel vedlegg")
-        )
+        val metadataResponse =
+            listOf(
+                opprettDokumentMetadata(journalpostId, dokumentreferanse1),
+                opprettDokumentMetadata(journalpostId, dokumentreferanse2).copy(tittel = "Tittel vedlegg"),
+            )
         stubUtils.stubHentDokumentFraPDF()
         stubUtils.stubHentDokumentMetadata("JOARK-$journalpostId", response = metadataResponse)
         val dokument = forsendelse.dokumenter[0]
@@ -97,22 +101,24 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
         metadataDo.lagreDokumentDetaljer(
             listOf(
                 DokumentDetaljer(tittel = "Hoveddok", dokumentreferanse = dokumentreferanse1, antallSider = 3),
-                DokumentDetaljer(tittel = "Vedlegg", dokumentreferanse = dokumentreferanse2, antallSider = 8)
-            )
+                DokumentDetaljer(tittel = "Vedlegg", dokumentreferanse = dokumentreferanse2, antallSider = 8),
+            ),
         )
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = journalpostId,
-                        dokumentreferanseOriginal = null,
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel på dokument"
-                    ).copy(metadata = metadataDo)
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = journalpostId,
+                                dokumentreferanseOriginal = null,
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel på dokument",
+                            ).copy(metadata = metadataDo),
+                        ),
+                ),
             )
-        )
 
         stubUtils.stubHentDokumentFraPDF()
         stubUtils.stubHentDokumentMetadata("JOARK-$journalpostId", response = emptyList())
@@ -145,31 +151,35 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
         val dokumentreferanse1 = "3123333213213"
         val dokumentreferanse2 = "44124214214"
         val redigeringmetadataNy = "redigeringmetedataNy"
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                status = ForsendelseStatus.UNDER_PRODUKSJON,
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = journalpostId,
-                        dokumentreferanseOriginal = null,
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel på dokument"
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    status = ForsendelseStatus.UNDER_PRODUKSJON,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = journalpostId,
+                                dokumentreferanseOriginal = null,
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel på dokument",
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val metadataResponse = listOf(
-            opprettDokumentMetadata(journalpostId, dokumentreferanse1),
-            opprettDokumentMetadata(journalpostId, dokumentreferanse2).copy(tittel = "Tittel vedlegg")
-        )
+        val metadataResponse =
+            listOf(
+                opprettDokumentMetadata(journalpostId, dokumentreferanse1),
+                opprettDokumentMetadata(journalpostId, dokumentreferanse2).copy(tittel = "Tittel vedlegg"),
+            )
         stubUtils.stubHentDokumentFraPDF()
         stubUtils.stubHentDokumentMetadata("JOARK-$journalpostId", response = metadataResponse)
         val dokument = forsendelse.dokumenter[0]
         val response = utførHentRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse)
         response.statusCode shouldBe HttpStatus.OK
-        val responseLagre = utførLagreRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse, redigeringmetadataNy)
+        val responseLagre =
+            utførLagreRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse, redigeringmetadataNy)
         responseLagre.statusCode shouldBe HttpStatus.OK
         val responseEtterLagre = utførHentRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse)
 
@@ -205,25 +215,28 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
         metadataDo.lagreDokumentDetaljer(
             listOf(
                 DokumentDetaljer(tittel = "Hoveddok", dokumentreferanse = dokumentreferanse1, antallSider = 3),
-                DokumentDetaljer(tittel = "Vedlegg", dokumentreferanse = dokumentreferanse2, antallSider = 8)
-            )
+                DokumentDetaljer(tittel = "Vedlegg", dokumentreferanse = dokumentreferanse2, antallSider = 8),
+            ),
         )
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = journalpostId,
-                        dokumentreferanseOriginal = null,
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel på dokument"
-                    ).copy(metadata = metadataDo)
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = journalpostId,
+                                dokumentreferanseOriginal = null,
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel på dokument",
+                            ).copy(metadata = metadataDo),
+                        ),
+                ),
             )
-        )
 
         val dokument = forsendelse.dokumenter[0]
-        val responseLagre = utførLagreRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse, redigeringmetadataNy)
+        val responseLagre =
+            utførLagreRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse, redigeringmetadataNy)
         responseLagre.statusCode shouldBe HttpStatus.OK
 
         val response = utførHentRedigeringmetadata(forsendelse.forsendelseIdMedPrefix, dokument.dokumentreferanse)
@@ -241,20 +254,22 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
     fun utførLagreRedigeringmetadata(
         forsendelseId: String,
         dokumentreferanse: String,
-        nyMetadata: String
+        nyMetadata: String,
     ): ResponseEntity<DokumentRedigeringMetadataResponsDto> {
-        return httpHeaderTestRestTemplate.patchForEntity<DokumentRedigeringMetadataResponsDto>(
+        return httpHeaderTestRestTemplate.exchange<DokumentRedigeringMetadataResponsDto>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse",
-            HttpEntity(nyMetadata)
+            HttpMethod.PATCH,
+            HttpEntity(nyMetadata),
+            DokumentRedigeringMetadataResponsDto::class.java,
         )
     }
 
     fun utførHentRedigeringmetadata(
         forsendelseId: String,
-        dokumentreferanse: String
+        dokumentreferanse: String,
     ): ResponseEntity<DokumentRedigeringMetadataResponsDto> {
         return httpHeaderTestRestTemplate.getForEntity<DokumentRedigeringMetadataResponsDto>(
-            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse"
+            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse",
         )
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpHeaders
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 
 @Configuration
 @Profile("test")
@@ -28,7 +29,7 @@ class TestRestTemplateConfiguration {
             RestTemplateBuilder().additionalInterceptors({ request, body, execution ->
                 request.headers.add(HttpHeaders.AUTHORIZATION, generateBearerToken())
                 execution.execute(request, body)
-            }),
+            }).requestFactory { _ -> HttpComponentsClientHttpRequestFactory() },
         )
     }
 
@@ -39,18 +40,19 @@ class TestRestTemplateConfiguration {
     private fun generateBearerToken(): String {
         val iss = mockOAuth2Server.issuerUrl("aad")
         val newIssuer = iss.newBuilder().host("localhost").build()
-        val token = mockOAuth2Server.issueToken(
-            "aad",
-            clientId,
-            DefaultOAuth2TokenCallback(
+        val token =
+            mockOAuth2Server.issueToken(
                 "aad",
-                SAKSBEHANDLER_IDENT,
-                JOSEObjectType.JWT.type,
-                listOf(clientId),
-                mapOf("iss" to newIssuer.toString()),
-                3600
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    "aad",
+                    SAKSBEHANDLER_IDENT,
+                    JOSEObjectType.JWT.type,
+                    listOf(clientId),
+                    mapOf("iss" to newIssuer.toString()),
+                    3600,
+                ),
             )
-        )
         return "Bearer " + token.serialize()
     }
 }

@@ -6,7 +6,6 @@ import com.google.cloud.storage.StorageOptions
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import mu.KotlinLogging
-import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
@@ -23,8 +22,13 @@ import no.nav.bidrag.transport.dokument.JournalpostResponse
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.getForEntity
+import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 
 private val log = KotlinLogging.logger {}
@@ -40,7 +44,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     private val host: String? = null
 
     @Autowired
-    lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
+    lateinit var httpHeaderTestRestTemplate: TestRestTemplate
 
     @MockkBean
     lateinit var journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent
@@ -65,10 +69,11 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
 
     fun initBucket(retryCount: Int = 0) {
         if (retryCount > 3) return
-        val storage = StorageOptions.newBuilder()
-            .setHost(host)
-            .setProjectId("bidrag-local")
-            .setCredentials(NoCredentials.getInstance()).build()
+        val storage =
+            StorageOptions.newBuilder()
+                .setHost(host)
+                .setProjectId("bidrag-local")
+                .setCredentials(NoCredentials.getInstance()).build()
         try {
             storage.service.create(BucketInfo.of(bucketNavn))
         } catch (e: Exception) {
@@ -77,26 +82,33 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
         }
     }
 
-    protected fun utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel: OpprettForsendelseForespørsel): ResponseEntity<OpprettForsendelseRespons> {
+    protected fun utførOpprettForsendelseForespørsel(
+        opprettForsendelseForespørsel: OpprettForsendelseForespørsel,
+    ): ResponseEntity<OpprettForsendelseRespons> {
         return httpHeaderTestRestTemplate.postForEntity<OpprettForsendelseRespons>(
             rootUri(),
-            HttpEntity(opprettForsendelseForespørsel)
+            HttpEntity(opprettForsendelseForespørsel),
         )
     }
 
     protected fun utførOppdaterForsendelseForespørsel(
         forsendelseId: String,
-        oppdaterForespørsel: OppdaterForsendelseForespørsel
+        oppdaterForespørsel: OppdaterForsendelseForespørsel,
     ): ResponseEntity<OppdaterForsendelseResponse> {
-        return httpHeaderTestRestTemplate.patchForEntity<OppdaterForsendelseResponse>(
+        return httpHeaderTestRestTemplate.exchange(
             "${rootUri()}/$forsendelseId",
-            HttpEntity(oppdaterForespørsel)
+            HttpMethod.PATCH,
+            HttpEntity(oppdaterForespørsel),
+            OppdaterForsendelseResponse::class.java,
         )
     }
 
-    protected fun utførHentForsendelse(forsendelseId: String, saksnummer: String? = null): ResponseEntity<ForsendelseResponsTo> {
+    protected fun utførHentForsendelse(
+        forsendelseId: String,
+        saksnummer: String? = null,
+    ): ResponseEntity<ForsendelseResponsTo> {
         return httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
-            "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}"
+            "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
         )
     }
 
@@ -107,40 +119,45 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     protected fun utførDistribuerForsendelse(
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
-        batchId: String? = null
+        batchId: String? = null,
     ): ResponseEntity<DistribuerJournalpostResponse> {
         return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
-            forespørsel?.let { HttpEntity(it) }
+            forespørsel?.let { HttpEntity(it) },
         )
     }
 
     fun utførFerdigstillDokument(
         forsendelseId: String,
         dokumentreferanse: String,
-        request: FerdigstillDokumentRequest
+        request: FerdigstillDokumentRequest,
     ): ResponseEntity<DokumentRespons> {
-        return httpHeaderTestRestTemplate.patchForEntity<DokumentRespons>(
+        return httpHeaderTestRestTemplate.exchange<DokumentRespons>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill",
-            HttpEntity(request)
+            HttpMethod.PATCH,
+            HttpEntity(request),
+            DokumentRespons::class.java,
         )
     }
 
     fun utførHentDokumentMetadata(
         forsendelseId: String,
-        dokumentreferanse: String
+        dokumentreferanse: String,
     ): ResponseEntity<List<DokumentMetadata>> {
-        return httpHeaderTestRestTemplate.optionsForEntity<List<DokumentMetadata>>(
-            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
+        return httpHeaderTestRestTemplate.exchange(
+            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse",
+            HttpMethod.OPTIONS,
+            null,
+            object : ParameterizedTypeReference<List<DokumentMetadata>>() {},
         )
     }
 
     fun utførHentDokument(
         forsendelseId: String,
-        dokumentreferanse: String
+        dokumentreferanse: String,
     ): ResponseEntity<ByteArray> {
         return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
-            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse"
+            "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse",
         )
     }
 }

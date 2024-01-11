@@ -14,35 +14,39 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
 class RedigerForsendelseIt : KontrollerTestContainerRunner() {
-
     @Test
     fun `Skal ferdigstille dokument under redigering`() {
         val redigeringData = "redigeringdata"
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel på dokument"
-                    ).copy(metadata = DokumentMetadataDo())
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel på dokument",
+                            ).copy(metadata = DokumentMetadataDo()),
+                        ),
+                ),
             )
-        )
 
         val dokument = forsendelse.dokumenter[0]
-        val response = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix,
-            dokument.dokumentreferanse,
-            request = FerdigstillDokumentRequest(
-                fysiskDokument = VALID_PDF_BASE64.toByteArray(),
-                redigeringMetadata = redigeringData
+        val response =
+            utførFerdigstillDokument(
+                forsendelse.forsendelseIdMedPrefix,
+                dokument.dokumentreferanse,
+                request =
+                    FerdigstillDokumentRequest(
+                        fysiskDokument = VALID_PDF_BASE64.toByteArray(),
+                        redigeringMetadata = redigeringData,
+                    ),
             )
-        )
 
         response.statusCode shouldBe HttpStatus.OK
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
@@ -68,28 +72,32 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
     @Test
     fun `Skal oppheve ferdigstilt dokument under redigering`() {
         val redigeringData = "redigeringdata"
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel på dokument"
-                    ).copy(metadata = DokumentMetadataDo())
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel på dokument",
+                            ).copy(metadata = DokumentMetadataDo()),
+                        ),
+                ),
             )
-        )
 
         val dokument = forsendelse.dokumenter[0]
 
         // Ferdigstill dokument
-        val responseFerdigstill = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix,
-            dokument.dokumentreferanse,
-            request = FerdigstillDokumentRequest(
-                fysiskDokument = VALID_PDF_BASE64.toByteArray(),
-                redigeringMetadata = redigeringData
+        val responseFerdigstill =
+            utførFerdigstillDokument(
+                forsendelse.forsendelseIdMedPrefix,
+                dokument.dokumentreferanse,
+                request =
+                    FerdigstillDokumentRequest(
+                        fysiskDokument = VALID_PDF_BASE64.toByteArray(),
+                        redigeringMetadata = redigeringData,
+                    ),
             )
-        )
 
         responseFerdigstill.statusCode shouldBe HttpStatus.OK
 
@@ -118,10 +126,13 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
 
     fun utførOpphevFerdigstillDokument(
         forsendelseId: String,
-        dokumentreferanse: String
+        dokumentreferanse: String,
     ): ResponseEntity<DokumentRespons> {
-        return httpHeaderTestRestTemplate.patchForEntity<DokumentRespons>(
-            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill/opphev"
+        return httpHeaderTestRestTemplate.exchange<DokumentRespons>(
+            "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill/opphev",
+            HttpMethod.PATCH,
+            null,
+            DokumentRespons::class.java,
         )
     }
 }

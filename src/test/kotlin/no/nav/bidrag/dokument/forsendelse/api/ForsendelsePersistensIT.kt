@@ -38,13 +38,15 @@ import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.web.client.exchange
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.time.Duration
 import java.time.LocalDateTime
 
 class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
-
     @SpykBean
     lateinit var gcpCloudStorage: GcpCloudStorage
 
@@ -69,22 +71,24 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
     fun `Skal opprette forsendelse med behandlinginfo`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            behandlingInfo = BehandlingInfoDto(
-                soknadId = "123123",
-                vedtakId = "12321333",
-                behandlingId = "2342323",
-                erVedtakIkkeTilbakekreving = true,
-                erFattetBeregnet = true,
-                behandlingType = "BEHANDLING_TYPE",
-                engangsBelopType = Engangsbeløptype.TILBAKEKREVING,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                soknadType = "EGET_TILTAK",
-                stonadType = Stønadstype.FORSKUDD,
-                vedtakType = Vedtakstype.FASTSETTELSE,
-                barnIBehandling = listOf("13231231312", "43124324234")
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        soknadId = "123123",
+                        vedtakId = "12321333",
+                        behandlingId = "2342323",
+                        erVedtakIkkeTilbakekreving = true,
+                        erFattetBeregnet = true,
+                        behandlingType = "BEHANDLING_TYPE",
+                        engangsBelopType = Engangsbeløptype.TILBAKEKREVING,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        soknadType = "EGET_TILTAK",
+                        stonadType = Stønadstype.FORSKUDD,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                        barnIBehandling = listOf("13231231312", "43124324234"),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -139,33 +143,36 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
     fun `Skal oppdatere og endre rekkefølge på dokumentene i forsendelse`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
-            +nyttDokument(rekkefølgeIndeks = 1)
-            +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0)
+                +nyttDokument(rekkefølgeIndeks = 1)
+                +nyttDokument(journalpostId = "BID-123123213", dokumentreferanseOriginal = "12312321333", rekkefølgeIndeks = 2)
+            }
 
         val forsendelseId = forsendelse.forsendelseId!!
         val hoveddokument = forsendelse.dokumenter.hoveddokument!!
         val vedlegg1 = forsendelse.dokumenter.vedlegger[0]
         val vedlegg2 = forsendelse.dokumenter.vedlegger[1]
 
-        val oppdaterForespørsel = OppdaterForsendelseForespørsel(
-            dokumenter = listOf(
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg1.tittel,
-                    dokumentreferanse = vedlegg1.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = "Ny tittel hoveddok",
-                    dokumentreferanse = hoveddokument.dokumentreferanse
-                ),
-                OppdaterDokumentForespørsel(
-                    tittel = vedlegg2.tittel,
-                    dokumentreferanse = vedlegg2.dokumentreferanse
-                )
+        val oppdaterForespørsel =
+            OppdaterForsendelseForespørsel(
+                dokumenter =
+                    listOf(
+                        OppdaterDokumentForespørsel(
+                            tittel = vedlegg1.tittel,
+                            dokumentreferanse = vedlegg1.dokumentreferanse,
+                        ),
+                        OppdaterDokumentForespørsel(
+                            tittel = "Ny tittel hoveddok",
+                            dokumentreferanse = hoveddokument.dokumentreferanse,
+                        ),
+                        OppdaterDokumentForespørsel(
+                            tittel = vedlegg2.tittel,
+                            dokumentreferanse = vedlegg2.dokumentreferanse,
+                        ),
+                    ),
             )
-        )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.OK
 
@@ -189,40 +196,51 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
 
     @Test
     fun `Skal hente liste over forsendelser ikke distribuert`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
-        val forsendelse3 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse3 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
         testDataManager.lagreForsendelse(forsendelse.copy(opprettetTidspunkt = LocalDateTime.now().minusDays(1)))
         testDataManager.lagreForsendelse(forsendelse2.copy(opprettetTidspunkt = LocalDateTime.now().minusDays(1)))
         val response: ResponseEntity<List<ForsendelseIkkeDistribuertResponsTo>> =
-            httpHeaderTestRestTemplate.getForEntity("${rootUri()}/journal/ikkedistribuert")
+            httpHeaderTestRestTemplate.exchange(
+                "${rootUri()}/journal/ikkedistribuert",
+                HttpMethod.GET,
+                null,
+                object : ParameterizedTypeReference<List<ForsendelseIkkeDistribuertResponsTo>>() {},
+            )
 
         response.statusCode shouldBe HttpStatus.OK
 
@@ -246,60 +264,66 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
         val dokumentInnholdRedigering = "redigeringdata_PDF"
         stubUtils.stubHentDokument()
         stubUtils.stubBestillDistribusjon(bestillingId)
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                tittel = "Tittel på forsendelse",
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        rekkefølgeIndeks = 0
-                    ),
-                    nyttDokument(
-                        journalpostId = "45454545",
-                        dokumentreferanseOriginal = "23123123",
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel vedlegg må kontrolleres",
-                        dokumentMalId = "BI100",
-                        rekkefølgeIndeks = 1
-                    ),
-                    nyttDokument(
-                        journalpostId = "545454",
-                        dokumentreferanseOriginal = "45454545",
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Tittel vedlegg må kontrolleres 2",
-                        dokumentMalId = "BI100",
-                        rekkefølgeIndeks = 2
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    tittel = "Tittel på forsendelse",
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                rekkefølgeIndeks = 0,
+                            ),
+                            nyttDokument(
+                                journalpostId = "45454545",
+                                dokumentreferanseOriginal = "23123123",
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel vedlegg må kontrolleres",
+                                dokumentMalId = "BI100",
+                                rekkefølgeIndeks = 1,
+                            ),
+                            nyttDokument(
+                                journalpostId = "545454",
+                                dokumentreferanseOriginal = "45454545",
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Tittel vedlegg må kontrolleres 2",
+                                dokumentMalId = "BI100",
+                                rekkefølgeIndeks = 2,
+                            ),
+                        ),
+                ),
             )
-        )
         val dokument1 = forsendelse.dokumenter[1]
-        val responseFerdigstill = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix,
-            dokument1.dokumentreferanse,
-            request = FerdigstillDokumentRequest(
-                fysiskDokument = dokumentInnholdRedigering.toByteArray(),
-                redigeringMetadata = dokumentRedigeringData
+        val responseFerdigstill =
+            utførFerdigstillDokument(
+                forsendelse.forsendelseIdMedPrefix,
+                dokument1.dokumentreferanse,
+                request =
+                    FerdigstillDokumentRequest(
+                        fysiskDokument = dokumentInnholdRedigering.toByteArray(),
+                        redigeringMetadata = dokumentRedigeringData,
+                    ),
             )
-        )
         responseFerdigstill.statusCode shouldBe HttpStatus.OK
 
         val dokument2 = forsendelse.dokumenter[2]
-        val responseFerdigstill2 = utførFerdigstillDokument(
-            forsendelse.forsendelseIdMedPrefix,
-            dokument2.dokumentreferanse,
-            request = FerdigstillDokumentRequest(
-                fysiskDokument = dokumentInnholdRedigering.toByteArray(),
-                redigeringMetadata = dokumentRedigeringData
+        val responseFerdigstill2 =
+            utførFerdigstillDokument(
+                forsendelse.forsendelseIdMedPrefix,
+                dokument2.dokumentreferanse,
+                request =
+                    FerdigstillDokumentRequest(
+                        fysiskDokument = dokumentInnholdRedigering.toByteArray(),
+                        redigeringMetadata = dokumentRedigeringData,
+                    ),
             )
-        )
         responseFerdigstill2.statusCode shouldBe HttpStatus.OK
 
         stubUtils.stubOpprettJournalpost(
             nyJournalpostId,
-            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") },
         )
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
@@ -334,7 +358,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                     "\"journalposttype\":\"UTGÅENDE\"," +
                     "\"referanseId\":\"$referanseId\"," +
                     "\"journalførendeEnhet\":\"${forsendelse.enhet}\"" +
-                    "}"
+                    "}",
             )
             stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
             verify(ordering = Ordering.ORDERED) {
@@ -346,7 +370,7 @@ class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
                 journalpostKafkaHendelseProdusent.publiserForsendelse(
                     withArg {
                         it.forsendelseId shouldBe oppdatertForsendelse.forsendelseId
-                    }
+                    },
                 )
             }
         }
