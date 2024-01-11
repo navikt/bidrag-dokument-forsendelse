@@ -20,7 +20,44 @@
       "stonadType": "BIDRAG",
       "soknadFra": [],
       "titler": [
-        "Innkreving orientering til søker"
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
+      ]
+    },
+    {
+      "vedtakType": [
+        "INNKREVING"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG18AAR",
+      "soknadFra": [],
+      "titler": [
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
+      ]
+    },
+    {
+      "soknadType": [
+        "PRIVAT_AVTALE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG",
+      "soknadFra": [],
+      "titler": [
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
+      ]
+    },
+    {
+      "soknadType": [
+        "PRIVAT_AVTALE"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "stonadType": "BIDRAG18AAR",
+      "soknadFra": [],
+      "titler": [
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
       ]
     },
     {
@@ -57,11 +94,9 @@
       "soknadType": [],
       "behandlingStatus": "IKKE_FATTET",
       "stonadType": "BIDRAG",
-      "soknadFra": [
-        "BIDRAGSPLIKTIG"
-      ],
       "titler": [
-        "Innkreving varsel til motparten"
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
       ]
     },
     {
@@ -72,11 +107,9 @@
       "soknadType": [],
       "behandlingStatus": "IKKE_FATTET",
       "stonadType": "BIDRAG18AAR",
-      "soknadFra": [
-        "BIDRAGSPLIKTIG"
-      ],
       "titler": [
-        "Innkreving varsel til motparten"
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
       ]
     },
     {
@@ -92,7 +125,8 @@
         "BIDRAGSMOTTAKER"
       ],
       "titler": [
-        "Innkreving orientering til søker"
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
       ]
     },
     {
@@ -108,7 +142,8 @@
         "BIDRAGSMOTTAKER"
       ],
       "titler": [
-        "Innkreving orientering til søker"
+        "Innkreving orientering til søker",
+        "Innkreving orientering til motparten"
       ]
     },
     {

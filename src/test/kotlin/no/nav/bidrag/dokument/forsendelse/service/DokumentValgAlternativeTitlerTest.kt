@@ -90,8 +90,9 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 3
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldHaveSize 2
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
     }
 
@@ -176,8 +177,9 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 5
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldHaveSize 2
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
 
         assertSoftly("Søknad bidrag fra 18 år") {
@@ -193,8 +195,9 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 5
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldHaveSize 2
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
 
         assertSoftly("Søknad bidrag 18 år fra BM") {
@@ -210,8 +213,9 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldHaveSize 2
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
 
         assertSoftly("Søknad bidrag 18 år fra 18 åring") {
@@ -227,8 +231,9 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
+            fritekstBrev.alternativeTitler shouldHaveSize 2
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
     }
 
@@ -247,8 +252,9 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 5
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
-            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
 
         assertSoftly("Søknad bidrag fra 18 år") {
@@ -264,8 +270,64 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 1
-            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+        }
+    }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for innkrevingsgrunnlag`() {
+        assertSoftly("Søknad bidrag 18 år") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.INNKREVING,
+                        behandlingType = Stønadstype.BIDRAG18AAR.name,
+                    ),
+                )
+
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+        }
+
+        assertSoftly("Søknad bidrag") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.INNKREVING,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                    ),
+                )
+
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+        }
+
+        assertSoftly("Søknad bidrag fra 18 år privat avtale") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        soknadType = "PRIVAT_AVTALE",
+                        behandlingType = Stønadstype.BIDRAG18AAR.name,
+                        soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                    ),
+                )
+
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
         }
     }
 }
