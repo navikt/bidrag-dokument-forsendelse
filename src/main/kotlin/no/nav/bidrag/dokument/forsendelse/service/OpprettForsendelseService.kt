@@ -33,9 +33,8 @@ class OpprettForsendelseService(
     private val personConsumer: BidragPersonConsumer,
     private val dokumenttjeneste: DokumentTjeneste,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-    private val forsendelseTittelService: ForsendelseTittelService
+    private val forsendelseTittelService: ForsendelseTittelService,
 ) {
-
     @Transactional
     fun opprettForsendelse(forespørsel: OpprettForsendelseForespørsel): OpprettForsendelseRespons {
         tilgangskontrollService.sjekkTilgangPerson(forespørsel.gjelderIdent)
@@ -48,23 +47,28 @@ class OpprettForsendelseService(
         val dokumenter =
             dokumenttjeneste.opprettNyttDokument(forsendelse, dokumenterMedOppdatertTittel(forespørsel, forsendelseType))
 
-        log.info { "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(",") { it.dokumentreferanse }}" }
+        log.info {
+            "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(
+                ",",
+            ) { it.dokumentreferanse }}"
+        }
         return OpprettForsendelseRespons(
             forsendelseId = forsendelse.forsendelseId,
             forsendelseType = forsendelse.tilForsendelseType(),
-            dokumenter = dokumenter.map {
-                DokumentRespons(
-                    dokumentreferanse = it.dokumentreferanse,
-                    tittel = it.tittel,
-                    dokumentDato = it.dokumentDato
-                )
-            }
+            dokumenter =
+                dokumenter.map {
+                    DokumentRespons(
+                        dokumentreferanse = it.dokumentreferanse,
+                        tittel = it.tittel,
+                        dokumentDato = it.dokumentDato,
+                    )
+                },
         )
     }
 
     private fun dokumenterMedOppdatertTittel(
         forespørsel: OpprettForsendelseForespørsel,
-        forsendelseType: ForsendelseType
+        forsendelseType: ForsendelseType,
     ): List<OpprettDokumentForespørsel> {
         val dokumenter = forespørsel.dokumenter
 //        val skalLeggeTilPrefiksPåNotatTittel = forsendelseType == ForsendelseType.NOTAT && dokumenter.size == 1 && forespørsel.opprettTittel == true
@@ -85,34 +89,40 @@ class OpprettForsendelseService(
             ?: ForsendelseType.UTGÅENDE
     }
 
-    private fun opprettForsendelseFraForespørsel(forespørsel: OpprettForsendelseForespørsel, forsendelseType: ForsendelseType): Forsendelse {
+    private fun opprettForsendelseFraForespørsel(
+        forespørsel: OpprettForsendelseForespørsel,
+        forsendelseType: ForsendelseType,
+    ): Forsendelse {
         val bruker = saksbehandlerInfoManager.hentSaksbehandler()
         val mottakerIdent = forespørsel.mottaker!!.ident
         val mottakerInfo = mottakerIdent?.let { personConsumer.hentPerson(mottakerIdent) }
         val mottakerSpråk = forespørsel.språk ?: mottakerIdent?.let { personConsumer.hentPersonSpråk(mottakerIdent) } ?: "NB"
-        val forsendelse = Forsendelse(
-            saksnummer = forespørsel.saksnummer,
-            batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
-            forsendelseType = forsendelseType,
-            gjelderIdent = forespørsel.gjelderIdent,
-            behandlingInfo = forespørsel.tilBehandlingInfo(),
-            enhet = forespørsel.enhet,
-            tittel = if (forespørsel.opprettTittel == true && forsendelseType !== ForsendelseType.NOTAT) {
-                forsendelseTittelService.opprettForsendelseTittel(forespørsel)
-            } else {
-                null
-            },
-            språk = mottakerSpråk,
-            opprettetAvIdent = bruker?.ident ?: "UKJENT",
-            endretAvIdent = bruker?.ident ?: "UKJENT",
-            opprettetAvNavn = bruker?.navn,
-            mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
-            status = if (forespørsel.dokumenter.isEmpty()) ForsendelseStatus.UNDER_OPPRETTELSE else ForsendelseStatus.UNDER_PRODUKSJON,
-            tema = when (forespørsel.tema) {
-                JournalTema.FAR -> ForsendelseTema.FAR
-                else -> ForsendelseTema.BID
-            }
-        )
+        val forsendelse =
+            Forsendelse(
+                saksnummer = forespørsel.saksnummer,
+                batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
+                forsendelseType = forsendelseType,
+                gjelderIdent = forespørsel.gjelderIdent,
+                behandlingInfo = forespørsel.tilBehandlingInfo(),
+                enhet = forespørsel.enhet,
+                tittel =
+                    if (forespørsel.opprettTittel == true && forsendelseType !== ForsendelseType.NOTAT) {
+                        forsendelseTittelService.opprettForsendelseTittel(forespørsel)
+                    } else {
+                        null
+                    },
+                språk = mottakerSpråk,
+                opprettetAvIdent = bruker?.ident ?: "UKJENT",
+                endretAvIdent = bruker?.ident ?: "UKJENT",
+                opprettetAvNavn = bruker?.navn,
+                mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
+                status = if (forespørsel.dokumenter.isEmpty()) ForsendelseStatus.UNDER_OPPRETTELSE else ForsendelseStatus.UNDER_PRODUKSJON,
+                tema =
+                    when (forespørsel.tema) {
+                        JournalTema.FAR -> ForsendelseTema.FAR
+                        else -> ForsendelseTema.BID
+                    },
+            )
 
         return forsendelseTjeneste.lagre(forsendelse)
     }

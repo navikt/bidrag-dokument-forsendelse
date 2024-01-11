@@ -7,26 +7,35 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
-class DokumentStorageService(private val gcpCloudStorage: GcpCloudStorage, private val applicationEventPublisher: ApplicationEventPublisher) {
+class DokumentStorageService(
+    private val gcpCloudStorage: GcpCloudStorage,
+    private val applicationEventPublisher: ApplicationEventPublisher,
+) {
+    private val folderName = "dokumenter"
 
-    private val FOLDER_NAME = "dokumenter"
-    fun bestillSletting(forsendelseId: Long, dokumentreferanse: String) {
+    fun bestillSletting(
+        forsendelseId: Long,
+        dokumentreferanse: String,
+    ) {
         applicationEventPublisher.publishEvent(DokumentBestillSletting(forsendelseId, dokumentreferanse))
     }
 
     fun slettFil(filnavn: String) {
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn
-        gcpCloudStorage.slettFil("$FOLDER_NAME/$filenameWithExtension")
+        gcpCloudStorage.slettFil("$folderName/$filenameWithExtension")
     }
 
-    fun lagreFil(filnavn: String, dokument: ByteArray): LagreFilResponse {
+    fun lagreFil(
+        filnavn: String,
+        dokument: ByteArray,
+    ): LagreFilResponse {
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn
-        return gcpCloudStorage.lagreFil("$FOLDER_NAME/$filenameWithExtension", dokument)
+        return gcpCloudStorage.lagreFil("$folderName/$filenameWithExtension", dokument)
     }
 
     fun hentFil(filnavn: String): ByteArray {
         val filenameWithExtension = if (!filnavn.endsWith(".pdf")) "$filnavn.pdf" else filnavn
-        return gcpCloudStorage.hentFil("$FOLDER_NAME/$filenameWithExtension")
+        return gcpCloudStorage.hentFil("$folderName/$filenameWithExtension")
     }
 
     fun totalStørrelse(forsendelseId: Long): Long {

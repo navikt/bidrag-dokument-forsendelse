@@ -26,7 +26,11 @@ import java.time.Duration
 
 private val log = KotlinLogging.logger {}
 
-@EmbeddedKafka(partitions = 1, bootstrapServersProperty = "spring.kafka.bootstrap-servers", topics = ["bidrag.dokument", "bidrag.journalpost"])
+@EmbeddedKafka(
+    partitions = 1,
+    bootstrapServersProperty = "spring.kafka.bootstrap-servers",
+    topics = ["bidrag.dokument", "bidrag.journalpost"],
+)
 abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     @Value("\${TOPIC_DOKUMENT}")
     private lateinit var topicDokument: String
@@ -57,8 +61,9 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
             val result = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(4000))
             result shouldNotBe null
             val records = result.records(topicJournalpost)
-            val hendelser = records
-                .map { ObjectMapper().findAndRegisterModules().readValue(it.value(), JournalpostHendelse::class.java) }
+            val hendelser =
+                records
+                    .map { ObjectMapper().findAndRegisterModules().readValue(it.value(), JournalpostHendelse::class.java) }
 
             return if (journalpostId.isNullOrEmpty()) {
                 hendelser.first()

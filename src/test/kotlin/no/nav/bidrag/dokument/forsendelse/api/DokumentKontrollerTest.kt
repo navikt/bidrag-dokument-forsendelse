@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 class DokumentKontrollerTest : KontrollerTestRunner() {
-
     @MockkBean
     lateinit var gcpCloudStorage: GcpCloudStorage
 
@@ -38,45 +37,49 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     fun `skal hente dokumentmetadata`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
 
-        val originalForsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val originalForsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
         val originalDokument = originalForsendelse.dokumenter[0]
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        dokumentreferanseOriginal = "123213123",
-                        journalpostId = "123123213123",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        journalpostId = originalForsendelse.forsendelseId.toString(),
-                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                dokumentreferanseOriginal = "123213123",
+                                journalpostId = "123123213123",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                journalpostId = originalForsendelse.forsendelseId.toString(),
+                                dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokumenter = forsendelse.dokumenter.sortertEtterRekkefølge
         val response = utførHentDokumentMetadata(forsendelse.forsendelseId.toString())
@@ -118,33 +121,35 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     fun `skal ikke hente dokumentmetadata for slettet dokument`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
 
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        dokumentreferanseOriginal = "123213123",
-                        journalpostId = "123123213123",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        slettet = true,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                dokumentreferanseOriginal = "123213123",
+                                journalpostId = "123123213123",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                slettet = true,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokumenter = forsendelse.dokumenter.sortertEtterRekkefølge
         val response = utførHentDokumentMetadata(forsendelse.forsendelseId.toString())
@@ -172,25 +177,27 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     fun `skal hente dokumentmetadata enkel dokument med status under produksjon`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
 
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        dokumentreferanseOriginal = "123213123",
-                        journalpostId = "123123213123",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                dokumentreferanseOriginal = "123213123",
+                                journalpostId = "123123213123",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokumenter = forsendelse.dokumenter.sortertEtterRekkefølge
         val response = utførHentDokumentMetadata(forsendelse.forsendelseId.toString(), dokumenter[0].dokumentreferanse)
@@ -212,38 +219,42 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `skal hente dokumentmetadata enkel dokument som har lenke til dokument i annen forsendelse`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-        val originalForsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val originalForsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
         val originalDokument = originalForsendelse.dokumenter[0]
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
-                        journalpostId = originalForsendelse.forsendelseId.toString(),
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                                journalpostId = originalForsendelse.forsendelseId.toString(),
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokumenter = forsendelse.dokumenter.sortertEtterRekkefølge
 
@@ -272,18 +283,20 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `skal hente dokument`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.KONTROLLERT,
-                        dokumentreferanseOriginal = "123213213",
-                        journalpostId = "515325325325",
-                        arkivsystem = DokumentArkivSystem.JOARK
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.KONTROLLERT,
+                                dokumentreferanseOriginal = "123213213",
+                                journalpostId = "515325325325",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
 
@@ -294,18 +307,20 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `skal feile å hente dokument hvis ikke har status KONTROLLERT`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        dokumentreferanseOriginal = "123213213",
-                        journalpostId = "515325325325",
-                        arkivsystem = DokumentArkivSystem.JOARK
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                dokumentreferanseOriginal = "123213213",
+                                journalpostId = "515325325325",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
 
@@ -315,18 +330,20 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `skal få tilgangsfeil ved henting av dokument hvis ikke har tilgang til forsendelse`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.KONTROLLERT,
-                        dokumentreferanseOriginal = "123213213",
-                        journalpostId = "515325325325",
-                        arkivsystem = DokumentArkivSystem.JOARK
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.KONTROLLERT,
+                                dokumentreferanseOriginal = "123213213",
+                                journalpostId = "515325325325",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                            ),
+                        ),
+                ),
             )
-        )
 
         stubUtils.stubTilgangskontrollSak(false)
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
@@ -337,22 +354,25 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `skal hente statisk dokument`() {
         stubUtils.stubHentDokumetFraBestill(DOKUMENTMAL_STATISK_VEDLEGG)
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        arkivsystem = DokumentArkivSystem.BIDRAG,
-                        dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG,
-                        metadata = run {
-                            val metadata = DokumentMetadataDo()
-                            metadata.markerSomStatiskDokument()
-                            metadata
-                        }
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                arkivsystem = DokumentArkivSystem.BIDRAG,
+                                dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG,
+                                metadata =
+                                    run {
+                                        val metadata = DokumentMetadataDo()
+                                        metadata.markerSomStatiskDokument()
+                                        metadata
+                                    },
+                            ),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
         stubUtils.Valider().hentDokumentFraBestillingKalt(DOKUMENTMAL_STATISK_VEDLEGG)
@@ -364,23 +384,26 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `skal hente statisk dokument redigerbar`() {
         stubUtils.stubHentDokumetFraBestill(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        arkivsystem = DokumentArkivSystem.BIDRAG,
-                        dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
-                        metadata = run {
-                            val metadata = DokumentMetadataDo()
-                            metadata.markerSomStatiskDokument()
-                            metadata.markerSomSkjema()
-                            metadata
-                        }
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                arkivsystem = DokumentArkivSystem.BIDRAG,
+                                dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
+                                metadata =
+                                    run {
+                                        val metadata = DokumentMetadataDo()
+                                        metadata.markerSomStatiskDokument()
+                                        metadata.markerSomSkjema()
+                                        metadata
+                                    },
+                            ),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
         stubUtils.Valider().hentDokumentFraBestillingKalt(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
@@ -392,23 +415,26 @@ class DokumentKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `skal hente statisk dokument redigerbar fra bucket hvis kontrollert`() {
         stubUtils.stubHentDokumetFraBestill(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.KONTROLLERT,
-                        arkivsystem = DokumentArkivSystem.BIDRAG,
-                        dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
-                        metadata = run {
-                            val metadata = DokumentMetadataDo()
-                            metadata.markerSomStatiskDokument()
-                            metadata.markerSomSkjema()
-                            metadata
-                        }
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.KONTROLLERT,
+                                arkivsystem = DokumentArkivSystem.BIDRAG,
+                                dokumentMalId = DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
+                                metadata =
+                                    run {
+                                        val metadata = DokumentMetadataDo()
+                                        metadata.markerSomStatiskDokument()
+                                        metadata.markerSomSkjema()
+                                        metadata
+                                    },
+                            ),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentDokument(forsendelse.forsendelseId.toString(), forsendelse.dokumenter[0].dokumentreferanse)
         verify(exactly = 1) { gcpCloudStorage.hentFil(eq("dokumenter/${forsendelse.dokumenter[0].filsti}")) }

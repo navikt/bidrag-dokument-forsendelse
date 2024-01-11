@@ -7,5 +7,5 @@ data class FerdigstillDokumentRequest(
     @field:NotBlank(message = "Fysisk dokument kan ikke være tom")
     @Schema(type = "string", format = "binary")
     val fysiskDokument: ByteArray,
-    val redigeringMetadata: String? = null
+    val redigeringMetadata: String? = null,
 )

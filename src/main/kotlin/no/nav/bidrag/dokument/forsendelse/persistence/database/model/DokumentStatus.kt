@@ -8,5 +8,5 @@ enum class DokumentStatus {
     BESTILLING_FEILET,
     AVBRUTT, // Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
     MÅ_KONTROLLERES, // Dokumentet er importert fra annen kilde og må kontrolleres
-    KONTROLLERT
+    KONTROLLERT,
 }

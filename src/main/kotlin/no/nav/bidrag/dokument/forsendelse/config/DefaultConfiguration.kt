@@ -33,7 +33,10 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import javax.sql.DataSource
 
 @EnableAspectJAutoProxy
-@OpenAPIDefinition(info = Info(title = "bidrag-dokument-forsendelse", version = "v1"), security = [SecurityRequirement(name = "bearer-key")])
+@OpenAPIDefinition(
+    info = Info(title = "bidrag-dokument-forsendelse", version = "v1"),
+    security = [SecurityRequirement(name = "bearer-key")],
+)
 @SecurityScheme(bearerFormat = "JWT", name = "bearer-key", scheme = "bearer", type = SecuritySchemeType.HTTP)
 @EnableRetry
 @Configuration
@@ -42,14 +45,13 @@ import javax.sql.DataSource
 @Import(CorrelationIdFilter::class, DefaultCorsFilter::class, UserMdcFilter::class, MdcFilter::class)
 @EnableSaksbehandlernavnProvider
 class DefaultConfiguration {
-
     @Bean
     fun lockProvider(dataSource: DataSource): LockProvider {
         return JdbcTemplateLockProvider(
             JdbcTemplateLockProvider.Configuration.builder()
                 .withJdbcTemplate(JdbcTemplate(dataSource))
                 .usingDbTime()
-                .build()
+                .build(),
         )
     }
 
@@ -72,7 +74,7 @@ class DefaultConfiguration {
         .synchronousFetchOnInitialisation(true)
         .apiKey(apiToken)
         .unleashContextProvider(DefaultUnleashContextProvider())
-        .build();
+        .build()
 
     @Bean
     @Scope("prototype")
@@ -80,7 +82,6 @@ class DefaultConfiguration {
 }
 
 class DefaultUnleashContextProvider : UnleashContextProvider {
-
     override fun getContext(): UnleashContext {
         val userId = MDC.get("user")
         return UnleashContext.builder()

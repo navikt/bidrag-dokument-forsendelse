@@ -39,20 +39,24 @@ class RedigerDokumentService(
     private val dokumentStorageService: DokumentStorageService,
     private val dokumenttjeneste: DokumentTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
-    private val fysiskDokumentService: FysiskDokumentService
+    private val fysiskDokumentService: FysiskDokumentService,
 ) {
-
-    fun opphevFerdigstillDokument(forsendelseId: Long, dokumentreferanse: String): DokumentRespons {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
+    fun opphevFerdigstillDokument(
+        forsendelseId: Long,
+        dokumentreferanse: String,
+    ): DokumentRespons {
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
-        val oppdatertForsendelse = forsendelseTjeneste.lagre(
-            forsendelse.copy(
-                dokumenter = opphevFerdigstillDokument(forsendelse, dokumentreferanse),
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent
+        val oppdatertForsendelse =
+            forsendelseTjeneste.lagre(
+                forsendelse.copy(
+                    dokumenter = opphevFerdigstillDokument(forsendelse, dokumentreferanse),
+                    endretTidspunkt = LocalDateTime.now(),
+                    endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
+                ),
             )
-        )
 
         val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
         oppdaterStatusTilAlleDokumenter(dokumentreferanse, oppdatertDokument.dokumentStatus)
@@ -62,28 +66,34 @@ class RedigerDokumentService(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
             dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumentStatusTo()
+            status = oppdatertDokument.tilDokumentStatusTo(),
         )
     }
 
-    fun ferdigstillDokument(forsendelseId: Long, dokumentreferanse: String, ferdigstillDokumentRequest: FerdigstillDokumentRequest): DokumentRespons {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
+    fun ferdigstillDokument(
+        forsendelseId: Long,
+        dokumentreferanse: String,
+        ferdigstillDokumentRequest: FerdigstillDokumentRequest,
+    ): DokumentRespons {
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
         log.info {
             "Ferdigstiller dokument $dokumentreferanse i forsendelse $forsendelseId med dokumentstørrelse ${
-            bytesIntoHumanReadable(
-                ferdigstillDokumentRequest.fysiskDokument.size.toLong()
-            )
+                bytesIntoHumanReadable(
+                    ferdigstillDokumentRequest.fysiskDokument.size.toLong(),
+                )
             }"
         }
-        val oppdatertForsendelse = forsendelseTjeneste.lagre(
-            forsendelse.copy(
-                dokumenter = ferdigstillDokument(forsendelse, dokumentreferanse, ferdigstillDokumentRequest),
-                endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent
+        val oppdatertForsendelse =
+            forsendelseTjeneste.lagre(
+                forsendelse.copy(
+                    dokumenter = ferdigstillDokument(forsendelse, dokumentreferanse, ferdigstillDokumentRequest),
+                    endretTidspunkt = LocalDateTime.now(),
+                    endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
+                ),
             )
-        )
 
         val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
 
@@ -94,24 +104,25 @@ class RedigerDokumentService(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
             dokumentDato = oppdatertDokument.dokumentDato,
-            status = oppdatertDokument.tilDokumentStatusTo()
+            status = oppdatertDokument.tilDokumentStatusTo(),
         )
     }
 
     private fun opphevFerdigstillDokument(
         forsendelse: Forsendelse,
-        dokumentreferanse: String
+        dokumentreferanse: String,
     ): List<Dokument> {
-        val oppdaterteDokumenter = forsendelse.dokumenter
-            .map {
-                (it.dokumentreferanse == dokumentreferanse).ifTrue {
-                    it.copy(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        ferdigstiltAvIdent = null,
-                        ferdigstiltTidspunkt = null
-                    )
-                } ?: it
-            }
+        val oppdaterteDokumenter =
+            forsendelse.dokumenter
+                .map {
+                    (it.dokumentreferanse == dokumentreferanse).ifTrue {
+                        it.copy(
+                            dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                            ferdigstiltAvIdent = null,
+                            ferdigstiltTidspunkt = null,
+                        )
+                    } ?: it
+                }
 
         dokumentStorageService.bestillSletting(forsendelse.forsendelseId!!, dokumentreferanse)
 
@@ -121,23 +132,24 @@ class RedigerDokumentService(
     private fun ferdigstillDokument(
         forsendelse: Forsendelse,
         dokumentreferanse: String,
-        ferdigstillDokumentRequest: FerdigstillDokumentRequest
+        ferdigstillDokumentRequest: FerdigstillDokumentRequest,
     ): List<Dokument> {
         val (fysiskDokument, redigeringMetadata) = ferdigstillDokumentRequest
 //        erGyldigPDFA(ferdigstillDokumentRequest.fysiskDokument, dokumentreferanse)
-        val oppdaterteDokumenter = forsendelse.dokumenter
-            .map {
-                (it.dokumentreferanse == dokumentreferanse).ifTrue {
-                    it.copy(
-                        metadata = redigeringMetadata?.let { rd -> oppdaterDokumentRedigeringMetadata(it, rd) }
-                            ?: it.metadata,
-                        dokumentStatus = it.hentStatusFerdigstilt(),
-                        ferdigstiltTidspunkt = LocalDateTime.now(),
-                        ferdigstiltAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
-
-                    )
-                } ?: it
-            }
+        val oppdaterteDokumenter =
+            forsendelse.dokumenter
+                .map {
+                    (it.dokumentreferanse == dokumentreferanse).ifTrue {
+                        it.copy(
+                            metadata =
+                                redigeringMetadata?.let { rd -> oppdaterDokumentRedigeringMetadata(it, rd) }
+                                    ?: it.metadata,
+                            dokumentStatus = it.hentStatusFerdigstilt(),
+                            ferdigstiltTidspunkt = LocalDateTime.now(),
+                            ferdigstiltAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId(),
+                        )
+                    } ?: it
+                }
 
         val dokument = oppdaterteDokumenter.hentDokument(dokumentreferanse)!!
         val respons = dokumentStorageService.lagreFil(dokument.filsti, fysiskDokument)
@@ -147,59 +159,70 @@ class RedigerDokumentService(
     private fun lagreGcpMetadata(
         dokumenter: List<Dokument>,
         dokumentreferanse: String,
-        lagreFilResponse: LagreFilResponse
+        lagreFilResponse: LagreFilResponse,
     ): List<Dokument> {
         return dokumenter
             .map {
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {
                     it.copy(
-                        metadata = run {
-                            val metadata = it.metadata
-                            metadata.lagreGcpKrypteringnøkkelVersjon(lagreFilResponse.versjon)
-                            metadata.lagreGcpFilsti(lagreFilResponse.filsti)
-                            metadata.copy()
-                        }
+                        metadata =
+                            run {
+                                val metadata = it.metadata
+                                metadata.lagreGcpKrypteringnøkkelVersjon(lagreFilResponse.versjon)
+                                metadata.lagreGcpFilsti(lagreFilResponse.filsti)
+                                metadata.copy()
+                            },
                     )
                 } ?: it
             }
     }
 
-    private fun Dokument.hentStatusFerdigstilt() = when (dokumentStatus) {
-        DokumentStatus.MÅ_KONTROLLERES -> DokumentStatus.KONTROLLERT
-        DokumentStatus.UNDER_REDIGERING -> DokumentStatus.FERDIGSTILT
-        else -> dokumentStatus
-    }
+    private fun Dokument.hentStatusFerdigstilt() =
+        when (dokumentStatus) {
+            DokumentStatus.MÅ_KONTROLLERES -> DokumentStatus.KONTROLLERT
+            DokumentStatus.UNDER_REDIGERING -> DokumentStatus.FERDIGSTILT
+            else -> dokumentStatus
+        }
 
-    private fun oppdaterStatusTilAlleDokumenter(dokumentreferanse: String, status: DokumentStatus) {
+    private fun oppdaterStatusTilAlleDokumenter(
+        dokumentreferanse: String,
+        status: DokumentStatus,
+    ) {
         dokumenttjeneste.hentDokumenterMedReferanse(dokumentreferanse).forEach {
             dokumenttjeneste.lagreDokument(
                 it.copy(
-                    dokumentStatus = status
-                )
+                    dokumentStatus = status,
+                ),
             )
         }
     }
 
-    fun oppdaterDokumentRedigeringMetadata(forsendelseId: Long, dokumentreferanse: String, redigeringMetadata: String) {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
+    fun oppdaterDokumentRedigeringMetadata(
+        forsendelseId: Long,
+        dokumentreferanse: String,
+        redigeringMetadata: String,
+    ) {
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
         log.info { "Oppdaterer dokument redigeringmetadata for dokument $dokumentreferanse i forsendelse $forsendelseId" }
         forsendelseTjeneste.lagre(
             forsendelse.copy(
                 dokumenter = oppdaterDokumentRedigeringMetadata(forsendelse, dokumentreferanse, redigeringMetadata),
                 endretTidspunkt = LocalDateTime.now(),
-                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent
-            )
+                endretAvIdent = saksbehandlerInfoManager.hentSaksbehandlerBrukerId() ?: forsendelse.endretAvIdent,
+            ),
         )
     }
 
     fun hentDokumentredigeringMetadata(
         forsendelseId: Long,
-        dokumentreferanse: String
+        dokumentreferanse: String,
     ): DokumentRedigeringMetadataResponsDto {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
 
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse) ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
 
@@ -208,7 +231,7 @@ class RedigerDokumentService(
             forsendelseStatus = forsendelse.tilForsendelseStatusTo(),
             status = dokument.tilDokumentStatusTo(),
             redigeringMetadata = dokument.metadata.hentRedigeringmetadata(),
-            dokumenter = hentEllerInitialiserAlleDokumentDetaljer(dokument)
+            dokumenter = hentEllerInitialiserAlleDokumentDetaljer(dokument),
         )
     }
 
@@ -222,8 +245,8 @@ class RedigerDokumentService(
         metadata.lagreDokumentDetaljer(dokumentDetaljer)
         dokumenttjeneste.lagreDokument(
             dokument.copy(
-                metadata = metadata.copy()
-            )
+                metadata = metadata.copy(),
+            ),
         )
         return dokumentDetaljer
     }
@@ -234,7 +257,7 @@ class RedigerDokumentService(
         return DokumentDetaljer(
             tittel = dokumentMetadata.tittel ?: dokumentMetadata.dokumentreferanse ?: "",
             dokumentreferanse = dokumentMetadata.dokumentreferanse,
-            antallSider = numerOfPages
+            antallSider = numerOfPages,
         )
     }
 
@@ -242,7 +265,7 @@ class RedigerDokumentService(
         return if (dokument.erFraAnnenKilde && dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) {
             bidragDokumentConsumer.hentDokumentMetadata(
                 dokument.journalpostId!!,
-                dokument.dokumentreferanseOriginal
+                dokument.dokumentreferanseOriginal,
             )
         } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             fysiskDokumentService.hentDokumentMetadata(dokument.forsendelseId!!, dokument.lenkeTilDokumentreferanse)
@@ -254,21 +277,25 @@ class RedigerDokumentService(
     private fun oppdaterDokumentRedigeringMetadata(
         forsendelse: Forsendelse,
         dokumentreferanse: String,
-        redigeringMetadata: String
+        redigeringMetadata: String,
     ): List<Dokument> {
-        val oppdaterteDokumenter = forsendelse.dokumenter
-            .map { dokument ->
-                (dokument.dokumentreferanse == dokumentreferanse).ifTrue {
-                    dokument.copy(
-                        metadata = oppdaterDokumentRedigeringMetadata(dokument, redigeringMetadata)
-                    )
-                } ?: dokument
-            }
+        val oppdaterteDokumenter =
+            forsendelse.dokumenter
+                .map { dokument ->
+                    (dokument.dokumentreferanse == dokumentreferanse).ifTrue {
+                        dokument.copy(
+                            metadata = oppdaterDokumentRedigeringMetadata(dokument, redigeringMetadata),
+                        )
+                    } ?: dokument
+                }
 
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 
-    private fun oppdaterDokumentRedigeringMetadata(dokument: Dokument, redigeringMetadata: String): DokumentMetadataDo {
+    private fun oppdaterDokumentRedigeringMetadata(
+        dokument: Dokument,
+        redigeringMetadata: String,
+    ): DokumentMetadataDo {
         return redigeringMetadata.let { rd ->
             val metadata = dokument.metadata
             metadata.lagreRedigeringmetadata(rd)

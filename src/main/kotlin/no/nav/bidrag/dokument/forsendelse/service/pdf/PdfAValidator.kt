@@ -22,9 +22,15 @@ import java.io.InputStream
 
 private val log = KotlinLogging.logger {}
 
-private val validPdfas = listOf(PDFAFlavour.PDFA_1_A, PDFAFlavour.PDFA_1_B, PDFAFlavour.PDFA_2_A, PDFAFlavour.PDFA_2_B, PDFAFlavour.PDFA_2_U)
+private val validPdfas =
+    listOf(PDFAFlavour.PDFA_1_A, PDFAFlavour.PDFA_1_B, PDFAFlavour.PDFA_2_A, PDFAFlavour.PDFA_2_B, PDFAFlavour.PDFA_2_U)
+
 fun ValidationResult.readableMessage() = testAssertions.joinToString(",") { it.message }
-fun erGyldigPDFA(pdfBytes: ByteArray, dokumentreferanse: String): Boolean {
+
+fun erGyldigPDFA(
+    pdfBytes: ByteArray,
+    dokumentreferanse: String,
+): Boolean {
     try {
         VeraGreenfieldFoundryProvider.initialise()
         Foundries.defaultInstance().createParser(ByteArrayInputStream(pdfBytes)).use {
@@ -60,11 +66,12 @@ fun validerPDFA(pdfBytes: ByteArray): String? {
         val result = validator.validate(it)
         val pageTree = (it as GFModelParser).pdDocument.catalog.pageTree
         val pagesCount = pageTree.pageCount
-        val invalidObjects = (0..pagesCount - 1).flatMap { i ->
-            pageTree.getPage(i).resources.xObjectNames.filter { name ->
-                pageTree.getPage(i).resources.getXObject(name) == null
-            }.map { name -> name.value }
-        }
+        val invalidObjects =
+            (0..pagesCount - 1).flatMap { i ->
+                pageTree.getPage(i).resources.xObjectNames.filter { name ->
+                    pageTree.getPage(i).resources.getXObject(name) == null
+                }.map { name -> name.value }
+            }
         if (!result.isCompliant) {
             return "Dokumentet har ugyldig Xobject $invalidObjects Dokument er ikke en gyldig PDF/A: ${result.readableMessage()}"
         }
@@ -72,7 +79,10 @@ fun validerPDFA(pdfBytes: ByteArray): String? {
     }
 }
 
-fun convertToPDFA(pdfByte: ByteArray, title: String): ByteArray {
+fun convertToPDFA(
+    pdfByte: ByteArray,
+    title: String,
+): ByteArray {
     Loader.loadPDF(pdfByte).use { pdfDocument ->
         // add XMP metadata
         val xmp: XMPMetadata = XMPMetadata.createXMPMetadata()
@@ -89,9 +99,10 @@ fun convertToPDFA(pdfByte: ByteArray, title: String): ByteArray {
             metadata.importXMPMetadata(baos.toByteArray())
             pdfDocument.documentCatalog.metadata = metadata
 
-            val colorProfile: InputStream? = PDFAValidator::class.java.getResourceAsStream(
-                "/files/colorprofiles/sRGB2014.icc"
-            )
+            val colorProfile: InputStream? =
+                PDFAValidator::class.java.getResourceAsStream(
+                    "/files/colorprofiles/sRGB2014.icc",
+                )
 
             val intent = PDOutputIntent(pdfDocument, colorProfile)
 

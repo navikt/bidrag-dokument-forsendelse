@@ -33,31 +33,35 @@ class ForsendelseInnsynService(
     private val tilgangskontrollService: TilgangskontrollService,
     private val dokumentValgService: DokumentValgService,
     private val dokumentTjeneste: DokumentTjeneste,
-    private val forsendelseTittelService: ForsendelseTittelService
+    private val forsendelseTittelService: ForsendelseTittelService,
 ) {
-
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
-        val journalpostDtoer = forsendelseTjeneste.hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
-            .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-            .map {
-                ForsendelseIkkeDistribuertResponsTo(
-                    enhet = it.enhet,
-                    forsendelseId = it.forsendelseIdMedPrefix,
-                    saksnummer = it.saksnummer,
-                    opprettetDato = it.opprettetTidspunkt,
-                    tittel = it.dokumenter.hoveddokument?.tittel
-                )
-            }
+        val journalpostDtoer =
+            forsendelseTjeneste.hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
+                .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
+                .map {
+                    ForsendelseIkkeDistribuertResponsTo(
+                        enhet = it.enhet,
+                        forsendelseId = it.forsendelseIdMedPrefix,
+                        saksnummer = it.saksnummer,
+                        opprettetDato = it.opprettetTidspunkt,
+                        tittel = it.dokumenter.hoveddokument?.tittel,
+                    )
+                }
         log.info { "Hentet ${journalpostDtoer.size} utgående forsendelser som ikke er distribuert" }
         return journalpostDtoer
     }
 
-    fun hentForsendelseForSakJournal(saksnummer: String, temaListe: List<JournalTema> = listOf(JournalTema.BID)): List<JournalpostDto> {
+    fun hentForsendelseForSakJournal(
+        saksnummer: String,
+        temaListe: List<JournalTema> = listOf(JournalTema.BID),
+    ): List<JournalpostDto> {
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
-        val forsendelserFiltrert = forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
-            .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-            .map { tilJournalpostDto(it) }
+        val forsendelserFiltrert =
+            forsendelser.filtrerIkkeFerdigstiltEllerArkivert
+                .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
+                .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
+                .map { tilJournalpostDto(it) }
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
         return forsendelserFiltrert
@@ -67,36 +71,41 @@ class ForsendelseInnsynService(
         val journalpostDto = forsendelse.tilJournalpostDto(tilDokumenterMetadata(forsendelse.dokumenter))
         return journalpostDto.innhold.isNullOrEmpty().ifTrue {
             journalpostDto.copy(
-                innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+                innhold = forsendelseTittelService.opprettForsendelseTittel(forsendelse),
             )
         } ?: journalpostDto
     }
 
     private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> {
         return dokumenter.associate {
-            it.dokumentreferanse to run {
-                val metadata = DokumentDtoMetadata()
-                if (it.erLenkeTilEnAnnenForsendelse) {
-                    val originalDokument = dokumentTjeneste.hentOriginalDokument(it)
-                    if (originalDokument.erFraAnnenKilde) {
-                        metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanseOriginal)
-                        metadata.oppdaterOriginalJournalpostId(originalDokument.journalpostIdOriginal)
+            it.dokumentreferanse to
+                run {
+                    val metadata = DokumentDtoMetadata()
+                    if (it.erLenkeTilEnAnnenForsendelse) {
+                        val originalDokument = dokumentTjeneste.hentOriginalDokument(it)
+                        if (originalDokument.erFraAnnenKilde) {
+                            metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanseOriginal)
+                            metadata.oppdaterOriginalJournalpostId(originalDokument.journalpostIdOriginal)
+                        } else {
+                            metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanse)
+                            metadata.oppdaterOriginalJournalpostId(originalDokument.forsendelseId?.toString())
+                        }
                     } else {
-                        metadata.oppdaterOriginalDokumentreferanse(originalDokument.dokumentreferanse)
-                        metadata.oppdaterOriginalJournalpostId(originalDokument.forsendelseId?.toString())
+                        metadata.oppdaterOriginalDokumentreferanse(it.dokumentreferanseOriginal)
+                        metadata.oppdaterOriginalJournalpostId(it.journalpostIdOriginal)
                     }
-                } else {
-                    metadata.oppdaterOriginalDokumentreferanse(it.dokumentreferanseOriginal)
-                    metadata.oppdaterOriginalJournalpostId(it.journalpostIdOriginal)
+                    metadata.copy()
                 }
-                metadata.copy()
-            }
         }
     }
 
-    fun hentForsendelseJournal(forsendelseId: Long, saksnummer: String? = null): JournalpostResponse {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
+    fun hentForsendelseJournal(
+        forsendelseId: Long,
+        saksnummer: String? = null,
+    ): JournalpostResponse {
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
 
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
@@ -104,7 +113,7 @@ class ForsendelseInnsynService(
 
         return JournalpostResponse(
             journalpost = forsendelse.tilJournalpostDto(tilDokumenterMetadata(forsendelse.dokumenter)),
-            sakstilknytninger = listOf(forsendelse.saksnummer)
+            sakstilknytninger = listOf(forsendelse.saksnummer),
         )
     }
 
@@ -115,7 +124,10 @@ class ForsendelseInnsynService(
             .map { it.tilForsendelseRespons(tilDokumenterMetadata(it.dokumenter)) }
     }
 
-    fun hentForsendelse(forsendelseId: Long, saksnummer: String? = null): ForsendelseResponsTo {
+    fun hentForsendelse(
+        forsendelseId: Long,
+        saksnummer: String? = null,
+    ): ForsendelseResponsTo {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
@@ -126,7 +138,7 @@ class ForsendelseInnsynService(
         val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
         return forsendelseRespons.tittel.isNullOrEmpty().ifTrue {
             forsendelseRespons.copy(
-                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
+                tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse),
             )
         } ?: forsendelseRespons
     }
@@ -144,9 +156,8 @@ class ForsendelseInnsynService(
                     erFattetBeregnet = it.erFattetBeregnet,
                     erVedtakIkkeTilbakekreving = it.erVedtakIkkeTilbakekreving,
                     enhet = forsendelse.enhet,
-                    soknadType = it.soknadType
-                )
-
+                    soknadType = it.soknadType,
+                ),
             )
         } ?: dokumentValgService.hentDokumentMalListe()
     }

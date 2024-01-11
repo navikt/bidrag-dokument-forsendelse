@@ -13,9 +13,8 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 class ForsendelseLytter(
     private val forsendelseRepository: ForsendelseRepository,
-    private val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent
+    private val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
 ) {
-
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun sendHendelse(bestilling: ForsendelseHendelseBestilling) {

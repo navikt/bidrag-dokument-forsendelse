@@ -36,9 +36,8 @@ class DokumentHendelseLytter(
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
     val ferdigstillForsendelseService: FerdigstillForsendelseService,
-    @Value("\${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean
+    @Value("\${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean,
 ) {
-
     /**
      * Sjekker om dokumenter som har status UNDER_REDIGERING er ferdigstilt eller ikke og ferdigstiller dokumentet hvis de er det
      * Denne feilen kan oppstå hvis kvittering fra brevserver ikke blir sendt på ritkig måte pga feil i verdikjeden.
@@ -53,7 +52,7 @@ class DokumentHendelseLytter(
     fun oppdaterStatusPaFerdigstilteDokumenter(
         limit: Int = 100,
         afterDate: LocalDateTime? = null,
-        beforeDate: LocalDateTime? = null
+        beforeDate: LocalDateTime? = null,
     ): List<Dokument> {
         val dokumenter = dokumentTjeneste.hentDokumenterSomErUnderRedigering(limit, afterDate, beforeDate)
         log.info { "Hentet ${dokumenter.size} dokumenter som skal sjekkes om er ferdigstilt" }
@@ -63,7 +62,10 @@ class DokumentHendelseLytter(
         }
     }
 
-    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(dokument: Dokument, oppdaterStatus: Boolean): List<Dokument> {
+    fun sjekkOmDokumentErFerdigstiltOgOppdaterStatus(
+        dokument: Dokument,
+        oppdaterStatus: Boolean,
+    ): List<Dokument> {
         try {
             if (dokument.dokumentStatus == DokumentStatus.FERDIGSTILT) {
                 log.info { "Dokument ${dokument.dokumentreferanse} er allerede ferdigstilt" }
@@ -82,21 +84,23 @@ class DokumentHendelseLytter(
             }
             if (erFerdigstilt && oppdaterStatus) {
                 val dokumenterForReferanse = dokumentTjeneste.hentDokumenterMedReferanse(dokument.dokumentreferanse)
-                val oppdaterteDokumenter = dokumenterForReferanse.map { dokumentForRef ->
-                    dokumentTjeneste.lagreDokument(
-                        dokumentForRef.copy(
-                            dokumentStatus = DokumentStatus.FERDIGSTILT,
-                            ferdigstiltTidspunkt = LocalDateTime.now(),
-                            ferdigstiltAvIdent = FORSENDELSE_APP_ID
+                val oppdaterteDokumenter =
+                    dokumenterForReferanse.map { dokumentForRef ->
+                        dokumentTjeneste.lagreDokument(
+                            dokumentForRef.copy(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                ferdigstiltTidspunkt = LocalDateTime.now(),
+                                ferdigstiltAvIdent = FORSENDELSE_APP_ID,
+                            ),
                         )
-                    )
-                }
+                    }
                 sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
                 ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
                 return oppdaterteDokumenter
             } else if (erFerdigstilt) {
                 log.info {
-                    "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} har status ${dokument.dokumentStatus} men er ferdigstilt. " +
+                    "Dokument ${dokument.dokumentreferanse} med forsendelseid ${dokument.forsendelse.forsendelseId} " +
+                        "har status ${dokument.dokumentStatus} men er ferdigstilt. " +
                         "Gjør ingen endring fordi synkronisering egenskap er ikke skrudd på"
                 }
             }
@@ -113,48 +117,65 @@ class DokumentHendelseLytter(
 
         if (hendelse.hendelseType == DokumentHendelseType.BESTILLING) return
 
-        log.info { "Mottok hendelse for dokumentreferanse ${hendelse.dokumentreferanse} med status ${hendelse.status}, arkivsystem ${hendelse.arkivSystem} og hendelsetype ${hendelse.hendelseType}" }
+        log.info {
+            "Mottok hendelse for dokumentreferanse ${hendelse.dokumentreferanse} med status ${hendelse.status}, " +
+                "arkivsystem ${hendelse.arkivSystem} og hendelsetype ${hendelse.hendelseType}"
+        }
 
         val dokumenter = dokumentTjeneste.hentDokumenterMedReferanse(hendelse.dokumentreferanse)
 
-        val oppdaterteDokumenter = dokumenter.map {
-            log.info { "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} og journalpostid ${it.journalpostId} fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse" }
-            dokumentTjeneste.lagreDokument(
-                it.copy(
-                    arkivsystem = if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
-                        it.arkivsystem
-                    } else {
-                        when (hendelse.arkivSystem) {
-                            DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                            else -> it.arkivsystem
-                        }
-                    },
-                    dokumentStatus = when (hendelse.status) {
-                        DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
-                        DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
-                        DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
-                        else -> it.dokumentStatus
-                    },
-                    metadata = run {
-                        val metadata = it.metadata
-                        if (erKvitteringForProdusertDokument(it, hendelse)) {
-                            metadata.lagreProdusertTidspunkt(LocalDateTime.now())
-                        }
-                        metadata.copy()
-                    },
-                    ferdigstiltTidspunkt = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) LocalDateTime.now() else null,
-                    ferdigstiltAvIdent = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) FORSENDELSE_APP_ID else null
-
+        val oppdaterteDokumenter =
+            dokumenter.map {
+                log.info {
+                    "Oppdaterer dokument ${it.dokumentId} med dokumentreferanse ${it.dokumentreferanse} " +
+                        "og journalpostid ${it.journalpostId} " +
+                        "fra forsendelse ${it.forsendelse.forsendelseId} med informasjon fra hendelse"
+                }
+                dokumentTjeneste.lagreDokument(
+                    it.copy(
+                        arkivsystem =
+                            if (it.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
+                                it.arkivsystem
+                            } else {
+                                when (hendelse.arkivSystem) {
+                                    DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER -> DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+                                    else -> it.arkivsystem
+                                }
+                            },
+                        dokumentStatus =
+                            when (hendelse.status) {
+                                DokumentStatusDto.UNDER_REDIGERING -> DokumentStatus.UNDER_REDIGERING
+                                DokumentStatusDto.FERDIGSTILT -> DokumentStatus.FERDIGSTILT
+                                DokumentStatusDto.AVBRUTT -> DokumentStatus.AVBRUTT
+                                else -> it.dokumentStatus
+                            },
+                        metadata =
+                            run {
+                                val metadata = it.metadata
+                                if (erKvitteringForProdusertDokument(it, hendelse)) {
+                                    metadata.lagreProdusertTidspunkt(LocalDateTime.now())
+                                }
+                                metadata.copy()
+                            },
+                        ferdigstiltTidspunkt = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) LocalDateTime.now() else null,
+                        ferdigstiltAvIdent = if (hendelse.status == DokumentStatusDto.FERDIGSTILT) FORSENDELSE_APP_ID else null,
+                    ),
                 )
-            )
-        }
+            }
 
         sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
         ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
     }
 
-    private fun erKvitteringForProdusertDokument(dokument: Dokument, dokumentHendelse: DokumentHendelse): Boolean {
-        return dokument.dokumentStatus == DokumentStatus.UNDER_PRODUKSJON && (dokumentHendelse.status == DokumentStatusDto.UNDER_REDIGERING || dokumentHendelse.status == DokumentStatusDto.FERDIGSTILT)
+    private fun erKvitteringForProdusertDokument(
+        dokument: Dokument,
+        dokumentHendelse: DokumentHendelse,
+    ): Boolean {
+        return dokument.dokumentStatus == DokumentStatus.UNDER_PRODUKSJON &&
+            (
+                dokumentHendelse.status == DokumentStatusDto.UNDER_REDIGERING ||
+                    dokumentHendelse.status == DokumentStatusDto.FERDIGSTILT
+            )
     }
 
     private fun sendJournalposthendelseHvisKlarForDistribusjon(dokumenter: List<Dokument>) {
@@ -171,7 +192,10 @@ class DokumentHendelseLytter(
 
             if (forsendelse.forsendelseType == ForsendelseType.NOTAT && forsendelse.dokumenter.erAlleFerdigstilt) {
                 medApplikasjonKontekst {
-                    log.info { "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} med type NOTAT er ferdigstilt. Ferdigstiller forsendelse." }
+                    log.info {
+                        "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} " +
+                            "med type NOTAT er ferdigstilt. Ferdigstiller forsendelse."
+                    }
                     ferdigstillForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
                 }
             }

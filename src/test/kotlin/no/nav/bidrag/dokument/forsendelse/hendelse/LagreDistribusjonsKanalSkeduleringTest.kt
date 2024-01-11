@@ -43,52 +43,54 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         return testDataManager.lagreForsendelseNotNewTransaction(
             opprettForsendelse2(
                 status = ForsendelseStatus.UNDER_PRODUKSJON,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
+            ),
         )
     }
 
     private fun opprettDistribuertForsendelse(
         distTidspunktMinusHours: Long,
         kanal: DistribusjonKanal? = null,
-        markerSjekketForRedistribusjon: Boolean = false
+        markerSjekketForRedistribusjon: Boolean = false,
     ): Forsendelse {
         return testDataManager.lagreForsendelseNotNewTransaction(
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 distribusjonsTidspunkt = LocalDateTime.now().minusHours(distTidspunktMinusHours),
                 kanal = kanal,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                ),
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
                 arkivJournalpostId = (10000..20000).random().toString(),
-                metadata = if (markerSjekketForRedistribusjon) {
-                    run {
-                        val metadata = ForsendelseMetadataDo()
-                        metadata.markerSomSjekketNavNoRedistribusjon()
-                        metadata
-                    }
-                } else {
-                    null
-                }
-
-            )
+                metadata =
+                    if (markerSjekketForRedistribusjon) {
+                        run {
+                            val metadata = ForsendelseMetadataDo()
+                            metadata.markerSomSjekketNavNoRedistribusjon()
+                            metadata
+                        }
+                    } else {
+                        null
+                    },
+            ),
         )
     }
 
@@ -117,7 +119,9 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
             testDataManager.hentForsendelse(forsendelseNy)?.distribusjonKanal shouldBe null
             testDataManager.hentForsendelse(forsendelseNavNo)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SDP
-            testDataManager.hentForsendelse(forsendelseSentralPrint.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(
+                forsendelseSentralPrint.forsendelseId!!,
+            )?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
         }
     }
 
@@ -139,7 +143,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDistribusjonInfo(
             foresendelseFeil.journalpostIdFagarkiv,
             DistribusjonKanal.SENTRAL_UTSKRIFT.name,
-            HttpStatus.INTERNAL_SERVER_ERROR
+            HttpStatus.INTERNAL_SERVER_ERROR,
         )
 
         skedulering.lagreDistribusjoninfo()
@@ -152,7 +156,9 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
             testDataManager.hentForsendelse(forsendelseNavNo)?.bestiltNyDistribusjon shouldBe false
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.bestiltNyDistribusjon shouldBe false
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SDP
-            testDataManager.hentForsendelse(forsendelseSentralPrint.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager.hentForsendelse(
+                forsendelseSentralPrint.forsendelseId!!,
+            )?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
             testDataManager.hentForsendelse(foresendelseFeil.forsendelseId!!)?.distribusjonKanal shouldBe null
         }
     }
@@ -290,7 +296,10 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
             stubUtils.stubHentDistribusjonInfo(forsendelseNavNo5.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
             stubUtils.stubHentDistribusjonInfo(forsendelseNavNo6.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
 
-            skedulering.resynkDistribusjoninfoNavNo(afterDate = LocalDateTime.now().minusHours(11), beforeDate = LocalDateTime.now().minusHours(4))
+            skedulering.resynkDistribusjoninfoNavNo(
+                afterDate = LocalDateTime.now().minusHours(11),
+                beforeDate = LocalDateTime.now().minusHours(4),
+            )
 
             stubUtils.Valider().hentDistribusjonInfoKalt(2)
             stubUtils.Valider().hentDistribusjonInfoKaltMed(forsendelseNavNo3.journalpostIdFagarkiv)

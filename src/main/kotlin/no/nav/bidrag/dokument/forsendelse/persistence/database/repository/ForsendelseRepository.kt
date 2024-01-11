@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.time.LocalDateTime
 
+@Suppress("ktlint:standard:max-line-length")
 interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
-
     @Query("select f from forsendelse f where f.saksnummer = :saksnummer")
     fun hentAlleMedSaksnummer(saksnummer: String): List<Forsendelse>
 
@@ -18,19 +18,32 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     @Query("select f from forsendelse f where f.forsendelseId = :forsendelseId")
     fun medForsendelseId(forsendelseId: Long): Forsendelse?
 
-    @Query("select f from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjonKanal is null and f.distribuertTidspunkt <= :olderThan order by f.distribuertTidspunkt asc")
-    fun hentDistribuerteForsendelseUtenKanal(pageable: Pageable, olderThan: LocalDateTime): List<Forsendelse>
+    @Query(
+        "select f from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjonKanal is null and f.distribuertTidspunkt <= :olderThan order by f.distribuertTidspunkt asc",
+    )
+    fun hentDistribuerteForsendelseUtenKanal(
+        pageable: Pageable,
+        olderThan: LocalDateTime,
+    ): List<Forsendelse>
 
     @Query(
         "select * from forsendelse f where f.status = 'DISTRIBUERT' and f.distribusjon_kanal = 'NAV_NO' and f.distribuert_tidspunkt <= :beforeDate and f.distribuert_tidspunkt >= :afterDate " +
             "and (f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print' = 'false' or f.metadata -> 'sjekket_navno_redistribusjon_til_sentral_print' is null) order by f.distribuert_tidspunkt desc",
-        nativeQuery = true
+        nativeQuery = true,
     )
-    fun hentDistribuerteForsendelseTilNAVNO(pageable: Pageable, beforeDate: LocalDateTime, afterDate: LocalDateTime): List<Forsendelse>
+    fun hentDistribuerteForsendelseTilNAVNO(
+        pageable: Pageable,
+        beforeDate: LocalDateTime,
+        afterDate: LocalDateTime,
+    ): List<Forsendelse>
 
-    @Query("select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE' and f.distribusjonKanal is null")
+    @Query(
+        "select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE' and f.distribusjonKanal is null",
+    )
     fun hentFerdigstilteArkivertIJoarkIkkeDistribuert(): List<Forsendelse>
 
-    @Query("select f from forsendelse f where f.status = 'UNDER_PRODUKSJON' and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date")
+    @Query(
+        "select f from forsendelse f where f.status = 'UNDER_PRODUKSJON' and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date",
+    )
     fun hentUnderProduksjonOpprettetFørDagensDato(): List<Forsendelse>
 }

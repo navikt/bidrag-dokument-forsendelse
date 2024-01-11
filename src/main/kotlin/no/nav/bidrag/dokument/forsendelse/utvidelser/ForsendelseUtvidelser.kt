@@ -29,7 +29,7 @@ fun Forsendelse.validerKanDistribuere() {
     if (!listOf(ForsendelseStatus.UNDER_PRODUKSJON, ForsendelseStatus.FERDIGSTILT).contains(this.status)) {
         kanIkkeDistribuereForsendelse(
             forsendelseId,
-            "Forsendelse har feil status ${this.status}"
+            "Forsendelse har feil status ${this.status}",
         )
     }
 }
@@ -69,35 +69,48 @@ fun BehandlingDto.tilEngangsbeløptype(): Engangsbeløptype? {
     }
 }
 
-fun BehandlingInfo.tilBeskrivelseBehandlingType(vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String? {
-    val StønadstypeValue =
-        vedtak?.stønadsendringListe?.isNotEmpty()?.ifTrue { vedtak.stønadsendringListe[0].type } ?: behandling?.tilStønadstype() ?: stonadType
-    val EngangsbeløptypeValue =
-        vedtak?.engangsbeløpListe?.isNotEmpty()?.ifTrue { vedtak.engangsbeløpListe[0].type } ?: behandling?.tilEngangsbeløptype() ?: engangsBelopType
-    return when (StønadstypeValue) {
+fun BehandlingInfo.tilBeskrivelseBehandlingType(
+    vedtak: VedtakDto? = null,
+    behandling: BehandlingDto? = null,
+): String? {
+    val stønadstypeValue =
+        vedtak?.stønadsendringListe?.isNotEmpty()
+            ?.ifTrue { vedtak.stønadsendringListe[0].type } ?: behandling?.tilStønadstype() ?: stonadType
+    val engangsbeløptypeValue =
+        vedtak?.engangsbeløpListe?.isNotEmpty()?.ifTrue {
+            vedtak.engangsbeløpListe[0].type
+        } ?: behandling?.tilEngangsbeløptype() ?: engangsBelopType
+    return when (stønadstypeValue) {
         Stønadstype.FORSKUDD -> "Bidragsforskudd"
         Stønadstype.BIDRAG -> "Barnebidrag"
         Stønadstype.BIDRAG18AAR -> "Barnebidrag 18 år"
         Stønadstype.EKTEFELLEBIDRAG -> "Ektefellebidrag"
         Stønadstype.OPPFOSTRINGSBIDRAG -> "Oppfostringbidrag"
         Stønadstype.MOTREGNING -> "Motregning"
-        else -> when (EngangsbeløptypeValue) {
-            Engangsbeløptype.SAERTILSKUDD -> "Særtilskudd"
-            Engangsbeløptype.DIREKTE_OPPGJOR -> "Direkte oppgjør"
-            Engangsbeløptype.ETTERGIVELSE -> "Ettergivelse"
-            Engangsbeløptype.ETTERGIVELSE_TILBAKEKREVING -> "Ettergivelse tilbakekreving"
-            Engangsbeløptype.GEBYR_MOTTAKER -> "Gebyr"
-            Engangsbeløptype.GEBYR_SKYLDNER -> "Gebyr"
-            Engangsbeløptype.TILBAKEKREVING -> "Tilbakekreving"
-            else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
-        }
+        else ->
+            when (engangsbeløptypeValue) {
+                Engangsbeløptype.SAERTILSKUDD -> "Særtilskudd"
+                Engangsbeløptype.DIREKTE_OPPGJOR -> "Direkte oppgjør"
+                Engangsbeløptype.ETTERGIVELSE -> "Ettergivelse"
+                Engangsbeløptype.ETTERGIVELSE_TILBAKEKREVING -> "Ettergivelse tilbakekreving"
+                Engangsbeløptype.GEBYR_MOTTAKER -> "Gebyr"
+                Engangsbeløptype.GEBYR_SKYLDNER -> "Gebyr"
+                Engangsbeløptype.TILBAKEKREVING -> "Tilbakekreving"
+                else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
+            }
     }
 }
 
-fun BehandlingInfo.gjelderKlage(vedtak: VedtakDto? = null, behandling: BehandlingDto? = null) =
-    vedtak?.type == Vedtakstype.KLAGE || behandling?.søknadstype == Vedtakstype.KLAGE || vedtakType == Vedtakstype.KLAGE
+fun BehandlingInfo.gjelderKlage(
+    vedtak: VedtakDto? = null,
+    behandling: BehandlingDto? = null,
+) = vedtak?.type == Vedtakstype.KLAGE || behandling?.søknadstype == Vedtakstype.KLAGE || vedtakType == Vedtakstype.KLAGE
 
-fun BehandlingInfo.tilBeskrivelse(rolle: Rolletype?, vedtak: VedtakDto? = null, behandling: BehandlingDto? = null): String {
+fun BehandlingInfo.tilBeskrivelse(
+    rolle: Rolletype?,
+    vedtak: VedtakDto? = null,
+    behandling: BehandlingDto? = null,
+): String {
     val behandlingType = this.tilBeskrivelseBehandlingType(vedtak, behandling)
     val gjelderKlage = this.gjelderKlage(vedtak, behandling)
 

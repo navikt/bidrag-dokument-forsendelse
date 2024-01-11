@@ -44,47 +44,52 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
 
     @Test
     fun `Skal bestille feilede dokumenter på nytt`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.BESTILLING_FEILET,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.BESTILLING_FEILET,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                            ),
+                        ),
+                ),
             )
-        )
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.BESTILLING_FEILET,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = "MAL2"
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.BESTILLING_FEILET,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = "MAL2",
+                            ),
+                        ),
+                ),
             )
-        )
         testDataManager.lagreForsendelse(
             opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = "MAL3"
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.UKJENT,
+                            dokumentMalId = "MAL3",
+                        ),
+                    ),
+            ),
         )
 
         skedulering.bestillFeiledeDokumenterPåNytt()
@@ -92,12 +97,12 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         stubUtils.Valider().bestillDokumentKaltMed(
             DOKUMENTMAL_UTGÅENDE_2,
             "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
-            "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\""
+            "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\"",
         )
         stubUtils.Valider().bestillDokumentKaltMed(
             "MAL2",
             "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
-            "\"dokumentreferanse\":\"${forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse}\""
+            "\"dokumentreferanse\":\"${forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse}\"",
         )
         stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
     }
@@ -107,32 +112,34 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.SLETTET,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.BESTILLING_FEILET,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.BESTILLING_FEILET,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.UKJENT,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
+            ),
         )
         testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.SLETTET,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.BESTILLING_FEILET,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = "MAL2"
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.BESTILLING_FEILET,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.UKJENT,
+                            dokumentMalId = "MAL2",
+                        ),
+                    ),
+            ),
         )
 
         skedulering.bestillFeiledeDokumenterPåNytt()
@@ -143,90 +150,101 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
 
     @Test
     fun `Skal bestille dokumenter med status under produksjon på nytt hvis de er eldre enn 10 min og ikke bestillt mer enn 10 ganger`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    ).copy(opprettetTidspunkt = LocalDateTime.now())
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                            ).copy(opprettetTidspunkt = LocalDateTime.now()),
+                        ),
+                ),
             )
-        )
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES,
-                        metadata = run {
-                            val metadata = DokumentMetadataDo()
-                            metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusMinutes(10))
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata
-                        }
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES,
+                                metadata =
+                                    run {
+                                        val metadata = DokumentMetadataDo()
+                                        metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusMinutes(10))
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata
+                                    },
+                            ),
+                        ),
+                ),
             )
-        )
-        val forsendelse3 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        metadata = run {
-                            val metadata = DokumentMetadataDo()
-                            metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusHours(2))
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata
-                        },
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
-                    )
-                )
+        val forsendelse3 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                metadata =
+                                    run {
+                                        val metadata = DokumentMetadataDo()
+                                        metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusHours(2))
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata
+                                    },
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2,
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val forsendelse4Bestilt10Ganger = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        metadata = run {
-                            val metadata = DokumentMetadataDo()
-                            metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusHours(2))
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata.inkrementerBestiltAntallGanger()
-                            metadata
-                        },
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
-                    )
-                )
+        val forsendelse4Bestilt10Ganger =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                metadata =
+                                    run {
+                                        val metadata = DokumentMetadataDo()
+                                        metadata.lagreBestiltTidspunkt(LocalDateTime.now().minusHours(2))
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata.inkrementerBestiltAntallGanger()
+                                        metadata
+                                    },
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2,
+                            ),
+                        ),
+                ),
             )
-        )
 
         skedulering.bestillDokumenterUnderProduksjonPåNytt()
 
@@ -235,8 +253,9 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         val dokument4 = testDataManager.hentForsendelse(forsendelse4Bestilt10Ganger.forsendelseId!!)!!.dokumenter.hoveddokument!!
         assertSoftly {
             dokument4.metadata.hentDokumentBestiltAntallGanger() shouldBe 10
-            dokument4.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now()
-                .minusHours(2).hour
+            dokument4.metadata.hentBestiltTidspunkt()!! shouldHaveHour
+                LocalDateTime.now()
+                    .minusHours(2).hour
             dokument2.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
             dokument3.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
             dokument2.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
@@ -252,14 +271,14 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
                     it.forsendelseId shouldBe forsendelse2.forsendelseId.toString()
                     it.hendelseType shouldBe DokumentHendelseType.BESTILLING
                     it.dokumentreferanse shouldBe forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
-                }
+                },
             )
             kafkaHendelseProdusent.publiser(
                 withArg {
                     it.forsendelseId shouldBe forsendelse3.forsendelseId.toString()
                     it.hendelseType shouldBe DokumentHendelseType.BESTILLING
                     it.dokumentreferanse shouldBe forsendelse3.dokumenter.hoveddokument!!.dokumentreferanse
-                }
+                },
             )
         }
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
@@ -269,35 +288,39 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
 
     @Test
     fun `Skal ikke bestille dokumenter med status under produksjon hvis de mangler bestilling metadata`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    ).copy(opprettetTidspunkt = LocalDateTime.now().minusHours(1))
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                            ).copy(opprettetTidspunkt = LocalDateTime.now().minusHours(1)),
+                        ),
+                ),
             )
-        )
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES,
-                        metadata = DokumentMetadataDo()
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES,
+                                metadata = DokumentMetadataDo(),
+                            ),
+                        ),
+                ),
             )
-        )
 
         skedulering.bestillDokumenterUnderProduksjonPåNytt()
 

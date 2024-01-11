@@ -7,11 +7,11 @@ data class DokumentRedigeringMetadataResponsDto(
     @Schema(enumAsRef = true) val status: DokumentStatusTo,
     @Schema(enumAsRef = true) val forsendelseStatus: ForsendelseStatusTo,
     val redigeringMetadata: String?,
-    val dokumenter: List<DokumentDetaljer> = emptyList()
+    val dokumenter: List<DokumentDetaljer> = emptyList(),
 )
 
 data class DokumentDetaljer(
     val tittel: String,
     val dokumentreferanse: String?,
-    val antallSider: Int = 0
+    val antallSider: Int = 0,
 )

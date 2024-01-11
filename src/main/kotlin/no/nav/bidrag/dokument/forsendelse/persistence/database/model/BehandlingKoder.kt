@@ -21,7 +21,7 @@ enum class SoknadFra(private val kode: String) {
     UTENLANDSKE_MYNDIGHET("UM"),
     VERGE("VE"),
     TRYGDEETATEN_INNKREVING("TI"),
-    KLAGE_ANKE("FK"); // FTK
+    KLAGE_ANKE("FK"), // FTK
 }
 
 typealias BehandlingType = String
@@ -29,13 +29,13 @@ typealias SoknadType = String
 
 data class DokumentBehandling(
     val tittel: String,
-    val detaljer: List<DokumentBehandlingDetaljer>
+    val detaljer: List<DokumentBehandlingDetaljer>,
 )
 
 enum class Forvaltning {
     BEGGE,
     KLAGE_ANKE,
-    BIDRAG;
+    BIDRAG,
 }
 
 fun Forvaltning.isValid(enhet: String? = null): Boolean {
@@ -53,7 +53,7 @@ enum class BehandlingStatus {
     FATTET,
     FATTET_MANUELT,
     FATTET_BEREGNET,
-    IKKE_FATTET;
+    IKKE_FATTET,
 }
 
 fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
@@ -70,14 +70,20 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
 
 typealias SoknadTyper = List<SoknadType>
 
-fun DokumentBehandlingDetaljer.isVedtaktypeValid(vt: Vedtakstype?, st: SoknadType?): Boolean {
+fun DokumentBehandlingDetaljer.isVedtaktypeValid(
+    vt: Vedtakstype?,
+    st: SoknadType?,
+): Boolean {
     if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING" || st == "KLAGE") {
         return soknadType.contains(st)
     }
     return vedtakType.contains(vt)
 }
 
-fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(vt: Vedtakstype?, st: SoknadType?): Boolean {
+fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(
+    vt: Vedtakstype?,
+    st: SoknadType?,
+): Boolean {
     if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING") {
         return soknadType.contains(st)
     }
@@ -98,7 +104,7 @@ data class DokumentBehandlingDetaljer(
     val forvaltning: Forvaltning,
     val erVedtakIkkeTilbakekreving: Boolean = false,
     val behandlingStatus: BehandlingStatus,
-    val brevkoder: List<String>
+    val brevkoder: List<String>,
 )
 
 data class DokumentBehandlingTittelDetaljer(
@@ -110,5 +116,5 @@ data class DokumentBehandlingTittelDetaljer(
     val forvaltning: Forvaltning? = null,
     val erVedtakIkkeTilbakekreving: Boolean? = false,
     val behandlingStatus: BehandlingStatus,
-    val titler: List<String>
+    val titler: List<String>,
 )

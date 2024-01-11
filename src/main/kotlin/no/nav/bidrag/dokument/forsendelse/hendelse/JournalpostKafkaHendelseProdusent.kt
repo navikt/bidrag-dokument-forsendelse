@@ -30,7 +30,7 @@ private val log = KotlinLogging.logger {}
 class JournalpostKafkaHendelseProdusent(
     private val kafkaTemplate: KafkaTemplate<String, String>,
     private val objectMapper: ObjectMapper,
-    @Value("\${TOPIC_JOURNALPOST}") val topic: String
+    @Value("\${TOPIC_JOURNALPOST}") val topic: String,
 ) {
     @Retryable(value = [Exception::class], maxAttempts = 10, backoff = Backoff(delay = 1000, maxDelay = 12000, multiplier = 2.0))
     fun publiser(journalpostHendelse: JournalpostHendelse) {
@@ -53,33 +53,45 @@ class JournalpostKafkaHendelseProdusent(
                 dokumentDato = forsendelse.opprettetTidspunkt.toLocalDate(),
                 journalfortDato = forsendelse.ferdigstiltTidspunkt?.toLocalDate(),
                 sakstilknytninger = listOf(forsendelse.saksnummer),
-                sporing = Sporingsdata(CorrelationId.fetchCorrelationIdForThread(), forsendelse.opprettetAvIdent, forsendelse.opprettetAvNavn),
-                journalposttype = when (forsendelse.forsendelseType) {
-                    ForsendelseType.NOTAT -> JournalpostType.NOTAT.name
-                    ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE.name
-                },
-                status = when (forsendelse.status) {
-                    ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT
-                    ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
-                    ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
-                    ForsendelseStatus.FERDIGSTILT -> if (forsendelse.distribusjonKanal == DistribusjonKanal.INGEN_DISTRIBUSJON) {
-                        JournalpostStatus.DISTRIBUERT
-                    } else if (forsendelse.erUtgående) {
-                        JournalpostStatus.KLAR_FOR_DISTRIBUSJON
-                    } else {
-                        JournalpostStatus.FERDIGSTILT
-                    }
+                sporing =
+                    Sporingsdata(
+                        CorrelationId.fetchCorrelationIdForThread(),
+                        forsendelse.opprettetAvIdent,
+                        forsendelse.opprettetAvNavn,
+                    ),
+                journalposttype =
+                    when (forsendelse.forsendelseType) {
+                        ForsendelseType.NOTAT -> JournalpostType.NOTAT.name
+                        ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE.name
+                    },
+                status =
+                    when (forsendelse.status) {
+                        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT
+                        ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
+                        ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
+                        ForsendelseStatus.FERDIGSTILT ->
+                            if (forsendelse.distribusjonKanal == DistribusjonKanal.INGEN_DISTRIBUSJON) {
+                                JournalpostStatus.DISTRIBUERT
+                            } else if (forsendelse.erUtgående) {
+                                JournalpostStatus.KLAR_FOR_DISTRIBUSJON
+                            } else {
+                                JournalpostStatus.FERDIGSTILT
+                            }
 
-                    ForsendelseStatus.UNDER_PRODUKSJON ->
-                        if (forsendelse.dokumenter.erAlleFerdigstilt) {
-                            if (forsendelse.kanDistribueres()) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
-                        } else {
-                            JournalpostStatus.UNDER_PRODUKSJON
-                        }
+                        ForsendelseStatus.UNDER_PRODUKSJON ->
+                            if (forsendelse.dokumenter.erAlleFerdigstilt) {
+                                if (forsendelse.kanDistribueres()) {
+                                    JournalpostStatus.KLAR_FOR_DISTRIBUSJON
+                                } else {
+                                    JournalpostStatus.FERDIGSTILT
+                                }
+                            } else {
+                                JournalpostStatus.UNDER_PRODUKSJON
+                            }
 
-                    ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_PRODUKSJON
-                }
-            )
+                        ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_PRODUKSJON
+                    },
+            ),
         )
     }
 }

@@ -34,7 +34,6 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
-
     @Autowired
     lateinit var dokumentHendelseLytter: DokumentHendelseLytter
 
@@ -47,89 +46,98 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
     fun `Full verdikjede test - skal opprette forsendelse med lenket dokumenter og bestille distribusjon`() {
         val dokumentRedigeringData = "REDIGERINGDATA"
         val dokumentInnholdRedigering = "REDIGERINGDATA_BYTE"
-        val originalForsendelseResponse = utførOpprettForsendelseForespørsel(
-            nyOpprettForsendelseForespørsel().copy(
-                behandlingInfo = BehandlingInfoDto(
-                    soknadId = "123213",
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.FORSKUDD,
-                    vedtakType = Vedtakstype.FASTSETTELSE
+        val originalForsendelseResponse =
+            utførOpprettForsendelseForespørsel(
+                nyOpprettForsendelseForespørsel().copy(
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadId = "123213",
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.FORSKUDD,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = TITTEL_HOVEDDOKUMENT,
+                                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            ),
+                            OpprettDokumentForespørsel(
+                                tittel = TITTEL_HOVEDDOKUMENT,
+                                journalpostId = "JOARK-64443434",
+                                dokumentreferanse = "12313213",
+                            ),
+                        ),
                 ),
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                    ),
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        journalpostId = "JOARK-64443434",
-                        dokumentreferanse = "12313213"
-
-                    )
-                )
             )
-        )
         originalForsendelseResponse.statusCode shouldBe HttpStatus.OK
         val originalForsendelse = testDataManager.hentForsendelse(originalForsendelseResponse.body!!.forsendelseId!!)!!
 
         val originalDokument = originalForsendelse.dokumenter.sortertEtterRekkefølge[0]
         val originalForsendelseId = originalForsendelse.forsendelseId!!
-        val forsendelse2Respons = utførOpprettForsendelseForespørsel(
-            nyOpprettForsendelseForespørsel().copy(
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                    )
-                )
+        val forsendelse2Respons =
+            utførOpprettForsendelseForespørsel(
+                nyOpprettForsendelseForespørsel().copy(
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = TITTEL_HOVEDDOKUMENT,
+                                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            ),
+                        ),
+                ),
             )
-        )
         val forsendelse2 = testDataManager.hentForsendelse(forsendelse2Respons.body!!.forsendelseId!!)!!
 
         // Opprett ny forsendelse som skal distribueres
-        val forsendelseOpprettetResponse = utførOpprettForsendelseForespørsel(
-            nyOpprettForsendelseForespørsel().copy(
-                behandlingInfo = BehandlingInfoDto(
-                    soknadId = "123213",
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.FORSKUDD,
-                    vedtakType = Vedtakstype.FASTSETTELSE
+        val forsendelseOpprettetResponse =
+            utførOpprettForsendelseForespørsel(
+                nyOpprettForsendelseForespørsel().copy(
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadId = "123213",
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.FORSKUDD,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = TITTEL_HOVEDDOKUMENT,
+                                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            ),
+                        ),
                 ),
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                    )
-                )
             )
-        )
 
         forsendelseOpprettetResponse.statusCode shouldBe HttpStatus.OK
         val forsendelseIdSomSkalDistribueres = forsendelseOpprettetResponse.body!!.forsendelseId!!
 
         // Legg til dokument som kobling til original forsendelse
-        val kobleTilOriginalForsendelseDokumentResponse = utførOppdaterForsendelseForespørsel(
-            forsendelse2.forsendelseId.toString(),
-            OppdaterForsendelseForespørsel(
-                dokumenter = listOf(
-                    OppdaterDokumentForespørsel(
-                        dokumentreferanse = forsendelse2.dokumenter.sortertEtterRekkefølge[0].dokumentreferanse
-                    ),
-                    OppdaterDokumentForespørsel(
-                        tittel = "Ny tittel koblet dokument fra original",
-                        dokumentreferanse = originalDokument.dokumentreferanse,
-                        journalpostId = "BIF-${originalForsendelse.forsendelseId}"
-                    ),
-                    OppdaterDokumentForespørsel(
-                        tittel = "Ny tittel dokument fra Joark",
-                        dokumentreferanse = originalForsendelse.dokumenter.sortertEtterRekkefølge[1].dokumentreferanse,
-                        journalpostId = "JOARK-${originalForsendelse.forsendelseId}"
-                    )
-                )
+        val kobleTilOriginalForsendelseDokumentResponse =
+            utførOppdaterForsendelseForespørsel(
+                forsendelse2.forsendelseId.toString(),
+                OppdaterForsendelseForespørsel(
+                    dokumenter =
+                        listOf(
+                            OppdaterDokumentForespørsel(
+                                dokumentreferanse = forsendelse2.dokumenter.sortertEtterRekkefølge[0].dokumentreferanse,
+                            ),
+                            OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel koblet dokument fra original",
+                                dokumentreferanse = originalDokument.dokumentreferanse,
+                                journalpostId = "BIF-${originalForsendelse.forsendelseId}",
+                            ),
+                            OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel dokument fra Joark",
+                                dokumentreferanse = originalForsendelse.dokumenter.sortertEtterRekkefølge[1].dokumentreferanse,
+                                journalpostId = "JOARK-${originalForsendelse.forsendelseId}",
+                            ),
+                        ),
+                ),
             )
-        )
 
         kobleTilOriginalForsendelseDokumentResponse.statusCode shouldBe HttpStatus.OK
 
@@ -137,26 +145,28 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         val opprettetForsendelse = testDataManager.hentForsendelse(forsendelseOpprettetResponse.body?.forsendelseId!!)!!
 
         // Koble dokument fra forsendelse 2 til opprettet forsendelse
-        val oppdaterNyForsendelseResponse = utførOppdaterForsendelseForespørsel(
-            forsendelseIdSomSkalDistribueres.toString(),
-            OppdaterForsendelseForespørsel(
-                dokumenter = listOf(
-                    OppdaterDokumentForespørsel(
-                        dokumentreferanse = opprettetForsendelse.dokumenter.sortertEtterRekkefølge[0].dokumentreferanse
-                    ),
-                    OppdaterDokumentForespørsel(
-                        tittel = "Ny tittel koblet dokument fra original",
-                        dokumentreferanse = forsendelse2Oppdatert.dokumenter.sortertEtterRekkefølge[1].dokumentreferanse,
-                        journalpostId = "BIF-${forsendelse2Oppdatert.forsendelseId}"
-                    ),
-                    OppdaterDokumentForespørsel(
-                        tittel = "Ny tittel dokument fra Joark",
-                        dokumentreferanse = "123213213213",
-                        journalpostId = "JOARK-123123123123"
-                    )
-                )
+        val oppdaterNyForsendelseResponse =
+            utførOppdaterForsendelseForespørsel(
+                forsendelseIdSomSkalDistribueres.toString(),
+                OppdaterForsendelseForespørsel(
+                    dokumenter =
+                        listOf(
+                            OppdaterDokumentForespørsel(
+                                dokumentreferanse = opprettetForsendelse.dokumenter.sortertEtterRekkefølge[0].dokumentreferanse,
+                            ),
+                            OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel koblet dokument fra original",
+                                dokumentreferanse = forsendelse2Oppdatert.dokumenter.sortertEtterRekkefølge[1].dokumentreferanse,
+                                journalpostId = "BIF-${forsendelse2Oppdatert.forsendelseId}",
+                            ),
+                            OppdaterDokumentForespørsel(
+                                tittel = "Ny tittel dokument fra Joark",
+                                dokumentreferanse = "123213213213",
+                                journalpostId = "JOARK-123123123123",
+                            ),
+                        ),
+                ),
             )
-        )
 
         oppdaterNyForsendelseResponse.statusCode shouldBe HttpStatus.OK
         val nyForsendelseDokumentreferanse = oppdaterNyForsendelseResponse.body!!.dokumenter[0].dokumentreferanse
@@ -165,14 +175,14 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         dokumentHendelseLytter.prossesserDokumentHendelse(
             opprettConsumerRecord(
                 originalDokument.dokumentreferanse,
-                jsonToString(opprettHendelse(originalDokument.dokumentreferanse, status = DokumentStatusDto.UNDER_REDIGERING))
-            )
+                jsonToString(opprettHendelse(originalDokument.dokumentreferanse, status = DokumentStatusDto.UNDER_REDIGERING)),
+            ),
         )
         dokumentHendelseLytter.prossesserDokumentHendelse(
             opprettConsumerRecord(
                 nyForsendelseDokumentreferanse,
-                jsonToString(opprettHendelse(nyForsendelseDokumentreferanse, status = DokumentStatusDto.UNDER_REDIGERING))
-            )
+                jsonToString(opprettHendelse(nyForsendelseDokumentreferanse, status = DokumentStatusDto.UNDER_REDIGERING)),
+            ),
         )
 
         assertSoftly("Valider forsendelse") {
@@ -187,22 +197,23 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         dokumentHendelseLytter.prossesserDokumentHendelse(
             opprettConsumerRecord(
                 originalDokument.dokumentreferanse,
-                jsonToString(opprettHendelse(originalDokument.dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT))
-            )
+                jsonToString(opprettHendelse(originalDokument.dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)),
+            ),
         )
         dokumentHendelseLytter.prossesserDokumentHendelse(
             opprettConsumerRecord(
                 nyForsendelseDokumentreferanse,
-                jsonToString(opprettHendelse(nyForsendelseDokumentreferanse, status = DokumentStatusDto.FERDIGSTILT))
-            )
+                jsonToString(opprettHendelse(nyForsendelseDokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)),
+            ),
         )
         utførFerdigstillDokument(
             forsendelseIdSomSkalDistribueres.toString(),
             nyForsendelseDokumentreferanseMåKontrolleres,
-            request = FerdigstillDokumentRequest(
-                fysiskDokument = dokumentInnholdRedigering.toByteArray(),
-                redigeringMetadata = dokumentRedigeringData
-            )
+            request =
+                FerdigstillDokumentRequest(
+                    fysiskDokument = dokumentInnholdRedigering.toByteArray(),
+                    redigeringMetadata = dokumentRedigeringData,
+                ),
         )
         assertSoftly("Valider forsendelse etter hendelse") {
             val opprettetForsendelseOppdatert = testDataManager.hentForsendelse(forsendelseIdSomSkalDistribueres)!!
@@ -241,9 +252,9 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
             opprettetForsendelseOppdatert.dokumenter.sortertEtterRekkefølge.map {
                 OpprettDokumentDto(
                     it.tittel,
-                    dokumentreferanse = "JOARK${it.dokumentreferanse}"
+                    dokumentreferanse = "JOARK${it.dokumentreferanse}",
                 )
-            }
+            },
         )
 
         val dokumenter = opprettetForsendelseOppdatert.dokumenter.sortertEtterRekkefølge
@@ -252,18 +263,19 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
         utførOppdaterForsendelseForespørsel(
             forsendelseIdSomSkalDistribueres.toString(),
             OppdaterForsendelseForespørsel(
-                dokumenter = listOf(
-                    OppdaterDokumentForespørsel(
-                        dokumentreferanse = dokumenter[2].dokumentreferanse
+                dokumenter =
+                    listOf(
+                        OppdaterDokumentForespørsel(
+                            dokumentreferanse = dokumenter[2].dokumentreferanse,
+                        ),
+                        OppdaterDokumentForespørsel(
+                            dokumentreferanse = dokumenter[0].dokumentreferanse,
+                        ),
+                        OppdaterDokumentForespørsel(
+                            dokumentreferanse = dokumenter[1].dokumentreferanse,
+                        ),
                     ),
-                    OppdaterDokumentForespørsel(
-                        dokumentreferanse = dokumenter[0].dokumentreferanse
-                    ),
-                    OppdaterDokumentForespørsel(
-                        dokumentreferanse = dokumenter[1].dokumentreferanse
-                    )
-                )
-            )
+            ),
         )
 
         val distribuerResponse = utførDistribuerForsendelse(forsendelseIdSomSkalDistribueres.toString())
@@ -293,10 +305,13 @@ class ForsendelseVerdikjedeTest : KontrollerTestContainerRunner() {
                     "\"journalposttype\":\"UTGÅENDE\"," +
                     "\"referanseId\":\"$referanseId\"," +
                     "\"journalførendeEnhet\":\"${opprettetForsendelseOppdatert.enhet}\"" +
-                    "}"
+                    "}",
             )
         }
     }
 
-    fun opprettConsumerRecord(key: String, value: String) = ConsumerRecord("", 1, 1L, key, value)
+    fun opprettConsumerRecord(
+        key: String,
+        value: String,
+    ) = ConsumerRecord("", 1, 1L, key, value)
 }

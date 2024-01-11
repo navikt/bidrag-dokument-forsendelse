@@ -13,9 +13,8 @@ import java.time.LocalDateTime
 class ForsendelseTjeneste(
     private val forsendelseRepository: ForsendelseRepository,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-    private val tilgangskontrollService: TilgangskontrollService
+    private val tilgangskontrollService: TilgangskontrollService,
 ) {
-
     fun hentAlleMedSaksnummer(saksnummer: String): List<Forsendelse> {
         tilgangskontrollService.sjekkTilgangSak(saksnummer)
         return forsendelseRepository.hentAlleMedSaksnummer(saksnummer)
@@ -31,11 +30,15 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
     }
 
-    fun hentDistribuerteForsendelserDistribuertTilNavNo(limit: Int, afterDate: LocalDateTime?, beforeDate: LocalDateTime?): List<Forsendelse> {
+    fun hentDistribuerteForsendelserDistribuertTilNavNo(
+        limit: Int,
+        afterDate: LocalDateTime?,
+        beforeDate: LocalDateTime?,
+    ): List<Forsendelse> {
         return forsendelseRepository.hentDistribuerteForsendelseTilNAVNO(
             Pageable.ofSize(limit),
             beforeDate ?: LocalDateTime.now().minusDays(2),
-            afterDate ?: LocalDateTime.now().minusDays(100)
+            afterDate ?: LocalDateTime.now().minusDays(100),
         )
     }
 
@@ -53,8 +56,8 @@ class ForsendelseTjeneste(
         return forsendelseRepository.save(
             forsendelse.copy(
                 endretAvIdent = bruker?.ident ?: forsendelse.endretAvIdent,
-                endretTidspunkt = LocalDateTime.now()
-            )
+                endretTidspunkt = LocalDateTime.now(),
+            ),
         )
     }
 }

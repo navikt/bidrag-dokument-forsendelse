@@ -26,13 +26,13 @@ data class BehandlingInfo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-
     val vedtakId: String? = null,
     val behandlingId: String? = null,
     val soknadId: String? = null,
-    val erFattetBeregnet: Boolean? = null, // Null = ikke fattet, true = fattet og beregnet, false = fattet og manuelt beregnet
-    val erVedtakIkkeTilbakekreving: Boolean? = false, // Annen brevmeny vises hvis resultatkode = IT (Vedtak ikke tilbakekreving)
-
+    // Null = ikke fattet, true = fattet og beregnet, false = fattet og manuelt beregnet
+    val erFattetBeregnet: Boolean? = null,
+    // Annen brevmeny vises hvis resultatkode = IT (Vedtak ikke tilbakekreving)
+    val erVedtakIkkeTilbakekreving: Boolean? = false,
     @Enumerated(EnumType.STRING)
     val engangsBelopType: Engangsbeløptype? = null,
     @Enumerated(EnumType.STRING)
@@ -47,13 +47,12 @@ data class BehandlingInfo(
     val soknadType: SoknadType? = null,
     @Type(BarnIBehandlingConverter::class)
     @Column(name = "barn_i_behandling", columnDefinition = "text")
-    val barnIBehandling: BarnIBehandling = BarnIBehandling()
+    val barnIBehandling: BarnIBehandling = BarnIBehandling(),
 ) {
     fun toBehandlingType(): String? = behandlingType ?: stonadType?.name ?: engangsBelopType?.name
 }
 
 class BarnIBehandling : MutableList<String> by mutableListOf() {
-
     fun asString() = this.distinct().joinToString(",")
 
     companion object {
@@ -70,14 +69,23 @@ class BarnIBehandling : MutableList<String> by mutableListOf() {
 }
 
 class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling::class.java) {
-
-    override fun get(rs: ResultSet, p1: Int, session: SharedSessionContractImplementor?, owner: Any?): BarnIBehandling {
+    override fun get(
+        rs: ResultSet,
+        p1: Int,
+        session: SharedSessionContractImplementor?,
+        owner: Any?,
+    ): BarnIBehandling {
         return rs.getObject(p1)?.let {
             BarnIBehandling.fromString(it as String)
         } ?: BarnIBehandling()
     }
 
-    override fun set(st: PreparedStatement, value: BarnIBehandling?, index: Int, session: SharedSessionContractImplementor) {
+    override fun set(
+        st: PreparedStatement,
+        value: BarnIBehandling?,
+        index: Int,
+        session: SharedSessionContractImplementor,
+    ) {
         st.setObject(index, if (value.isNullOrEmpty()) null else value.asString())
     }
 
@@ -85,7 +93,11 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
         return Types.OTHER
     }
 
-    override fun compare(p0: Any?, p1: Any?, p2: SessionFactoryImplementor?): Int {
+    override fun compare(
+        p0: Any?,
+        p1: Any?,
+        p2: SessionFactoryImplementor?,
+    ): Int {
         return 0
     }
 
@@ -96,8 +108,8 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
             throw IllegalArgumentException(
                 String.format(
                     "Could not transform the [%s] value to BarnIBehandling!",
-                    sequence
-                )
+                    sequence,
+                ),
             )
         }
     }

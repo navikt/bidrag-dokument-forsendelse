@@ -21,7 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 class FysiskDokumentServiceTest {
-
     @MockkBean
     lateinit var forsendelseTjeneste: ForsendelseTjeneste
 
@@ -44,14 +43,15 @@ class FysiskDokumentServiceTest {
 
     @BeforeEach
     fun init() {
-        fysiskDokumentService = FysiskDokumentService(
-            forsendelseTjeneste,
-            dokumentTjeneste,
-            bidragDokumentConsumer,
-            bidragDokumentBestillingConsumer,
-            tilgangskontrollService,
-            dokumentStorageService
-        )
+        fysiskDokumentService =
+            FysiskDokumentService(
+                forsendelseTjeneste,
+                dokumentTjeneste,
+                bidragDokumentConsumer,
+                bidragDokumentBestillingConsumer,
+                tilgangskontrollService,
+                dokumentStorageService,
+            )
         every { forsendelseTjeneste.lagre(any()) } returns opprettForsendelse2()
         every { forsendelseTjeneste.medForsendelseId(any()) } returns opprettForsendelse2()
         every { bidragDokumentConsumer.hentDokument(any(), any()) } returns DOKUMENT_FIL.toByteArray()
@@ -63,17 +63,19 @@ class FysiskDokumentServiceTest {
 
     @Test
     fun `skal hente dokument fra storage hvis status er KONTROLLERT`() {
-        var forsendelse = opprettForsendelse2(
-            dokumenter = emptyList()
-        ).copy(forsendelseId = 100L)
-        val dokumentKontrollert = nyttDokument(
-            journalpostId = "123213213",
-            dokumentreferanseOriginal = "13213213123",
-            dokumentStatus = DokumentStatus.KONTROLLERT,
-            tittel = "Tittel dokument",
-            dokumentMalId = "BI100",
-            rekkefølgeIndeks = 1
-        ).copy(dokumentId = 2L, forsendelse = forsendelse)
+        var forsendelse =
+            opprettForsendelse2(
+                dokumenter = emptyList(),
+            ).copy(forsendelseId = 100L)
+        val dokumentKontrollert =
+            nyttDokument(
+                journalpostId = "123213213",
+                dokumentreferanseOriginal = "13213213123",
+                dokumentStatus = DokumentStatus.KONTROLLERT,
+                tittel = "Tittel dokument",
+                dokumentMalId = "BI100",
+                rekkefølgeIndeks = 1,
+            ).copy(dokumentId = 2L, forsendelse = forsendelse)
 
         forsendelse = forsendelse.copy(dokumenter = listOf(dokumentKontrollert))
 
@@ -89,18 +91,20 @@ class FysiskDokumentServiceTest {
     fun `skal hente dokument fra ekstern kilde hvis ikke status KONTROLLERT`() {
         val journalpostId = "123123213"
         val dokumentreferanse = "5353535"
-        var forsendelse = opprettForsendelse2(
-            dokumenter = emptyList()
-        ).copy(forsendelseId = 100L)
-        val dokumentKontrollert = nyttDokument(
-            journalpostId = journalpostId,
-            dokumentreferanseOriginal = dokumentreferanse,
-            dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-            tittel = "Tittel dokument",
-            dokumentMalId = "BI100",
-            arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-            rekkefølgeIndeks = 1
-        ).copy(dokumentId = 2L, forsendelse = forsendelse)
+        var forsendelse =
+            opprettForsendelse2(
+                dokumenter = emptyList(),
+            ).copy(forsendelseId = 100L)
+        val dokumentKontrollert =
+            nyttDokument(
+                journalpostId = journalpostId,
+                dokumentreferanseOriginal = dokumentreferanse,
+                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                tittel = "Tittel dokument",
+                dokumentMalId = "BI100",
+                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                rekkefølgeIndeks = 1,
+            ).copy(dokumentId = 2L, forsendelse = forsendelse)
 
         forsendelse = forsendelse.copy(dokumenter = listOf(dokumentKontrollert))
 
@@ -117,31 +121,35 @@ class FysiskDokumentServiceTest {
     fun `skal hente original dokument fra ekstern kilde hvis arkivsystem er FORSENDELSE`() {
         val journalpostId = "123123213"
         val dokumentreferanse = "5353535"
-        var forsendelse = opprettForsendelse2(
-            dokumenter = emptyList()
-        ).copy(forsendelseId = 100L)
-        val dokumentLenket = nyttDokument(
-            journalpostId = journalpostId,
-            dokumentreferanseOriginal = dokumentreferanse,
-            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-            tittel = "Tittel dokument",
-            dokumentMalId = "BI100",
-            arkivsystem = DokumentArkivSystem.FORSENDELSE,
-            rekkefølgeIndeks = 1
-        ).copy(dokumentId = 2L, forsendelse = forsendelse)
+        var forsendelse =
+            opprettForsendelse2(
+                dokumenter = emptyList(),
+            ).copy(forsendelseId = 100L)
+        val dokumentLenket =
+            nyttDokument(
+                journalpostId = journalpostId,
+                dokumentreferanseOriginal = dokumentreferanse,
+                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                tittel = "Tittel dokument",
+                dokumentMalId = "BI100",
+                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                rekkefølgeIndeks = 1,
+            ).copy(dokumentId = 2L, forsendelse = forsendelse)
 
-        var forsendelseOriginal = opprettForsendelse2(
-            dokumenter = emptyList()
-        ).copy(forsendelseId = 200L)
-        val dokumentOriginal = nyttDokument(
-            journalpostId = null,
-            dokumentreferanseOriginal = null,
-            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-            tittel = "Tittel dokument",
-            dokumentMalId = "BI100",
-            arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-            rekkefølgeIndeks = 1
-        ).copy(dokumentId = 5L, forsendelse = forsendelseOriginal)
+        var forsendelseOriginal =
+            opprettForsendelse2(
+                dokumenter = emptyList(),
+            ).copy(forsendelseId = 200L)
+        val dokumentOriginal =
+            nyttDokument(
+                journalpostId = null,
+                dokumentreferanseOriginal = null,
+                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                tittel = "Tittel dokument",
+                dokumentMalId = "BI100",
+                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                rekkefølgeIndeks = 1,
+            ).copy(dokumentId = 5L, forsendelse = forsendelseOriginal)
 
         forsendelse = forsendelse.copy(dokumenter = listOf(dokumentLenket))
         forsendelseOriginal = forsendelseOriginal.copy(dokumenter = listOf(dokumentOriginal))
@@ -154,6 +162,8 @@ class FysiskDokumentServiceTest {
 
         dokument shouldBe DOKUMENT_FIL.toByteArray()
         verify(exactly = 0) { dokumentStorageService.hentFil(any()) }
-        verify(exactly = 1) { bidragDokumentConsumer.hentDokument(forsendelseOriginal.forsendelseIdMedPrefix, dokumentOriginal.dokumentreferanse) }
+        verify(
+            exactly = 1,
+        ) { bidragDokumentConsumer.hentDokument(forsendelseOriginal.forsendelseIdMedPrefix, dokumentOriginal.dokumentreferanse) }
     }
 }

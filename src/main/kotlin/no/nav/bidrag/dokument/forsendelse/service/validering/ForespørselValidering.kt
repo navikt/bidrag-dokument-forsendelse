@@ -27,12 +27,15 @@ object ForespørselValidering {
 
         if (forsendelseType == ForsendelseType.NOTAT && this.dokumenter.size > 1) {
             val dokumentmaler = this.dokumenter.map { it.dokumentmalId }.joinToString(",")
-            feilmeldinger.add("Kan ikke opprette ny forsendelse med flere dokumenter hvis forsendelsetype er Notat. dokumentmaler=$dokumentmaler")
+            feilmeldinger.add(
+                "Kan ikke opprette ny forsendelse med flere dokumenter hvis forsendelsetype er Notat. dokumentmaler=$dokumentmaler",
+            )
         }
 
-        val harFlereDokumenterMedSammeReferanse = this.dokumenter.any {
-            this.dokumenter.harFlereDokumenterMedSammeJournalpostIdOgReferanse(it)
-        }
+        val harFlereDokumenterMedSammeReferanse =
+            this.dokumenter.any {
+                this.dokumenter.harFlereDokumenterMedSammeJournalpostIdOgReferanse(it)
+            }
 
         if (harFlereDokumenterMedSammeReferanse) {
             feilmeldinger.add("Kan ikke lagre flere dokumenter med samme journalpostid/arkivsystem og dokumentreferanse")
@@ -54,28 +57,32 @@ object ForespørselValidering {
         }
     }
 
-    fun OppdaterDokumentForespørsel.valider(forsendelse: Forsendelse, dokumentreferanse: String) {
+    fun OppdaterDokumentForespørsel.valider(
+        forsendelse: Forsendelse,
+        dokumentreferanse: String,
+    ) {
         val feilmeldinger: MutableList<String> = mutableListOf()
         feilmeldinger.validerErSann(
             this.tittel == null || this.tittel.isNotEmpty(),
-            "Tittel på dokument kan ikke være tom"
+            "Tittel på dokument kan ikke være tom",
         )
         feilmeldinger.validerErSann(
             this.tittel != null && this.tittel.length < 500,
-            "Tittel på dokument kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel?.length} tegn)"
+            "Tittel på dokument kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel?.length} tegn)",
         )
         feilmeldinger.validerErSann(
             this.dokumentreferanse == null || this.dokumentreferanse == dokumentreferanse,
-            "Dokumentreferanse $dokumentreferanse i forespørsel stemmer ikke med dokumentreferanse i inneholdet på forespørsel ${this.dokumentreferanse}"
+            "Dokumentreferanse $dokumentreferanse " +
+                "i forespørsel stemmer ikke med dokumentreferanse i inneholdet på forespørsel ${this.dokumentreferanse}",
         )
         feilmeldinger.validerErSann(
             forsendelse.dokumenter.hentDokument(dokumentreferanse) != null,
-            "Forsendelse ${forsendelse.forsendelseId} har ingen dokument med dokumentreferanse $dokumentreferanse"
+            "Forsendelse ${forsendelse.forsendelseId} har ingen dokument med dokumentreferanse $dokumentreferanse",
         )
 
         feilmeldinger.validerErSann(
             this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
-            "Dokumentdato kan ikke bli satt til fram i tid"
+            "Dokumentdato kan ikke bli satt til fram i tid",
         )
         if (feilmeldinger.isNotEmpty()) {
             throw UgyldigForespørsel(feilmeldinger.joinToString(", "))
@@ -84,30 +91,31 @@ object ForespørselValidering {
 
     fun OpprettDokumentForespørsel.valider(
         index: Int? = null,
-        throwWhenInvalid: Boolean = true
+        throwWhenInvalid: Boolean = true,
     ): List<String> {
         val feilmeldinger: MutableList<String> = mutableListOf()
         feilmeldinger.validerIkkeNullEllerTom(
             this.tittel,
-            "Tittel på dokument ${index ?: ""} kan ikke være tom".replace("  ", "")
+            "Tittel på dokument ${index ?: ""} kan ikke være tom".replace("  ", ""),
         )
         feilmeldinger.validerErSann(
             this.tittel.length < 500,
-            "Tittel på dokument ${index ?: ""} kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel.length} tegn)"
+            "Tittel på dokument ${index ?: ""} kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel.length} tegn)",
         )
         if (this.dokumentreferanse.isNotNullOrEmpty() || this.journalpostId.isNotNullOrEmpty()) {
             feilmeldinger.validerErSann(
                 this.journalpostId.isNotNullOrEmpty() || this.dokumentreferanse.isNotNullOrEmpty() && this.journalpostId.isNotNullOrEmpty(),
-                "Både journalpostId og dokumentreferanse må settes hvis dokumentereferanse er satt dokumentreferanse=${this.dokumentreferanse}."
+                "Både journalpostId og dokumentreferanse må " +
+                    "settes hvis dokumentereferanse er satt dokumentreferanse=${this.dokumentreferanse}.",
             )
             feilmeldinger.validerErSann(
                 !this.journalpostId.isNullOrEmpty() && (this.journalpostId.harArkivPrefiks || this.arkivsystem != null),
-                "JournalpostId må innholde arkiv prefiks eller arkivsystem må være satt"
+                "JournalpostId må innholde arkiv prefiks eller arkivsystem må være satt",
             )
         } else {
             feilmeldinger.validerIkkeNullEllerTom(
                 this.dokumentmalId,
-                "dokumentmalId må settes hvis dokumentreferanse eller journalpostId ikke er satt"
+                "dokumentmalId må settes hvis dokumentreferanse eller journalpostId ikke er satt",
             )
         }
 
@@ -144,14 +152,19 @@ object ForespørselValidering {
 
     fun Forsendelse.validerKanEndreForsendelse() {
         if (this.status != ForsendelseStatus.UNDER_PRODUKSJON && this.status != ForsendelseStatus.UNDER_OPPRETTELSE) {
-            throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres")
+            throw UgyldigEndringAvForsendelse(
+                "Forsendelse med forsendelseId=${this.forsendelseId} og status ${this.status} kan ikke endres",
+            )
         }
     }
 
     fun Forsendelse.validerKanEndreTilFagområde(nyTema: String) {
         val erGyldigTema = listOf(Fagomrade.BIDRAG.uppercase(), Fagomrade.FARSKAP.uppercase()).contains(nyTema.uppercase())
         if (!erGyldigTema) {
-            throw UgyldigEndringAvForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} kan ikke endres til tema $nyTema. $nyTema er ikke en gyldig Bidrag tema.")
+            throw UgyldigEndringAvForsendelse(
+                "Forsendelse med forsendelseId=${this.forsendelseId} kan ikke endres til tema $nyTema. " +
+                    "$nyTema er ikke en gyldig Bidrag tema.",
+            )
         }
     }
 
@@ -176,7 +189,10 @@ object ForespørselValidering {
 
         this.dokumenter.forEach {
             if (it.tittel.inneholderKontrollTegn()) {
-                feilmeldinger.add("Dokument med tittel ${it.tittel} og dokumentreferanse ${it.dokumentreferanse} i forsendelse ${this.forsendelseId} inneholder ugyldig tegn")
+                feilmeldinger.add(
+                    "Dokument med tittel ${it.tittel} og dokumentreferanse ${it.dokumentreferanse} " +
+                        "i forsendelse ${this.forsendelseId} inneholder ugyldig tegn",
+                )
             }
         }
 

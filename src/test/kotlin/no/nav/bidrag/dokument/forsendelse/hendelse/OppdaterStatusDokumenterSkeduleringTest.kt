@@ -45,52 +45,58 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
 
     @Test
     fun `Skal oppdatere status på dokumenter som er under redigering`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(24)
-                    )
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(24),
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(24)
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(24),
+                            ),
+                        ),
+                ),
             )
-        )
-        val forsendelse3 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 3",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL3",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(24)
-                    )
-                )
+        val forsendelse3 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 3",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL3",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(24),
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokref1 = forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse
         val dokref2 = forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
@@ -132,17 +138,17 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelse1.forsendelseId
-                }
+                },
             )
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelse2.forsendelseId
-                }
+                },
             )
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelse3.forsendelseId
-                }
+                },
             )
         }
     }
@@ -152,39 +158,43 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
         val nyJournalpostId = "1331234412321"
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
-        val forsendelseNotat = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                erNotat = true,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "Forsendelse notat",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = DOKUMENTMAL_NOTAT,
-                        dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(24)
-                    )
-                )
+        val forsendelseNotat =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    erNotat = true,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "Forsendelse notat",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = DOKUMENTMAL_NOTAT,
+                                dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(24),
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(24)
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(24),
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokrefNotat = forsendelseNotat.dokumenter.hoveddokument!!.dokumentreferanse
         val dokref2 = forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
@@ -217,7 +227,7 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
                     "\"referanseId\":\"$referanseId\"," +
                     "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
                     "\"saksbehandlerIdent\":\"Z999444\"" +
-                    "}"
+                    "}",
             )
         }
 
@@ -234,7 +244,7 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelse2.forsendelseId
-                }
+                },
             )
         }
     }
@@ -245,21 +255,23 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
 
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(24)
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(24),
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokref = forsendelse.dokumenter.hoveddokument!!.dokumentreferanse
         stubUtils.stubSjekkErDokumentFerdigstilt(dokref, false)
@@ -283,46 +295,50 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
 
-        val forsendelseFør12Timer = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(2)
-                    )
-                )
+        val forsendelseFør12Timer =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(2),
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    ),
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2 DOK 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2 DOK 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokref = forsendelseFør12Timer.dokumenter.hoveddokument!!.dokumentreferanse
         val dokref2 = forsendelse2.dokumenter[0].dokumentreferanse
@@ -356,7 +372,7 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelse2.forsendelseId
-                }
+                },
             )
         }
     }
@@ -367,47 +383,51 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
 
-        val forsendelseOriginal = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    )
-                )
+        val forsendelseOriginal =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                        ),
+                ),
             )
-        )
         val dokrefOriginal = forsendelseOriginal.dokumenter[0].dokumentreferanse
 
-        val forsendelseMedLenke = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = dokrefOriginal,
-                        journalpostId = forsendelseOriginal.forsendelseId.toString(),
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    ),
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2 DOK 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    )
-                )
+        val forsendelseMedLenke =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = dokrefOriginal,
+                                journalpostId = forsendelseOriginal.forsendelseId.toString(),
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2 DOK 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                        ),
+                ),
             )
-        )
         val dokrefLenket = forsendelseMedLenke.dokumenter[0].dokumentreferanse
         val dokref3 = forsendelseMedLenke.dokumenter[1].dokumentreferanse
 
@@ -438,12 +458,12 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelseOriginal.forsendelseId
-                }
+                },
             )
             journalpostKafkaHendelseProdusent.publiserForsendelse(
                 withArg {
                     it.forsendelseId shouldBe forsendelseMedLenke.forsendelseId
-                }
+                },
             )
         }
     }
@@ -454,30 +474,32 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
 
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    ),
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2 DOK 2",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentMalId = "MAL2",
-                        opprettetTidspunkt = LocalDateTime.now().minusHours(13)
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2 DOK 2",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentMalId = "MAL2",
+                                opprettetTidspunkt = LocalDateTime.now().minusHours(13),
+                            ),
+                        ),
+                ),
             )
-        )
         val dokref1 = forsendelse.dokumenter[0].dokumentreferanse
         val dokref2 = forsendelse.dokumenter[1].dokumentreferanse
 

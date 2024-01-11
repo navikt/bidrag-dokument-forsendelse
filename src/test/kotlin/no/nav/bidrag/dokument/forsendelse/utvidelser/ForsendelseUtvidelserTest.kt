@@ -5,7 +5,6 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import org.junit.jupiter.api.Test
 
 class ForsendelseUtvidelserTest {
-
     @Test
     fun `Skal returnere dokumenter med hoveddokument først og vedleggene sortert rekkefølge`() {
         val hoveddokument = nyttDokument(tittel = "HOVEDDOK")

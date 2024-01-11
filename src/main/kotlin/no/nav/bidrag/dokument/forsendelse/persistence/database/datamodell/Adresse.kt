@@ -10,7 +10,6 @@ data class Adresse(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-
     val adresselinje1: String,
     val adresselinje2: String? = null,
     val adresselinje3: String? = null,
@@ -18,5 +17,5 @@ data class Adresse(
     val landkode: String? = null,
     val landkode3: String? = null,
     val postnummer: String? = null,
-    val poststed: String? = null
+    val poststed: String? = null,
 )

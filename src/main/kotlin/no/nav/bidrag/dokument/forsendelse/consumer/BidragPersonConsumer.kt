@@ -21,11 +21,11 @@ import java.net.URI
 @Service
 class BidragPersonConsumer(
     @Value("\${BIDRAG_PERSON_URL}") val url: URI,
-    @Qualifier("azure") private val restTemplate: RestOperations
+    @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-person") {
-
-    private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
-        .path(path ?: "").build().toUri()
+    private fun createUri(path: String?) =
+        UriComponentsBuilder.fromUri(url)
+            .path(path ?: "").build().toUri()
 
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @BrukerCacheable(PERSON_CACHE)

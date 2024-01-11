@@ -7,9 +7,14 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
 @Component
-class DokumentBestillingService(val applicationEventPublisher: ApplicationEventPublisher, val dokumentBestillingKonsumer: BidragDokumentBestillingConsumer) {
-
-    fun bestill(forsendelseId: Long, dokumentreferanse: String) {
+class DokumentBestillingService(
+    val applicationEventPublisher: ApplicationEventPublisher,
+    val dokumentBestillingKonsumer: BidragDokumentBestillingConsumer,
+) {
+    fun bestill(
+        forsendelseId: Long,
+        dokumentreferanse: String,
+    ) {
         applicationEventPublisher.publishEvent(DokumentBestilling(forsendelseId, dokumentreferanse))
     }
 

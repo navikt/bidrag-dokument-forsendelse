@@ -22,17 +22,18 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 class AvvikKontrollerTest : KontrollerTestRunner() {
-
     @Test
     fun `Skal hente avvik for forsendelse med status UNDER_PRODUKSJON`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                status = ForsendelseStatus.UNDER_PRODUKSJON,
-                dokumenter = listOf(
-                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    status = ForsendelseStatus.UNDER_PRODUKSJON,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
@@ -45,14 +46,16 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente avvik for forsendelse med status UNDER_OPPRETTELSE`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                status = ForsendelseStatus.UNDER_OPPRETTELSE,
-                dokumenter = listOf(
-                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    status = ForsendelseStatus.UNDER_OPPRETTELSE,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"),
+                        ),
+                ),
             )
-        )
 
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
@@ -65,24 +68,27 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal utføre avvik FEILFORE_SAK for forsendelse`() {
         val saksnummer = "13213213213"
 
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                saksnummer = saksnummer,
-                dokumenter = listOf(
-                    nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    saksnummer = saksnummer,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"),
+                        ),
+                ),
             )
-        )
 
         testDataManager
             .lagreForsendelse(
                 opprettForsendelse2(
                     saksnummer = saksnummer,
                     endretAvIdent = "",
-                    dokumenter = listOf(
-                        nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-                    )
-                )
+                    dokumenter =
+                        listOf(
+                            nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"),
+                        ),
+                ),
             )
 
         assertSoftly("Valider før utført avvik") {
@@ -129,10 +135,11 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal utføre avvik SLETT_JOURNALPOST for forsendelse`() {
         val saksnummer = "13213213213"
 
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            }
 
         testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
@@ -173,10 +180,11 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE for forsendelse til tema FAR`() {
         val saksnummer = "13213213213"
 
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            }
 
         testDataManager.opprettOgLagreForsendelse {
             med saksnummer saksnummer
@@ -215,11 +223,12 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE fra FAR til BID`() {
         val saksnummer = "13213213213"
 
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            med tema ForsendelseTema.FAR
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                med tema ForsendelseTema.FAR
+                +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            }
         forsendelse.tema shouldBe ForsendelseTema.FAR
 
         val responsUtfør = utførEndreFagområdeForsendelseAvvik(forsendelse.forsendelseId.toString(), Fagomrade.BIDRAG)
@@ -239,11 +248,12 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal utføre avvik ENDRE_FAGOMRÅDE til samme tema`() {
         val saksnummer = "13213213213"
 
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            med tema ForsendelseTema.FAR
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                med tema ForsendelseTema.FAR
+                +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            }
         forsendelse.tema shouldBe ForsendelseTema.FAR
 
         val responsUtfør = utførEndreFagområdeForsendelseAvvik(forsendelse.forsendelseId.toString(), Fagomrade.FARSKAP)
@@ -263,10 +273,11 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     fun `Skal ikke utføre avvik ENDRE_FAGOMRÅDE for forsendelse hvis tema er ikke bidrag tema`() {
         val saksnummer = "13213213213"
 
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                +nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK")
+            }
 
         val responsUtfør = utførEndreFagområdeForsendelseAvvik(forsendelse.forsendelseId.toString(), "BAR")
         responsUtfør.statusCode shouldBe HttpStatus.BAD_REQUEST
@@ -275,12 +286,16 @@ class AvvikKontrollerTest : KontrollerTestRunner() {
     @ParameterizedTest
     @EnumSource(value = ForsendelseStatus::class, names = ["UNDER_PRODUKSJON", "UNDER_OPPRETTELSE"], mode = EnumSource.Mode.EXCLUDE)
     fun `Skal hente tom liste med avvik for forsendelse med status {argumentsWithNames}`(status: ForsendelseStatus) {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                status = status,
-                dokumenter = listOf(nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"))
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    status = status,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(journalpostId = null, dokumentreferanseOriginal = null, rekkefølgeIndeks = 0, tittel = "HOVEDDOK"),
+                        ),
+                ),
             )
-        )
         val respons = utførHentAvvik(forsendelse.forsendelseId.toString())
         respons.statusCode shouldBe HttpStatus.OK
 

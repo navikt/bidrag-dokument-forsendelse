@@ -20,11 +20,11 @@ import java.net.URI
 @Service
 class BidragTIlgangskontrollConsumer(
     @Value("\${BIDRAG_TILGANGSKONTROLL_URL}") val url: URI,
-    @Qualifier("azure") private val restTemplate: RestOperations
+    @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-tilgangskontroll") {
-
-    private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
-        .path(path ?: "").build().toUri()
+    private fun createUri(path: String?) =
+        UriComponentsBuilder.fromUri(url)
+            .path(path ?: "").build().toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     @BrukerCacheable(TILGANG_SAK_CACHE)

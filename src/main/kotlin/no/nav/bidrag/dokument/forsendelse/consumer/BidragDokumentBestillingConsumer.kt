@@ -24,18 +24,21 @@ inline fun <reified T> typeReference() = object : ParameterizedTypeReference<T>(
 @Service
 class BidragDokumentBestillingConsumer(
     @Value("\${BIDRAG_DOKUMENT_BESTILLING_URL}") val url: URI,
-    @Qualifier("azure") private val restTemplate: RestOperations
+    @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-dokument-bestilling") {
-
     companion object {
         private val LOGGER = LoggerFactory.getLogger(BidragDokumentBestillingConsumer::class.java)
     }
 
-    private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
-        .path(path ?: "").build().toUri()
+    private fun createUri(path: String?) =
+        UriComponentsBuilder.fromUri(url)
+            .path(path ?: "").build().toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun bestill(forespørsel: DokumentBestillingForespørsel, dokumentmalId: String): DokumentBestillingResponse? {
+    fun bestill(
+        forespørsel: DokumentBestillingForespørsel,
+        dokumentmalId: String,
+    ): DokumentBestillingResponse? {
         val respons: DokumentBestillingResponse? = postForEntity(createUri("/bestill/$dokumentmalId"), forespørsel)
         LOGGER.info("Bestilte dokument med dokumentmalId $dokumentmalId")
         SIKKER_LOGG.info("Bestilte dokument med dokumentmalId $dokumentmalId og forespørsel $forespørsel")
@@ -43,7 +46,10 @@ class BidragDokumentBestillingConsumer(
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun hentDokument(dokumentmalId: String, forespørsel: DokumentBestillingForespørsel? = null): ByteArray? {
+    fun hentDokument(
+        dokumentmalId: String,
+        forespørsel: DokumentBestillingForespørsel? = null,
+    ): ByteArray? {
         LOGGER.info("Henter dokument med dokumentmalId $dokumentmalId")
         return postForEntity(createUri("/dokument/$dokumentmalId"), forespørsel)
     }

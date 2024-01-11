@@ -33,13 +33,13 @@ class FerdigstillForsendelseService(
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
-    private val fysiskDokumentService: FysiskDokumentService
+    private val fysiskDokumentService: FysiskDokumentService,
 ) {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun ferdigstillOgHentForsendelse(
         forsendelseId: Long,
         lokalUtskrift: Boolean = false,
-        ingenDistribusjon: Boolean = false
+        ingenDistribusjon: Boolean = false,
     ): Forsendelse? {
         ferdigstillForsendelse(forsendelseId, lokalUtskrift, ingenDistribusjon)
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
@@ -49,7 +49,7 @@ class FerdigstillForsendelseService(
     fun ferdigstillForsendelse(
         forsendelseId: Long,
         lokalUtskrift: Boolean = false,
-        ingenDistribusjon: Boolean = false
+        ingenDistribusjon: Boolean = false,
     ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
         forsendelse.validerKanFerdigstilleForsendelse()
@@ -62,44 +62,57 @@ class FerdigstillForsendelseService(
 
         val referanseId = forsendelse.opprettReferanseId()
         val dokumentDato = forsendelse.dokumentDato?.let { begrensDokumentdatoTilIdagEllerTidligere(it) }
-        val opprettJournalpostRequest = OpprettJournalpostRequest(
-            avsenderMottaker = if (!forsendelse.erNotat) {
-                AvsenderMottakerDto(
-                    ident = forsendelse.mottaker!!.ident,
-                    navn = forsendelse.mottaker.navn,
-                    type = when (forsendelse.mottaker.identType) {
-                        MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
-                        else -> AvsenderMottakerDtoIdType.FNR
-                    }
-                )
-            } else {
-                null
-            },
-            referanseId = referanseId,
-            gjelderIdent = forsendelse.gjelderIdent,
-            journalførendeEnhet = forsendelse.enhet,
-            journalposttype = when (forsendelse.forsendelseType) {
-                ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
-                ForsendelseType.NOTAT -> JournalpostType.NOTAT
-            },
-            kanal = if (lokalUtskrift) MottakUtsendingKanal.LOKAL_UTSKRIFT else if (ingenDistribusjon) MottakUtsendingKanal.INGEN_DISTRIBUSJON else null,
-            dokumenter = forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
-                OpprettDokumentDto(
-                    brevkode = it.dokumentmalId,
-                    tittel = if (it.tilknyttetSom === DokumentTilknyttetSom.HOVEDDOKUMENT) hovedtittelMedBeskjed else it.tittel,
-                    dokumentreferanse = it.dokumentreferanse
-                )
-            },
-            tilknyttSaker = listOf(forsendelse.saksnummer),
-            saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null,
-            skalFerdigstilles = true,
-            tema = when (forsendelse.tema) {
-                ForsendelseTema.FAR -> "FAR"
-                else -> "BID"
-            },
-            tittel = hovedtittel,
-            datoDokument = if (forsendelse.erNotat) dokumentDato else null
-        )
+        val opprettJournalpostRequest =
+            OpprettJournalpostRequest(
+                avsenderMottaker =
+                    if (!forsendelse.erNotat) {
+                        AvsenderMottakerDto(
+                            ident = forsendelse.mottaker!!.ident,
+                            navn = forsendelse.mottaker.navn,
+                            type =
+                                when (forsendelse.mottaker.identType) {
+                                    MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
+                                    else -> AvsenderMottakerDtoIdType.FNR
+                                },
+                        )
+                    } else {
+                        null
+                    },
+                referanseId = referanseId,
+                gjelderIdent = forsendelse.gjelderIdent,
+                journalførendeEnhet = forsendelse.enhet,
+                journalposttype =
+                    when (forsendelse.forsendelseType) {
+                        ForsendelseType.UTGÅENDE -> JournalpostType.UTGÅENDE
+                        ForsendelseType.NOTAT -> JournalpostType.NOTAT
+                    },
+                kanal =
+                    if (lokalUtskrift) {
+                        MottakUtsendingKanal.LOKAL_UTSKRIFT
+                    } else if (ingenDistribusjon) {
+                        MottakUtsendingKanal.INGEN_DISTRIBUSJON
+                    } else {
+                        null
+                    },
+                dokumenter =
+                    forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
+                        OpprettDokumentDto(
+                            brevkode = it.dokumentmalId,
+                            tittel = if (it.tilknyttetSom === DokumentTilknyttetSom.HOVEDDOKUMENT) hovedtittelMedBeskjed else it.tittel,
+                            dokumentreferanse = it.dokumentreferanse,
+                        )
+                    },
+                tilknyttSaker = listOf(forsendelse.saksnummer),
+                saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null,
+                skalFerdigstilles = true,
+                tema =
+                    when (forsendelse.tema) {
+                        ForsendelseTema.FAR -> "FAR"
+                        else -> "BID"
+                    },
+                tittel = hovedtittel,
+                datoDokument = if (forsendelse.erNotat) dokumentDato else null,
+            )
 
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
 
@@ -107,18 +120,22 @@ class FerdigstillForsendelseService(
             forsendelse.copy(
                 journalpostIdFagarkiv = respons!!.journalpostId,
                 status = ForsendelseStatus.FERDIGSTILT,
-                dokumenter = forsendelse.dokumenter.mapIndexed { i, it ->
-                    it.copy(
-                        dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null,
-                        dokumentDato = if (forsendelse.erNotat && dokumentDato != null) dokumentDato else it.dokumentDato
-                    )
-                },
+                dokumenter =
+                    forsendelse.dokumenter.mapIndexed { i, it ->
+                        it.copy(
+                            dokumentreferanseFagarkiv = if (respons.dokumenter.size > i) respons.dokumenter[i].dokumentreferanse else null,
+                            dokumentDato = if (forsendelse.erNotat && dokumentDato != null) dokumentDato else it.dokumentDato,
+                        )
+                    },
                 ferdigstiltTidspunkt = LocalDateTime.now(),
-                referanseId = referanseId
-            )
+                referanseId = referanseId,
+            ),
         )
 
-        log.info { "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. Opprettet journalpostId=${respons.journalpostId}." }
+        log.info {
+            "Ferdigstilt og opprettet journalpost for forsendelse $forsendelseId med type ${forsendelse.forsendelseType}. " +
+                "Opprettet journalpostId=${respons.journalpostId}."
+        }
 
         return respons
     }

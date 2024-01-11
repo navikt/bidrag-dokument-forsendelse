@@ -20,5 +20,5 @@ enum class DistribusjonKanal(val beskrivelse: String) {
 
     SKAN_NETS("Skanning Nets"),
     SKAN_PEN("Skanning Pensjon"),
-    SKAN_IM("Skanning Iron Mountain")
+    SKAN_IM("Skanning Iron Mountain"),
 }
