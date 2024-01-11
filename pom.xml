@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav</groupId>
@@ -23,12 +23,12 @@
     <springdoc-openapi-ui.version>2.1.0</springdoc-openapi-ui.version>
     <springframework-cloud.version>4.0.2</springframework-cloud.version>
     <bidrag-commons-test.version>1.20230511093912_dc35d81</bidrag-commons-test.version>
-    <kotest.version>5.6.2</kotest.version>
+    <kotest.version>5.8.0</kotest.version>
     <mockk.version>4.0.2</mockk.version>
-    <flyway.version>10.2.0</flyway.version>
+    <flyway.version>10.4.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.19.3</testcontainers.version>
-    <shedlock.version>5.9.1</shedlock.version>
+    <shedlock.version>5.10.2</shedlock.version>
     <google-api-extention.version>2.32.0</google-api-extention.version>
     <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
     <google-cloud-libraries-bom.version>26.28.0</google-cloud-libraries-bom.version>
