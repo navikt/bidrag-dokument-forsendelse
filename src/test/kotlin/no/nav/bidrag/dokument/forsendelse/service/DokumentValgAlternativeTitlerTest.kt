@@ -25,7 +25,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 class DokumentValgAlternativeTitlerTest {
-
     @MockkBean
     lateinit var bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
 
@@ -55,14 +54,15 @@ class DokumentValgAlternativeTitlerTest {
 
     @Test
     fun `Skal hente alternative titler for dokumentvalg for innkreving særtilskudd`() {
-        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-            HentDokumentValgRequest(
-                vedtakType = Vedtakstype.INNKREVING,
-                behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
-                soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = null
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.INNKREVING,
+                    behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
+                    soknadFra = SøktAvType.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                ),
             )
-        )
 
         assertSoftly {
             dokumentValgListe.size shouldBe 2
@@ -76,14 +76,15 @@ class DokumentValgAlternativeTitlerTest {
 
     @Test
     fun `Skal hente alternative titler for dokumentvalg for innkreving bidrag`() {
-        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-            HentDokumentValgRequest(
-                vedtakType = Vedtakstype.INNKREVING,
-                behandlingType = Stønadstype.BIDRAG.name,
-                soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = null
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.INNKREVING,
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                ),
             )
-        )
 
         assertSoftly {
             dokumentValgListe.size shouldBe 3
@@ -96,15 +97,16 @@ class DokumentValgAlternativeTitlerTest {
 
     @Test
     fun `Skal hente alternative titler for dokumentvalg for varsel av eget tiltak bidrag`() {
-        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-            HentDokumentValgRequest(
-                vedtakType = Vedtakstype.INNKREVING,
-                soknadType = "EGET_TILTAK",
-                behandlingType = Stønadstype.BIDRAG.name,
-                soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = null
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.INNKREVING,
+                    soknadType = "EGET_TILTAK",
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.NAV_BIDRAG,
+                    erFattetBeregnet = null,
+                ),
             )
-        )
 
         assertSoftly {
             dokumentValgListe.size shouldBe 7
@@ -119,15 +121,16 @@ class DokumentValgAlternativeTitlerTest {
 
     @Test
     fun `Skal hente alternative titler for dokumentvalg for vedtak av eget tiltak bidrag`() {
-        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-            HentDokumentValgRequest(
-                vedtakType = Vedtakstype.ENDRING,
-                soknadType = "EGET_TILTAK",
-                behandlingType = Stønadstype.BIDRAG.name,
-                soknadFra = SøktAvType.NAV_BIDRAG,
-                erFattetBeregnet = false
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    soknadType = "EGET_TILTAK",
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.NAV_BIDRAG,
+                    erFattetBeregnet = false,
+                ),
             )
-        )
 
         assertSoftly {
             dokumentValgListe.size shouldBe 3
@@ -140,13 +143,14 @@ class DokumentValgAlternativeTitlerTest {
 
     @Test
     fun `Skal hente alternative titler for dokumentvalg for forskudd søkt av BM`() {
-        val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-            HentDokumentValgRequest(
-                vedtakType = Vedtakstype.ENDRING,
-                behandlingType = Stønadstype.FORSKUDD.name,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.FORSKUDD.name,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                ),
             )
-        )
 
         assertSoftly {
             dokumentValgListe.size shouldBe 2
@@ -160,13 +164,14 @@ class DokumentValgAlternativeTitlerTest {
     @Test
     fun `Skal hente alternative titler for dokumentvalg for søknad til BM eller 18 åring`() {
         assertSoftly("Søknad bidrag fra BM") {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.ENDRING,
-                    behandlingType = Stønadstype.BIDRAG.name,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.ENDRING,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    ),
                 )
-            )
 
             dokumentValgListe.size shouldBe 5
             dokumentValgListe shouldContainKey "BI01S02"
@@ -176,13 +181,14 @@ class DokumentValgAlternativeTitlerTest {
         }
 
         assertSoftly("Søknad bidrag fra 18 år") {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.ENDRING,
-                    behandlingType = Stønadstype.BIDRAG.name,
-                    soknadFra = SøktAvType.BARN_18_ÅR
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.ENDRING,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        soknadFra = SøktAvType.BARN_18_ÅR,
+                    ),
                 )
-            )
 
             dokumentValgListe.size shouldBe 5
             dokumentValgListe shouldContainKey "BI01S02"
@@ -192,13 +198,14 @@ class DokumentValgAlternativeTitlerTest {
         }
 
         assertSoftly("Søknad bidrag 18 år fra BM") {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.ENDRING,
-                    behandlingType = Stønadstype.BIDRAG18AAR.name,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.ENDRING,
+                        behandlingType = Stønadstype.BIDRAG18AAR.name,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    ),
                 )
-            )
 
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"
@@ -208,13 +215,14 @@ class DokumentValgAlternativeTitlerTest {
         }
 
         assertSoftly("Søknad bidrag 18 år fra 18 åring") {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.ENDRING,
-                    behandlingType = Stønadstype.BIDRAG18AAR.name,
-                    soknadFra = SøktAvType.BARN_18_ÅR
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.ENDRING,
+                        behandlingType = Stønadstype.BIDRAG18AAR.name,
+                        soknadFra = SøktAvType.BARN_18_ÅR,
+                    ),
                 )
-            )
 
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"
@@ -227,13 +235,14 @@ class DokumentValgAlternativeTitlerTest {
     @Test
     fun `Skal hente alternative titler for dokumentvalg for søknad til bidragspliktig`() {
         assertSoftly("Søknad bidrag fra BM") {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.ENDRING,
-                    behandlingType = Stønadstype.BIDRAG.name,
-                    soknadFra = SøktAvType.BIDRAGSPLIKTIG
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.ENDRING,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                    ),
                 )
-            )
 
             dokumentValgListe.size shouldBe 5
             dokumentValgListe shouldContainKey "BI01S02"
@@ -243,13 +252,14 @@ class DokumentValgAlternativeTitlerTest {
         }
 
         assertSoftly("Søknad bidrag fra 18 år") {
-            val dokumentValgListe = dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.ENDRING,
-                    behandlingType = Stønadstype.BIDRAG18AAR.name,
-                    soknadFra = SøktAvType.BIDRAGSPLIKTIG
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.ENDRING,
+                        behandlingType = Stønadstype.BIDRAG18AAR.name,
+                        soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                    ),
                 )
-            )
 
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"

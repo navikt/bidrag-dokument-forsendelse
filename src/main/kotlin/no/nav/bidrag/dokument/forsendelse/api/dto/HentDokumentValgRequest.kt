@@ -20,20 +20,21 @@ data class HentDokumentValgRequest(
     val behandlingId: String? = null,
     val enhet: String? = null,
     @Schema(enumAsRef = true) val stonadType: Stønadstype? = null,
-    @Schema(enumAsRef = true) val engangsBelopType: Engangsbeløptype? = null
+    @Schema(enumAsRef = true) val engangsBelopType: Engangsbeløptype? = null,
 ) {
     fun erKlage() = vedtakType == Vedtakstype.KLAGE || soknadType == Vedtakstype.KLAGE.name
 }
 
-fun HentDokumentValgRequest.tilBehandlingInfo(): BehandlingInfo = BehandlingInfo(
-    vedtakId = this.vedtakId,
-    behandlingId = this.behandlingId,
-    vedtakType = this.vedtakType,
-    engangsBelopType = this.engangsBelopType,
-    stonadType = this.stonadType,
-    soknadType = this.soknadType,
-    erFattetBeregnet = this.erFattetBeregnet,
-    erVedtakIkkeTilbakekreving = this.erVedtakIkkeTilbakekreving,
-    soknadFra = this.soknadFra,
-    behandlingType = this.behandlingType
-)
+fun HentDokumentValgRequest.tilBehandlingInfo(): BehandlingInfo =
+    BehandlingInfo(
+        vedtakId = this.vedtakId,
+        behandlingId = this.behandlingId,
+        vedtakType = this.vedtakType,
+        engangsBelopType = this.engangsBelopType,
+        stonadType = this.stonadType,
+        soknadType = this.soknadType,
+        erFattetBeregnet = this.erFattetBeregnet,
+        erVedtakIkkeTilbakekreving = this.erVedtakIkkeTilbakekreving,
+        soknadFra = this.soknadFra,
+        behandlingType = this.behandlingType,
+    )

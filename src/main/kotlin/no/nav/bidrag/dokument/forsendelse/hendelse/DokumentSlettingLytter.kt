@@ -18,34 +18,44 @@ private val LOGGER = KotlinLogging.logger {}
 class DokumentSlettingLytter(
     val dokumentStorageService: DokumentStorageService,
     val forsendelseRepository: ForsendelseRepository,
-    val dokumentTjeneste: DokumentTjeneste
+    val dokumentTjeneste: DokumentTjeneste,
 ) {
-
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun slettDokument(dokumentBestilling: DokumentBestillSletting) {
         val (forsendelseId, dokumentreferanse) = dokumentBestilling
-        val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId)
-            ?: throw KunneIkkBestilleDokument("Fant ikke forsendelse $forsendelseId")
-        val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)
-            ?: throw KunneIkkBestilleDokument("Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}")
+        val forsendelse =
+            forsendelseRepository.medForsendelseId(forsendelseId)
+                ?: throw KunneIkkBestilleDokument("Fant ikke forsendelse $forsendelseId")
+        val dokument =
+            forsendelse.dokumenter.hentDokument(dokumentreferanse)
+                ?: throw KunneIkkBestilleDokument(
+                    "Fant ikke dokument med dokumentreferanse $dokumentreferanse i forsendelse ${forsendelse.forsendelseId}",
+                )
 
         try {
             val gcpFilsti = dokument.metadata.hentGcpFilsti() ?: dokument.filsti
             dokumentStorageService.slettFil(dokument.filsti)
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
-                    metadata = run {
-                        val metadata = dokument.metadata
-                        metadata.lagreGcpFilsti(null)
-                        metadata.lagreGcpKrypteringnøkkelVersjon(null)
-                        metadata.copy()
-                    }
-                )
+                    metadata =
+                        run {
+                            val metadata = dokument.metadata
+                            metadata.lagreGcpFilsti(null)
+                            metadata.lagreGcpKrypteringnøkkelVersjon(null)
+                            metadata.copy()
+                        },
+                ),
             )
-            LOGGER.info { "Slettet fil med GCP filsti $gcpFilsti som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}. Forsendelse har status ${forsendelse.status}" }
+            LOGGER.info {
+                "Slettet fil med GCP filsti $gcpFilsti som tilhører dokument ${dokument.dokumentreferanse} " +
+                    "og forsendelse ${forsendelse.forsendelseId}. Forsendelse har status ${forsendelse.status}"
+            }
         } catch (e: Exception) {
-            LOGGER.error(e) { "Kunne ikke slettet fil med filsti ${dokument.filsti} som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}" }
+            LOGGER.error(e) {
+                "Kunne ikke slettet fil med filsti ${dokument.filsti} " +
+                    "som tilhører dokument ${dokument.dokumentreferanse} og forsendelse ${forsendelse.forsendelseId}"
+            }
         }
     }
 }

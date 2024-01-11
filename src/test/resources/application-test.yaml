@@ -20,6 +20,7 @@ KODEVERK_URL: http://localhost:${wiremock.server.port}/kodeverk
 BIDRAG_TILGANGSKONTROLL_URL: http://localhost:${wiremock.server.port}/tilgangskontroll
 BIDRAG_VEDTAK_URL: http://localhost:${wiremock.server.port}/vedtak
 BIDRAG_BEHANDLING_URL: http://localhost:${wiremock.server.port}/behandling
+UNLEASH_SERVER_API_URL: http://localhost:${wiremock.server.port}/unleash
 KAFKA_BROKERS: localhost:9093
 KAFKA_MAX_RETRY: 0
 SYNKRONISER_STATUS_DOKUMENTER_ENABLED: true
@@ -29,6 +30,8 @@ GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: path/to/kms/key
 GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-local/locations/localhost/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
 GCP_CREDENTIALS_PATH: fake_service_account.json
 DISABLE_CLIENTSIDE_ENCRYPTION: true
+UNLEASH_SERVER_API_TOKEN: 123123
+UNLEASH_SERVER_API_ENV: development
 HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED: true
 no.nav.security.jwt:
   client:

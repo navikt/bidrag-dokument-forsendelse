@@ -24,8 +24,7 @@ import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
 
-fun Dokument.erStatiskDokument() =
-    arkivsystem == DokumentArkivSystem.BIDRAG && metadata.erStatiskDokument()
+fun Dokument.erStatiskDokument() = arkivsystem == DokumentArkivSystem.BIDRAG && metadata.erStatiskDokument()
 
 @Component
 class FysiskDokumentService(
@@ -34,12 +33,15 @@ class FysiskDokumentService(
     val bidragDokumentConsumer: BidragDokumentConsumer,
     val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer,
     val tilgangskontrollService: TilgangskontrollService,
-    val dokumentStorageService: DokumentStorageService
+    val dokumentStorageService: DokumentStorageService,
 ) {
-
-    fun hentDokument(forsendelseId: Long, dokumentreferanse: String): ByteArray {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
+    fun hentDokument(
+        forsendelseId: Long,
+        dokumentreferanse: String,
+    ): ByteArray {
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
 
         tilgangskontrollService.sjekkTilgangForsendelse(forsendelse)
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)!!
@@ -61,8 +63,9 @@ class FysiskDokumentService(
     }
 
     fun hentDokument(dokumentreferanse: String): ByteArray {
-        val dokument = dokumentTjeneste.hentDokument(dokumentreferanse)
-            ?: fantIkkeDokument(-1, dokumentreferanse)
+        val dokument =
+            dokumentTjeneste.hentDokument(dokumentreferanse)
+                ?: fantIkkeDokument(-1, dokumentreferanse)
         val forsendelse = dokument.forsendelse
 
         tilgangskontrollService.sjekkTilgangForsendelse(forsendelse)
@@ -76,19 +79,21 @@ class FysiskDokumentService(
         }
 
         val arkivSystem = dokument.arkivsystem
-        throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId ${forsendelse.forsendelseId} fra arkivsystem = $arkivSystem")
+        throw FantIkkeDokument(
+            "Kan ikke hente dokument $dokumentreferanse med forsendelseId ${forsendelse.forsendelseId} fra arkivsystem = $arkivSystem",
+        )
     }
 
     fun hentFysiskDokument(dokumentMetadata: DokumentMetadata): ByteArray {
         return if (dokumentMetadata.arkivsystem == DokumentArkivSystemDto.BIDRAG) {
             hentDokument(
                 dokumentMetadata.journalpostId!!.numerisk,
-                dokumentMetadata.dokumentreferanse!!
+                dokumentMetadata.dokumentreferanse!!,
             )
         } else {
             bidragDokumentConsumer.hentDokument(
                 dokumentMetadata.journalpostId,
-                dokumentMetadata.dokumentreferanse
+                dokumentMetadata.dokumentreferanse,
             )!!
         }
     }
@@ -97,7 +102,7 @@ class FysiskDokumentService(
         return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
-                dokument.dokumentreferanse
+                dokument.dokumentreferanse,
             )
         } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             val originalDokument = dokumentTjeneste.hentOriginalDokument(dokument)
@@ -110,29 +115,37 @@ class FysiskDokumentService(
         } else if (dokument.erFraAnnenKilde) {
             bidragDokumentConsumer.hentDokument(
                 dokument.journalpostId,
-                dokument.dokumentreferanseOriginal
+                dokument.dokumentreferanseOriginal,
             )!!
         } else {
             bidragDokumentConsumer.hentDokument(
                 dokument.forsendelseIdMedPrefix,
-                dokument.dokumentreferanse
+                dokument.dokumentreferanse,
             )!!
         }
     }
 
-    fun hentDokumentMetadata(forsendelseId: Long, dokumentreferanse: String? = null): List<DokumentMetadata> {
-        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId)
-            ?: fantIkkeForsendelse(forsendelseId)
+    fun hentDokumentMetadata(
+        forsendelseId: Long,
+        dokumentreferanse: String? = null,
+    ): List<DokumentMetadata> {
+        val forsendelse =
+            forsendelseTjeneste.medForsendelseId(forsendelseId)
+                ?: fantIkkeForsendelse(forsendelseId)
 
         if (dokumentreferanse.isNullOrEmpty()) {
             return forsendelse.dokumenter.ikkeSlettetSortertEtterRekkefølge.map { mapTilDokumentMetadata(it) }
         }
 
-        val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)
-            ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
+        val dokument =
+            forsendelse.dokumenter.hentDokument(dokumentreferanse)
+                ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse i forsendelseId=$forsendelseId")
 
         if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
-            log.info { "Dokument $dokumentreferanse i forsendelse $forsendelseId og er symlink til dokument ${dokument.dokumentreferanseOriginal} i forsendelse ${dokument.journalpostIdOriginal}" }
+            log.info {
+                "Dokument $dokumentreferanse i forsendelse $forsendelseId og " +
+                    "er symlink til dokument ${dokument.dokumentreferanseOriginal} i forsendelse ${dokument.journalpostIdOriginal}"
+            }
             return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal)
         }
 
@@ -140,10 +153,16 @@ class FysiskDokumentService(
     }
 
     fun hentDokumentMetadataForReferanse(dokumentreferanse: String): List<DokumentMetadata> {
-        val dokument = dokumentTjeneste.hentDokument(dokumentreferanse) ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse")
+        val dokument =
+            dokumentTjeneste.hentDokument(
+                dokumentreferanse,
+            ) ?: throw FantIkkeDokument("Fant ikke dokumentreferanse=$dokumentreferanse")
 
         if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
-            log.info { "Dokument $dokumentreferanse er symlink til dokument ${dokument.dokumentreferanseOriginal} i forsendelse ${dokument.journalpostIdOriginal}" }
+            log.info {
+                "Dokument $dokumentreferanse er symlink til dokument ${dokument.dokumentreferanseOriginal} " +
+                    "i forsendelse ${dokument.journalpostIdOriginal}"
+            }
             return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal)
         }
 
@@ -158,18 +177,19 @@ class FysiskDokumentService(
                 dokumentreferanse = dokument.dokumentreferanse,
                 format = DokumentFormatDto.PDF,
                 status = dokument.tilDokumentStatusDto(),
-                arkivsystem = DokumentArkivSystemDto.BIDRAG
+                arkivsystem = DokumentArkivSystemDto.BIDRAG,
             )
         } else if (dokument.arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER) {
             DokumentMetadata(
                 journalpostId = dokument.journalpostId,
                 dokumentreferanse = dokumentreferanse,
-                format = when (dokument.dokumentStatus) {
-                    DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
-                    else -> DokumentFormatDto.PDF
-                },
+                format =
+                    when (dokument.dokumentStatus) {
+                        DokumentStatus.UNDER_PRODUKSJON, DokumentStatus.UNDER_REDIGERING -> DokumentFormatDto.MBDOK
+                        else -> DokumentFormatDto.PDF
+                    },
                 status = dokument.tilDokumentStatusDto(),
-                arkivsystem = dokument.tilArkivSystemDto()
+                arkivsystem = dokument.tilArkivSystemDto(),
             )
         } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             return hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanseOriginal).first()
@@ -179,7 +199,7 @@ class FysiskDokumentService(
                 dokumentreferanse = dokumentreferanse,
                 format = DokumentFormatDto.MBDOK,
                 status = dokument.tilDokumentStatusDto(),
-                arkivsystem = dokument.tilArkivSystemDto()
+                arkivsystem = dokument.tilArkivSystemDto(),
             )
         } else {
             DokumentMetadata(
@@ -187,7 +207,7 @@ class FysiskDokumentService(
                 dokumentreferanse = dokumentreferanse,
                 format = DokumentFormatDto.PDF,
                 status = dokument.tilDokumentStatusDto(),
-                arkivsystem = dokument.tilArkivSystemDto()
+                arkivsystem = dokument.tilArkivSystemDto(),
             )
         }
     }

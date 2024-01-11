@@ -1,0 +1,3 @@
+[src/test/**/*.{kt,kts}]
+max_line_length = off
+ktlint_standard_class-naming = disabled

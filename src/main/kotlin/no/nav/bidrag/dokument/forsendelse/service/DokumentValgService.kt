@@ -32,9 +32,9 @@ class DokumentValgService(
     val bidragVedtakConsumer: BidragVedtakConsumer,
     val behandlingConsumer: BidragBehandlingConsumer,
     val tittelService: ForsendelseTittelService,
-    @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}") val hentDetaljerFraVedtakBehandlingEnabled: Boolean
+    @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}") val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) {
-
+    @Suppress("ktlint:standard:property-naming")
     val FRITEKSTBREV = "BI01S02"
     val dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
     val dokumentValgTittelMap: Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>>
@@ -74,13 +74,12 @@ class DokumentValgService(
         }
     }
 
-    fun hentDokumentMalListe(
-        request: HentDokumentValgRequest? = null
-    ): Map<String, DokumentMalDetaljer> {
+    fun hentDokumentMalListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
         if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
         val requestUtfylt = hentUtfyltDokumentValgDetaljer(request)
-        val maler = hentDokumentMalListeForRequest(requestUtfylt)
-            ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
+        val maler =
+            hentDokumentMalListeForRequest(requestUtfylt)
+                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
 
         return maler.toList().sortedBy { (a, b) -> if (a == FRITEKSTBREV) -1 else 1 }.toMap()
     }
@@ -100,12 +99,12 @@ class DokumentValgService(
                         vedtakType = it.type,
                         erFattetBeregnet = erFattetBeregnet,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
-                        enhet = request.enhet ?: it.enhetsnummer?.verdi
+                        enhet = request.enhet ?: it.enhetsnummer?.verdi,
                     )
                 }
         } else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) {
             behandlingConsumer.hentBehandling(
-                request.behandlingId
+                request.behandlingId,
             )?.let {
                 request.copy(
                     behandlingType = it.behandlingtype,
@@ -113,7 +112,7 @@ class DokumentValgService(
                     soknadFra = request.soknadFra ?: it.soknadFraType,
                     erFattetBeregnet = null,
                     erVedtakIkkeTilbakekreving = false,
-                    enhet = request.enhet ?: it.behandlerenhet
+                    enhet = request.enhet ?: it.behandlerenhet,
                 )
             }
         } else {
@@ -121,46 +120,66 @@ class DokumentValgService(
         }
     }
 
-    private fun hentDokumentMalListeForRequest(
-        request: HentDokumentValgRequest?
-    ): Map<String, DokumentMalDetaljer>? {
+    private fun hentDokumentMalListeForRequest(request: HentDokumentValgRequest?): Map<String, DokumentMalDetaljer>? {
         if (request == null) return null
         val (soknadType, vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
-        val dokumentValg = dokumentValgMap[behandlingTypeConverted]?.find {
-            it.soknadFra.contains(soknadFra) &&
-                it.isVedtaktypeValid(vedtakType, soknadType) &&
-                it.behandlingStatus.isValid(erFattetBeregnet) &&
-                it.forvaltning.isValid(enhet) &&
-                it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
-        }
+        val dokumentValg =
+            dokumentValgMap[behandlingTypeConverted]?.find {
+                it.soknadFra.contains(soknadFra) &&
+                    it.isVedtaktypeValid(vedtakType, soknadType) &&
+                    it.behandlingStatus.isValid(erFattetBeregnet) &&
+                    it.forvaltning.isValid(enhet) &&
+                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+            }
         val brevkoder =
-            dokumentValg?.brevkoder?.let { if (erFattetBeregnet != null) it + ekstraBrevkoderVedtakFattet else it + ekstraBrevkoderVedtakIkkeFattet }
+            dokumentValg?.brevkoder?.let {
+                if (erFattetBeregnet != null) {
+                    it + ekstraBrevkoderVedtakFattet
+                } else {
+                    it + ekstraBrevkoderVedtakIkkeFattet
+                }
+            }
                 ?: if (erFattetBeregnet != null) ekstraBrevkoderVedtakFattet else ekstraBrevkoderVedtakIkkeFattet
         return brevkoder.associateWith { mapToMalDetaljer(it, request) }
             .filter { it.value.type != DokumentMalType.NOTAT }
     }
 
-    fun mapToMalDetaljer(malId: String, request: HentDokumentValgRequest? = null, leggTilPrefiksPåTittel: Boolean = false): DokumentMalDetaljer {
+    fun mapToMalDetaljer(
+        malId: String,
+        request: HentDokumentValgRequest? = null,
+        leggTilPrefiksPåTittel: Boolean = false,
+    ): DokumentMalDetaljer {
         val dokumentDetaljer = bestillingConsumer.dokumentmalDetaljer()
         val malInfo = dokumentDetaljer[malId]
         val originalTittel = malInfo?.tittel ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
-        val tittel = if (leggTilPrefiksPåTittel) tittelService.hentTittelMedPrefiks(originalTittel, request?.tilBehandlingInfo()) else originalTittel
+        val tittel =
+            if (leggTilPrefiksPåTittel) {
+                tittelService.hentTittelMedPrefiks(
+                    originalTittel,
+                    request?.tilBehandlingInfo(),
+                )
+            } else {
+                originalTittel
+            }
         return DokumentMalDetaljer(
             tittel,
             beskrivelse = malInfo?.beskrivelse ?: tittel,
             type = malType,
-            alternativeTitler = hentAlternativeTitlerForMal(malId, request)
+            alternativeTitler = hentAlternativeTitlerForMal(malId, request),
         )
     }
 
-    fun hentAlternativeTitlerForMal(malId: String, request: HentDokumentValgRequest? = null): List<String> {
+    fun hentAlternativeTitlerForMal(
+        malId: String,
+        request: HentDokumentValgRequest? = null,
+    ): List<String> {
         if (request == null) return emptyList()
         return dokumentValgTittelMap[malId]?.sortedByDescending {
             it.isVedtaktypeValid(
                 request.vedtakType,
-                request.soknadType
+                request.soknadType,
             ) || it.soknadFra.contains(request.soknadFra)
         }?.find {
             (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
@@ -178,18 +197,19 @@ class DokumentValgService(
             objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             val inputstream = ClassPathResource("files/dokument_valg.json").inputStream
             val text = String(inputstream.readAllBytes(), StandardCharsets.UTF_8)
-            val listType: JavaType = objectMapper.typeFactory.constructParametricType(
-                MutableList::class.java,
-                DokumentBehandlingDetaljer::class.java
-            )
+            val listType: JavaType =
+                objectMapper.typeFactory.constructParametricType(
+                    MutableList::class.java,
+                    DokumentBehandlingDetaljer::class.java,
+                )
             val stringType = objectMapper.typeFactory.constructType(String::class.java)
             objectMapper.readValue(
                 text,
                 objectMapper.typeFactory.constructMapType(
                     MutableMap::class.java,
                     stringType,
-                    listType
-                )
+                    listType,
+                ),
             )
         } catch (e: IOException) {
             throw RuntimeException("Kunne ikke laste fil", e)
@@ -202,18 +222,19 @@ class DokumentValgService(
             objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             val inputstream = ClassPathResource("files/dokument_valg_tittel.json").inputStream
             val text = String(inputstream.readAllBytes(), StandardCharsets.UTF_8)
-            val listType: JavaType = objectMapper.typeFactory.constructParametricType(
-                MutableList::class.java,
-                DokumentBehandlingTittelDetaljer::class.java
-            )
+            val listType: JavaType =
+                objectMapper.typeFactory.constructParametricType(
+                    MutableList::class.java,
+                    DokumentBehandlingTittelDetaljer::class.java,
+                )
             val stringType = objectMapper.typeFactory.constructType(String::class.java)
             objectMapper.readValue(
                 text,
                 objectMapper.typeFactory.constructMapType(
                     MutableMap::class.java,
                     stringType,
-                    listType
-                )
+                    listType,
+                ),
             )
         } catch (e: IOException) {
             throw RuntimeException("Kunne ikke laste fil", e)

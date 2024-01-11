@@ -5,5 +5,5 @@ enum class DokumentArkivSystem {
     MIDLERTIDLIG_BREVLAGER,
     UKJENT,
     BIDRAG,
-    FORSENDELSE // Dokumentet er en symlink til et dokument i en annen forsendelse
+    FORSENDELSE, // Dokumentet er en symlink til et dokument i en annen forsendelse
 }

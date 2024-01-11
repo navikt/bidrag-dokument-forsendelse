@@ -20,24 +20,23 @@ import org.springframework.web.bind.annotation.RequestParam
 @ForsendelseApiKontroller
 @Timed
 class ForsendelseJournalKontroller(
-    val forsendelseInnsynService: ForsendelseInnsynService
+    val forsendelseInnsynService: ForsendelseInnsynService,
 ) {
-
     @GetMapping("/journal/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")
-        ]
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid"),
+        ],
     )
     fun hentForsendelse(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @Parameter(
             name = "saksnummer",
-            description = "journalposten tilhører sak"
+            description = "journalposten tilhører sak",
         )
         @RequestParam(required = false)
-        saksnummer: String?
+        saksnummer: String?,
     ): JournalpostResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return forsendelseInnsynService.hentForsendelseJournal(forsendelseId, saksnummer)
@@ -45,34 +44,34 @@ class ForsendelseJournalKontroller(
 
     @GetMapping("/sak/{saksnummer}/journal")
     @Operation(
-        description = "Hent alle forsendelse som har saksnummer"
+        description = "Hent alle forsendelse som har saksnummer",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet."
-            )
-        ]
+                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet.",
+            ),
+        ],
     )
     fun hentJournal(
         @PathVariable saksnummer: String,
-        @RequestParam(name = "fagomrade") temaListe: List<JournalTema> = emptyList()
+        @RequestParam(name = "fagomrade") temaListe: List<JournalTema> = emptyList(),
     ): List<JournalpostDto> {
         return forsendelseInnsynService.hentForsendelseForSakJournal(saksnummer, temaListe)
     }
 
     @GetMapping("/journal/ikkedistribuert")
     @Operation(
-        description = "Hent alle forsendelse som er opprettet før dagens dato og ikke er distribuert"
+        description = "Hent alle forsendelse som er opprettet før dagens dato og ikke er distribuert",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser funnet."
-            )
-        ]
+                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser funnet.",
+            ),
+        ],
     )
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
         return forsendelseInnsynService.hentForsendelserIkkeDistribuert()

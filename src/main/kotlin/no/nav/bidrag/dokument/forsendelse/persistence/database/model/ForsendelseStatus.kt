@@ -7,5 +7,5 @@ enum class ForsendelseStatus {
     AVBRUTT,
     SLETTET,
     DISTRIBUERT,
-    DISTRIBUERT_LOKALT
+    DISTRIBUERT_LOKALT,
 }

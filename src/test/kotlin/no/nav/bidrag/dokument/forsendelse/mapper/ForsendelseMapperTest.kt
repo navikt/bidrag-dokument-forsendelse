@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 class ForsendelseMapperTest {
-
     @Test
     fun `Skal mappe forsendelse med flere dokumenter`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
@@ -26,43 +25,47 @@ class ForsendelseMapperTest {
         val dokumentId1 = 1L
         val dokumentId2 = 2L
         val dokumentId3 = 3L
-        val forsendelse = opprettForsendelse2(
-            dokumenter = listOf(
-                nyttDokument(
-                    journalpostId = null,
-                    dokumentreferanseOriginal = null,
-                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                    rekkefølgeIndeks = 1,
-                    dokumentDato = dokumentDato
-                ).copy(dokumentId = dokumentId1),
-                nyttDokument(
-                    dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                    dokumentreferanseOriginal = "123213123",
-                    journalpostId = "123123213123",
-                    arkivsystem = DokumentArkivSystem.JOARK,
-                    rekkefølgeIndeks = 0,
-                    dokumentDato = dokumentDato
-                ).copy(dokumentId = dokumentId2),
-                nyttDokument(
-                    journalpostId = origForsendelseId,
-                    dokumentreferanseOriginal = originalDokumentReferanse,
-                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                    arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                    dokumentDato = dokumentDato,
-                    dokumentMalId = DOKUMENTMAL_UTGÅENDE,
-                    rekkefølgeIndeks = 2
-                ).copy(dokumentId = dokumentId3)
+        val forsendelse =
+            opprettForsendelse2(
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            journalpostId = null,
+                            dokumentreferanseOriginal = null,
+                            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                            rekkefølgeIndeks = 1,
+                            dokumentDato = dokumentDato,
+                        ).copy(dokumentId = dokumentId1),
+                        nyttDokument(
+                            dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                            dokumentreferanseOriginal = "123213123",
+                            journalpostId = "123123213123",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            rekkefølgeIndeks = 0,
+                            dokumentDato = dokumentDato,
+                        ).copy(dokumentId = dokumentId2),
+                        nyttDokument(
+                            journalpostId = origForsendelseId,
+                            dokumentreferanseOriginal = originalDokumentReferanse,
+                            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                            arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                            dokumentDato = dokumentDato,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                            rekkefølgeIndeks = 2,
+                        ).copy(dokumentId = dokumentId3),
+                    ),
             )
-        )
 
-        val dokumentMetadata = mapOf(
-            "BIF$dokumentId2" to run {
-                val metadata = DokumentDtoMetadata()
-                metadata.oppdaterOriginalJournalpostId("orig_jp_123")
-                metadata.oppdaterOriginalDokumentreferanse("orig_dokref_123")
-                metadata
-            }
-        )
+        val dokumentMetadata =
+            mapOf(
+                "BIF$dokumentId2" to
+                    run {
+                        val metadata = DokumentDtoMetadata()
+                        metadata.oppdaterOriginalJournalpostId("orig_jp_123")
+                        metadata.oppdaterOriginalDokumentreferanse("orig_dokref_123")
+                        metadata
+                    },
+            )
         val forsendelseRespons = forsendelse.tilForsendelseRespons(dokumentMetadata)
         assertSoftly("Skal validere dokument 2 i forsendelse") {
             val dokumenter = forsendelseRespons.dokumenter
@@ -116,9 +119,10 @@ class ForsendelseMapperTest {
     @Test
     @Disabled("Tittel på forsendelse skal alltid være lik hoveddokument")
     fun `Skal mappe forsendelse med forsendelse tittel`() {
-        val forsendelse = opprettForsendelse2(
-            tittel = "Forsendelse tittel"
-        )
+        val forsendelse =
+            opprettForsendelse2(
+                tittel = "Forsendelse tittel",
+            )
 
         val forsendelseRespons = forsendelse.tilForsendelseRespons()
         forsendelseRespons.tittel shouldBe "Forsendelse tittel"
@@ -129,19 +133,21 @@ class ForsendelseMapperTest {
 
     @Test
     fun `Skal mappe forsendelse med hoveddokument tittel hvis forsendelse ikke har tittel`() {
-        val forsendelse = opprettForsendelse2(
-            tittel = null,
-            dokumenter = listOf(
-                nyttDokument(
-                    tittel = "Hoveddokument tittel",
-                    rekkefølgeIndeks = 0
-                ),
-                nyttDokument(
-                    tittel = "Vedlegg 1 tittel",
-                    rekkefølgeIndeks = 1
-                )
+        val forsendelse =
+            opprettForsendelse2(
+                tittel = null,
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            tittel = "Hoveddokument tittel",
+                            rekkefølgeIndeks = 0,
+                        ),
+                        nyttDokument(
+                            tittel = "Vedlegg 1 tittel",
+                            rekkefølgeIndeks = 1,
+                        ),
+                    ),
             )
-        )
 
         val forsendelseRespons = forsendelse.tilForsendelseRespons()
         forsendelseRespons.tittel shouldBe "Hoveddokument tittel"
@@ -153,10 +159,11 @@ class ForsendelseMapperTest {
     @Test
     @Disabled("Tittel skal være null")
     fun `Skal mappe forsendelse med standard tittel hvis det er ingen dokumenter`() {
-        val forsendelse = opprettForsendelse2(
-            tittel = null,
-            dokumenter = emptyList()
-        ).copy(forsendelseId = 100L)
+        val forsendelse =
+            opprettForsendelse2(
+                tittel = null,
+                dokumenter = emptyList(),
+            ).copy(forsendelseId = 100L)
 
         val forsendelseRespons = forsendelse.tilForsendelseRespons()
         forsendelseRespons.tittel shouldBe "Forsendelse 100"
@@ -167,10 +174,11 @@ class ForsendelseMapperTest {
 
     @Test
     fun `Skal mappe forsendelse til null hvis det er ingen dokumenter`() {
-        val forsendelse = opprettForsendelse2(
-            tittel = null,
-            dokumenter = emptyList()
-        ).copy(forsendelseId = 100L)
+        val forsendelse =
+            opprettForsendelse2(
+                tittel = null,
+                dokumenter = emptyList(),
+            ).copy(forsendelseId = 100L)
 
         val forsendelseRespons = forsendelse.tilForsendelseRespons()
         forsendelseRespons.tittel shouldBe null
@@ -181,28 +189,30 @@ class ForsendelseMapperTest {
 
     @Test
     fun `Skal mappe forsendelse med dokumenter i riktig rekkefølge og uten slettet dokumenter`() {
-        val forsendelse = opprettForsendelse2(
-            tittel = null,
-            dokumenter = listOf(
-                nyttDokument(
-                    tittel = "Hoveddokument tittel",
-                    rekkefølgeIndeks = 0
-                ).copy(dokumentId = 1L),
-                nyttDokument(
-                    tittel = "Vedlegg 2 tittel",
-                    rekkefølgeIndeks = 2
-                ).copy(dokumentId = 2L),
-                nyttDokument(
-                    tittel = "Vedlegg 1 tittel",
-                    rekkefølgeIndeks = 1
-                ).copy(dokumentId = 3L),
-                nyttDokument(
-                    tittel = "Vedlegg 3 slettet",
-                    rekkefølgeIndeks = 1,
-                    slettet = true
-                ).copy(dokumentId = 4L)
-            )
-        ).copy(forsendelseId = 100L)
+        val forsendelse =
+            opprettForsendelse2(
+                tittel = null,
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            tittel = "Hoveddokument tittel",
+                            rekkefølgeIndeks = 0,
+                        ).copy(dokumentId = 1L),
+                        nyttDokument(
+                            tittel = "Vedlegg 2 tittel",
+                            rekkefølgeIndeks = 2,
+                        ).copy(dokumentId = 2L),
+                        nyttDokument(
+                            tittel = "Vedlegg 1 tittel",
+                            rekkefølgeIndeks = 1,
+                        ).copy(dokumentId = 3L),
+                        nyttDokument(
+                            tittel = "Vedlegg 3 slettet",
+                            rekkefølgeIndeks = 1,
+                            slettet = true,
+                        ).copy(dokumentId = 4L),
+                    ),
+            ).copy(forsendelseId = 100L)
 
         val forsendelseRespons = forsendelse.tilForsendelseRespons()
 

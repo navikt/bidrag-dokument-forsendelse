@@ -17,10 +17,15 @@ private val LOGGER = KotlinLogging.logger {}
 
 @Component
 @Aspect
+@Suppress("ktlint:standard:max-line-length")
 class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
-
-    @Before(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter.prossesserDokumentHendelse(..)) && args(hendelse)")
-    fun leggSporingFraDokumentHendelseTilMDC(joinPoint: JoinPoint, hendelse: ConsumerRecord<String, String>) {
+    @Before(
+        value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter.prossesserDokumentHendelse(..)) && args(hendelse)",
+    )
+    fun leggSporingFraDokumentHendelseTilMDC(
+        joinPoint: JoinPoint,
+        hendelse: ConsumerRecord<String, String>,
+    ) {
         hentSporingFraHendelse(hendelse)?.let {
             val correlationId = CorrelationId.existing(it)
             MDC.put(CORRELATION_ID_HEADER, correlationId.get())

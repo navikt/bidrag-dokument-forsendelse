@@ -20,15 +20,15 @@ import java.net.URI
 @Service
 class BidragSakConsumer(
     @Value("\${BIDRAG_SAK_URL}") val url: URI,
-    @Qualifier("azure") private val restTemplate: RestOperations
+    @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-sak") {
-
     companion object {
         private val LOGGER = LoggerFactory.getLogger(BidragSakConsumer::class.java)
     }
 
-    private fun createUri(path: String?) = UriComponentsBuilder.fromUri(url)
-        .path(path ?: "").build().toUri()
+    private fun createUri(path: String?) =
+        UriComponentsBuilder.fromUri(url)
+            .path(path ?: "").build().toUri()
 
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @Cacheable(CacheConfig.SAK_CACHE)

@@ -30,7 +30,6 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 class DokumentHendelseTest : KafkaHendelseTestRunner() {
-
     @SpykBean
     private lateinit var dokumentTjeneste: DokumentTjeneste
 
@@ -44,19 +43,21 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
     @Test
     fun `Skal oppdatere status på dokument til UNDER_REDIGERING og lagre produsert tidspunkt ved mottatt hendelse`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                            ),
+                        ),
+                ),
             )
-        )
         val dokument = forsendelse.dokumenter[0]
         val hendelse = opprettHendelse(dokument.dokumentreferanse, status = DokumentStatusDto.UNDER_REDIGERING)
         sendMeldingTilDokumentHendelse(hendelse)
@@ -74,32 +75,36 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
     @Test
     fun `Skal oppdatere status på alle dokumenter til FERDIGSTILT ved mottatt hendelse`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT
-                    )
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokumentreferanse = forsendelse1.dokumenter[0].dokumentreferanse
-        val forsendelseMedLenketDokument = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = forsendelse1.forsendelseId.toString(),
-                        dokumentreferanseOriginal = dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE
-                    )
-                )
+        val forsendelseMedLenketDokument =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = forsendelse1.forsendelseId.toString(),
+                                dokumentreferanseOriginal = dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                            ),
+                        ),
+                ),
             )
-        )
         val hendelse = opprettHendelse(dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelse)
 
@@ -132,32 +137,36 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
     @Test
     fun `Skal oppdatere arkivsystem på dokumenter ved mottatt hendelse`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.UKJENT
-                    )
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                            ),
+                        ),
+                ),
             )
-        )
 
         val dokumentreferanse = forsendelse1.dokumenter[0].dokumentreferanse
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = forsendelse1.forsendelseId.toString(),
-                        dokumentreferanseOriginal = dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 2",
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = forsendelse1.forsendelseId.toString(),
+                                dokumentreferanseOriginal = dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 2",
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                            ),
+                        ),
+                ),
             )
-        )
         val hendelse = opprettHendelse(dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelse)
 
@@ -178,24 +187,25 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
     @Test
     fun `Skal sende journalpost hendelse når alle dokumenter i forsendelse er ferdigstilt`() {
-        val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "DOK1",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                rekkefølgeIndeks = 0,
-                dokumentreferanseOriginal = null,
-                journalpostId = null
-            )
-            +nyttDokument(
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "DOK2",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                rekkefølgeIndeks = 1,
-                dokumentreferanseOriginal = null,
-                journalpostId = null
-            )
-        }
+        val forsendelse1 =
+            testDataManager.opprettOgLagreForsendelse {
+                +nyttDokument(
+                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                    tittel = "DOK1",
+                    arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                    rekkefølgeIndeks = 0,
+                    dokumentreferanseOriginal = null,
+                    journalpostId = null,
+                )
+                +nyttDokument(
+                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                    tittel = "DOK2",
+                    arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                    rekkefølgeIndeks = 1,
+                    dokumentreferanseOriginal = null,
+                    journalpostId = null,
+                )
+            }
         val hendelseDok1 = opprettHendelse(forsendelse1.dokumenter[0].dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelseDok1)
 
@@ -226,24 +236,25 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
 
     @Test
     fun `Skal ikke sende journalpost hendelse når ikke alle dokumenter i forsendelse er ferdigstilt`() {
-        val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "DOK1",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                rekkefølgeIndeks = 0,
-                dokumentreferanseOriginal = null,
-                journalpostId = null
-            )
-            +nyttDokument(
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "DOK2",
-                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                rekkefølgeIndeks = 1,
-                dokumentreferanseOriginal = null,
-                journalpostId = null
-            )
-        }
+        val forsendelse1 =
+            testDataManager.opprettOgLagreForsendelse {
+                +nyttDokument(
+                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                    tittel = "DOK1",
+                    arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                    rekkefølgeIndeks = 0,
+                    dokumentreferanseOriginal = null,
+                    journalpostId = null,
+                )
+                +nyttDokument(
+                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                    tittel = "DOK2",
+                    arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                    rekkefølgeIndeks = 1,
+                    dokumentreferanseOriginal = null,
+                    journalpostId = null,
+                )
+            }
         val hendelseDok1 = opprettHendelse(forsendelse1.dokumenter[0].dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelseDok1)
 
@@ -277,21 +288,23 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
         val nyJournalpostId = "1331234412321"
         stubUtils.stubHentDokument()
         stubUtils.stubOpprettJournalpost(nyJournalpostId)
-        val forsendelseNotat = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                erNotat = true,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "Forsendelse notat",
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
-                        dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03")
-                    )
-                )
+        val forsendelseNotat =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    erNotat = true,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "Forsendelse notat",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
 
         val hendelse = opprettHendelse(forsendelseNotat.dokumenter[0].dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
         sendMeldingTilDokumentHendelse(hendelse)
@@ -318,7 +331,7 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
                     "\"referanseId\":\"$referanseId\"," +
                     "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
                     "\"saksbehandlerIdent\":\"Z999444\"" +
-                    "}"
+                    "}",
             )
         }
     }

@@ -46,11 +46,12 @@ class ForsendelseTittelServiceTest {
 
     @BeforeEach
     fun init() {
-        forsendelseTittelService = ForsendelseTittelService(
-            sakService,
-            vedtakConsumer,
-            behandlingConsumer
-        )
+        forsendelseTittelService =
+            ForsendelseTittelService(
+                sakService,
+                vedtakConsumer,
+                behandlingConsumer,
+            )
         every { sakService.hentSak(any()) } returns opprettSak()
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
@@ -58,130 +59,144 @@ class ForsendelseTittelServiceTest {
 
     @Test
     fun `Skal opprette forsendelse tittel for vedtak om bidrag`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.BIDRAG,
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.BIDRAG,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om barnebidrag til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for vedtak om bidrag for type klage`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.BIDRAG,
-                    vedtakType = Vedtakstype.KLAGE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.BIDRAG,
+                            vedtakType = Vedtakstype.KLAGE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Klagevedtak om barnebidrag til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for refusjon bidrag`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BP,
-                behandlingInfo = BehandlingInfoDto(
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSPLIKTIG,
-                    behandlingType = "REFUSJON_BIDRAG",
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BP,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                            behandlingType = "REFUSJON_BIDRAG",
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om refusjon bidrag til bidragspliktig"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for reisekostnader`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    behandlingType = "REISEKOSTNADER",
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            behandlingType = "REISEKOSTNADER",
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om reisekostnader til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for vedtak om bidrag til bidragspliktig`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BP,
-                behandlingInfo = BehandlingInfoDto(
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.BIDRAG,
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BP,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.BIDRAG,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om barnebidrag til bidragspliktig"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for vedtak om bidrag til barn`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BA,
-                behandlingInfo = BehandlingInfoDto(
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.BIDRAG,
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BA,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.BIDRAG,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om barnebidrag til barn"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for behandlingtype`() {
-        val forsendelse = opprettForsendelse2(
-            gjelderIdent = GJELDER_IDENT_BM,
-            behandlingInfo = BehandlingInfo(
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                erFattetBeregnet = true,
-                stonadType = null,
-                behandlingType = "AVSKRIVNING",
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val forsendelse =
+            opprettForsendelse2(
+                gjelderIdent = GJELDER_IDENT_BM,
+                behandlingInfo =
+                    BehandlingInfo(
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        erFattetBeregnet = true,
+                        stonadType = null,
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         val tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse)
 
         tittel shouldBe "Vedtak om avskrivning til bidragsmottaker"
@@ -189,88 +204,100 @@ class ForsendelseTittelServiceTest {
 
     @Test
     fun `Skal opprette forsendelse tittel for varsling av bidrag`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    erFattetBeregnet = null,
-                    stonadType = null,
-                    behandlingType = Stønadstype.BIDRAG.name,
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            erFattetBeregnet = null,
+                            stonadType = null,
+                            behandlingType = Stønadstype.BIDRAG.name,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Orientering/Varsel om bidrag til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for varsling av bidrag for klage`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    erFattetBeregnet = null,
-                    stonadType = null,
-                    behandlingType = Stønadstype.BIDRAG.name,
-                    vedtakType = Vedtakstype.KLAGE
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            erFattetBeregnet = null,
+                            stonadType = null,
+                            behandlingType = Stønadstype.BIDRAG.name,
+                            vedtakType = Vedtakstype.KLAGE,
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Orientering/Varsel om klage på vedtak om bidrag til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for vedtak av bidrag 18 år fra vedtakid`() {
-        every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto().copy(
-            type = Vedtakstype.FASTSETTELSE,
-            stønadsendringListe = listOf(
-                opprettStonadsEndringDto().copy(type = Stønadstype.BIDRAG18AAR)
+        every { vedtakConsumer.hentVedtak(any()) } returns
+            opprettVedtakDto().copy(
+                type = Vedtakstype.FASTSETTELSE,
+                stønadsendringListe =
+                    listOf(
+                        opprettStonadsEndringDto().copy(type = Stønadstype.BIDRAG18AAR),
+                    ),
             )
-        )
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    vedtakId = "123213"
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            vedtakId = "123213",
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om barnebidrag 18 år til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette forsendelse tittel for vedtak særtilskudd fra vedtakid`() {
-        every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto().copy(
-            type = Vedtakstype.FASTSETTELSE,
-            stønadsendringListe = emptyList(),
-            engangsbeløpListe = listOf(
-                opprettEngangsbelopDto().copy(type = Engangsbeløptype.SAERTILSKUDD)
+        every { vedtakConsumer.hentVedtak(any()) } returns
+            opprettVedtakDto().copy(
+                type = Vedtakstype.FASTSETTELSE,
+                stønadsendringListe = emptyList(),
+                engangsbeløpListe =
+                    listOf(
+                        opprettEngangsbelopDto().copy(type = Engangsbeløptype.SAERTILSKUDD),
+                    ),
             )
-        )
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    vedtakId = "123213",
-                    behandlingId = "123123213"
-                )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            vedtakId = "123213",
+                            behandlingId = "123123213",
+                        ),
+                ),
             )
-        )
 
         tittel shouldBe "Vedtak om særtilskudd til bidragsmottaker"
         verify(exactly = 0) { behandlingConsumer.hentBehandling(any()) }
@@ -278,75 +305,85 @@ class ForsendelseTittelServiceTest {
 
     @Test
     fun `Skal opprette behandling tittel for varsling av bidrag 18 år fra vedtakid`() {
-        every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingtype = Stønadstype.EKTEFELLEBIDRAG.name
-        )
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    behandlingId = "123213"
-                )
+        every { behandlingConsumer.hentBehandling(any()) } returns
+            opprettBehandlingDto().copy(
+                behandlingtype = Stønadstype.EKTEFELLEBIDRAG.name,
             )
-        )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            behandlingId = "123213",
+                        ),
+                ),
+            )
 
         tittel shouldBe "Orientering/Varsel om ektefellebidrag til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette tittel uten behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
-        every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingtype = "NOT_EXISTING"
-        )
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    behandlingId = "123213"
-                )
+        every { behandlingConsumer.hentBehandling(any()) } returns
+            opprettBehandlingDto().copy(
+                behandlingtype = "NOT_EXISTING",
             )
-        )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            behandlingId = "123213",
+                        ),
+                ),
+            )
 
         tittel shouldBe "Orientering/Varsel til bidragsmottaker"
     }
 
     @Test
     fun `Skal opprette tittel fra forespørsel behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
-        every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto().copy(
-            behandlingtype = "NOT_EXISTING"
-        )
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = BehandlingInfoDto(
-                    behandlingType = Stønadstype.FORSKUDD.name,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    behandlingId = "123213"
-                )
+        every { behandlingConsumer.hentBehandling(any()) } returns
+            opprettBehandlingDto().copy(
+                behandlingtype = "NOT_EXISTING",
             )
-        )
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            behandlingType = Stønadstype.FORSKUDD.name,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            behandlingId = "123213",
+                        ),
+                ),
+            )
 
         tittel shouldBe "Orientering/Varsel om forskudd til bidragsmottaker"
     }
 
     @Test
     fun `Skal ikke opprette forsendelse tittel hvis mangler behandlingInfo`() {
-        val tittel = forsendelseTittelService.opprettForsendelseTittel(
-            OpprettForsendelseForespørsel(
-                enhet = "",
-                saksnummer = "",
-                gjelderIdent = GJELDER_IDENT_BM,
-                behandlingInfo = null
+        val tittel =
+            forsendelseTittelService.opprettForsendelseTittel(
+                OpprettForsendelseForespørsel(
+                    enhet = "",
+                    saksnummer = "",
+                    gjelderIdent = GJELDER_IDENT_BM,
+                    behandlingInfo = null,
+                ),
             )
-        )
 
         tittel shouldBe null
     }

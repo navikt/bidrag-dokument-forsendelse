@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class TestDataManager(val forsendelseRepository: ForsendelseRepository, val dokumentRepository: DokumentRepository) {
-
     @Transactional
     fun hentForsendelse(forsendelseId: Long): Forsendelse? {
         return forsendelseRepository.findById(forsendelseId).get()

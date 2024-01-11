@@ -28,21 +28,26 @@ import no.nav.bidrag.transport.person.PersonDto
 import java.time.LocalDateTime
 
 object ForespørselMapper {
-    fun JournalTema.toForsendelseTema() = when (this) {
-        JournalTema.FAR -> ForsendelseTema.FAR
-        else -> ForsendelseTema.BID
-    }
+    fun JournalTema.toForsendelseTema() =
+        when (this) {
+            JournalTema.FAR -> ForsendelseTema.FAR
+            else -> ForsendelseTema.BID
+        }
 
-    fun MottakerTo.tilMottakerDo(person: PersonDto?, språk: String) = Mottaker(
+    fun MottakerTo.tilMottakerDo(
+        person: PersonDto?,
+        språk: String,
+    ) = Mottaker(
         navn = this.navn ?: person?.visningsnavn,
         ident = this.ident,
         språk = språk.uppercase(),
-        identType = when (this.identType) {
-            MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
-            MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
-            else -> this.ident?.tilIdentType()
-        },
-        adresse = this.adresse?.tilAdresseDo()
+        identType =
+            when (this.identType) {
+                MottakerIdentTypeTo.FNR -> MottakerIdentType.FNR
+                MottakerIdentTypeTo.SAMHANDLER -> MottakerIdentType.SAMHANDLER
+                else -> this.ident?.tilIdentType()
+            },
+        adresse = this.adresse?.tilAdresseDo(),
     )
 
     fun PersonIdent.tilIdentType() =
@@ -52,16 +57,17 @@ object ForespørselMapper {
             MottakerIdentType.FNR
         }
 
-    fun MottakerAdresseTo.tilAdresseDo() = Adresse(
-        adresselinje1 = this.adresselinje1,
-        adresselinje2 = this.adresselinje2,
-        adresselinje3 = this.adresselinje3,
-        bruksenhetsnummer = this.bruksenhetsnummer,
-        landkode = this.landkode ?: alpha3LandkodeTilAlpha2(this.landkode3),
-        landkode3 = this.landkode3,
-        postnummer = this.postnummer,
-        poststed = this.poststed ?: hentNorskPoststed(this.postnummer, this.landkode ?: this.landkode3)
-    )
+    fun MottakerAdresseTo.tilAdresseDo() =
+        Adresse(
+            adresselinje1 = this.adresselinje1,
+            adresselinje2 = this.adresselinje2,
+            adresselinje3 = this.adresselinje3,
+            bruksenhetsnummer = this.bruksenhetsnummer,
+            landkode = this.landkode ?: alpha3LandkodeTilAlpha2(this.landkode3),
+            landkode3 = this.landkode3,
+            postnummer = this.postnummer,
+            poststed = this.poststed ?: hentNorskPoststed(this.postnummer, this.landkode ?: this.landkode3),
+        )
 
     fun JournalpostId.tilArkivSystemDo() = this.arkivsystem?.let { DokumentArkivSystem.valueOf(it.name) }
 
@@ -69,22 +75,31 @@ object ForespørselMapper {
         if (this.journalpostId?.erForsendelse == true) {
             DokumentArkivSystem.FORSENDELSE
         } else {
-            this.arkivsystem?.let { DokumentArkivSystem.valueOf(it.name) } ?: this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
+            this.arkivsystem?.let {
+                DokumentArkivSystem.valueOf(
+                    it.name,
+                )
+            } ?: this.journalpostId?.tilArkivSystemDo() ?: DokumentArkivSystem.UKJENT
         }
 
     fun OpprettDokumentForespørsel.erBestillingAvNyttDokument() =
         this.journalpostId.isNullOrEmpty() && this.dokumentreferanse.isNullOrEmpty() && this.dokumentmalId.isNotNullOrEmpty()
 
     fun OpprettDokumentForespørsel.erFraAnnenKilde() = !(dokumentreferanse == null && journalpostId == null)
-    fun OpprettDokumentForespørsel.tilDokumentStatusDo() = if (bestillDokument && this.erBestillingAvNyttDokument()) {
-        DokumentStatus.IKKE_BESTILT
-    } else if (this.erBestillingAvNyttDokument()) {
-        DokumentStatus.UNDER_PRODUKSJON
-    } else {
-        DokumentStatus.MÅ_KONTROLLERES
-    }
 
-    fun OpprettDokumentForespørsel.tilDokumentDo(forsendelse: Forsendelse, indeks: Int) = Dokument(
+    fun OpprettDokumentForespørsel.tilDokumentStatusDo() =
+        if (bestillDokument && this.erBestillingAvNyttDokument()) {
+            DokumentStatus.IKKE_BESTILT
+        } else if (this.erBestillingAvNyttDokument()) {
+            DokumentStatus.UNDER_PRODUKSJON
+        } else {
+            DokumentStatus.MÅ_KONTROLLERES
+        }
+
+    fun OpprettDokumentForespørsel.tilDokumentDo(
+        forsendelse: Forsendelse,
+        indeks: Int,
+    ) = Dokument(
         forsendelse = forsendelse,
         tittel = this.tittel.fjernKontrollTegn(),
         språk = this.språk ?: forsendelse.språk,
@@ -94,7 +109,7 @@ object ForespørselMapper {
         dokumentDato = this.dokumentDato ?: LocalDateTime.now(),
         journalpostIdOriginal = this.journalpostId?.utenPrefiks,
         dokumentmalId = this.dokumentmalId,
-        rekkefølgeIndeks = indeks
+        rekkefølgeIndeks = indeks,
     )
 
     fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel() =
@@ -105,6 +120,6 @@ object ForespørselMapper {
             språk = språk,
             journalpostId = journalpostId,
             dokumentDato = dokumentDato,
-            arkivsystem = this.arkivsystem
+            arkivsystem = this.arkivsystem,
         )
 }

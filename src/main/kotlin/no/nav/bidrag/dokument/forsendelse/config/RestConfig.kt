@@ -24,8 +24,9 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 @Configuration
 @EnableSecurityConfiguration
 @Import(RestOperationsAzure::class)
-class RestConfig(@Value("\${KODEVERK_URL}") kodeverkUrl: String) {
-
+class RestConfig(
+    @Value("\${KODEVERK_URL}") kodeverkUrl: String,
+) {
     init {
         KodeverkProvider.initialiser(kodeverkUrl)
     }
@@ -42,7 +43,7 @@ class RestConfig(@Value("\${KODEVERK_URL}") kodeverkUrl: String) {
     @Scope("prototype")
     fun restOperationsJwtBearerNoBuffer(
         restTemplateBuilder: RestTemplateBuilder,
-        bearerTokenClientInterceptor: BearerTokenClientInterceptor
+        bearerTokenClientInterceptor: BearerTokenClientInterceptor,
     ) = restTemplateBuilder
         .requestFactory { _ ->
             val sc = SocketConfig.custom().setSoTimeout(Timeout.ofMinutes(5)).build()

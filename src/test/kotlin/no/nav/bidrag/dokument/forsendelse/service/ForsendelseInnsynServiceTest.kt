@@ -11,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 class ForsendelseInnsynServiceTest {
-
     @MockkBean
     lateinit var forsendelseTjeneste: ForsendelseTjeneste
 
@@ -30,13 +29,14 @@ class ForsendelseInnsynServiceTest {
 
     @BeforeEach
     fun init() {
-        forsendelseInnsynService = ForsendelseInnsynService(
-            forsendelseTjeneste,
-            tilgangskontrollService,
-            dokumentValgService,
-            dokumentTjeneste,
-            forsendelseTittelService
-        )
+        forsendelseInnsynService =
+            ForsendelseInnsynService(
+                forsendelseTjeneste,
+                tilgangskontrollService,
+                dokumentValgService,
+                dokumentTjeneste,
+                forsendelseTittelService,
+            )
         every { tilgangskontrollService.sjekkTilgangForsendelse(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangPerson(any()) } returns Unit

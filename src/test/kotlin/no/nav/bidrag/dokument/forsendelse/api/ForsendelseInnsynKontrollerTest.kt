@@ -49,44 +49,48 @@ import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.JournalpostDto
 import org.junit.jupiter.api.Test
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
-
     @Test
     fun `Skal hente forsendelse`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                mottaker = Mottaker(
-                    ident = MOTTAKER_IDENT,
-                    navn = MOTTAKER_NAVN,
-                    adresse = opprettAdresseDo()
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    mottaker =
+                        Mottaker(
+                            ident = MOTTAKER_IDENT,
+                            navn = MOTTAKER_NAVN,
+                            adresse = opprettAdresseDo(),
+                        ),
+                    tittel = "Forsendelse tittel",
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "Tittel dokument under redigering",
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                                dokumentDato = dokumentDato,
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                            ),
+                            nyttDokument(
+                                journalpostId = "12312355555",
+                                dokumentreferanseOriginal = "123123213",
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                tittel = "Dokument må kontrolleres",
+                                dokumentDato = dokumentDato,
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                            ),
+                        ),
                 ),
-                tittel = "Forsendelse tittel",
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "Tittel dokument under redigering",
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
-                        dokumentDato = dokumentDato,
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                    ),
-                    nyttDokument(
-                        journalpostId = "12312355555",
-                        dokumentreferanseOriginal = "123123213",
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        tittel = "Dokument må kontrolleres",
-                        dokumentDato = dokumentDato,
-                        arkivsystem = DokumentArkivSystem.JOARK
-                    )
-                )
             )
-        )
         val response = utførHentForsendelse(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -149,34 +153,38 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
         val vedtakId = "565656"
         val behandlingId = "343434"
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                mottaker = Mottaker(
-                    ident = MOTTAKER_IDENT,
-                    navn = MOTTAKER_NAVN,
-                    adresse = opprettAdresseDo()
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    mottaker =
+                        Mottaker(
+                            ident = MOTTAKER_IDENT,
+                            navn = MOTTAKER_NAVN,
+                            adresse = opprettAdresseDo(),
+                        ),
+                    tittel = "Forsendelse tittel",
+                    behandlingInfo =
+                        BehandlingInfo(
+                            vedtakId = vedtakId,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            soknadId = soknadId,
+                            behandlingId = behandlingId,
+                            stonadType = Stønadstype.BIDRAG,
+                        ),
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "Tittel dokument under redigering",
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE,
+                                dokumentDato = dokumentDato,
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                            ),
+                        ),
                 ),
-                tittel = "Forsendelse tittel",
-                behandlingInfo = BehandlingInfo(
-                    vedtakId = vedtakId,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    soknadId = soknadId,
-                    behandlingId = behandlingId,
-                    stonadType = Stønadstype.BIDRAG
-                ),
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "Tittel dokument under redigering",
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE,
-                        dokumentDato = dokumentDato,
-                        arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-                    )
-                )
             )
-        )
         val response = utførHentForsendelse(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -198,45 +206,49 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     fun `Skal hente forsendelse med lenket dokumenter`() {
         val dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
 
-        val originalForsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val originalForsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
         val originalDokument = originalForsendelse.dokumenter[0]
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
-                        dokumentreferanseOriginal = "123213123",
-                        journalpostId = "123123213123",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentDato = dokumentDato
-                    ),
-                    nyttDokument(
-                        journalpostId = originalForsendelse.forsendelseId.toString(),
-                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = dokumentDato
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                                dokumentreferanseOriginal = "123213123",
+                                journalpostId = "123123213123",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentDato = dokumentDato,
+                            ),
+                            nyttDokument(
+                                journalpostId = originalForsendelse.forsendelseId.toString(),
+                                dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = dokumentDato,
+                            ),
+                        ),
+                ),
             )
-        )
         val response = utførHentForsendelse(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -284,16 +296,18 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelse som journalpost`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -305,11 +319,12 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             forsendelseResponse.innhold shouldBe TITTEL_HOVEDDOKUMENT
             forsendelseResponse.gjelderIdent shouldBe GJELDER_IDENT
             forsendelseResponse.gjelderAktor shouldBe AktorDto(GJELDER_IDENT)
-            forsendelseResponse.avsenderMottaker shouldBe AvsenderMottakerDto(
-                MOTTAKER_NAVN,
-                MOTTAKER_IDENT,
-                AvsenderMottakerDtoIdType.FNR
-            )
+            forsendelseResponse.avsenderMottaker shouldBe
+                AvsenderMottakerDto(
+                    MOTTAKER_NAVN,
+                    MOTTAKER_IDENT,
+                    AvsenderMottakerDtoIdType.FNR,
+                )
             forsendelseResponse.brevkode?.kode shouldBe HOVEDDOKUMENT_DOKUMENTMAL
             forsendelseResponse.journalpostId shouldBe "BIF-${forsendelse.forsendelseId}"
             forsendelseResponse.journalstatus shouldBe "D"
@@ -335,45 +350,49 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelse med dokumenter knyttet til annen forsendelse og ekstern dokumenter`() {
-        val originalForsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val originalForsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
         val originalDokument = originalForsendelse.dokumenter[0]
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentreferanseOriginal = "123213123",
-                        journalpostId = "123123213123",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
-                    nyttDokument(
-                        journalpostId = originalForsendelse.forsendelseId.toString(),
-                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentreferanseOriginal = "123213123",
+                                journalpostId = "123123213123",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                            nyttDokument(
+                                journalpostId = originalForsendelse.forsendelseId.toString(),
+                                dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -407,17 +426,19 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal hente forsendelse notat`() {
         val dokumentdato = LocalDateTime.parse("2021-01-01T01:02:03")
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                erNotat = true,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = dokumentdato
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    erNotat = true,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = dokumentdato,
+                            ),
+                        ),
+                ),
             )
-        )
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -444,9 +465,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelse med saksnummer`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString(), SAKSNUMMER)
 
         response.statusCode shouldBe HttpStatus.OK
@@ -454,9 +476,10 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal ikke hente forsendelse hvis forsendelse ikke har saksnummer i forespørsel`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString(), "13213123")
 
         response.statusCode shouldBe HttpStatus.NOT_FOUND
@@ -464,10 +487,11 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal returnere forsendelse med status F hvis forsendels er avbrutt`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            med status ForsendelseStatus.AVBRUTT
-            +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                med status ForsendelseStatus.AVBRUTT
+                +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
+            }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -478,41 +502,43 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelse med dokumenter i riktig rekkefølge`() {
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        rekkefølgeIndeks = 0,
-                        tittel = "HOVEDDOK"
-                    ),
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        rekkefølgeIndeks = 1,
-                        tittel = "VEDLEGG1"
-                    ),
-                    nyttDokument(
-                        rekkefølgeIndeks = 2,
-                        tittel = "VEDLEGG2",
-                        dokumentreferanseOriginal = "4543434"
-                    ),
-                    nyttDokument(
-                        rekkefølgeIndeks = 4,
-                        slettet = true,
-                        tittel = "VEDLEGG4",
-                        dokumentreferanseOriginal = "3231312313"
-                    ),
-                    nyttDokument(
-                        journalpostId = "BID-123123213",
-                        dokumentreferanseOriginal = "12312321333",
-                        rekkefølgeIndeks = 3,
-                        tittel = "VEDLEGG3"
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                rekkefølgeIndeks = 0,
+                                tittel = "HOVEDDOK",
+                            ),
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                rekkefølgeIndeks = 1,
+                                tittel = "VEDLEGG1",
+                            ),
+                            nyttDokument(
+                                rekkefølgeIndeks = 2,
+                                tittel = "VEDLEGG2",
+                                dokumentreferanseOriginal = "4543434",
+                            ),
+                            nyttDokument(
+                                rekkefølgeIndeks = 4,
+                                slettet = true,
+                                tittel = "VEDLEGG4",
+                                dokumentreferanseOriginal = "3231312313",
+                            ),
+                            nyttDokument(
+                                journalpostId = "BID-123123213",
+                                dokumentreferanseOriginal = "12312321333",
+                                rekkefølgeIndeks = 3,
+                                tittel = "VEDLEGG3",
+                            ),
+                        ),
+                ),
             )
-        )
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -532,15 +558,16 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Utgående forsendelse skal ha status KP hvis alle dokumenter er ferdigstilt`() {
-        val forsendelse = testDataManager.opprettOgLagreForsendelse {
-            +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
-            +nyttDokument(
-                journalpostId = null,
-                dokumentreferanseOriginal = null,
-                dokumentStatus = DokumentStatus.FERDIGSTILT,
-                tittel = TITTEL_VEDLEGG_1
-            )
-        }
+        val forsendelse =
+            testDataManager.opprettOgLagreForsendelse {
+                +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT)
+                +nyttDokument(
+                    journalpostId = null,
+                    dokumentreferanseOriginal = null,
+                    dokumentStatus = DokumentStatus.FERDIGSTILT,
+                    tittel = TITTEL_VEDLEGG_1,
+                )
+            }
         val response = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         response.statusCode shouldBe HttpStatus.OK
@@ -562,44 +589,53 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente forsendelser basert på saksnummer`() {
-        val forsendelse1 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                tittel = "Tittel på forsendelse",
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        tittel = "FORSENDELSE 1"
-                    )
-                )
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    tittel = "Tittel på forsendelse",
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "FORSENDELSE 1",
+                            ),
+                        ),
+                ),
             )
-        )
 
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                tittel = "Tittel på forsendelse 2",
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "FORSENDELSE 2"
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    tittel = "Tittel på forsendelse 2",
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                tittel = "FORSENDELSE 2",
+                            ),
+                        ),
+                ),
             )
-        )
 
         testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 saksnummer = "5435435",
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                        ),
+                    ),
+            ),
         )
 
-        val response = httpHeaderTestRestTemplate.getForEntity<List<JournalpostDto>>(
-            "${rootUri()}/sak/${forsendelse1.saksnummer}/journal?fagomrade=BID"
-        )
+        val response =
+            httpHeaderTestRestTemplate.exchange(
+                "${rootUri()}/sak/${forsendelse1.saksnummer}/journal?fagomrade=BID",
+                HttpMethod.GET,
+                null,
+                object : ParameterizedTypeReference<List<JournalpostDto>>() {},
+            )
 
         response.statusCode shouldBe HttpStatus.OK
 
@@ -622,18 +658,20 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     fun `Skal ikke hente forsendelser som er arkivert i fagarkivet (JOARK) eller har status AVBRUTT`() {
         stubUtils.stubTilgangskontrollPerson()
         val saksnummer = "3123213123213"
-        val forsendelse1 = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(
-                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                tittel = "FORSENDELSE 1"
-            )
-        }
+        val forsendelse1 =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                +nyttDokument(
+                    dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                    tittel = "FORSENDELSE 1",
+                )
+            }
 
-        val forsendelse2 = testDataManager.opprettOgLagreForsendelse {
-            med saksnummer saksnummer
-            +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
-        }
+        val forsendelse2 =
+            testDataManager.opprettOgLagreForsendelse {
+                med saksnummer saksnummer
+                +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 2")
+            }
 
         testDataManager.opprettOgLagreForsendelse {
             med arkivJournalpostId "123123213"
@@ -641,11 +679,12 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 3")
         }
 
-        val forsendelse3Avbrutt = testDataManager.opprettOgLagreForsendelse {
-            med status ForsendelseStatus.AVBRUTT
-            med saksnummer saksnummer
-            +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 4")
-        }
+        val forsendelse3Avbrutt =
+            testDataManager.opprettOgLagreForsendelse {
+                med status ForsendelseStatus.AVBRUTT
+                med saksnummer saksnummer
+                +nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, tittel = "FORSENDELSE 4")
+            }
 
         val response = utførHentJournalForSaksnummer(forsendelse1.saksnummer)
 
@@ -672,77 +711,83 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal hente forsendelser basert på saksnummer med forsendelser som har lenket dokumenter`() {
         val saksnummer = SAKSNUMMER
-        val originalForsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                saksnummer = saksnummer,
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val originalForsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    saksnummer = saksnummer,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
         val originalDokument = originalForsendelse.dokumenter[0]
-        val forsendelse2 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                saksnummer = saksnummer,
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
-                    nyttDokument(
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentreferanseOriginal = "123213123",
-                        journalpostId = "123123213123",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
-                    nyttDokument(
-                        journalpostId = originalForsendelse.forsendelseId.toString(),
-                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse2 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    saksnummer = saksnummer,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                            nyttDokument(
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentreferanseOriginal = "123213123",
+                                journalpostId = "123123213123",
+                                arkivsystem = DokumentArkivSystem.JOARK,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                            nyttDokument(
+                                journalpostId = originalForsendelse.forsendelseId.toString(),
+                                dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
 
         val originalDokumentForsendelse2 = forsendelse2.dokumenter[0]
 
-        val forsendelse3 = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                saksnummer = saksnummer,
-                dokumenter = listOf(
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
-                    nyttDokument(
-                        journalpostId = originalDokumentForsendelse2.forsendelseId.toString(),
-                        dokumentreferanseOriginal = originalDokumentForsendelse2.dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    ),
-                    nyttDokument(
-                        journalpostId = originalForsendelse.forsendelseId.toString(),
-                        dokumentreferanseOriginal = originalDokument.dokumentreferanse,
-                        dokumentStatus = DokumentStatus.UNDER_REDIGERING,
-                        arkivsystem = DokumentArkivSystem.FORSENDELSE,
-                        dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03")
-                    )
-                )
+        val forsendelse3 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    saksnummer = saksnummer,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                            nyttDokument(
+                                journalpostId = originalDokumentForsendelse2.forsendelseId.toString(),
+                                dokumentreferanseOriginal = originalDokumentForsendelse2.dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                            nyttDokument(
+                                journalpostId = originalForsendelse.forsendelseId.toString(),
+                                dokumentreferanseOriginal = originalDokument.dokumentreferanse,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                arkivsystem = DokumentArkivSystem.FORSENDELSE,
+                                dokumentDato = LocalDateTime.parse("2021-01-01T01:02:03"),
+                            ),
+                        ),
+                ),
             )
-        )
         val response = utførHentJournalForSaksnummer(saksnummer)
 
         response.statusCode shouldBe HttpStatus.OK

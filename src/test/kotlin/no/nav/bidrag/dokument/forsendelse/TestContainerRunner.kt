@@ -19,27 +19,28 @@ private val log = KotlinLogging.logger {}
 @Testcontainers
 @ActiveProfiles(value = ["test", "testcontainer"])
 class TestContainerRunner : CommonTestRunner() {
-
     companion object {
         @Container
-        protected val postgreSqlDb = PostgreSQLContainer("postgres:latest").apply {
-            withDatabaseName("bidrag-dokument-forsendelse")
-            withUsername("cloudsqliamuser")
-            withPassword("admin")
-            portBindings = listOf("7777:5432")
-        }
+        protected val postgreSqlDb =
+            PostgreSQLContainer("postgres:latest").apply {
+                withDatabaseName("bidrag-dokument-forsendelse")
+                withUsername("cloudsqliamuser")
+                withPassword("admin")
+                portBindings = listOf("7777:5432")
+            }
 
         @Container
-        protected val gcpCloudStorage = GenericContainer("fsouza/fake-gcs-server").apply {
-            withExposedPorts(4443)
-            withCreateContainerCmdModifier { cmd ->
-                cmd.withEntrypoint(
-                    "/bin/fake-gcs-server",
-                    "-scheme",
-                    "http"
-                )
+        protected val gcpCloudStorage =
+            GenericContainer("fsouza/fake-gcs-server").apply {
+                withExposedPorts(4443)
+                withCreateContainerCmdModifier { cmd ->
+                    cmd.withEntrypoint(
+                        "/bin/fake-gcs-server",
+                        "-scheme",
+                        "http",
+                    )
+                }
             }
-        }
 
         private fun updateExternalUrlWithContainerUrl(fakeGcsExternalUrl: String) {
             val modifyExternalUrlRequestUri = "$fakeGcsExternalUrl/_internal/config"
@@ -47,17 +48,19 @@ class TestContainerRunner : CommonTestRunner() {
                 "{" +
                     "\"externalUrl\": \"" + fakeGcsExternalUrl + "\"" +
                     "}"
-                )
-            val req = HttpRequest.newBuilder()
-                .uri(URI.create(modifyExternalUrlRequestUri))
-                .header("Content-Type", "application/json")
-                .PUT(BodyPublishers.ofString(updateExternalUrlJson))
-                .build()
-            val response = HttpClient.newBuilder().build()
-                .send(req, BodyHandlers.discarding())
+            )
+            val req =
+                HttpRequest.newBuilder()
+                    .uri(URI.create(modifyExternalUrlRequestUri))
+                    .header("Content-Type", "application/json")
+                    .PUT(BodyPublishers.ofString(updateExternalUrlJson))
+                    .build()
+            val response =
+                HttpClient.newBuilder().build()
+                    .send(req, BodyHandlers.discarding())
             if (response.statusCode() != 200) {
                 throw RuntimeException(
-                    "error updating fake-gcs-server with external url, response status code " + response.statusCode() + " != 200"
+                    "error updating fake-gcs-server with external url, response status code " + response.statusCode() + " != 200",
                 )
             }
         }

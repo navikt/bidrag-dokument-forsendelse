@@ -21,31 +21,36 @@ import org.springframework.web.bind.annotation.RequestParam
 @ForsendelseApiKontroller
 @Timed
 class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
-
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/size")
     @Operation(
         summary = "Hent størrelse på dokumentene i forsendelsen",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
-    fun henStørrelsePåDokumenter(@PathVariable forsendelseIdMedPrefix: ForsendelseId): Long {
+    fun henStørrelsePåDokumenter(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+    ): Long {
         return distribusjonService.størrelseIMb(forsendelseIdMedPrefix.numerisk)
     }
 
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/enabled")
     @Operation(
         summary = "Sjekk om forsendelse kan distribueres",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Kan distribueres"),
             ApiResponse(
                 responseCode = "406",
-                description = "Kan ikke distribueres. Dette kan skyldes at forsendelsen ikke er ferdigstilt eller en eller flere av dokumentene ikke er ferdigstilt"
-            )
-        ]
+                description =
+                    "Kan ikke distribueres. " +
+                        "Dette kan skyldes at forsendelsen ikke er ferdigstilt eller en eller flere av dokumentene ikke er ferdigstilt",
+            ),
+        ],
     )
-    fun kanDistribuere(@PathVariable forsendelseIdMedPrefix: ForsendelseId): ResponseEntity<String> {
+    fun kanDistribuere(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+    ): ResponseEntity<String> {
         return try {
             distribusjonService.validerKanDistribuere(forsendelseIdMedPrefix.numerisk)
             ResponseEntity.ok().build()
@@ -60,14 +65,14 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
         value = [
             ApiResponse(responseCode = "200", description = "Distribusjon av journalpost er bestilt"),
             ApiResponse(responseCode = "400", description = "Journalpost mangler mottakerid eller adresse er ikke oppgitt i kallet"),
-            ApiResponse(responseCode = "404", description = "Fant ikke journalpost som skal distribueres")
-        ]
+            ApiResponse(responseCode = "404", description = "Fant ikke journalpost som skal distribueres"),
+        ],
     )
     fun distribuerForsendelse(
         @RequestBody(required = false) distribuerJournalpostRequest: DistribuerJournalpostRequest?,
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @RequestParam(required = false) batchId: String?,
-        @RequestParam(required = false) ingenDistribusjon: Boolean = false
+        @RequestParam(required = false) ingenDistribusjon: Boolean = false,
     ): DistribuerJournalpostResponse {
         return distribusjonService.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest, batchId, ingenDistribusjon)
     }

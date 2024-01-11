@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ForsendelseHendelseBestillingService(
-    val applicationEventPublisher: ApplicationEventPublisher
+    val applicationEventPublisher: ApplicationEventPublisher,
 ) {
-
     fun bestill(forsendelseId: Long) {
         applicationEventPublisher.publishEvent(ForsendelseHendelseBestilling(forsendelseId))
     }

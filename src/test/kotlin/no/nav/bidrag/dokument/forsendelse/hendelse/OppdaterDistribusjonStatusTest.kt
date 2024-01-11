@@ -9,7 +9,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
-import no.nav.bidrag.commons.web.test.HttpHeaderTestRestTemplate
 import no.nav.bidrag.dokument.forsendelse.model.BIDRAG_DOKUMENT_FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
@@ -32,6 +31,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
@@ -43,7 +44,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
-
     @SpykBean
     private lateinit var journalpostHendelseProdusent: JournalpostKafkaHendelseProdusent
 
@@ -57,7 +57,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     private val port = 0
 
     @Autowired
-    lateinit var httpHeaderTestRestTemplate: HttpHeaderTestRestTemplate
+    lateinit var httpHeaderTestRestTemplate: TestRestTemplate
+
     protected fun rootUri(): String {
         return "http://localhost:$port/api/forsendelse"
     }
@@ -73,17 +74,18 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
             opprettForsendelse2(
                 status = ForsendelseStatus.FERDIGSTILT,
                 arkivJournalpostId = (10000..20000).random().toString(),
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
+            ),
         )
     }
 
@@ -91,17 +93,18 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         return testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.UNDER_PRODUKSJON,
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                )
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
+            ),
         )
     }
 
@@ -110,18 +113,19 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 distribusjonsTidspunkt = LocalDateTime.now(),
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                ),
-                arkivJournalpostId = (10000..20000).random().toString()
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
+                arkivJournalpostId = (10000..20000).random().toString(),
+            ),
         )
     }
 
@@ -145,8 +149,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                 kanal = DistribusjonKanal.SDP.name,
                 distribuertDato = distribuertDato,
                 journalstatus = JournalpostStatus.DISTRIBUERT,
-                distribuertAvIdent = "Z999999"
-            )
+                distribuertAvIdent = "Z999999",
+            ),
         )
         stubUtils.stubHentDistribusjonInfo(
             forsendelse2.journalpostIdFagarkiv,
@@ -155,15 +159,15 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                 kanal = DistribusjonKanal.SDP.name,
                 distribuertDato = distribuertDato,
                 journalstatus = JournalpostStatus.EKSPEDERT,
-                distribuertAvIdent = "Z999999"
-            )
+                distribuertAvIdent = "Z999999",
+            ),
         )
         stubUtils.stubHentDistribusjonInfo(
             forsendelseIkkeDistribuert.journalpostIdFagarkiv,
             DistribusjonInfoDto(
                 kanal = DistribusjonKanal.SDP.name,
-                journalstatus = JournalpostStatus.FERDIGSTILT
-            )
+                journalstatus = JournalpostStatus.FERDIGSTILT,
+            ),
         )
 
         transactionTemplate.executeWithoutResult {
@@ -218,8 +222,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                 kanal = DistribusjonKanal.LOKAL_UTSKRIFT.name,
                 distribuertDato = distribuertDato,
                 journalstatus = JournalpostStatus.EKSPEDERT,
-                distribuertAvIdent = "Z999999"
-            )
+                distribuertAvIdent = "Z999999",
+            ),
         )
         transactionTemplate.executeWithoutResult {
             skedulering.oppdaterDistribusjonstatus()
@@ -258,18 +262,19 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
             opprettForsendelse2(
                 status = ForsendelseStatus.FERDIGSTILT,
                 arkivJournalpostId = (10000..20000).random().toString(),
-                dokumenter = listOf(
-                    nyttDokument(
-                        dokumentreferanseOriginal = null,
-                        journalpostId = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "FORSENDELSE 1",
-                        arkivsystem = DokumentArkivSystem.JOARK,
-                        dokumentMalId = DOKUMENTMAL_UTGÅENDE_2
-                    )
-                ),
-                kanal = DistribusjonKanal.INGEN_DISTRIBUSJON
-            )
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentreferanseOriginal = null,
+                            journalpostId = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "FORSENDELSE 1",
+                            arkivsystem = DokumentArkivSystem.JOARK,
+                            dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                        ),
+                    ),
+                kanal = DistribusjonKanal.INGEN_DISTRIBUSJON,
+            ),
         )
         val distribuertDato = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT)
 
@@ -280,8 +285,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                 kanal = DistribusjonKanal.INGEN_DISTRIBUSJON.name,
                 distribuertDato = null,
                 journalstatus = JournalpostStatus.FERDIGSTILT,
-                distribuertAvIdent = "Z999999"
-            )
+                distribuertAvIdent = "Z999999",
+            ),
         )
         transactionTemplate.executeWithoutResult {
             skedulering.oppdaterDistribusjonstatus()
@@ -326,8 +331,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                 kanal = DistribusjonKanal.SDP.name,
                 distribuertDato = distribuertDato,
                 journalstatus = JournalpostStatus.EKSPEDERT,
-                distribuertAvIdent = "Z999999"
-            )
+                distribuertAvIdent = "Z999999",
+            ),
         )
         transactionTemplate.executeWithoutResult {
             skedulering.oppdaterDistribusjonstatus()
@@ -362,11 +367,11 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     protected fun utførDistribuerForsendelse(
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
-        batchId: String? = null
+        batchId: String? = null,
     ): ResponseEntity<DistribuerJournalpostResponse> {
         return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
-            forespørsel?.let { HttpEntity(it) }
+            forespørsel?.let { HttpEntity(it) },
         )
     }
 
@@ -377,25 +382,27 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val nyJournalpostId = "21313331231"
         stubUtils.stubHentDokument()
         stubUtils.stubBestillDistribusjon(bestillingId)
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "Tittel vedlegg",
-                        dokumentMalId = "BI100",
-                        rekkefølgeIndeks = 1
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                tittel = "Tittel vedlegg",
+                                dokumentMalId = "BI100",
+                                rekkefølgeIndeks = 1,
+                            ),
+                        ),
+                ),
             )
-        )
 
         stubUtils.stubOpprettJournalpost(
             nyJournalpostId,
-            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") },
         )
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
@@ -430,25 +437,27 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         val nyJournalpostId = "21313331231"
         stubUtils.stubHentDokument()
         stubUtils.stubBestillDistribusjon(bestillingId)
-        val forsendelse = testDataManager.lagreForsendelse(
-            opprettForsendelse2(
-                dokumenter = listOf(
-                    nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
-                    nyttDokument(
-                        journalpostId = null,
-                        dokumentreferanseOriginal = null,
-                        dokumentStatus = DokumentStatus.FERDIGSTILT,
-                        tittel = "Tittel vedlegg",
-                        dokumentMalId = "BI100",
-                        rekkefølgeIndeks = 1
-                    )
-                )
+        val forsendelse =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    dokumenter =
+                        listOf(
+                            nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
+                            nyttDokument(
+                                journalpostId = null,
+                                dokumentreferanseOriginal = null,
+                                dokumentStatus = DokumentStatus.FERDIGSTILT,
+                                tittel = "Tittel vedlegg",
+                                dokumentMalId = "BI100",
+                                rekkefølgeIndeks = 1,
+                            ),
+                        ),
+                ),
             )
-        )
 
         stubUtils.stubOpprettJournalpost(
             nyJournalpostId,
-            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") }
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") },
         )
 
         val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix, DistribuerJournalpostRequest(lokalUtskrift = true))

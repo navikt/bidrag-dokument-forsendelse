@@ -47,7 +47,6 @@ import java.time.LocalDateTime
 
 @ExtendWith(SpringExtension::class)
 class OpprettForsendelseServiceTest {
-
     @MockkBean
     lateinit var forsendelseTjeneste: ForsendelseTjeneste
 
@@ -81,15 +80,16 @@ class OpprettForsendelseServiceTest {
 
     @BeforeEach
     fun init() {
-        opprettForsendelseService = OpprettForsendelseService(
-            tilgangskontrollService,
-            dokumentBestillingService,
-            forsendelseTjeneste,
-            personConsumer,
-            dokumenttjeneste,
-            saksbehandlerInfoManager,
-            forsendelseTittelService
-        )
+        opprettForsendelseService =
+            OpprettForsendelseService(
+                tilgangskontrollService,
+                dokumentBestillingService,
+                forsendelseTjeneste,
+                personConsumer,
+                dokumenttjeneste,
+                saksbehandlerInfoManager,
+                forsendelseTittelService,
+            )
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangPerson(any()) } returns Unit
         every { saksbehandlerInfoManager.hentSaksbehandler() } returns Saksbehandler(SAKSBEHANDLER_IDENT, SAKSBEHANDLER_NAVN)
@@ -105,16 +105,18 @@ class OpprettForsendelseServiceTest {
 
     @Test
     fun `Skal opprette forsendelse med behandlingtype`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = emptyList(),
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = null,
-                behandlingType = "AVSKRIVNING",
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter = emptyList(),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = null,
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
@@ -122,23 +124,25 @@ class OpprettForsendelseServiceTest {
                     it.behandlingInfo!!.behandlingType shouldBe "AVSKRIVNING"
                     it.behandlingInfo!!.stonadType shouldBe null
                     it.behandlingInfo!!.engangsBelopType shouldBe null
-                }
+                },
             )
         }
     }
 
     @Test
     fun `Skal opprette forsendelse med soknadtype`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = emptyList(),
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                soknadType = "EGET_TILTAK",
-                behandlingType = "AVSKRIVNING",
-                vedtakType = Vedtakstype.ENDRING
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter = emptyList(),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        soknadType = "EGET_TILTAK",
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.ENDRING,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
@@ -147,116 +151,127 @@ class OpprettForsendelseServiceTest {
                     it.behandlingInfo!!.soknadType shouldBe "EGET_TILTAK"
                     it.behandlingInfo!!.stonadType shouldBe null
                     it.behandlingInfo!!.engangsBelopType shouldBe null
-                }
+                },
             )
         }
     }
 
     @Test
     fun `Skal opprette forsendelse med forsendelse tittel (skal ikke opprette tittel)`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_HOVEDDOKUMENT,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                )
-            ),
-            opprettTittel = true,
-            gjelderIdent = GJELDER_IDENT_BP,
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = null,
-                behandlingType = Stønadstype.BIDRAG.name,
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_HOVEDDOKUMENT,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                        ),
+                    ),
+                opprettTittel = true,
+                gjelderIdent = GJELDER_IDENT_BP,
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = null,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.tittel shouldBe "Vedtak om bidrag"
-                }
+                },
             )
         }
     }
 
     @Test
     fun `Skal opprette forsendelse med status under opprettelse hvis det ikke er noe dokumenter`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = emptyList(),
-            opprettTittel = true,
-            gjelderIdent = GJELDER_IDENT_BP,
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = null,
-                behandlingType = Stønadstype.BIDRAG.name,
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter = emptyList(),
+                opprettTittel = true,
+                gjelderIdent = GJELDER_IDENT_BP,
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = null,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.status shouldBe ForsendelseStatus.UNDER_OPPRETTELSE
-                }
+                },
             )
         }
     }
 
     @Test
     fun `Skal opprette forsendelse med status under produksjon hvis det opprettes med dokumenter`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_HOVEDDOKUMENT,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                )
-            ),
-            opprettTittel = true,
-            gjelderIdent = GJELDER_IDENT_BP,
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = null,
-                behandlingType = Stønadstype.BIDRAG.name,
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_HOVEDDOKUMENT,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                        ),
+                    ),
+                opprettTittel = true,
+                gjelderIdent = GJELDER_IDENT_BP,
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = null,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.status shouldBe ForsendelseStatus.UNDER_PRODUKSJON
-                }
+                },
             )
         }
     }
 
     @Test
     fun `Skal opprette forsendelse uten forsendelse tittel`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_HOVEDDOKUMENT,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                )
-            ),
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = null,
-                behandlingType = Stønadstype.EKTEFELLEBIDRAG.name,
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_HOVEDDOKUMENT,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                        ),
+                    ),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = null,
+                        behandlingType = Stønadstype.EKTEFELLEBIDRAG.name,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.tittel shouldBe null
-                }
+                },
             )
         }
     }
@@ -265,36 +280,41 @@ class OpprettForsendelseServiceTest {
     @Disabled
     fun `Skal ikke lagre forsendelse tittel for notat men legge til prefiks på dokument tittel`() {
         every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
-        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
-            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
-                "Tittel notat",
-                type = DokumentMalType.NOTAT
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns
+            mapOf(
+                DOKUMENTMAL_NOTAT to
+                    DokumentMalDetaljer(
+                        "Tittel notat",
+                        type = DokumentMalType.NOTAT,
+                    ),
             )
-        )
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = "Tittel notat",
-                    dokumentmalId = DOKUMENTMAL_NOTAT
-                )
-            ),
-            behandlingInfo = BehandlingInfoDto(
-                behandlingType = Stønadstype.EKTEFELLEBIDRAG.name
-            ),
-            opprettTittel = true
-        )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = "Tittel notat",
+                            dokumentmalId = DOKUMENTMAL_NOTAT,
+                        ),
+                    ),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        behandlingType = Stønadstype.EKTEFELLEBIDRAG.name,
+                    ),
+                opprettTittel = true,
+            )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.tittel shouldBe null
-                }
+                },
             )
             dokumenttjeneste.opprettNyttDokument(
                 any<Forsendelse>(),
                 withArg<List<OpprettDokumentForespørsel>> {
                     it[0].tittel shouldBe "Ektefellebidrag, Tittel notat"
-                }
+                },
             )
         }
     }
@@ -302,62 +322,71 @@ class OpprettForsendelseServiceTest {
     @Test
     fun `Skal ikke legge til prefiks på dokument tittel hvis opprettTittel er false`() {
         every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
-        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
-            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
-                "Tittel notat",
-                type = DokumentMalType.NOTAT
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns
+            mapOf(
+                DOKUMENTMAL_NOTAT to
+                    DokumentMalDetaljer(
+                        "Tittel notat",
+                        type = DokumentMalType.NOTAT,
+                    ),
             )
-        )
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = "Tittel notat",
-                    dokumentmalId = DOKUMENTMAL_NOTAT
-                )
-            ),
-            behandlingInfo = BehandlingInfoDto(
-                behandlingType = Stønadstype.EKTEFELLEBIDRAG.name
-            ),
-            opprettTittel = false
-        )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = "Tittel notat",
+                            dokumentmalId = DOKUMENTMAL_NOTAT,
+                        ),
+                    ),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        behandlingType = Stønadstype.EKTEFELLEBIDRAG.name,
+                    ),
+                opprettTittel = false,
+            )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
         verify {
             forsendelseTjeneste.lagre(
                 withArg {
                     it.tittel shouldBe null
-                }
+                },
             )
             dokumenttjeneste.opprettNyttDokument(
                 any<Forsendelse>(),
                 withArg<List<OpprettDokumentForespørsel>> {
                     it[0].tittel shouldBe "Tittel notat"
-                }
+                },
             )
         }
     }
 
     @Test
     fun `Skal ikke lagre behandlingtype hvis stonadType eller engangsbeloptype finnes`() {
-        val opprettForsendelseForespørselStonad = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = emptyList(),
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = Stønadstype.BIDRAG,
-                behandlingType = "AVSKRIVNING",
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørselStonad =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter = emptyList(),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = Stønadstype.BIDRAG,
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
-        val opprettForsendelseForespørselEngangsbelop = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = emptyList(),
-            behandlingInfo = BehandlingInfoDto(
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                engangsBelopType = Engangsbeløptype.SAERTILSKUDD,
-                behandlingType = "AVSKRIVNING",
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørselEngangsbelop =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter = emptyList(),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        engangsBelopType = Engangsbeløptype.SAERTILSKUDD,
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørselStonad)
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørselEngangsbelop)
 
@@ -367,14 +396,14 @@ class OpprettForsendelseServiceTest {
                     it.behandlingInfo!!.behandlingType shouldBe null
                     it.behandlingInfo!!.stonadType shouldBe Stønadstype.BIDRAG
                     it.behandlingInfo!!.engangsBelopType shouldBe null
-                }
+                },
             )
             forsendelseTjeneste.lagre(
                 withArg {
                     it.behandlingInfo!!.behandlingType shouldBe null
                     it.behandlingInfo!!.stonadType shouldBe null
                     it.behandlingInfo!!.engangsBelopType shouldBe Engangsbeløptype.SAERTILSKUDD
-                }
+                },
             )
         }
     }
@@ -382,21 +411,25 @@ class OpprettForsendelseServiceTest {
     @Test
     fun `Skal feile hvis dokumentdato er senere enn dagens dato`() {
         every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
-        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
-            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
-                "Tittel notat",
-                type = DokumentMalType.NOTAT
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns
+            mapOf(
+                DOKUMENTMAL_NOTAT to
+                    DokumentMalDetaljer(
+                        "Tittel notat",
+                        type = DokumentMalType.NOTAT,
+                    ),
             )
-        )
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = "Tittel notat",
-                    dokumentmalId = DOKUMENTMAL_NOTAT,
-                    dokumentDato = LocalDateTime.now().plusDays(1)
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = "Tittel notat",
+                            dokumentmalId = DOKUMENTMAL_NOTAT,
+                            dokumentDato = LocalDateTime.now().plusDays(1),
+                        ),
+                    ),
             )
-        )
         val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
         result.message shouldBe "Dokumentdato kan ikke være senere enn dagens dato"
     }
@@ -404,20 +437,24 @@ class OpprettForsendelseServiceTest {
     @Test
     fun `Skal feile hvis tittel er lengre enn 500 tegn`() {
         every { forsendelseTittelService.opprettForsendelseBehandlingPrefiks(any()) } returns "Ektefellebidrag"
-        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns mapOf(
-            DOKUMENTMAL_NOTAT to DokumentMalDetaljer(
-                "Tittel notat",
-                type = DokumentMalType.NOTAT
+        every { dokumentBestillingService.hentDokumentmalDetaljer() } returns
+            mapOf(
+                DOKUMENTMAL_NOTAT to
+                    DokumentMalDetaljer(
+                        "Tittel notat",
+                        type = DokumentMalType.NOTAT,
+                    ),
             )
-        )
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = "12345".repeat(101),
-                    dokumentmalId = DOKUMENTMAL_NOTAT
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = "12345".repeat(101),
+                            dokumentmalId = DOKUMENTMAL_NOTAT,
+                        ),
+                    ),
             )
-        )
         val result = shouldThrow<UgyldigForespørsel> { opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel) }
         result.message shouldBe "Tittel på dokument 0 kan ikke være lengre enn 500 tegn (tittel har lengde på 505 tegn)"
     }

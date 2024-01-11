@@ -19,13 +19,15 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ActiveProfiles("test")
-@SpringBootTest(classes = [BidragDokumentForsendelseTest::class, StubUtils::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    classes = [BidragDokumentForsendelseTest::class, StubUtils::class],
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+)
 @AutoConfigureWireMock(port = 0)
 @EnableMockOAuth2Server
 @ExtendWith(SpringExtension::class)
 @Import(AppContext::class)
 abstract class CommonTestRunner {
-
     @Autowired
     lateinit var stubUtils: StubUtils
 
@@ -58,6 +60,7 @@ abstract class CommonTestRunner {
     }
 
     protected fun mockKodeverk() {
+        stubUtils.stubUnleash()
         stubUtils.stubKodeverkPostnummerEndepunkt()
     }
 }

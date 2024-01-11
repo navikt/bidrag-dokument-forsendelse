@@ -61,7 +61,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
-
     @Test
     fun `Skal opprette forsendelse`() {
         val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(batchId = "FB050")
@@ -142,7 +141,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                         "\"tittel\":\"${hoveddokument.tittel}\"," +
                         "\"enhet\":\"${forsendelse.enhet}\"," +
                         "\"språk\":\"${forsendelse.språk}\"," +
-                        "\"barnIBehandling\":[]}"
+                        "\"barnIBehandling\":[]}",
                 )
             }
         }
@@ -157,7 +156,10 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal opprette forsendelse med barn i behandling`() {
         val opprettForsendelseForespørsel =
-            nyOpprettForsendelseForespørsel().copy(batchId = "FB050", behandlingInfo = BehandlingInfoDto(barnIBehandling = listOf("123123123123")))
+            nyOpprettForsendelseForespørsel().copy(
+                batchId = "FB050",
+                behandlingInfo = BehandlingInfoDto(barnIBehandling = listOf("123123123123")),
+            )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -184,7 +186,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                         "\"tittel\":\"${hoveddokument.tittel}\"," +
                         "\"enhet\":\"${forsendelse.enhet}\"," +
                         "\"språk\":\"${forsendelse.språk}\"," +
-                        "\"barnIBehandling\":[\"123123123123\"]}"
+                        "\"barnIBehandling\":[\"123123123123\"]}",
                 )
             }
         }
@@ -199,16 +201,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal opprette forsendelse med behandlingsdetaljer uten forsendelse tittel`() {
         val soknadId = "123213"
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            batchId = "FB050",
-            behandlingInfo = BehandlingInfoDto(
-                soknadId = soknadId,
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = Stønadstype.FORSKUDD,
-                vedtakType = Vedtakstype.FASTSETTELSE
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                batchId = "FB050",
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        soknadId = soknadId,
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = Stønadstype.FORSKUDD,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -239,17 +243,20 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     @Disabled
     fun `Skal opprette forsendelse med samhandlerid som mangler poststed`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            mottaker = MottakerTo(
-                ident = SAMHANDLER_ID,
-                identType = MottakerIdentTypeTo.SAMHANDLER,
-                adresse = MottakerAdresseTo(
-                    adresselinje1 = "Adresselinje1",
-                    postnummer = "2306",
-                    landkode3 = "NOR"
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                mottaker =
+                    MottakerTo(
+                        ident = SAMHANDLER_ID,
+                        identType = MottakerIdentTypeTo.SAMHANDLER,
+                        adresse =
+                            MottakerAdresseTo(
+                                adresselinje1 = "Adresselinje1",
+                                postnummer = "2306",
+                                landkode3 = "NOR",
+                            ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -284,12 +291,14 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse med samhandlerid`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            mottaker = MottakerTo(
-                ident = SAMHANDLER_ID,
-                identType = MottakerIdentTypeTo.SAMHANDLER
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                mottaker =
+                    MottakerTo(
+                        ident = SAMHANDLER_ID,
+                        identType = MottakerIdentTypeTo.SAMHANDLER,
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -323,18 +332,20 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     fun `Skal opprette tom forsendelse med behandlingdetaljer`() {
         stubUtils.stubHentSak()
         val soknadId = "123213"
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            gjelderIdent = GJELDER_IDENT_BM,
-            dokumenter = emptyList(),
-            behandlingInfo = BehandlingInfoDto(
-                soknadId = "123213",
-                erFattetBeregnet = true,
-                soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                stonadType = Stønadstype.FORSKUDD,
-                vedtakType = Vedtakstype.FASTSETTELSE
-            ),
-            opprettTittel = true
-        )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                gjelderIdent = GJELDER_IDENT_BM,
+                dokumenter = emptyList(),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        soknadId = "123213",
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = Stønadstype.FORSKUDD,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
+                opprettTittel = true,
+            )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -421,7 +432,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
             stubUtils.Valider().bestillDokumentKaltMed(
                 HOVEDDOKUMENT_DOKUMENTMAL,
-                "\"språk\":\"EN\""
+                "\"språk\":\"EN\"",
             )
         }
 
@@ -434,23 +445,26 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal opprette forsendelse som notat`() {
         val soknadId = "12321321"
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
-            .copy(
-                behandlingInfo = BehandlingInfoDto(
-                    soknadId = soknadId,
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.EKTEFELLEBIDRAG,
-                    vedtakType = Vedtakstype.FASTSETTELSE
-                ),
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = "Ektefellebidrag, Tittel notat",
-                        dokumentmalId = DOKUMENTMAL_NOTAT
-                    )
-                ),
-                opprettTittel = true
-            )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel()
+                .copy(
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadId = soknadId,
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.EKTEFELLEBIDRAG,
+                            vedtakType = Vedtakstype.FASTSETTELSE,
+                        ),
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = "Ektefellebidrag, Tittel notat",
+                                dokumentmalId = DOKUMENTMAL_NOTAT,
+                            ),
+                        ),
+                    opprettTittel = true,
+                )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -468,15 +482,17 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     @Disabled
     fun `Skal opprette forsendelse som notat hvis dokumentlisten inneholder mal med type notat`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
-            .copy(
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = "Tittel notat",
-                        dokumentmalId = DOKUMENTMAL_NOTAT
-                    )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel()
+                .copy(
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = "Tittel notat",
+                                dokumentmalId = DOKUMENTMAL_NOTAT,
+                            ),
+                        ),
                 )
-            )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -495,23 +511,26 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Disabled
     fun `Skal opprette notat med prefiks tittel som inneholder klage`() {
         val soknadId = "12321321"
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
-            .copy(
-                opprettTittel = true,
-                behandlingInfo = BehandlingInfoDto(
-                    soknadId = soknadId,
-                    erFattetBeregnet = true,
-                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    stonadType = Stønadstype.EKTEFELLEBIDRAG,
-                    vedtakType = Vedtakstype.KLAGE
-                ),
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = "Tittel notat",
-                        dokumentmalId = DOKUMENTMAL_NOTAT
-                    )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel()
+                .copy(
+                    opprettTittel = true,
+                    behandlingInfo =
+                        BehandlingInfoDto(
+                            soknadId = soknadId,
+                            erFattetBeregnet = true,
+                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                            stonadType = Stønadstype.EKTEFELLEBIDRAG,
+                            vedtakType = Vedtakstype.KLAGE,
+                        ),
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = "Tittel notat",
+                                dokumentmalId = DOKUMENTMAL_NOTAT,
+                            ),
+                        ),
                 )
-            )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -528,23 +547,27 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal ikke kunne opprette notat med flere dokumeenter`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel()
-            .copy(
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        dokumentmalId = DOKUMENTMAL_NOTAT
-                    ),
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_VEDLEGG_1,
-                        dokumentmalId = DOKUMENTMAL_UTGÅENDE
-                    )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel()
+                .copy(
+                    dokumenter =
+                        listOf(
+                            OpprettDokumentForespørsel(
+                                tittel = TITTEL_HOVEDDOKUMENT,
+                                dokumentmalId = DOKUMENTMAL_NOTAT,
+                            ),
+                            OpprettDokumentForespørsel(
+                                tittel = TITTEL_VEDLEGG_1,
+                                dokumentmalId = DOKUMENTMAL_UTGÅENDE,
+                            ),
+                        ),
                 )
-            )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.BAD_REQUEST
-        response.headers["Warning"]?.get(0) shouldContain "Kan ikke opprette ny forsendelse med flere dokumenter hvis forsendelsetype er Notat"
+        response.headers["Warning"]?.get(
+            0,
+        ) shouldContain "Kan ikke opprette ny forsendelse med flere dokumenter hvis forsendelsetype er Notat"
     }
 
     @Test
@@ -568,15 +591,17 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og ikke bestille dokument hvis bestillDokument er false`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_HOVEDDOKUMENT,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    bestillDokument = false
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_HOVEDDOKUMENT,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            bestillDokument = false,
+                        ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -595,16 +620,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse med tittel som inneholder ugyldig tegn`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = "$TITTEL_VEDLEGG_1\u001A\u0085",
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    journalpostId = "JOARK-123123213",
-                    dokumentreferanse = "123213"
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = "$TITTEL_VEDLEGG_1\u001A\u0085",
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            journalpostId = "JOARK-123123213",
+                            dokumentreferanse = "123213",
+                        ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -619,10 +646,11 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
         dokument.tittel shouldBe TITTEL_VEDLEGG_1
 
-        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
-            tittel = "Tittel ny dokument\u001A",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-        )
+        val opprettDokumentForespørsel =
+            OpprettDokumentForespørsel(
+                tittel = "Tittel ny dokument\u001A",
+                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
@@ -641,16 +669,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument på opprettet forsendelse`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_VEDLEGG_1,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    journalpostId = "JOARK-123123213",
-                    dokumentreferanse = "123213"
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_VEDLEGG_1,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            journalpostId = "JOARK-123123213",
+                            dokumentreferanse = "123213",
+                        ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -664,10 +694,11 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
-        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
-            tittel = "Tittel ny dokument",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-        )
+        val opprettDokumentForespørsel =
+            OpprettDokumentForespørsel(
+                tittel = "Tittel ny dokument",
+                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
@@ -687,17 +718,19 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse uten bestille dokument og legge til nytt dokument uten å bestille dokument`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_VEDLEGG_1,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    journalpostId = "JOARK-123123213",
-                    dokumentreferanse = "123213",
-                    bestillDokument = false
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_VEDLEGG_1,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            journalpostId = "JOARK-123123213",
+                            dokumentreferanse = "123213",
+                            bestillDokument = false,
+                        ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -711,12 +744,13 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
-        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
-            tittel = "Tittel ny dokument",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-            språk = "EN",
-            bestillDokument = false
-        )
+        val opprettDokumentForespørsel =
+            OpprettDokumentForespørsel(
+                tittel = "Tittel ny dokument",
+                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                språk = "EN",
+                bestillDokument = false,
+            )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
@@ -740,16 +774,18 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
     @Test
     fun `Skal opprette forsendelse og legge til nytt dokument med annen språk på opprettet forsendelse`() {
         val nyDokumentmal = DOKUMENTMAL_UTGÅENDE_2
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_VEDLEGG_1,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    journalpostId = "JOARK-123123213",
-                    dokumentreferanse = "123213"
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_VEDLEGG_1,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            journalpostId = "JOARK-123123213",
+                            dokumentreferanse = "123213",
+                        ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -763,11 +799,12 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         dokument.dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
         dokument.arkivsystem shouldBe DokumentArkivSystem.JOARK
 
-        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
-            tittel = "Tittel ny dokument",
-            dokumentmalId = nyDokumentmal,
-            språk = "EN"
-        )
+        val opprettDokumentForespørsel =
+            OpprettDokumentForespørsel(
+                tittel = "Tittel ny dokument",
+                dokumentmalId = nyDokumentmal,
+                språk = "EN",
+            )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
@@ -786,7 +823,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().bestillDokumentKaltMed(
                 nyDokumentmal,
                 "\"dokumentreferanse\":\"${nyDokument.dokumentreferanse}\"",
-                "\"språk\":\"${nyDokument.språk}\""
+                "\"språk\":\"${nyDokument.språk}\"",
             )
         }
     }
@@ -805,10 +842,11 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelseMedEnDokument.dokumenter shouldHaveSize 0
 
-        val opprettDokumentForespørsel = OpprettDokumentForespørsel(
-            tittel = "Tittel ny dokument",
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-        )
+        val opprettDokumentForespørsel =
+            OpprettDokumentForespørsel(
+                tittel = "Tittel ny dokument",
+                dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+            )
         val responseNyDokument =
             utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
@@ -828,26 +866,28 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal opprette forsendelse og fjerne dokument fra opprettet forsendelse`() {
-        val opprettForsendelseForespørsel = nyOpprettForsendelseForespørsel().copy(
-            dokumenter = listOf(
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_HOVEDDOKUMENT,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-                ),
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_VEDLEGG_1,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    journalpostId = "JOARK-123123213",
-                    dokumentreferanse = "123213"
-                ),
-                OpprettDokumentForespørsel(
-                    tittel = TITTEL_VEDLEGG_2,
-                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-                    journalpostId = "JOARK-555454",
-                    dokumentreferanse = "54545545"
-                )
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_HOVEDDOKUMENT,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                        ),
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_VEDLEGG_1,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            journalpostId = "JOARK-123123213",
+                            dokumentreferanse = "123213",
+                        ),
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_VEDLEGG_2,
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            journalpostId = "JOARK-555454",
+                            dokumentreferanse = "54545545",
+                        ),
+                    ),
             )
-        )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
@@ -891,13 +931,14 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val dokumentdato = LocalDateTime.parse("2021-01-01T01:02:03")
         val opprettForsendelseForespørsel =
             nyOpprettForsendelseForespørsel().copy(
-                dokumenter = listOf(
-                    OpprettDokumentForespørsel(
-                        tittel = TITTEL_HOVEDDOKUMENT,
-                        dokumentmalId = DOKUMENTMAL_NOTAT,
-                        dokumentDato = dokumentdato
-                    )
-                )
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            tittel = TITTEL_HOVEDDOKUMENT,
+                            dokumentmalId = DOKUMENTMAL_NOTAT,
+                            dokumentDato = dokumentdato,
+                        ),
+                    ),
             )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)

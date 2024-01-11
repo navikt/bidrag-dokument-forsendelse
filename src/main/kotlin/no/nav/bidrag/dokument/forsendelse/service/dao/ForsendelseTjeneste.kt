@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service.dao
 
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
@@ -9,13 +10,14 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
+private val LOGGER = KotlinLogging.logger {}
+
 @Component
 class ForsendelseTjeneste(
     private val forsendelseRepository: ForsendelseRepository,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-    private val tilgangskontrollService: TilgangskontrollService
+    private val tilgangskontrollService: TilgangskontrollService,
 ) {
-
     fun hentAlleMedSaksnummer(saksnummer: String): List<Forsendelse> {
         tilgangskontrollService.sjekkTilgangSak(saksnummer)
         return forsendelseRepository.hentAlleMedSaksnummer(saksnummer)
@@ -31,11 +33,18 @@ class ForsendelseTjeneste(
         return forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
     }
 
-    fun hentDistribuerteForsendelserDistribuertTilNavNo(limit: Int, afterDate: LocalDateTime?, beforeDate: LocalDateTime?): List<Forsendelse> {
+    fun hentDistribuerteForsendelserDistribuertTilNavNo(
+        limit: Int,
+        afterDateInput: LocalDateTime?,
+        beforeDateInput: LocalDateTime?,
+    ): List<Forsendelse> {
+        val beforeDate = beforeDateInput ?: LocalDateTime.now().minusDays(2)
+        val afterDate = afterDateInput ?: LocalDateTime.now().minusDays(100)
+        LOGGER.info { "Henter distribuerte forsendelser med kanal NAV_NO fra $afterDate til $beforeDate" }
         return forsendelseRepository.hentDistribuerteForsendelseTilNAVNO(
             Pageable.ofSize(limit),
-            beforeDate ?: LocalDateTime.now().minusDays(2),
-            afterDate ?: LocalDateTime.now().minusDays(100)
+            beforeDate,
+            afterDate,
         )
     }
 
@@ -53,8 +62,8 @@ class ForsendelseTjeneste(
         return forsendelseRepository.save(
             forsendelse.copy(
                 endretAvIdent = bruker?.ident ?: forsendelse.endretAvIdent,
-                endretTidspunkt = LocalDateTime.now()
-            )
+                endretTidspunkt = LocalDateTime.now(),
+            ),
         )
     }
 }

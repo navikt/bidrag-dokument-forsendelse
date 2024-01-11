@@ -37,22 +37,25 @@ class GcpCloudStorage(
     @Value("\${GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH}") private val kmsClientsideFilename: String,
     @Value("\${GCP_HOST:#{null}}") private val host: String? = null,
     @Value("\${GCP_CREDENTIALS_PATH:#{null}}") private val credentialsPath: String? = null,
-    @Value("\${DISABLE_CLIENTSIDE_ENCRYPTION:false}") private val disableClientsideEncryption: Boolean // Only use when running application locally
+    // Only use when running application locally
+    @Value("\${DISABLE_CLIENTSIDE_ENCRYPTION:false}") private val disableClientsideEncryption: Boolean,
 ) {
     private var keyVersion = -1
-    private val retrySetting = RetrySettings.newBuilder()
-        .setMaxAttempts(3)
-        .setTotalTimeout(Duration.ofMillis(3000)).build()
-    private val storage = StorageOptions.newBuilder()
-        .setHost(host)
-        .setCredentials(if (host != null) NoCredentials.getInstance() else GoogleCredentials.getApplicationDefault())
-        .setRetrySettings(retrySetting).build().service
+    private val retrySetting =
+        RetrySettings.newBuilder()
+            .setMaxAttempts(3)
+            .setTotalTimeout(Duration.ofMillis(3000)).build()
+    private val storage =
+        StorageOptions.newBuilder()
+            .setHost(host)
+            .setCredentials(if (host != null) NoCredentials.getInstance() else GoogleCredentials.getApplicationDefault())
+            .setRetrySettings(retrySetting).build().service
 
     init {
         AeadConfig.register()
         GcpKmsClient.register(
             Optional.of(kmsClientsideFilename),
-            Optional.ofNullable(credentialsPath?.let { ClassPathResource(credentialsPath).file.absolutePath })
+            Optional.ofNullable(credentialsPath?.let { ClassPathResource(credentialsPath).file.absolutePath }),
         )
         fetchKeyVersion()
     }
@@ -69,9 +72,10 @@ class GcpCloudStorage(
     }
 
     private fun initTinkClient(): Aead {
-        val handle = KeysetHandle.generateNew(
-            KmsEnvelopeAeadKeyManager.createKeyTemplate(kmsClientsideFilename, KeyTemplates.get("AES256_GCM"))
-        )
+        val handle =
+            KeysetHandle.generateNew(
+                KmsEnvelopeAeadKeyManager.createKeyTemplate(kmsClientsideFilename, KeyTemplates.get("AES256_GCM")),
+            )
         return handle.getPrimitive(Aead::class.java)
     }
 
@@ -92,7 +96,10 @@ class GcpCloudStorage(
         storage.delete(lagBlobinfo(filnavn).blobId)
     }
 
-    fun lagreFil(filnavn: String, byteArrayStream: ByteArray): LagreFilResponse {
+    fun lagreFil(
+        filnavn: String,
+        byteArrayStream: ByteArray,
+    ): LagreFilResponse {
         LOGGER.info("Starter overføring av fil: $filnavn til GCP-bucket: $bucketNavn")
         val blobInfo = lagBlobinfo(filnavn)
         val encryptedFile = encryptFile(byteArrayStream, blobInfo)
@@ -109,7 +116,7 @@ class GcpCloudStorage(
         } catch (e: StorageException) {
             throw HttpClientErrorException(
                 HttpStatus.NOT_FOUND,
-                "Finnes ingen dokumentfil i bucket $bucketNavn med filsti ${lagBlobinfo(filnavn).blobId}"
+                "Finnes ingen dokumentfil i bucket $bucketNavn med filsti ${lagBlobinfo(filnavn).blobId}",
             )
         }
     }
@@ -118,7 +125,10 @@ class GcpCloudStorage(
         return storage.writer(blobInfo, createObjectUploadPrecondition(blobInfo))
     }
 
-    private fun decryptFile(file: ByteArray, blobInfo: BlobInfo): ByteArray {
+    private fun decryptFile(
+        file: ByteArray,
+        blobInfo: BlobInfo,
+    ): ByteArray {
         if (disableClientsideEncryption) return file
         // Based on example from https://cloud.google.com/kms/docs/client-side-encryption
         LOGGER.info { "Dekryptrerer fil ${blobInfo.name}" }
@@ -126,7 +136,10 @@ class GcpCloudStorage(
         return tinkClient.decrypt(file, associatedData)
     }
 
-    private fun encryptFile(file: ByteArray, blobInfo: BlobInfo): ByteArray {
+    private fun encryptFile(
+        file: ByteArray,
+        blobInfo: BlobInfo,
+    ): ByteArray {
         if (disableClientsideEncryption) return file
         // This will bind the encryption to the location of the GCS blob. That if, if you rename or
         // move the blob to a different bucket, decryption will fail.
@@ -143,7 +156,7 @@ class GcpCloudStorage(
             Storage.BlobWriteOption.doesNotExist()
         } else {
             Storage.BlobWriteOption.generationMatch(
-                storage.get(blobInfo.blobId).generation
+                storage.get(blobInfo.blobId).generation,
             )
         }
     }

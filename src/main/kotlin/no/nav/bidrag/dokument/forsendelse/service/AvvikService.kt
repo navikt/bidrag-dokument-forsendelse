@@ -24,9 +24,8 @@ private val log = KotlinLogging.logger {}
 class AvvikService(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
-    private val hendelseBestillingService: ForsendelseHendelseBestillingService
+    private val hendelseBestillingService: ForsendelseHendelseBestillingService,
 ) {
-
     fun hentAvvik(forsendelseId: Long): List<AvvikType> {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
@@ -34,7 +33,7 @@ class AvvikService(
             listOf(
                 AvvikType.FEILFORE_SAK,
                 AvvikType.SLETT_JOURNALPOST,
-                AvvikType.ENDRE_FAGOMRADE
+                AvvikType.ENDRE_FAGOMRADE,
             )
         } else if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) {
             listOf(AvvikType.SLETT_JOURNALPOST)
@@ -43,12 +42,16 @@ class AvvikService(
         }
     }
 
-    fun utførAvvik(forsendelseId: Long, avvikshendelse: Avvikshendelse, enhet: String?) {
+    fun utførAvvik(
+        forsendelseId: Long,
+        avvikshendelse: Avvikshendelse,
+        enhet: String?,
+    ) {
         forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         val avvikType = AvvikType.valueOf(avvikshendelse.avvikType)
         if (!isValidAvvikForForsendelse(
                 forsendelseId,
-                avvikType
+                avvikType,
             )
         ) {
             throw UgyldigAvvikForForsendelse("Kan ikke utføre avvik $avvikType på forsendelse $forsendelseId")
@@ -62,22 +65,29 @@ class AvvikService(
         log.info { "Utførte avvik $avvikType for forsendelseId $forsendelseId og enhet $enhet" }
     }
 
-    private fun isValidAvvikForForsendelse(forsendelseId: Long, avvikType: AvvikType): Boolean {
+    private fun isValidAvvikForForsendelse(
+        forsendelseId: Long,
+        avvikType: AvvikType,
+    ): Boolean {
         return hentAvvik(forsendelseId).contains(avvikType)
     }
 
-    private fun endreFagområde(forsendelseId: Long, avvikshendelse: Avvikshendelse): Boolean {
+    private fun endreFagområde(
+        forsendelseId: Long,
+        avvikshendelse: Avvikshendelse,
+    ): Boolean {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return false
         val endreTilFagområde = avvikshendelse.hentFagområde() ?: ugyldigAvviksForespørsel("forespørsel mangler fagområde")
         forsendelse.validerKanEndreForsendelse()
         forsendelse.validerKanEndreTilFagområde(endreTilFagområde)
         forsendelseTjeneste.lagre(
             forsendelse.copy(
-                tema = when (endreTilFagområde) {
-                    Fagomrade.FARSKAP -> ForsendelseTema.FAR
-                    else -> ForsendelseTema.BID
-                }
-            )
+                tema =
+                    when (endreTilFagområde) {
+                        Fagomrade.FARSKAP -> ForsendelseTema.FAR
+                        else -> ForsendelseTema.BID
+                    },
+            ),
         )
 
         return true
@@ -91,8 +101,8 @@ class AvvikService(
             forsendelse.copy(
                 status = ForsendelseStatus.SLETTET,
                 avbruttAvIdent = saksbehandler?.ident,
-                avbruttTidspunkt = LocalDateTime.now()
-            )
+                avbruttTidspunkt = LocalDateTime.now(),
+            ),
         )
 
         hendelseBestillingService.bestill(forsendelseId)
@@ -107,8 +117,8 @@ class AvvikService(
             forsendelse.copy(
                 status = ForsendelseStatus.AVBRUTT,
                 avbruttAvIdent = saksbehandler?.ident,
-                avbruttTidspunkt = LocalDateTime.now()
-            )
+                avbruttTidspunkt = LocalDateTime.now(),
+            ),
         )
         hendelseBestillingService.bestill(forsendelseId)
         return true

@@ -14,14 +14,14 @@ data class DokumentBestillingForespørsel(
     val tittel: String? = null,
     val enhet: String? = null,
     val språk: String? = null,
-    val barnIBehandling: List<String> = emptyList()
+    val barnIBehandling: List<String> = emptyList(),
 )
 
 data class MottakerTo(
     val ident: String? = null,
     val navn: String? = null,
     val språk: String? = null,
-    val adresse: MottakerAdresseTo? = null
+    val adresse: MottakerAdresseTo? = null,
 )
 
 data class MottakerAdresseTo(
@@ -32,13 +32,13 @@ data class MottakerAdresseTo(
     val landkode: String? = null,
     val landkode3: String? = null,
     val postnummer: String? = null,
-    val poststed: String? = null
+    val poststed: String? = null,
 )
 
 data class DokumentBestillingResponse(
     val dokumentId: String,
     val journalpostId: String,
-    val arkivSystem: DokumentArkivSystemDto? = null
+    val arkivSystem: DokumentArkivSystemDto? = null,
 )
 
 data class DokumentMalDetaljer(
@@ -52,7 +52,7 @@ data class DokumentMalDetaljer(
     val gruppeVisningsnavn: String? = null,
     val språk: List<String> = emptyList(),
     val tilhorerEnheter: List<String> = emptyList(),
-    val alternativeTitler: List<String> = emptyList()
+    val alternativeTitler: List<String> = emptyList(),
 )
 
 enum class DokumentmalInnholdType {
@@ -61,10 +61,10 @@ enum class DokumentmalInnholdType {
     VEDLEGG_VEDTAK,
     VEDLEGG_VARSEL,
     VEDLEGG,
-    SKJEMA
+    SKJEMA,
 }
 
 enum class DokumentMalType {
     UTGÅENDE,
-    NOTAT
+    NOTAT,
 }

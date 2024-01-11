@@ -37,8 +37,8 @@ private val log = KotlinLogging.logger {}
 @Table(
     name = "dokument",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"])
-    ]
+        UniqueConstraint(columnNames = ["journalpostIdOriginal", "dokumentreferanseOriginal", "forsendelse_id"]),
+    ],
 )
 data class Dokument(
     @Id
@@ -50,11 +50,10 @@ data class Dokument(
             Parameter(name = "sequence_name", value = "dokument_dokument_id_seq"),
             Parameter(name = "initial_value", value = "100000000"),
             Parameter(name = "min_value", value = "100000000"),
-            Parameter(name = "increment_size", value = "1")
-        ]
+            Parameter(name = "increment_size", value = "1"),
+        ],
     )
     val dokumentId: Long? = null,
-
     val dokumentreferanseOriginal: String? = null,
     val journalpostIdOriginal: String? = null,
     val tittel: String,
@@ -63,60 +62,76 @@ data class Dokument(
     val dokumentreferanseFagarkiv: String? = null,
     val ferdigstiltAvIdent: String? = null,
     val ferdigstiltTidspunkt: LocalDateTime? = null,
-
     val slettetTidspunkt: LocalDate? = null,
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     val dokumentDato: LocalDateTime = LocalDateTime.now(),
-
     @Enumerated(EnumType.STRING)
     val dokumentStatus: DokumentStatus,
-
     @Enumerated(EnumType.STRING)
     val arkivsystem: DokumentArkivSystem,
-
     val rekkefølgeIndeks: Int,
-
     @Type(DokumentMetadataDoConverter::class)
     @Column(columnDefinition = "hstore", name = "metadata")
     val metadata: DokumentMetadataDo = DokumentMetadataDo(),
-
     @ManyToOne
     @JoinColumn(name = "forsendelse_id")
-    var forsendelse: Forsendelse
+    var forsendelse: Forsendelse,
 ) {
-
     override fun toString(): String {
         return this.toStringByReflection(listOf("forsendelse"))
     }
 
     val erFraAnnenKilde get() = !(dokumentreferanseOriginal == null && journalpostIdOriginal == null)
     val erLenkeTilEnAnnenForsendelse get() = erFraAnnenKilde && arkivsystem == DokumentArkivSystem.FORSENDELSE
-    val tilknyttetSom: DokumentTilknyttetSom get() = if (rekkefølgeIndeks == 0) DokumentTilknyttetSom.HOVEDDOKUMENT else DokumentTilknyttetSom.VEDLEGG
+    val tilknyttetSom: DokumentTilknyttetSom
+        get() =
+            if (rekkefølgeIndeks == 0) {
+                DokumentTilknyttetSom.HOVEDDOKUMENT
+            } else {
+                DokumentTilknyttetSom.VEDLEGG
+            }
     val dokumentreferanse get() = "BIF$dokumentId"
     val filsti get() = "forsendelse_${forsendelse.forsendelseId}/dokument_$dokumentreferanse.pdf"
 
-    val forsendelseId get() = if (arkivsystem == DokumentArkivSystem.FORSENDELSE && !journalpostIdOriginal.isNullOrEmpty()) journalpostIdOriginal.toLong() else forsendelse.forsendelseId
-    val lenkeTilDokumentreferanse get() = if (arkivsystem == DokumentArkivSystem.FORSENDELSE && !dokumentreferanseOriginal.isNullOrEmpty()) dokumentreferanseOriginal else null
-    val journalpostId
-        get() = run {
-            if (journalpostIdOriginal.isNullOrEmpty()) {
-                null
-            } else if (harJournalpostIdArkivPrefiks()) {
-                journalpostIdOriginal
+    val forsendelseId
+        get() =
+            if (arkivsystem == DokumentArkivSystem.FORSENDELSE &&
+                !journalpostIdOriginal.isNullOrEmpty()
+            ) {
+                journalpostIdOriginal.toLong()
             } else {
-                when (arkivsystem) {
-                    DokumentArkivSystem.JOARK -> "JOARK-$journalpostIdOriginal"
-                    DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostIdOriginal"
-                    else -> journalpostIdOriginal
+                forsendelse.forsendelseId
+            }
+    val lenkeTilDokumentreferanse
+        get() =
+            if (arkivsystem == DokumentArkivSystem.FORSENDELSE &&
+                !dokumentreferanseOriginal.isNullOrEmpty()
+            ) {
+                dokumentreferanseOriginal
+            } else {
+                null
+            }
+    val journalpostId
+        get() =
+            run {
+                if (journalpostIdOriginal.isNullOrEmpty()) {
+                    null
+                } else if (harJournalpostIdArkivPrefiks()) {
+                    journalpostIdOriginal
+                } else {
+                    when (arkivsystem) {
+                        DokumentArkivSystem.JOARK -> "JOARK-$journalpostIdOriginal"
+                        DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER -> "BID-$journalpostIdOriginal"
+                        else -> journalpostIdOriginal
+                    }
                 }
             }
-        }
 
     private fun harJournalpostIdArkivPrefiks(): Boolean = journalpostIdOriginal?.contains("-") == true
 }
 
+@Suppress("ktlint:standard:property-naming")
 class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
-
     companion object {
         fun from(initValue: Map<String, String> = hashMapOf()): DokumentMetadataDo {
             val dokmap = DokumentMetadataDo()
@@ -126,6 +141,7 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
     }
 
     private val GCP_FILE_PATH_KEY = "gcp_file_path"
+
     private val GCP_CLIENTSIDE_ENCRYPTION_KEY_VERSION = "gcp_clientside_encryption_key_version"
     private val REDIGERING_METADATA_KEY = "redigering_metadata"
     private val DOKUMENT_DETALJER_KEY = "dokument_detaljer"
@@ -145,6 +161,7 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
     }
 
     fun erSkjema() = get(ER_SKJEMA) == "true"
+
     fun erStatiskDokument() = get(ER_STATISK_DOKUMENT) == "true"
 
     fun inkrementerBestiltAntallGanger() {
@@ -153,12 +170,19 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
     }
 
     fun hentDokumentBestiltAntallGanger(): Int = get(DOKUMENT_BESTILT_ANTALL_GANGER)?.toInt() ?: 0
+
     fun lagreProdusertTidspunkt(tidspunkt: LocalDateTime?) = update(DOKUMENT_PRODUSERT_TIDSPUNKT, tidspunkt.toString())
+
     fun hentProdusertTidspunkt(): LocalDateTime? = get(DOKUMENT_PRODUSERT_TIDSPUNKT)?.let { LocalDateTime.parse(it) }
+
     fun lagreBestiltTidspunkt(tidspunkt: LocalDateTime?) = update(DOKUMENT_BESTILT_TIDSPUNKT, tidspunkt.toString())
+
     fun hentBestiltTidspunkt(): LocalDateTime? = get(DOKUMENT_BESTILT_TIDSPUNKT)?.let { LocalDateTime.parse(it) }
+
     fun lagreGcpFilsti(filsti: String?) = update(GCP_FILE_PATH_KEY, filsti)
+
     fun hentGcpFilsti(): String? = get(GCP_FILE_PATH_KEY)
+
     fun lagreGcpKrypteringnøkkelVersjon(versjon: String?) = update(GCP_CLIENTSIDE_ENCRYPTION_KEY_VERSION, versjon)
 
     fun hentGcpKrypteringnøkkelVersjon(): String? = get(GCP_CLIENTSIDE_ENCRYPTION_KEY_VERSION)
@@ -172,7 +196,10 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
     fun hentDokumentDetaljer(): List<DokumentDetaljer>? =
         get(DOKUMENT_DETALJER_KEY)?.let { objectMapper.readValue(it, object : TypeReference<List<DokumentDetaljer>?>() {}) }
 
-    private fun update(key: String, value: String?) {
+    private fun update(
+        key: String,
+        value: String?,
+    ) {
         remove(key)
         value?.let { put(key, value) }
     }
@@ -183,13 +210,22 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
 }
 
 class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMetadataDo::class.java) {
-
-    override fun get(rs: ResultSet, p1: Int, session: SharedSessionContractImplementor?, owner: Any?): DokumentMetadataDo {
+    override fun get(
+        rs: ResultSet,
+        p1: Int,
+        session: SharedSessionContractImplementor?,
+        owner: Any?,
+    ): DokumentMetadataDo {
         val map = rs.getObject(p1) as Map<String, String>
         return DokumentMetadataDo.from(map)
     }
 
-    override fun set(st: PreparedStatement, value: DokumentMetadataDo?, index: Int, session: SharedSessionContractImplementor) {
+    override fun set(
+        st: PreparedStatement,
+        value: DokumentMetadataDo?,
+        index: Int,
+        session: SharedSessionContractImplementor,
+    ) {
         st.setObject(index, value?.toMap())
     }
 
@@ -197,7 +233,11 @@ class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMe
         return Types.OTHER
     }
 
-    override fun compare(p0: Any?, p1: Any?, p2: SessionFactoryImplementor?): Int {
+    override fun compare(
+        p0: Any?,
+        p1: Any?,
+        p2: SessionFactoryImplementor?,
+    ): Int {
         return 0
     }
 
@@ -208,8 +248,8 @@ class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMe
             throw IllegalArgumentException(
                 String.format(
                     "Could not transform the [%s] value to a Map!",
-                    sequence
-                )
+                    sequence,
+                ),
             )
         }
     }

@@ -25,21 +25,20 @@ import org.springframework.web.bind.annotation.RequestBody
 @ForsendelseApiKontroller
 @Timed
 class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsendelseService) {
-
     @PatchMapping("/{forsendelseIdMedPrefix}")
     @Operation(
         summary = "Endre forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse endret"),
-            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId")
-        ]
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId"),
+        ],
     )
     fun oppdaterForsendelse(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-        @RequestBody request: OppdaterForsendelseForespørsel
+        @RequestBody request: OppdaterForsendelseForespørsel,
     ): OppdaterForsendelseResponse {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request)
@@ -48,15 +47,18 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
     @PatchMapping("/journal/{forsendelseIdMedPrefix}")
     @Operation(
         summary = "Endre forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse endret"),
-            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId")
-        ]
+            ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseId"),
+        ],
     )
-    fun oppdaterForsendelseLegacy(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @RequestBody request: EndreJournalpostCommand) {
+    fun oppdaterForsendelseLegacy(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+        @RequestBody request: EndreJournalpostCommand,
+    ) {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         oppdaterForsendelseService.oppdaterForsendelse(forsendelseId, request.tilOppdaterForsendelseForespørsel())
     }
@@ -64,18 +66,18 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
     @PatchMapping("/{forsendelseIdMedPrefix}/dokument/{dokumentreferanse}")
     @Operation(
         summary = "Oppdater dokument i en forsendelsee",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse hentet"),
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id")
-        ]
+            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
+        ],
     )
     fun oppdaterDokument(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @PathVariable dokumentreferanse: String,
-        @RequestBody forespørsel: OppdaterDokumentForespørsel
+        @RequestBody forespørsel: OppdaterDokumentForespørsel,
     ): DokumentRespons {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return oppdaterForsendelseService.oppdaterDokument(forsendelseId, dokumentreferanse, forespørsel)
@@ -84,15 +86,18 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
     @PostMapping("/{forsendelseIdMedPrefix}/dokument")
     @Operation(
         summary = "Knytt eller opprett ny dokument til forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse hentet"),
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id")
-        ]
+            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
+        ],
     )
-    fun knyttTilDokument(@PathVariable forsendelseIdMedPrefix: ForsendelseId, @RequestBody forespørsel: OpprettDokumentForespørsel): DokumentRespons {
+    fun knyttTilDokument(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+        @RequestBody forespørsel: OpprettDokumentForespørsel,
+    ): DokumentRespons {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return oppdaterForsendelseService.knyttDokumentTilForsendelse(forsendelseId, forespørsel)
     }
@@ -100,21 +105,22 @@ class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsend
     @DeleteMapping("/{forsendelseIdMedPrefix}/{dokumentreferanse}")
     @Operation(
         summary = "Slett dokument fra forsendelse",
-        security = [SecurityRequirement(name = "bearer-key")]
+        security = [SecurityRequirement(name = "bearer-key")],
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Forsendelse hentet"),
-            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id")
-        ]
+            ApiResponse(responseCode = "202", description = "Fant ingen forsendelse for id"),
+        ],
     )
     fun fjernDokumentFraForsendelse(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-        @PathVariable dokumentreferanse: String
+        @PathVariable dokumentreferanse: String,
     ): ResponseEntity<OppdaterForsendelseResponse> {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
-        val respons = oppdaterForsendelseService.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse)
-            ?: return ResponseEntity.badRequest().build()
+        val respons =
+            oppdaterForsendelseService.fjernDokumentFraForsendelse(forsendelseId, dokumentreferanse)
+                ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(respons)
     }
 }

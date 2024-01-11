@@ -27,22 +27,21 @@ import org.springframework.web.bind.annotation.RequestParam
 class ForsendelseInnsynKontroller(
     val forsendelseInnsynService: ForsendelseInnsynService,
     val dokumentValgService: DokumentValgService,
-    val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
+    val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer,
 ) {
-
     @GetMapping("/{forsendelseIdMedPrefix}")
     @Operation(description = "Hent forsendelse med forsendelseid")
     @ApiResponses(
-        value = [ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")]
+        value = [ApiResponse(responseCode = "404", description = "Fant ingen forsendelse for forsendelseid")],
     )
     fun hentForsendelse(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @Parameter(
             name = "saksnummer",
-            description = "journalposten tilhører sak"
+            description = "journalposten tilhører sak",
         )
         @RequestParam(required = false)
-        saksnummer: String?
+        saksnummer: String?,
     ): ForsendelseResponsTo {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return forsendelseInnsynService.hentForsendelse(forsendelseId, saksnummer)
@@ -54,11 +53,13 @@ class ForsendelseInnsynKontroller(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet."
-            )
-        ]
+                description = "Forsendelser hentet. Returnerer tom liste hvis ingen forsendelser for saksnummer funnet.",
+            ),
+        ],
     )
-    fun hentJournal(@PathVariable saksnummer: String): List<ForsendelseResponsTo> {
+    fun hentJournal(
+        @PathVariable saksnummer: String,
+    ): List<ForsendelseResponsTo> {
         return forsendelseInnsynService.hentForsendelseForSak(saksnummer)
     }
 
@@ -77,7 +78,7 @@ class ForsendelseInnsynKontroller(
     @GetMapping("/dokumentvalg/forsendelse/{forsendelseIdMedPrefix}")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValgForForsendelse(
-        @PathVariable forsendelseIdMedPrefix: ForsendelseId
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
     ): Map<String, DokumentMalDetaljer> {
         return forsendelseInnsynService.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
     }
@@ -85,14 +86,16 @@ class ForsendelseInnsynKontroller(
     @PostMapping("/dokumentvalg")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValg(
-        @RequestBody(required = false) request: HentDokumentValgRequest? = null
+        @RequestBody(required = false) request: HentDokumentValgRequest? = null,
     ): Map<String, DokumentMalDetaljer> {
         return dokumentValgService.hentDokumentMalListe(request)
     }
 
     @PostMapping("/dokumentvalg/notat")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
-    fun hentDokumentValgNotater(@RequestBody(required = false) request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
+    fun hentDokumentValgNotater(
+        @RequestBody(required = false) request: HentDokumentValgRequest? = null,
+    ): Map<String, DokumentMalDetaljer> {
         return dokumentValgService.hentNotatListe(request)
     }
 

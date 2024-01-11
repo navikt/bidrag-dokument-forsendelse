@@ -114,6 +114,7 @@ object med
 
 @OpprettForsendelseTestdataDsl
 object er
+
 class ForsendelseBuilder {
     private var erNotat: Boolean = false
     private var journalførendeenhet: String = JOURNALFØRENDE_ENHET
@@ -173,21 +174,22 @@ class ForsendelseBuilder {
     }
 
     internal fun build(): Forsendelse {
-        val forsendelse = Forsendelse(
-            forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
-            enhet = journalførendeenhet,
-            status = status,
-            språk = "NB",
-            saksnummer = saksnummer,
-            gjelderIdent = gjelderIdent,
-            mottaker = mottaker,
-            tema = tema,
-            opprettetAvIdent = SAKSBEHANDLER_IDENT,
-            opprettetAvNavn = SAKSBEHANDLER_NAVN,
-            endretAvIdent = SAKSBEHANDLER_IDENT,
-            dokumenter = opprettDokumenter,
-            journalpostIdFagarkiv = arkivJournalpostId
-        )
+        val forsendelse =
+            Forsendelse(
+                forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
+                enhet = journalførendeenhet,
+                status = status,
+                språk = "NB",
+                saksnummer = saksnummer,
+                gjelderIdent = gjelderIdent,
+                mottaker = mottaker,
+                tema = tema,
+                opprettetAvIdent = SAKSBEHANDLER_IDENT,
+                opprettetAvNavn = SAKSBEHANDLER_NAVN,
+                endretAvIdent = SAKSBEHANDLER_IDENT,
+                dokumenter = opprettDokumenter,
+                journalpostIdFagarkiv = arkivJournalpostId,
+            )
 
         opprettDokumenter.forEach { it.forsendelse = forsendelse }
         return forsendelse
@@ -217,46 +219,48 @@ fun opprettForsendelse2(
     dokumenter: List<Dokument> = listOf(),
     behandlingInfo: BehandlingInfo? = null,
     endretAvIdent: String = SAKSBEHANDLER_IDENT,
-    metadata: ForsendelseMetadataDo? = null
+    metadata: ForsendelseMetadataDo? = null,
 ): Forsendelse {
-    val forsendelse = Forsendelse(
-        forsendelseId = 1L,
-        forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
-        enhet = journalførendeenhet,
-        status = status,
-        behandlingInfo = behandlingInfo,
-        tittel = tittel,
-        språk = "NB",
-        saksnummer = saksnummer,
-        gjelderIdent = gjelderIdent,
-        mottaker = mottaker,
-        tema = tema,
-        opprettetAvIdent = SAKSBEHANDLER_IDENT,
-        opprettetAvNavn = SAKSBEHANDLER_NAVN,
-        endretAvIdent = endretAvIdent,
-        dokumenter = dokumenter,
-        journalpostIdFagarkiv = arkivJournalpostId,
-        distribusjonBestillingsId = distribusjonBestillingsId,
-        distribuertTidspunkt = distribusjonsTidspunkt,
-        distribusjonKanal = kanal,
-        metadata = metadata
-    )
+    val forsendelse =
+        Forsendelse(
+            forsendelseId = 1L,
+            forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
+            enhet = journalførendeenhet,
+            status = status,
+            behandlingInfo = behandlingInfo,
+            tittel = tittel,
+            språk = "NB",
+            saksnummer = saksnummer,
+            gjelderIdent = gjelderIdent,
+            mottaker = mottaker,
+            tema = tema,
+            opprettetAvIdent = SAKSBEHANDLER_IDENT,
+            opprettetAvNavn = SAKSBEHANDLER_NAVN,
+            endretAvIdent = endretAvIdent,
+            dokumenter = dokumenter,
+            journalpostIdFagarkiv = arkivJournalpostId,
+            distribusjonBestillingsId = distribusjonBestillingsId,
+            distribuertTidspunkt = distribusjonsTidspunkt,
+            distribusjonKanal = kanal,
+            metadata = metadata,
+        )
 
     dokumenter.forEach { it.forsendelse = forsendelse }
 
     return forsendelse
 }
 
-fun opprettAdresseDo() = Adresse(
-    adresselinje1 = ADRESSE_ADRESSELINJE1,
-    adresselinje2 = ADRESSE_ADRESSELINJE2,
-    adresselinje3 = ADRESSE_ADRESSELINJE3,
-    landkode = ADRESSE_LANDKODE,
-    landkode3 = ADRESSE_LANDKODE3,
-    bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
-    postnummer = ADRESSE_POSTNUMMER,
-    poststed = ADRESSE_POSTSTED
-)
+fun opprettAdresseDo() =
+    Adresse(
+        adresselinje1 = ADRESSE_ADRESSELINJE1,
+        adresselinje2 = ADRESSE_ADRESSELINJE2,
+        adresselinje3 = ADRESSE_ADRESSELINJE3,
+        landkode = ADRESSE_LANDKODE,
+        landkode3 = ADRESSE_LANDKODE3,
+        bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
+        postnummer = ADRESSE_POSTNUMMER,
+        poststed = ADRESSE_POSTSTED,
+    )
 
 fun nyttDokument(
     tittel: String = TITTEL_HOVEDDOKUMENT,
@@ -269,7 +273,7 @@ fun nyttDokument(
     slettet: Boolean = false,
     dokumentDato: LocalDateTime = LocalDateTime.now(),
     opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
-    metadata: DokumentMetadataDo = DokumentMetadataDo()
+    metadata: DokumentMetadataDo = DokumentMetadataDo(),
 ): Dokument {
     val forsendelse = opprettForsendelse2()
     return Dokument(
@@ -284,81 +288,90 @@ fun nyttDokument(
         rekkefølgeIndeks = rekkefølgeIndeks,
         slettetTidspunkt = if (slettet) LocalDate.now() else null,
         dokumentDato = dokumentDato,
-        opprettetTidspunkt = opprettetTidspunkt
-
+        opprettetTidspunkt = opprettetTidspunkt,
     )
 }
 
-fun opprettHendelse(dokumentreferanse: String, status: DokumentStatusDto = DokumentStatusDto.UNDER_REDIGERING): DokumentHendelse {
+fun opprettHendelse(
+    dokumentreferanse: String,
+    status: DokumentStatusDto = DokumentStatusDto.UNDER_REDIGERING,
+): DokumentHendelse {
     return DokumentHendelse(
         dokumentreferanse = dokumentreferanse,
         arkivSystem = DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER,
         hendelseType = DokumentHendelseType.ENDRING,
         sporingId = "sporing",
-        status = status
+        status = status,
     )
 }
 
-fun nyOpprettForsendelseForespørsel() = OpprettForsendelseForespørsel(
-    gjelderIdent = GJELDER_IDENT,
-    enhet = JOURNALFØRENDE_ENHET,
-    saksnummer = SAKSNUMMER,
-    mottaker = MottakerTo(
-        ident = MOTTAKER_IDENT,
-        navn = MOTTAKER_NAVN,
+fun nyOpprettForsendelseForespørsel() =
+    OpprettForsendelseForespørsel(
+        gjelderIdent = GJELDER_IDENT,
+        enhet = JOURNALFØRENDE_ENHET,
+        saksnummer = SAKSNUMMER,
+        mottaker =
+            MottakerTo(
+                ident = MOTTAKER_IDENT,
+                navn = MOTTAKER_NAVN,
+                språk = SPRÅK_NORSK_BOKMÅL,
+                identType = MottakerIdentTypeTo.FNR,
+                adresse =
+                    MottakerAdresseTo(
+                        adresselinje1 = ADRESSE_ADRESSELINJE1,
+                        adresselinje2 = ADRESSE_ADRESSELINJE2,
+                        adresselinje3 = ADRESSE_ADRESSELINJE3,
+                        poststed = ADRESSE_POSTSTED,
+                        postnummer = ADRESSE_POSTNUMMER,
+                        bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
+                        landkode3 = ADRESSE_LANDKODE3,
+                        landkode = ADRESSE_LANDKODE,
+                    ),
+            ),
         språk = SPRÅK_NORSK_BOKMÅL,
-        identType = MottakerIdentTypeTo.FNR,
-        adresse = MottakerAdresseTo(
-            adresselinje1 = ADRESSE_ADRESSELINJE1,
-            adresselinje2 = ADRESSE_ADRESSELINJE2,
-            adresselinje3 = ADRESSE_ADRESSELINJE3,
-            poststed = ADRESSE_POSTSTED,
-            postnummer = ADRESSE_POSTNUMMER,
-            bruksenhetsnummer = ADRESSE_BRUKSENHETSNUMMER,
-            landkode3 = ADRESSE_LANDKODE3,
-            landkode = ADRESSE_LANDKODE
-        )
-    ),
-    språk = SPRÅK_NORSK_BOKMÅL,
-    dokumenter = listOf(
-        OpprettDokumentForespørsel(
-            tittel = TITTEL_HOVEDDOKUMENT,
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL
-        ),
-        OpprettDokumentForespørsel(
-            tittel = TITTEL_VEDLEGG_1,
-            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
-            journalpostId = "JOARK-123123213",
-            dokumentreferanse = "123213"
-        )
+        dokumenter =
+            listOf(
+                OpprettDokumentForespørsel(
+                    tittel = TITTEL_HOVEDDOKUMENT,
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                ),
+                OpprettDokumentForespørsel(
+                    tittel = TITTEL_VEDLEGG_1,
+                    dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                    journalpostId = "JOARK-123123213",
+                    dokumentreferanse = "123213",
+                ),
+            ),
     )
-)
 
 fun nyOpprettJournalpostResponse(
     journalpostId: String = NY_JOURNALPOSTID,
     dokumenter: List<OpprettDokumentDto> =
-        listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1"))
+        listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1")),
 ): OpprettJournalpostResponse {
     return OpprettJournalpostResponse(
         dokumenter = dokumenter,
-        journalpostId = journalpostId
+        journalpostId = journalpostId,
     )
 }
 
-fun opprettDokumentMetadata(journalpostId: String, dokumentreferanse: String? = null): DokumentMetadata {
+fun opprettDokumentMetadata(
+    journalpostId: String,
+    dokumentreferanse: String? = null,
+): DokumentMetadata {
     return DokumentMetadata(
         journalpostId = journalpostId,
         dokumentreferanse = dokumentreferanse,
         tittel = "Tittel på dokument",
         status = DokumentStatusDto.UNDER_REDIGERING,
         arkivsystem = DokumentArkivSystemDto.JOARK,
-        format = DokumentFormatDto.PDF
+        format = DokumentFormatDto.PDF,
     )
 }
 
 fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> {
     return listOf(
-        opprettDokumentMetadata(journalpostId)
+        opprettDokumentMetadata(journalpostId),
     )
 }
 
@@ -368,7 +381,7 @@ fun opprettBehandlingDto(): BehandlingDto {
         soknadFraType = SøktAvType.BIDRAGSMOTTAKER,
         søknadstype = Vedtakstype.ENDRING,
         saksnummer = SAKSNUMMER,
-        behandlerenhet = JOURNALFØRENDE_ENHET
+        behandlerenhet = JOURNALFØRENDE_ENHET,
     )
 }
 
@@ -383,21 +396,25 @@ fun opprettVedtakDto(): VedtakDto {
         vedtakstidspunkt = LocalDateTime.now(),
         enhetsnummer = Enhetsnummer(JOURNALFØRENDE_ENHET),
         behandlingsreferanseListe = emptyList(),
-        grunnlagListe = listOf(
-            GrunnlagDto(
-                innhold = ObjectMapper().createObjectNode(),
-                type = Grunnlagstype.SLUTTBEREGNING_BBM,
-                referanse = ""
-            )
-        ),
+        grunnlagListe =
+            listOf(
+                GrunnlagDto(
+                    innhold = ObjectMapper().createObjectNode(),
+                    type = Grunnlagstype.SLUTTBEREGNING_BBM,
+                    referanse = "",
+                ),
+            ),
         opprettetAvNavn = "",
         fastsattILand = "",
         innkrevingUtsattTilDato = LocalDate.now(),
-        kildeapplikasjon = ""
+        kildeapplikasjon = "",
     )
 }
 
-fun opprettEngangsbelopDto(type: Engangsbeløptype = Engangsbeløptype.SAERTILSKUDD, resultatkode: String = "") = EngangsbeløpDto(
+fun opprettEngangsbelopDto(
+    type: Engangsbeløptype = Engangsbeløptype.SAERTILSKUDD,
+    resultatkode: String = "",
+) = EngangsbeløpDto(
     type,
     sak = Saksnummer(SAKSNUMMER),
     skyldner = Personident(""),
@@ -412,23 +429,24 @@ fun opprettEngangsbelopDto(type: Engangsbeløptype = Engangsbeløptype.SAERTILSK
     grunnlagReferanseListe = emptyList(),
     referanse = "",
     resultatkode = resultatkode,
-    valutakode = ""
+    valutakode = "",
 )
 
-fun opprettStonadsEndringDto() = StønadsendringDto(
-    Stønadstype.BIDRAG,
-    sak = Saksnummer(SAKSNUMMER),
-    skyldner = Personident(""),
-    kravhaver = Personident(""),
-    mottaker = Personident(""),
-    innkreving = Innkrevingstype.MED_INNKREVING,
-    beslutning = Beslutningstype.ENDRING,
-    periodeListe = emptyList(),
-    omgjørVedtakId = 1,
-    eksternReferanse = "",
-    førsteIndeksreguleringsår = 2044,
-    grunnlagReferanseListe = emptyList()
-)
+fun opprettStonadsEndringDto() =
+    StønadsendringDto(
+        Stønadstype.BIDRAG,
+        sak = Saksnummer(SAKSNUMMER),
+        skyldner = Personident(""),
+        kravhaver = Personident(""),
+        mottaker = Personident(""),
+        innkreving = Innkrevingstype.MED_INNKREVING,
+        beslutning = Beslutningstype.ENDRING,
+        periodeListe = emptyList(),
+        omgjørVedtakId = 1,
+        eksternReferanse = "",
+        førsteIndeksreguleringsår = 2044,
+        grunnlagReferanseListe = emptyList(),
+    )
 
 fun opprettSak(): BidragssakDto {
     return BidragssakDto(
@@ -439,10 +457,11 @@ fun opprettSak(): BidragssakDto {
         saksnummer = Saksnummer(SAKSNUMMER),
         saksstatus = Bidragssakstatus.IN,
         ukjentPart = false,
-        roller = listOf(
-            RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
-            RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
-            RolleDto(Personident(GJELDER_IDENT_BA), Rolletype.BARN)
-        )
+        roller =
+            listOf(
+                RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
+                RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
+                RolleDto(Personident(GJELDER_IDENT_BA), Rolletype.BARN),
+            ),
     )
 }

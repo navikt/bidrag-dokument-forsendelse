@@ -12,5 +12,5 @@ data class BehandlingDto(
     val saksnummer: String,
     val behandlerenhet: String,
     @JsonProperty("årsak")
-    val aarsakKode: String? = null
+    val aarsakKode: String? = null,
 )

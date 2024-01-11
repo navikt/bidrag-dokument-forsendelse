@@ -26,19 +26,30 @@ import java.time.LocalDateTime
 class DokumentTjeneste(
     private val dokumentRepository: DokumentRepository,
     private val dokumentBestillingService: DokumentBestillingService,
-    private val forsendelseTjeneste: ForsendelseTjeneste
+    private val forsendelseTjeneste: ForsendelseTjeneste,
 ) {
-    fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel, indeks: Int? = null): Dokument {
+    fun opprettNyttDokument(
+        forsendelse: Forsendelse,
+        forespørsel: OpprettDokumentForespørsel,
+        indeks: Int? = null,
+    ): Dokument {
         val nyDokument = forespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse, indeks ?: forsendelse.dokumenter.size)
 
         return lagreDokument(nyDokument)
     }
 
-    fun opprettDokumentDo(forsendelse: Forsendelse, forespørsel: OpprettDokumentForespørsel, indeks: Int? = null): Dokument {
+    fun opprettDokumentDo(
+        forsendelse: Forsendelse,
+        forespørsel: OpprettDokumentForespørsel,
+        indeks: Int? = null,
+    ): Dokument {
         return forespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse, indeks ?: forsendelse.dokumenter.size)
     }
 
-    fun opprettNyttDokument(forsendelse: Forsendelse, forespørsel: List<OpprettDokumentForespørsel>): List<Dokument> {
+    fun opprettNyttDokument(
+        forsendelse: Forsendelse,
+        forespørsel: List<OpprettDokumentForespørsel>,
+    ): List<Dokument> {
         val nyeDokumenter = forespørsel.mapIndexed { i, it -> it.tilDokumentDoMedOriginalLenketDokument(forsendelse, i) }
         return lagreDokumenter(nyeDokumenter.sortertEtterRekkefølge)
     }
@@ -73,11 +84,15 @@ class DokumentTjeneste(
         return dokumentRepository.hentDokumenterSomHarStatusUnderProduksjon()
     }
 
-    fun hentDokumenterSomErUnderRedigering(limit: Int, afterDate: LocalDateTime? = null, beforeDate: LocalDateTime? = null): List<Dokument> {
+    fun hentDokumenterSomErUnderRedigering(
+        limit: Int,
+        afterDate: LocalDateTime? = null,
+        beforeDate: LocalDateTime? = null,
+    ): List<Dokument> {
         return dokumentRepository.hentDokumentIkkeFerdigstiltFørDato(
             Pageable.ofSize(limit),
             beforeDate ?: LocalDateTime.now().minusHours(12),
-            afterDate ?: LocalDateTime.now().minusMonths(6)
+            afterDate ?: LocalDateTime.now().minusMonths(6),
         )
     }
 
@@ -90,20 +105,33 @@ class DokumentTjeneste(
     fun hentOriginalDokument(dokument: Dokument): Dokument {
         if (dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) return dokument
         val forsendelse = forsendelseTjeneste.medForsendelseId(dokument.forsendelseId!!) ?: fantIkkeForsendelse(dokument.forsendelseId!!)
-        if (dokument.lenkeTilDokumentreferanse == dokument.dokumentreferanse) return dokument // Dette betyr at dokument er lenket til seg selv som ikke burde skje
+        // Dette betyr at dokument er lenket til seg selv som ikke burde skje
+        if (dokument.lenkeTilDokumentreferanse == dokument.dokumentreferanse) return dokument
         val referertDokument = forsendelse.dokumenter.hentDokument(dokument.lenkeTilDokumentreferanse)
-        if (referertDokument?.erFraAnnenKilde == false || referertDokument?.arkivsystem != DokumentArkivSystem.FORSENDELSE) return referertDokument!!
+        if (referertDokument?.erFraAnnenKilde == false ||
+            referertDokument?.arkivsystem != DokumentArkivSystem.FORSENDELSE
+        ) {
+            return referertDokument!!
+        }
         return hentOriginalDokument(dokument)
     }
 
     private fun Dokument.tilOriginalDokument() = hentOriginalDokument(this)
 
-    private fun OpprettDokumentForespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse: Forsendelse, indeks: Int): Dokument {
+    private fun OpprettDokumentForespørsel.tilDokumentDoMedOriginalLenketDokument(
+        forsendelse: Forsendelse,
+        indeks: Int,
+    ): Dokument {
         val dokumentForsendelse =
             this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
                 ?: return this.tilDokumentDo(forsendelse, indeks)
 
-        if (this.dokumentreferanse.isNullOrEmpty()) ugyldigEndringAvForsendelse("Dokumentreferanse må settes når en dokument opprettes fra en annen forsendelse. Kan ikke knytte en hel forsendelse til en annen forsendelse.")
+        if (this.dokumentreferanse.isNullOrEmpty()) {
+            ugyldigEndringAvForsendelse(
+                "Dokumentreferanse må settes når en dokument opprettes fra en annen forsendelse. " +
+                    "Kan ikke knytte en hel forsendelse til en annen forsendelse.",
+            )
+        }
         val dokumentLenket = dokumentForsendelse.dokumenter.hentDokument(this.dokumentreferanse)!!.tilOriginalDokument()
         validerKanLeggeTilDokument(dokumentLenket, forsendelse)
         val erFraAnnenKilde = dokumentLenket.erFraAnnenKilde
@@ -118,17 +146,21 @@ class DokumentTjeneste(
             journalpostIdOriginal = if (erFraAnnenKilde) dokumentLenket.journalpostIdOriginal else dokumentLenket.forsendelseId.toString(),
             dokumentmalId = this.dokumentmalId ?: dokumentLenket.dokumentmalId,
             metadata = dokumentLenket.metadata,
-            rekkefølgeIndeks = indeks
+            rekkefølgeIndeks = indeks,
         )
     }
 
-    private fun validerKanLeggeTilDokument(dokumentLenket: Dokument, forsendelse: Forsendelse) {
+    private fun validerKanLeggeTilDokument(
+        dokumentLenket: Dokument,
+        forsendelse: Forsendelse,
+    ) {
         val originalDokumentDelAvSammeForsendelse = dokumentLenket.forsendelse.forsendelseId == forsendelse.forsendelseId
         val dokumentLenkerTilSammeForsendelse = dokumentLenket.journalpostIdOriginal == forsendelse.forsendelseId.toString()
         val harAlleredeLenkeTilSammeDokument = forsendelse.dokumenter.exists(dokumentLenket.dokumentreferanse)
         if (dokumentLenkerTilSammeForsendelse || harAlleredeLenkeTilSammeDokument || originalDokumentDelAvSammeForsendelse) {
             ugyldigEndringAvForsendelse(
-                "Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. Kan ikke legge til samme dokument flere ganger"
+                "Dokument med tittel \"${dokumentLenket.tittel}\" er allerede lagt til i forsendelse. " +
+                    "Kan ikke legge til samme dokument flere ganger",
             )
         }
     }
