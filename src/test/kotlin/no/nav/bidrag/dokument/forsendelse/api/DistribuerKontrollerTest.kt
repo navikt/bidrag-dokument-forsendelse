@@ -160,9 +160,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
         response.statusCode shouldBe HttpStatus.BAD_REQUEST
 
-        response.headers["Warning"]?.get(0) shouldBe "Forsendelsen kan ikke ferdigstilles: Dokument med tittel   Tittel test   " +
-            "og dokumentreferanse ${forsendelse.dokumenter[1].dokumentreferanse} " +
-            "i forsendelse ${forsendelse.forsendelseId} inneholder ugyldig tegn"
+        response.headers["Warning"]?.get(0) shouldBe "Forsendelsen kan ikke ferdigstilles: Dokument med tittel   Tittel test   og dokumentreferanse ${forsendelse.dokumenter[1].dokumentreferanse} i forsendelse ${forsendelse.forsendelseId} inneholder ugyldig tegn"
     }
 
     @Test
