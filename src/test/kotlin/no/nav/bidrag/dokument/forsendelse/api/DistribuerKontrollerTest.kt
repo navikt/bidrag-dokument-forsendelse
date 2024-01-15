@@ -6,7 +6,6 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.verify
-import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
@@ -161,7 +160,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
         response.statusCode shouldBe HttpStatus.BAD_REQUEST
 
-        response.headers["Warning"]?.get(0)?.fjernKontrollTegn() shouldBe "Forsendelsen kan ikke ferdigstilles: Dokument med tittel   Tittel test   og dokumentreferanse ${forsendelse.dokumenter[1].dokumentreferanse} i forsendelse ${forsendelse.forsendelseId} inneholder ugyldig tegn"
+        response.headers["Warning"]?.get(0)?.replace("\\p{C}".toRegex(), " ") shouldBe "Forsendelsen kan ikke ferdigstilles: Dokument med tittel   Tittel test   og dokumentreferanse ${forsendelse.dokumenter[1].dokumentreferanse} i forsendelse ${forsendelse.forsendelseId} inneholder ugyldig tegn"
     }
 
     @Test
