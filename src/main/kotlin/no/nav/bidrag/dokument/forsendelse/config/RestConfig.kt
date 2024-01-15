@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
 import org.springframework.context.annotation.Scope
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.http.client.observation.DefaultClientRequestObservationConvention
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 @Configuration
@@ -30,6 +31,9 @@ class RestConfig(
     init {
         KodeverkProvider.initialiser(kodeverkUrl)
     }
+
+    @Bean
+    fun clientRequestObservationConvention() = DefaultClientRequestObservationConvention()
 
     @Bean
     fun jackson2ObjectMapperBuilder(): Jackson2ObjectMapperBuilder {

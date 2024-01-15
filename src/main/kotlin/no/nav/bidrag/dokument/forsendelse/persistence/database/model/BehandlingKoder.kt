@@ -84,7 +84,7 @@ fun DokumentBehandlingTittelDetaljer.isVedtaktypeValid(
     vt: Vedtakstype?,
     st: SoknadType?,
 ): Boolean {
-    if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING") {
+    if (st == "EGET_TILTAK" || st == "OMGJORING" || st == "BEGRENSET_REVURDERING" || st == "PRIVAT_AVTALE") {
         return soknadType.contains(st)
     }
     return vedtakType.contains(vt)
