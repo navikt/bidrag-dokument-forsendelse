@@ -92,7 +92,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
     }
@@ -180,7 +180,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
 
@@ -199,7 +199,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
 
@@ -218,7 +218,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
 
@@ -237,7 +237,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
     }
@@ -259,7 +259,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
 
@@ -278,7 +278,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
     }
@@ -299,7 +299,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
 
@@ -317,7 +317,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
 
@@ -336,7 +336,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 3
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til motparten"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
     }
