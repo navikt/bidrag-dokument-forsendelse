@@ -27,9 +27,8 @@
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.19.3</testcontainers.version>
     <shedlock.version>5.10.2</shedlock.version>
-    <google-api-extention.version>2.40.0</google-api-extention.version>
-    <google-cloud-storage.version>2.24.0</google-cloud-storage.version>
-    <google-cloud-libraries-bom.version>26.28.0</google-cloud-libraries-bom.version>
+    <google-cloud-storage.version>2.32.0</google-cloud-storage.version>
+    <google-cloud-libraries-bom.version>26.30.0</google-cloud-libraries-bom.version>
     <google-tink-gcpkms.version>1.9.0</google-tink-gcpkms.version>
     <google-tink.version>1.12.0</google-tink.version>
     <grpc.version>1.57.2</grpc.version>
@@ -202,7 +201,6 @@
     <dependency>
       <groupId>com.google.api</groupId>
       <artifactId>gax</artifactId>
-      <version>${google-api-extention.version}</version>
     </dependency>
 
     <!-- Database -->
