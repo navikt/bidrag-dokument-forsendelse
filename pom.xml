@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav</groupId>
@@ -23,7 +23,7 @@
     <springframework-cloud.version>4.1.0</springframework-cloud.version>
     <kotest.version>5.8.0</kotest.version>
     <mockk.version>4.0.2</mockk.version>
-    <flyway.version>10.4.0</flyway.version>
+    <flyway.version>10.6.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.19.3</testcontainers.version>
     <shedlock.version>5.10.2</shedlock.version>
@@ -207,7 +207,7 @@
     <dependency>
       <groupId>io.hypersistence</groupId>
       <artifactId>hypersistence-utils-hibernate-62</artifactId>
-      <version>3.6.1</version>
+      <version>3.7.0</version>
     </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
