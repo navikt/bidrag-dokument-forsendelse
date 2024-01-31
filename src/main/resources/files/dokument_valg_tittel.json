@@ -39,6 +39,19 @@
       ]
     },
     {
+      "vedtakType": [
+        "FASTSETTELSE",
+        "ENDRING"
+      ],
+      "engangsbelopType": "SAERTILSKUDD",
+      "behandlingStatus": "IKKE_FATTET",
+      "soknadFra": [],
+      "titler": [
+        "Innkreving orientering til søker",
+        "Innkreving varsel til motparten"
+      ]
+    },
+    {
       "soknadType": [
         "PRIVAT_AVTALE"
       ],
@@ -164,6 +177,26 @@
       ],
       "titler": [
         "Orientering om bidragsforskudd"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [],
+      "behandlingStatus": "FATTET",
+      "behandlingType": "AVSKRIVNING",
+      "titler": [
+        "Vedtak om avskrivning til bidragspliktig",
+        "Vedtak om avskrivning til bidragsmottaker"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [],
+      "behandlingStatus": "FATTET",
+      "behandlingType": "SAKSOMKOSTNINGER",
+      "titler": [
+        "Vedtak om saksomkostninger til bidragspliktig",
+        "Vedtak om saksomkostninger til bidragsmottaker"
       ]
     }
   ]

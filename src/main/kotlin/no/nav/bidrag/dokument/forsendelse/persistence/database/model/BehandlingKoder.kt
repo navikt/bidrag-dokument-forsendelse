@@ -108,6 +108,7 @@ data class DokumentBehandlingDetaljer(
 )
 
 data class DokumentBehandlingTittelDetaljer(
+    val behandlingType: BehandlingType? = null,
     val stonadType: Stønadstype? = null,
     val engangsbelopType: Engangsbeløptype? = null,
     val soknadType: SoknadTyper = emptyList(),

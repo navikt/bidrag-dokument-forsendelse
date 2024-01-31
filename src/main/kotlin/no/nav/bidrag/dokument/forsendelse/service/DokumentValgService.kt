@@ -184,7 +184,7 @@ class DokumentValgService(
         }?.find {
             (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
                 (it.vedtakType.isEmpty() || it.isVedtaktypeValid(request.vedtakType, request.soknadType)) &&
-                listOf(it.stonadType?.name, it.engangsbelopType?.name).contains(request.behandlingType) &&
+                listOf(it.stonadType?.name, it.engangsbelopType?.name, it.behandlingType).contains(request.behandlingType) &&
                 it.behandlingStatus.isValid(request.erFattetBeregnet) &&
                 (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
                 it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
