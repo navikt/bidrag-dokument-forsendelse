@@ -340,4 +340,60 @@ class DokumentValgAlternativeTitlerTest {
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
         }
     }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for særtilskudd`() {
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.FASTSETTELSE,
+                    engangsBelopType = Engangsbeløptype.SÆRTILSKUDD,
+                ),
+            )
+
+        dokumentValgListe.size shouldBe 2
+        dokumentValgListe shouldContainKey "BI01S02"
+        val fritekstBrev = dokumentValgListe["BI01S02"]!!
+        fritekstBrev.alternativeTitler shouldHaveSize 2
+        fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
+        fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
+    }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for avskrivning`() {
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.FASTSETTELSE,
+                    behandlingType = "AVSKRIVNING",
+                    erFattetBeregnet = false,
+                ),
+            )
+
+        dokumentValgListe.size shouldBe 2
+        dokumentValgListe shouldContainKey "BI01S02"
+        val fritekstBrev = dokumentValgListe["BI01S02"]!!
+        fritekstBrev.alternativeTitler shouldHaveSize 2
+        fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragspliktig"
+        fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragsmottaker"
+    }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg for sakomkostninger`() {
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    vedtakType = Vedtakstype.FASTSETTELSE,
+                    behandlingType = "SAKSOMKOSTNINGER",
+                    erFattetBeregnet = false,
+                ),
+            )
+
+        dokumentValgListe.size shouldBe 2
+        dokumentValgListe shouldContainKey "BI01S02"
+        val fritekstBrev = dokumentValgListe["BI01S02"]!!
+        fritekstBrev.alternativeTitler shouldHaveSize 2
+        fritekstBrev.alternativeTitler shouldContain "Vedtak om saksomkostninger til bidragspliktig"
+        fritekstBrev.alternativeTitler shouldContain "Vedtak om saksomkostninger til bidragsmottaker"
+    }
 }
