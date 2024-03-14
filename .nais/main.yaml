@@ -31,7 +31,7 @@ env:
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
-  KODEVERK_URL: https://kodeverk.dev-fss-pub.nais.io
+  KODEVERK_URL: https://kodeverk-api.nav.no
 
   LAGRE_DIST_INFO_PAGE_SIZE: 10
   LAGRE_DIST_INFO_CRON: "0 */10 * * * ?"
@@ -62,7 +62,7 @@ outbound-access-hosts:
    - bidrag-person.dev-fss-pub.nais.io
    - bidrag-sak.dev-fss-pub.nais.io
    - bidrag-organisasjon.dev-fss-pub.nais.io
-   - kodeverk.dev-fss-pub.nais.io
+   - kodeverk-api.nav.no
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
