@@ -31,7 +31,7 @@ env:
   BIDRAG_BEHANDLING_URL:  http://bidrag-behandling-feature
   BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling-feature
 
-  KODEVERK_URL: https://kodeverk.dev-fss-pub.nais.io
+  KODEVERK_URL: https://kodeverk-api.nav.no
 
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 
@@ -62,7 +62,7 @@ outbound-access-hosts:
    - bidrag-person-feature.dev-fss-pub.nais.io
    - bidrag-sak-feature.dev-fss-pub.nais.io
    - bidrag-organisasjon-feature.dev-fss-pub.nais.io
-   - kodeverk.dev-fss-pub.nais.io
+   - kodeverk-api.nav.no
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
