@@ -228,7 +228,7 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
         mottaker =
             this.mottaker?.let {
                 MottakerTo(
-                    ident = it.ident,
+                    ident = it.ident ?: "",
                     språk = it.språk,
                     navn = it.navn,
                     adresse =
