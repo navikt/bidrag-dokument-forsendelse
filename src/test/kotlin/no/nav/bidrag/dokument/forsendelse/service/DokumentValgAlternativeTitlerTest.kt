@@ -90,10 +90,11 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 3
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 3
+            fritekstBrev.alternativeTitler shouldHaveSize 4
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld"
         }
     }
 
@@ -297,10 +298,11 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 2
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 3
+            fritekstBrev.alternativeTitler shouldHaveSize 4
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld"
         }
 
         assertSoftly("Søknad bidrag") {
@@ -315,10 +317,29 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe.size shouldBe 2
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
-            fritekstBrev.alternativeTitler shouldHaveSize 3
+            fritekstBrev.alternativeTitler shouldHaveSize 4
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld"
+        }
+
+        assertSoftly("Søknad bidrag innkreving fattet") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.INNKREVING,
+                        behandlingType = Stønadstype.BIDRAG.name,
+                        erFattetBeregnet = true,
+                    ),
+                )
+
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Orientering om innkreving av fremtidig bidrag"
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om innkreving av fremtidig gjeld"
         }
 
         assertSoftly("Søknad bidrag fra 18 år privat avtale") {
@@ -361,21 +382,60 @@ class DokumentValgAlternativeTitlerTest {
 
     @Test
     fun `Skal hente alternative titler for dokumentvalg for avskrivning`() {
-        val dokumentValgListe =
-            dokumentValgService!!.hentDokumentMalListe(
-                HentDokumentValgRequest(
-                    vedtakType = Vedtakstype.FASTSETTELSE,
-                    behandlingType = "AVSKRIVNING",
-                    erFattetBeregnet = false,
-                ),
-            )
+        assertSoftly("Fattet avskrivning") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                        behandlingType = "AVSKRIVNING",
+                        erFattetBeregnet = false,
+                    ),
+                )
 
-        dokumentValgListe.size shouldBe 2
-        dokumentValgListe shouldContainKey "BI01S02"
-        val fritekstBrev = dokumentValgListe["BI01S02"]!!
-        fritekstBrev.alternativeTitler shouldHaveSize 2
-        fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragspliktig"
-        fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragsmottaker"
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragspliktig"
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragsmottaker"
+        }
+        assertSoftly("Fattet avskrivning bidragspliktig") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                        behandlingType = "AVSKRIVNING",
+                        soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                        erFattetBeregnet = true,
+                    ),
+                )
+
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 3
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om innkreving av bidragsgjeld"
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragspliktig"
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om avskrivning til bidragsmottaker"
+        }
+        assertSoftly("Varsel avskrivning bidragspliktig") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                        behandlingType = "AVSKRIVNING",
+                        soknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                        erFattetBeregnet = null,
+                    ),
+                )
+
+            dokumentValgListe.size shouldBe 2
+            dokumentValgListe shouldContainKey "BI01S02"
+            val fritekstBrev = dokumentValgListe["BI01S02"]!!
+            fritekstBrev.alternativeTitler shouldHaveSize 2
+            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld, bidragspliktig har bedt om reduksjon"
+            fritekstBrev.alternativeTitler shouldContain "Innkreving av gjeld, vi trenger flere opplysninger"
+        }
     }
 
     @Test

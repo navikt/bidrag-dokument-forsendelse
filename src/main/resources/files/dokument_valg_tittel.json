@@ -22,7 +22,8 @@
       "titler": [
         "Innkreving orientering til søker",
         "Innkreving varsel til motparten",
-        "Orientering om trukket søknad"
+        "Orientering om trukket søknad",
+        "Innkreving av bidragsgjeld"
       ]
     },
     {
@@ -35,7 +36,8 @@
       "titler": [
         "Innkreving orientering til søker",
         "Innkreving varsel til motparten",
-        "Orientering om trukket søknad"
+        "Orientering om trukket søknad",
+        "Innkreving av bidragsgjeld"
       ]
     },
     {
@@ -192,11 +194,60 @@
     {
       "vedtakType": [],
       "soknadType": [],
+      "soknadFra": [
+        "BIDRAGSPLIKTIG"
+      ],
+      "behandlingStatus": "IKKE_FATTET",
+      "behandlingType": "AVSKRIVNING",
+      "titler": [
+        "Innkreving av bidragsgjeld, bidragspliktig har bedt om reduksjon",
+        "Innkreving av gjeld, vi trenger flere opplysninger"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [],
+      "soknadFra": [
+        "BIDRAGSPLIKTIG"
+      ],
+      "behandlingStatus": "FATTET",
+      "behandlingType": "AVSKRIVNING",
+      "titler": [
+        "Vedtak om innkreving av bidragsgjeld",
+        "Vedtak om avskrivning til bidragspliktig",
+        "Vedtak om avskrivning til bidragsmottaker"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "soknadType": [],
       "behandlingStatus": "FATTET",
       "behandlingType": "SAKSOMKOSTNINGER",
       "titler": [
         "Vedtak om saksomkostninger til bidragspliktig",
         "Vedtak om saksomkostninger til bidragsmottaker"
+      ]
+    },
+    {
+      "vedtakType": [
+        "INNKREVING"
+      ],
+      "behandlingStatus": "FATTET",
+      "stonadType": "BIDRAG18AAR",
+      "titler": [
+        "Orientering om innkreving av fremtidig bidrag",
+        "Vedtak om innkreving av fremtidig gjeld"
+      ]
+    },
+    {
+      "vedtakType": [
+        "INNKREVING"
+      ],
+      "behandlingStatus": "FATTET",
+      "stonadType": "BIDRAG",
+      "titler": [
+        "Orientering om innkreving av fremtidig bidrag",
+        "Vedtak om innkreving av fremtidig gjeld"
       ]
     }
   ]
