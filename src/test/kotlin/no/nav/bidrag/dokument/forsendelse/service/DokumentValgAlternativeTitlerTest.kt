@@ -456,4 +456,45 @@ class DokumentValgAlternativeTitlerTest {
         fritekstBrev.alternativeTitler shouldContain "Vedtak om saksomkostninger til bidragspliktig"
         fritekstBrev.alternativeTitler shouldContain "Vedtak om saksomkostninger til bidragsmottaker"
     }
+
+    @Test
+    fun `Skal hente alternative titler for dokumentvalg tilbakekreving`() {
+        assertSoftly("Varsling tilbakekreving") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        behandlingType = Engangsbeløptype.TILBAKEKREVING.name,
+                        soknadFra = SøktAvType.NAV_BIDRAG,
+                        erFattetBeregnet = null,
+                    ),
+                )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 2
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 1
+                fritekstBrev.alternativeTitler shouldContain "Varsel om mulig tilbakekreving av feilutbetalt bidrag"
+            }
+        }
+
+        assertSoftly("Fattet vedtak tilbakekreving") {
+            val dokumentValgListe =
+                dokumentValgService!!.hentDokumentMalListe(
+                    HentDokumentValgRequest(
+                        behandlingType = Engangsbeløptype.TILBAKEKREVING.name,
+                        soknadFra = SøktAvType.NAV_BIDRAG,
+                        erFattetBeregnet = true,
+                    ),
+                )
+
+            assertSoftly {
+                dokumentValgListe.size shouldBe 2
+                dokumentValgListe shouldContainKey "BI01S02"
+                val fritekstBrev = dokumentValgListe["BI01S02"]!!
+                fritekstBrev.alternativeTitler shouldHaveSize 1
+                fritekstBrev.alternativeTitler shouldContain "Vedtak om tilbakekreving etter direktebetaling"
+            }
+        }
+    }
 }

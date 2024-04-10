@@ -249,6 +249,22 @@
         "Orientering om innkreving av fremtidig bidrag",
         "Vedtak om innkreving av fremtidig gjeld"
       ]
+    },
+    {
+      "vedtakType": [],
+      "behandlingStatus": "IKKE_FATTET",
+      "engangsbelopType": "TILBAKEKREVING",
+      "titler": [
+        "Varsel om mulig tilbakekreving av feilutbetalt bidrag"
+      ]
+    },
+    {
+      "vedtakType": [],
+      "behandlingStatus": "FATTET",
+      "engangsbelopType": "TILBAKEKREVING",
+      "titler": [
+        "Vedtak om tilbakekreving etter direktebetaling"
+      ]
     }
   ]
 }
