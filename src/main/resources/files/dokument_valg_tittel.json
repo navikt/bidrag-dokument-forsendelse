@@ -265,6 +265,15 @@
       "titler": [
         "Vedtak om tilbakekreving etter direktebetaling"
       ]
+    },
+    {
+      "vedtakType": [
+        "OPPHØR"
+      ],
+      "behandlingStatus": "FATTET",
+      "titler": [
+        "Vedtak innkreving opphør"
+      ]
     }
   ]
 }
