@@ -94,7 +94,7 @@ class DokumentValgAlternativeTitlerTest {
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld"
+            fritekstBrev.alternativeTitler shouldContain "Informasjon om innkreving av bidragsgjeld"
         }
     }
 
@@ -302,7 +302,7 @@ class DokumentValgAlternativeTitlerTest {
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld"
+            fritekstBrev.alternativeTitler shouldContain "Informasjon om innkreving av bidragsgjeld"
         }
 
         assertSoftly("Søknad bidrag") {
@@ -321,7 +321,7 @@ class DokumentValgAlternativeTitlerTest {
             fritekstBrev.alternativeTitler shouldContain "Innkreving orientering til søker"
             fritekstBrev.alternativeTitler shouldContain "Innkreving varsel til motparten"
             fritekstBrev.alternativeTitler shouldContain "Orientering om trukket søknad"
-            fritekstBrev.alternativeTitler shouldContain "Innkreving av bidragsgjeld"
+            fritekstBrev.alternativeTitler shouldContain "Informasjon om innkreving av bidragsgjeld"
         }
 
         assertSoftly("Søknad bidrag innkreving fattet") {
@@ -339,7 +339,7 @@ class DokumentValgAlternativeTitlerTest {
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 2
             fritekstBrev.alternativeTitler shouldContain "Orientering om innkreving av fremtidig bidrag"
-            fritekstBrev.alternativeTitler shouldContain "Vedtak om innkreving av fremtidig gjeld"
+            fritekstBrev.alternativeTitler shouldContain "Vedtak om innkreving av fremtidig bidrag"
         }
 
         assertSoftly("Søknad bidrag fra 18 år privat avtale") {
