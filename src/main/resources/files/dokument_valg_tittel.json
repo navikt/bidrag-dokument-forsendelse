@@ -23,7 +23,7 @@
         "Innkreving orientering til søker",
         "Innkreving varsel til motparten",
         "Orientering om trukket søknad",
-        "Innkreving av bidragsgjeld"
+        "Informasjon om innkreving av bidragsgjeld"
       ]
     },
     {
@@ -37,7 +37,7 @@
         "Innkreving orientering til søker",
         "Innkreving varsel til motparten",
         "Orientering om trukket søknad",
-        "Innkreving av bidragsgjeld"
+        "Informasjon om innkreving av bidragsgjeld"
       ]
     },
     {
@@ -236,7 +236,7 @@
       "stonadType": "BIDRAG18AAR",
       "titler": [
         "Orientering om innkreving av fremtidig bidrag",
-        "Vedtak om innkreving av fremtidig gjeld"
+        "Vedtak om innkreving av fremtidig bidrag"
       ]
     },
     {
@@ -247,7 +247,7 @@
       "stonadType": "BIDRAG",
       "titler": [
         "Orientering om innkreving av fremtidig bidrag",
-        "Vedtak om innkreving av fremtidig gjeld"
+        "Vedtak om innkreving av fremtidig bidrag"
       ]
     },
     {
