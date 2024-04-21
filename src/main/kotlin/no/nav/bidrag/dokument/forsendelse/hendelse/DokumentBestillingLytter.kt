@@ -156,7 +156,7 @@ class DokumentBestillingLytter(
         dokument: Dokument,
     ): DokumentArkivSystemDto? {
         val dokumentMalId = dokument.dokumentmalId!!
-        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
+        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId) || forsendelse.behandlingInfo?.behandlingId != null) {
             val bestilling = tilForespørsel(forsendelse, dokument)
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
@@ -202,7 +202,8 @@ class DokumentBestillingLytter(
                 } else {
                     dokument.tittel
                 },
-                "er_statisk_dokument", if (dokument.erStatiskDokument()) "true" else "false",
+                "er_statisk_dokument",
+                if (dokument.erStatiskDokument()) "true" else "false",
             ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
