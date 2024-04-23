@@ -156,7 +156,8 @@ class DokumentBestillingLytter(
         dokument: Dokument,
     ): DokumentArkivSystemDto? {
         val dokumentMalId = dokument.dokumentmalId!!
-        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId) || forsendelse.behandlingInfo?.behandlingId != null) {
+        val erOpprettetGjennomNyLøsning = forsendelse.behandlingInfo?.behandlingId != null && forsendelse.behandlingInfo?.vedtakId != null
+        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId) || erOpprettetGjennomNyLøsning) {
             val bestilling = tilForespørsel(forsendelse, dokument)
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
