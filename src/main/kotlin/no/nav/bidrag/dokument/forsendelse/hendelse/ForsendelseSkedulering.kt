@@ -62,40 +62,61 @@ class ForsendelseSkedulering(
      * Sjekk om forsendelse er distribuert hvor journalpost ble opprettet men distribusjon feilet. Da kan saksbehandler distribuere journalpost på nytt manuelt men status ikke bli oppdatert.
      * Denne jobben synkroniserer distribusjonstatus slik at det stemmer med om hvordan journalposten er distribuert
      */
-    private fun oppdaterForsendelsestatusTilDistribuert(forsendelse: Forsendelse) {
+    fun oppdaterForsendelsestatusTilDistribuert(forsendelse: Forsendelse) {
         try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
                     ?.takeIf {
                         it.journalstatus == JournalpostStatus.DISTRIBUERT ||
                             it.journalstatus == JournalpostStatus.EKSPEDERT ||
+                            it.journalstatus == JournalpostStatus.FEILREGISTRERT ||
                             it.kanal == Kanal.INGEN_DISTRIBUSJON.name
                     }
                     ?.let { distInfo ->
-                        LOGGER.info {
-                            """Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} 
+                        val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
+                        if (distInfo.journalstatus == JournalpostStatus.FEILREGISTRERT) {
+                            LOGGER.info {
+                                """Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} 
+                                men journalpost ${forsendelse.journalpostIdFagarkiv} er feilregistrert. 
+                                Oppdaterer forsendelsestatus til ${ForsendelseStatus.AVBRUTT}
+                            """
+                            }
+                            forsendelseTjeneste.lagre(
+                                forsendelse.copy(
+                                    status = ForsendelseStatus.AVBRUTT,
+                                    distribusjonKanal = kanal,
+                                    avbruttTidspunkt = distInfo.distribuertDato ?: LocalDateTime.now(),
+                                    endretTidspunkt = LocalDateTime.now(),
+                                    avbruttAvIdent = BIDRAG_DOKUMENT_FORSENDELSE_APP_ID,
+                                    endretAvIdent = BIDRAG_DOKUMENT_FORSENDELSE_APP_ID,
+                                ),
+                            )
+                        } else {
+                            LOGGER.info {
+                                """Forsendelse ${forsendelse.forsendelseId} har status ${ForsendelseStatus.FERDIGSTILT} 
                                 men journalpost ${forsendelse.journalpostIdFagarkiv} 
                                 er distribuert med status ${distInfo.journalstatus} og kanal ${distInfo.kanal}. 
                                 Oppdaterer forsendelsestatus til ${ForsendelseStatus.DISTRIBUERT}
                             """
+                            }
+                            forsendelseTjeneste.lagre(
+                                forsendelse.copy(
+                                    status =
+                                        when (kanal) {
+                                            DistribusjonKanal.LOKAL_UTSKRIFT -> ForsendelseStatus.DISTRIBUERT_LOKALT
+                                            DistribusjonKanal.INGEN_DISTRIBUSJON -> ForsendelseStatus.FERDIGSTILT
+                                            else -> ForsendelseStatus.DISTRIBUERT
+                                        },
+                                    distribuertTidspunkt = distInfo.distribuertDato ?: LocalDateTime.now(),
+                                    distribuertAvIdent = distInfo.distribuertAvIdent ?: forsendelse.distribuertAvIdent,
+                                    distribusjonBestillingsId = distInfo.bestillingId ?: forsendelse.distribusjonBestillingsId,
+                                    distribusjonKanal = kanal,
+                                    endretTidspunkt = LocalDateTime.now(),
+                                    endretAvIdent = BIDRAG_DOKUMENT_FORSENDELSE_APP_ID,
+                                ),
+                            )
                         }
-                        val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
-                        forsendelseTjeneste.lagre(
-                            forsendelse.copy(
-                                status =
-                                    when (kanal) {
-                                        DistribusjonKanal.LOKAL_UTSKRIFT -> ForsendelseStatus.DISTRIBUERT_LOKALT
-                                        DistribusjonKanal.INGEN_DISTRIBUSJON -> ForsendelseStatus.FERDIGSTILT
-                                        else -> ForsendelseStatus.DISTRIBUERT
-                                    },
-                                distribuertTidspunkt = distInfo.distribuertDato ?: LocalDateTime.now(),
-                                distribuertAvIdent = distInfo.distribuertAvIdent ?: forsendelse.distribuertAvIdent,
-                                distribusjonBestillingsId = distInfo.bestillingId ?: forsendelse.distribusjonBestillingsId,
-                                distribusjonKanal = kanal,
-                                endretTidspunkt = LocalDateTime.now(),
-                                endretAvIdent = BIDRAG_DOKUMENT_FORSENDELSE_APP_ID,
-                            ),
-                        )
+
                         forsendelseHendelseBestilling.bestill(forsendelse.forsendelseId!!)
                     }
             }
