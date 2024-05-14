@@ -62,7 +62,7 @@ class ForsendelseSkedulering(
      * Sjekk om forsendelse er distribuert hvor journalpost ble opprettet men distribusjon feilet. Da kan saksbehandler distribuere journalpost på nytt manuelt men status ikke bli oppdatert.
      * Denne jobben synkroniserer distribusjonstatus slik at det stemmer med om hvordan journalposten er distribuert
      */
-    private fun oppdaterForsendelsestatusTilDistribuert(forsendelse: Forsendelse) {
+    fun oppdaterForsendelsestatusTilDistribuert(forsendelse: Forsendelse) {
         try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
