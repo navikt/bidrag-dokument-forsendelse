@@ -23,6 +23,17 @@ data class HentDokumentValgRequest(
     @Schema(enumAsRef = true) val engangsBelopType: Engangsbeløptype? = null,
 ) {
     fun erKlage() = vedtakType == Vedtakstype.KLAGE || soknadType == Vedtakstype.KLAGE.name
+
+    val behandlingtypeKonvertert =
+        when (behandlingType) {
+            Engangsbeløptype.SAERTILSKUDD.name,
+            Engangsbeløptype.SÆRTILSKUDD.name,
+            Engangsbeløptype.SÆRBIDRAG.name,
+            -> Engangsbeløptype.SÆRBIDRAG.name
+
+            Engangsbeløptype.DIREKTE_OPPGJØR.name, Engangsbeløptype.DIREKTE_OPPGJOR.name -> Engangsbeløptype.DIREKTE_OPPGJØR.name
+            else -> behandlingType
+        }
 }
 
 fun HentDokumentValgRequest.tilBehandlingInfo(): BehandlingInfo =

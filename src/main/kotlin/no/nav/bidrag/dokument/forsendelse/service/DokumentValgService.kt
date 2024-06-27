@@ -18,7 +18,6 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBeh
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTilbakekrevingLik
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
-import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
@@ -50,16 +49,15 @@ class DokumentValgService(
         dokumentValgTittelMap = fetchDokumentValgTitlerMapFromFile()
     }
 
-    fun hentNotatListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
-        return if (erKlage(request)) {
+    fun hentNotatListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> =
+        if (erKlage(request)) {
             (notaterKlage + notaterBrevkoder).associateWith { mapToMalDetaljer(it, request, true) }
         } else {
             notaterBrevkoder.associateWith { mapToMalDetaljer(it, request, true) }
         }
-    }
 
-    fun erKlage(request: HentDokumentValgRequest? = null): Boolean {
-        return if (request == null) {
+    fun erKlage(request: HentDokumentValgRequest? = null): Boolean =
+        if (request == null) {
             false
         } else if (request.erKlage()) {
             true
@@ -67,12 +65,12 @@ class DokumentValgService(
             bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == Vedtakstype.KLAGE }
                 ?: false
         } else if (!request.behandlingId.isNullOrEmpty()) {
-            behandlingConsumer.hentBehandling(behandlingId = request.behandlingId)
-                ?.let { it.søknadstype == Vedtakstype.KLAGE } ?: false
+            behandlingConsumer
+                .hentBehandling(behandlingId = request.behandlingId)
+                ?.let { it.vedtakstype == Vedtakstype.KLAGE } ?: false
         } else {
             false
         }
-    }
 
     fun hentDokumentMalListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
         if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
@@ -84,15 +82,16 @@ class DokumentValgService(
         return maler.toList().sortedBy { (a, b) -> if (a == FRITEKSTBREV) -1 else 1 }.toMap()
     }
 
-    private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? {
-        return if (request == null) {
+    private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? =
+        if (request == null) {
             null
         } else if (request.vedtakId != null && hentDetaljerFraVedtakBehandlingEnabled) {
-            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)
+            bidragVedtakConsumer
+                .hentVedtak(vedtakId = request.vedtakId)
                 ?.let {
                     val behandlingType =
                         if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
-                    val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
+                    val erFattetBeregnet = false // it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
                     val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
                     request.copy(
                         behandlingType = behandlingType,
@@ -103,26 +102,27 @@ class DokumentValgService(
                     )
                 }
         } else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) {
-            behandlingConsumer.hentBehandling(
-                request.behandlingId,
-            )?.let {
-                request.copy(
-                    behandlingType = it.behandlingtype,
-                    vedtakType = it.søknadstype,
-                    soknadFra = request.soknadFra ?: it.soknadFraType,
-                    erFattetBeregnet = null,
-                    erVedtakIkkeTilbakekreving = false,
-                    enhet = request.enhet ?: it.behandlerenhet,
-                )
-            }
+            behandlingConsumer
+                .hentBehandling(
+                    request.behandlingId,
+                )?.let {
+                    request.copy(
+                        behandlingType = it.stønadstype?.name ?: it.engangsbeløptype?.name,
+                        vedtakType = it.vedtakstype,
+                        soknadFra = request.soknadFra ?: it.søktAv,
+                        erFattetBeregnet = null,
+                        erVedtakIkkeTilbakekreving = false,
+                        enhet = request.enhet ?: it.behandlerenhet,
+                    )
+                }
         } else {
             request
         }
-    }
 
     private fun hentDokumentMalListeForRequest(request: HentDokumentValgRequest?): Map<String, DokumentMalDetaljer>? {
         if (request == null) return null
-        val (soknadType, vedtakType, behandlingType, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
+        val (soknadType, vedtakType, _, soknadFra, erFattetBeregnet, erVedtakIkkeTilbakekreving, _, _, enhet) = request
+        val behandlingType = request.behandlingtypeKonvertert
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg =
             dokumentValgMap[behandlingTypeConverted]?.find {
@@ -141,7 +141,8 @@ class DokumentValgService(
                 }
             }
                 ?: if (erFattetBeregnet != null) ekstraBrevkoderVedtakFattet else ekstraBrevkoderVedtakIkkeFattet
-        return brevkoder.associateWith { mapToMalDetaljer(it, request) }
+        return brevkoder
+            .associateWith { mapToMalDetaljer(it, request) }
             .filter { it.value.type != DokumentMalType.NOTAT }
     }
 
@@ -176,23 +177,29 @@ class DokumentValgService(
         request: HentDokumentValgRequest? = null,
     ): List<String> {
         if (request == null) return emptyList()
-        return dokumentValgTittelMap[malId]?.sortedByDescending {
-            it.isVedtaktypeValid(
-                request.vedtakType,
-                request.soknadType,
-            ) || it.soknadFra.contains(request.soknadFra)
-        }?.find {
-            (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
-                (it.vedtakType.isEmpty() || it.isVedtaktypeValid(request.vedtakType, request.soknadType)) &&
-                listOf(it.stonadType?.name, it.engangsbelopType?.name, it.behandlingType).contains(request.behandlingType) &&
-                it.behandlingStatus.isValid(request.erFattetBeregnet) &&
-                (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
-                it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
-        }?.titler ?: emptyList()
+        return dokumentValgTittelMap[malId]
+            ?.sortedByDescending {
+                it.isVedtaktypeValid(
+                    request.vedtakType,
+                    request.soknadType,
+                ) ||
+                    it.soknadFra.contains(request.soknadFra)
+            }?.find {
+                (it.soknadFra.isEmpty() || it.soknadFra.contains(request.soknadFra)) &&
+                    (it.vedtakType.isEmpty() || it.isVedtaktypeValid(request.vedtakType, request.soknadType)) &&
+                    listOf(
+                        it.stonadType?.name,
+                        it.engangsbelopType?.name,
+                        it.behandlingType,
+                    ).contains(request.behandlingtypeKonvertert) &&
+                    it.behandlingStatus.isValid(request.erFattetBeregnet) &&
+                    (it.forvaltning == null || it.forvaltning.isValid(request.enhet)) &&
+                    it.erVedtakTilbakekrevingLik(request.erVedtakIkkeTilbakekreving)
+            }?.titler ?: emptyList()
     }
 
-    private fun fetchDokumentValgMapFromFile(): Map<BehandlingType, List<DokumentBehandlingDetaljer>> {
-        return try {
+    private fun fetchDokumentValgMapFromFile(): Map<BehandlingType, List<DokumentBehandlingDetaljer>> =
+        try {
             val objectMapper = ObjectMapper(YAMLFactory())
             objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             val inputstream = ClassPathResource("files/dokument_valg.json").inputStream
@@ -214,10 +221,9 @@ class DokumentValgService(
         } catch (e: IOException) {
             throw RuntimeException("Kunne ikke laste fil", e)
         }
-    }
 
-    private fun fetchDokumentValgTitlerMapFromFile(): Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>> {
-        return try {
+    private fun fetchDokumentValgTitlerMapFromFile(): Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>> =
+        try {
             val objectMapper = ObjectMapper(YAMLFactory())
             objectMapper.findAndRegisterModules().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             val inputstream = ClassPathResource("files/dokument_valg_tittel.json").inputStream
@@ -239,5 +245,4 @@ class DokumentValgService(
         } catch (e: IOException) {
             throw RuntimeException("Kunne ikke laste fil", e)
         }
-    }
 }

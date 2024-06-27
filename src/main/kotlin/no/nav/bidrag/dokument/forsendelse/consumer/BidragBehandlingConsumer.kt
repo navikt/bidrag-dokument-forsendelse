@@ -23,15 +23,18 @@ class BidragBehandlingConsumer(
     @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}") val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) : AbstractRestClient(restTemplate, "bidrag-behandling") {
     private fun createUri(path: String?) =
-        UriComponentsBuilder.fromUri(url)
-            .path(path ?: "").build().toUri()
+        UriComponentsBuilder
+            .fromUri(url)
+            .path(path ?: "")
+            .build()
+            .toUri()
 
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @BrukerCacheable(CacheConfig.BEHANDLING_CACHE)
     fun hentBehandling(behandlingId: String): BehandlingDto? {
         if (!hentDetaljerFraVedtakBehandlingEnabled) return null
         try {
-            return getForEntity(createUri("/api/behandling/$behandlingId"))
+            return getForEntity(createUri("/api/v2/behandling/detaljer/$behandlingId"))
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.NOT_FOUND) {
                 return null

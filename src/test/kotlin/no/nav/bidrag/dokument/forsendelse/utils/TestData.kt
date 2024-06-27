@@ -36,8 +36,8 @@ import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.domene.ident.Personident
 import no.nav.bidrag.domene.organisasjon.Enhetsnummer
 import no.nav.bidrag.domene.sak.Saksnummer
+import no.nav.bidrag.transport.behandling.felles.grunnlag.GrunnlagDto
 import no.nav.bidrag.transport.behandling.vedtak.response.EngangsbeløpDto
-import no.nav.bidrag.transport.behandling.vedtak.response.GrunnlagDto
 import no.nav.bidrag.transport.behandling.vedtak.response.StønadsendringDto
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
@@ -97,14 +97,13 @@ val SPRÅK_NORSK_BOKMÅL = "NB"
 
 val NY_JOURNALPOSTID = "12312312312"
 
-fun jsonToString(data: Any): String {
-    return try {
+fun jsonToString(data: Any): String =
+    try {
         ObjectMapper().findAndRegisterModules().writeValueAsString(data)
     } catch (e: JsonProcessingException) {
         Assert.fail(e.message)
         ""
     }
-}
 
 @DslMarker
 annotation class OpprettForsendelseTestdataDsl
@@ -295,15 +294,14 @@ fun nyttDokument(
 fun opprettHendelse(
     dokumentreferanse: String,
     status: DokumentStatusDto = DokumentStatusDto.UNDER_REDIGERING,
-): DokumentHendelse {
-    return DokumentHendelse(
+): DokumentHendelse =
+    DokumentHendelse(
         dokumentreferanse = dokumentreferanse,
         arkivSystem = DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER,
         hendelseType = DokumentHendelseType.ENDRING,
         sporingId = "sporing",
         status = status,
     )
-}
 
 fun nyOpprettForsendelseForespørsel() =
     OpprettForsendelseForespørsel(
@@ -348,18 +346,17 @@ fun nyOpprettJournalpostResponse(
     journalpostId: String = NY_JOURNALPOSTID,
     dokumenter: List<OpprettDokumentDto> =
         listOf(OpprettDokumentDto(tittel = "Tittel på dokument", dokumentreferanse = "dokref1")),
-): OpprettJournalpostResponse {
-    return OpprettJournalpostResponse(
+): OpprettJournalpostResponse =
+    OpprettJournalpostResponse(
         dokumenter = dokumenter,
         journalpostId = journalpostId,
     )
-}
 
 fun opprettDokumentMetadata(
     journalpostId: String,
     dokumentreferanse: String? = null,
-): DokumentMetadata {
-    return DokumentMetadata(
+): DokumentMetadata =
+    DokumentMetadata(
         journalpostId = journalpostId,
         dokumentreferanse = dokumentreferanse,
         tittel = "Tittel på dokument",
@@ -367,26 +364,25 @@ fun opprettDokumentMetadata(
         arkivsystem = DokumentArkivSystemDto.JOARK,
         format = DokumentFormatDto.PDF,
     )
-}
 
-fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> {
-    return listOf(
+fun opprettDokumentMetadataListe(journalpostId: String): List<DokumentMetadata> =
+    listOf(
         opprettDokumentMetadata(journalpostId),
     )
-}
 
-fun opprettBehandlingDto(): BehandlingDto {
-    return BehandlingDto(
-        behandlingtype = Stønadstype.FORSKUDD.name,
-        soknadFraType = SøktAvType.BIDRAGSMOTTAKER,
-        søknadstype = Vedtakstype.ENDRING,
+fun opprettBehandlingDto(): BehandlingDto =
+    BehandlingDto(
+        stønadstype = Stønadstype.FORSKUDD,
+        søktAv = SøktAvType.BIDRAGSMOTTAKER,
+        vedtakstype = Vedtakstype.ENDRING,
         saksnummer = SAKSNUMMER,
         behandlerenhet = JOURNALFØRENDE_ENHET,
+        id = 1,
+        søknadsid = 1,
     )
-}
 
-fun opprettVedtakDto(): VedtakDto {
-    return VedtakDto(
+fun opprettVedtakDto(): VedtakDto =
+    VedtakDto(
         kilde = Vedtakskilde.AUTOMATISK,
         type = Vedtakstype.FASTSETTELSE,
         stønadsendringListe = listOf(opprettStonadsEndringDto()),
@@ -400,7 +396,7 @@ fun opprettVedtakDto(): VedtakDto {
             listOf(
                 GrunnlagDto(
                     innhold = ObjectMapper().createObjectNode(),
-                    type = Grunnlagstype.SLUTTBEREGNING_BBM,
+                    type = Grunnlagstype.SØKNAD,
                     referanse = "",
                 ),
             ),
@@ -409,10 +405,9 @@ fun opprettVedtakDto(): VedtakDto {
         innkrevingUtsattTilDato = LocalDate.now(),
         kildeapplikasjon = "",
     )
-}
 
 fun opprettEngangsbelopDto(
-    type: Engangsbeløptype = Engangsbeløptype.SAERTILSKUDD,
+    type: Engangsbeløptype = Engangsbeløptype.SÆRBIDRAG,
     resultatkode: String = "",
 ) = EngangsbeløpDto(
     type,
@@ -448,8 +443,8 @@ fun opprettStonadsEndringDto() =
         grunnlagReferanseListe = emptyList(),
     )
 
-fun opprettSak(): BidragssakDto {
-    return BidragssakDto(
+fun opprettSak(): BidragssakDto =
+    BidragssakDto(
         eierfogd = Enhetsnummer(JOURNALFØRENDE_ENHET),
         kategori = Sakskategori.U,
         levdeAdskilt = false,
@@ -464,4 +459,3 @@ fun opprettSak(): BidragssakDto {
                 RolleDto(Personident(GJELDER_IDENT_BA), Rolletype.BARN),
             ),
     )
-}

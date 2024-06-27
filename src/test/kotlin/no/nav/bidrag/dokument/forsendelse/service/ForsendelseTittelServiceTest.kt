@@ -281,7 +281,7 @@ class ForsendelseTittelServiceTest {
                 stønadsendringListe = emptyList(),
                 engangsbeløpListe =
                     listOf(
-                        opprettEngangsbelopDto().copy(type = Engangsbeløptype.SAERTILSKUDD),
+                        opprettEngangsbelopDto().copy(type = Engangsbeløptype.SÆRBIDRAG),
                     ),
             )
         val tittel =

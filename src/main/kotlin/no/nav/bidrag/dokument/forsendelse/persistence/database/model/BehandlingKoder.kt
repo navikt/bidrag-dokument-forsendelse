@@ -1,13 +1,16 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET_KODER
+import no.nav.bidrag.dokument.forsendelse.model.konverterFraDeprekerteVerdier
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 
 // T_BLANKETT.SOKN_FRA_KODE
-enum class SoknadFra(private val kode: String) {
+enum class SoknadFra(
+    private val kode: String,
+) {
     BM_I_ANNEN_SAK("AS"),
     BARN_18_AAR("BB"),
     NAV_BIDRAG("ET"), // TK
@@ -56,8 +59,8 @@ enum class BehandlingStatus {
     IKKE_FATTET,
 }
 
-fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
-    return if (erFattetBeregnet == null) {
+fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean =
+    if (erFattetBeregnet == null) {
         this == BehandlingStatus.IKKE_RELEVANT || this == BehandlingStatus.IKKE_FATTET
     } else if (this == BehandlingStatus.FATTET_BEREGNET) {
         erFattetBeregnet == true
@@ -66,7 +69,6 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean {
     } else {
         this == BehandlingStatus.FATTET
     }
-}
 
 typealias SoknadTyper = List<SoknadType>
 
@@ -118,4 +120,7 @@ data class DokumentBehandlingTittelDetaljer(
     val erVedtakIkkeTilbakekreving: Boolean? = false,
     val behandlingStatus: BehandlingStatus,
     val titler: List<String>,
-)
+) {
+    val engangsbeløptypeKonvertert
+        get() = engangsbelopType?.konverterFraDeprekerteVerdier()
+}
