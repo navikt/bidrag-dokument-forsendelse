@@ -396,7 +396,7 @@ fun opprettVedtakDto(): VedtakDto =
             listOf(
                 GrunnlagDto(
                     innhold = ObjectMapper().createObjectNode(),
-                    type = Grunnlagstype.SØKNAD,
+                    type = Grunnlagstype.DELBEREGNING_SUM_INNTEKT,
                     referanse = "",
                 ),
             ),
