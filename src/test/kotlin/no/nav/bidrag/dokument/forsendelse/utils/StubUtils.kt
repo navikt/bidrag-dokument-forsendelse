@@ -72,11 +72,10 @@ class StubUtils {
             )
         }
 
-        fun aClosedJsonResponse(): ResponseDefinitionBuilder {
-            return aResponse()
+        fun aClosedJsonResponse(): ResponseDefinitionBuilder =
+            aResponse()
                 .withHeader(HttpHeaders.CONNECTION, "close")
                 .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-        }
     }
 
     fun stubUnleash() {
@@ -87,7 +86,7 @@ class StubUtils {
 
     fun stubBehandling(behandlingDto: BehandlingDto = opprettBehandlingDto()) {
         WireMock.stubFor(
-            WireMock.get(WireMock.urlMatching("/behandling/api/behandling(.*)")).willReturn(
+            WireMock.get(WireMock.urlMatching("/behandling/api/v2/behandling/detaljer(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withBody(
@@ -132,8 +131,10 @@ class StubUtils {
         personResponse: PersonDto = PersonDto(Personident(MOTTAKER_IDENT), MOTTAKER_NAVN, kortnavn = MOTTAKER_NAVN),
     ) {
         WireMock.stubFor(
-            WireMock.post(WireMock.urlMatching("/person/informasjon"))
-                .withRequestBody(if (fnr.isNullOrEmpty()) AnythingPattern() else ContainsPattern(fnr)).willReturn(
+            WireMock
+                .post(WireMock.urlMatching("/person/informasjon"))
+                .withRequestBody(if (fnr.isNullOrEmpty()) AnythingPattern() else ContainsPattern(fnr))
+                .willReturn(
                     aClosedJsonResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withBody(jsonToString(personResponse)),
@@ -146,6 +147,7 @@ class StubUtils {
             WireMock.post(WireMock.urlMatching("/person/spraak")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
+                    .withHeader(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .withBody(result),
             ),
         )
@@ -383,6 +385,7 @@ class StubUtils {
             WireMock.post(WireMock.urlMatching("/bestilling/dokument/$dokumentmalId")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
+                    .withHeader(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .withBody(DOKUMENT_FIL.toByteArray()),
             ),
         )
@@ -405,14 +408,13 @@ class StubUtils {
         )
     }
 
-    private fun jsonToString(data: Any): String {
-        return try {
+    private fun jsonToString(data: Any): String =
+        try {
             objectMapper.writeValueAsString(data)
         } catch (e: JsonProcessingException) {
             Assert.fail(e.message)
             ""
         }
-    }
 
     inner class Valider {
         fun hentVedtakKalt(
@@ -432,7 +434,7 @@ class StubUtils {
         ) {
             val verify =
                 WireMock.getRequestedFor(
-                    WireMock.urlMatching("/behandling/api/behandling/$behandlingId"),
+                    WireMock.urlMatching("/behandling/api/v2/behandling/detaljer/$behandlingId"),
                 )
             WireMock.verify(antallGanger, verify)
         }
@@ -513,25 +515,28 @@ class StubUtils {
 
         fun hentPersonKaltMed(fnr: String?) {
             val verify =
-                WireMock.postRequestedFor(
-                    WireMock.urlMatching("/person/informasjon"),
-                ).withRequestBody(ContainsPattern(fnr))
+                WireMock
+                    .postRequestedFor(
+                        WireMock.urlMatching("/person/informasjon"),
+                    ).withRequestBody(ContainsPattern(fnr))
             WireMock.verify(verify)
         }
 
         fun hentPersonSpråkKaltMed(fnr: String?) {
             val verify =
-                WireMock.postRequestedFor(
-                    WireMock.urlMatching("/person/spraak"),
-                ).withRequestBody(ContainsPattern(fnr))
+                WireMock
+                    .postRequestedFor(
+                        WireMock.urlMatching("/person/spraak"),
+                    ).withRequestBody(ContainsPattern(fnr))
             WireMock.verify(verify)
         }
 
         fun hentPersonSpråkIkkeKaltMed(fnr: String?) {
             val verify =
-                WireMock.postRequestedFor(
-                    WireMock.urlMatching("/person/spraak"),
-                ).withRequestBody(ContainsPattern(fnr))
+                WireMock
+                    .postRequestedFor(
+                        WireMock.urlMatching("/person/spraak"),
+                    ).withRequestBody(ContainsPattern(fnr))
             WireMock.verify(0, verify)
         }
 

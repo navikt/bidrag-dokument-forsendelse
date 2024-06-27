@@ -58,7 +58,7 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgService!!.hentDokumentMalListe(
                 HentDokumentValgRequest(
                     vedtakType = Vedtakstype.INNKREVING,
-                    behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
+                    behandlingType = Engangsbeløptype.SÆRBIDRAG.name,
                     soknadFra = SøktAvType.NAV_BIDRAG,
                     erFattetBeregnet = null,
                 ),

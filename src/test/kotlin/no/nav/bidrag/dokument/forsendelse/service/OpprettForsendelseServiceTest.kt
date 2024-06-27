@@ -382,7 +382,7 @@ class OpprettForsendelseServiceTest {
                     BehandlingInfoDto(
                         erFattetBeregnet = true,
                         soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                        engangsBelopType = Engangsbeløptype.SAERTILSKUDD,
+                        engangsBelopType = Engangsbeløptype.SÆRBIDRAG,
                         behandlingType = "AVSKRIVNING",
                         vedtakType = Vedtakstype.FASTSETTELSE,
                     ),
@@ -402,7 +402,7 @@ class OpprettForsendelseServiceTest {
                 withArg {
                     it.behandlingInfo!!.behandlingType shouldBe null
                     it.behandlingInfo!!.stonadType shouldBe null
-                    it.behandlingInfo!!.engangsBelopType shouldBe Engangsbeløptype.SAERTILSKUDD
+                    it.behandlingInfo!!.engangsBelopType shouldBe Engangsbeløptype.SÆRBIDRAG
                 },
             )
         }

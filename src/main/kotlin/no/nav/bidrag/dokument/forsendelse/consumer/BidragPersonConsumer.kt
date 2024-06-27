@@ -9,7 +9,9 @@ import no.nav.bidrag.transport.person.PersonDto
 import no.nav.bidrag.transport.person.PersonRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -24,8 +26,11 @@ class BidragPersonConsumer(
     @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-person") {
     private fun createUri(path: String?) =
-        UriComponentsBuilder.fromUri(url)
-            .path(path ?: "").build().toUri()
+        UriComponentsBuilder
+            .fromUri(url)
+            .path(path ?: "")
+            .build()
+            .toUri()
 
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @BrukerCacheable(PERSON_CACHE)
@@ -44,7 +49,9 @@ class BidragPersonConsumer(
     @BrukerCacheable(PERSON_SPRAAK_CACHE)
     fun hentPersonSpråk(personId: String): String? {
         return try {
-            postForEntity(createUri("/spraak"), PersonRequest(Personident(personId)))
+            val headers = HttpHeaders()
+            headers.accept = listOf(MediaType.TEXT_PLAIN)
+            postForEntity(createUri("/spraak"), PersonRequest(Personident(personId)), headers)
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.NOT_FOUND) {
                 return null

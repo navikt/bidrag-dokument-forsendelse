@@ -281,7 +281,7 @@ class ForsendelseTittelServiceTest {
                 stønadsendringListe = emptyList(),
                 engangsbeløpListe =
                     listOf(
-                        opprettEngangsbelopDto().copy(type = Engangsbeløptype.SAERTILSKUDD),
+                        opprettEngangsbelopDto().copy(type = Engangsbeløptype.SÆRBIDRAG),
                     ),
             )
         val tittel =
@@ -307,7 +307,7 @@ class ForsendelseTittelServiceTest {
     fun `Skal opprette behandling tittel for varsling av bidrag 18 år fra vedtakid`() {
         every { behandlingConsumer.hentBehandling(any()) } returns
             opprettBehandlingDto().copy(
-                behandlingtype = Stønadstype.EKTEFELLEBIDRAG.name,
+                stønadstype = Stønadstype.EKTEFELLEBIDRAG,
             )
         val tittel =
             forsendelseTittelService.opprettForsendelseTittel(
@@ -324,53 +324,6 @@ class ForsendelseTittelServiceTest {
             )
 
         tittel shouldBe "Orientering/Varsel om ektefellebidrag til bidragsmottaker"
-    }
-
-    @Test
-    fun `Skal opprette tittel uten behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
-        every { behandlingConsumer.hentBehandling(any()) } returns
-            opprettBehandlingDto().copy(
-                behandlingtype = "NOT_EXISTING",
-            )
-        val tittel =
-            forsendelseTittelService.opprettForsendelseTittel(
-                OpprettForsendelseForespørsel(
-                    enhet = "",
-                    saksnummer = "",
-                    gjelderIdent = GJELDER_IDENT_BM,
-                    behandlingInfo =
-                        BehandlingInfoDto(
-                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                            behandlingId = "123213",
-                        ),
-                ),
-            )
-
-        tittel shouldBe "Orientering/Varsel til bidragsmottaker"
-    }
-
-    @Test
-    fun `Skal opprette tittel fra forespørsel behandlingtype hvis mapping av behandlingtype fra behandling respons feiler`() {
-        every { behandlingConsumer.hentBehandling(any()) } returns
-            opprettBehandlingDto().copy(
-                behandlingtype = "NOT_EXISTING",
-            )
-        val tittel =
-            forsendelseTittelService.opprettForsendelseTittel(
-                OpprettForsendelseForespørsel(
-                    enhet = "",
-                    saksnummer = "",
-                    gjelderIdent = GJELDER_IDENT_BM,
-                    behandlingInfo =
-                        BehandlingInfoDto(
-                            behandlingType = Stønadstype.FORSKUDD.name,
-                            soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                            behandlingId = "123213",
-                        ),
-                ),
-            )
-
-        tittel shouldBe "Orientering/Varsel om forskudd til bidragsmottaker"
     }
 
     @Test

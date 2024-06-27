@@ -465,7 +465,7 @@ class DokumentValgServiceTest {
                     stønadsendringListe = emptyList(),
                     engangsbeløpListe =
                         listOf(
-                            opprettEngangsbelopDto(Engangsbeløptype.SAERTILSKUDD),
+                            opprettEngangsbelopDto(Engangsbeløptype.SÆRBIDRAG),
                         ),
                 )
 
@@ -495,7 +495,7 @@ class DokumentValgServiceTest {
                 HentDokumentValgRequest(
                     vedtakType = Vedtakstype.ENDRING,
                     soknadFra = SøktAvType.BIDRAGSMOTTAKER,
-                    behandlingType = Engangsbeløptype.SAERTILSKUDD.name,
+                    behandlingType = Engangsbeløptype.SÆRBIDRAG.name,
                     erFattetBeregnet = true,
                 ),
             )
@@ -519,7 +519,7 @@ class DokumentValgServiceTest {
                     grunnlagListe = emptyList(),
                     engangsbeløpListe =
                         listOf(
-                            opprettEngangsbelopDto(Engangsbeløptype.SAERTILSKUDD),
+                            opprettEngangsbelopDto(Engangsbeløptype.SÆRBIDRAG),
                         ),
                 )
 
@@ -611,9 +611,9 @@ class DokumentValgServiceTest {
         every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns
             opprettBehandlingDto()
                 .copy(
-                    søknadstype = Vedtakstype.ENDRING,
-                    behandlingtype = Stønadstype.BIDRAG.name,
-                    soknadFraType = SøktAvType.BIDRAGSMOTTAKER,
+                    vedtakstype = Vedtakstype.ENDRING,
+                    stønadstype = Stønadstype.BIDRAG,
+                    søktAv = SøktAvType.BIDRAGSMOTTAKER,
                 )
 
         val dokumentValgListe =
@@ -643,9 +643,9 @@ class DokumentValgServiceTest {
         every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns
             opprettBehandlingDto()
                 .copy(
-                    søknadstype = Vedtakstype.ENDRING,
-                    behandlingtype = Stønadstype.BIDRAG.name,
-                    soknadFraType = SøktAvType.BIDRAGSMOTTAKER,
+                    vedtakstype = Vedtakstype.ENDRING,
+                    stønadstype = Stønadstype.BIDRAG,
+                    søktAv = SøktAvType.BIDRAGSMOTTAKER,
                 )
 
         val dokumentValgListe =
@@ -789,7 +789,7 @@ class DokumentValgServiceTest {
                     stønadsendringListe = emptyList(),
                     engangsbeløpListe =
                         listOf(
-                            opprettEngangsbelopDto(Engangsbeløptype.SAERTILSKUDD),
+                            opprettEngangsbelopDto(Engangsbeløptype.SÆRBIDRAG),
                         ),
                 )
 

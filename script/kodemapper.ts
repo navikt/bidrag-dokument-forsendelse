@@ -104,7 +104,7 @@ export function soknadGruppeToName(kode: string) {
     case "BT":
       return "BIDRAG_TILLEGGSBIDRAG"
     case "DO":
-      return "DIREKTE_OPPGJOR"
+      return "DIREKTE_OPPGJØR"
     case "EG":
       return "ETTERGIVELSE"
     case "ER":
@@ -152,7 +152,7 @@ export function soknadGruppeToName(kode: string) {
 
 export function soknadGruppeToEngangsbelopType(kode: string) {
   if (kode == "SARTILSKUDD") {
-    return "SAERTILSKUDD"
+    return "SÆRBIDRAG"
   } else if (kode == "GEBYR") {
     return "GEBYR_SKYLDNER" // GEBYR_SKYLDNER hvis BP eller GEBYR_MOTTAKER
   } else if ("ETTERGIVELSE" == kode) {

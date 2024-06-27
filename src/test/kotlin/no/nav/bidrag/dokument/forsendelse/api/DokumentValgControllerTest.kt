@@ -151,9 +151,9 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             )
         stubUtils.stubBehandling(
             opprettBehandlingDto().copy(
-                søknadstype = Vedtakstype.REVURDERING,
-                behandlingtype = Stønadstype.FORSKUDD.name,
-                soknadFraType = SøktAvType.NAV_BIDRAG,
+                vedtakstype = Vedtakstype.REVURDERING,
+                stønadstype = Stønadstype.FORSKUDD,
+                søktAv = SøktAvType.NAV_BIDRAG,
             ),
         )
         val dokumentValgResponse = utførHentForsendelseDokumentvalg(forsendelse.forsendelseIdMedPrefix)
@@ -282,28 +282,25 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
         }
     }
 
-    fun utførHentForsendelseDokumentvalg(forsendelseId: String): ResponseEntity<Map<String, DokumentMalDetaljer>> {
-        return httpHeaderTestRestTemplate.exchange(
+    fun utførHentForsendelseDokumentvalg(forsendelseId: String): ResponseEntity<Map<String, DokumentMalDetaljer>> =
+        httpHeaderTestRestTemplate.exchange(
             "${rootUri()}/dokumentvalg/forsendelse/$forsendelseId",
             HttpMethod.GET,
             null,
             object : ParameterizedTypeReference<Map<String, DokumentMalDetaljer>>() {},
         )
-    }
 
-    fun utførHentForsendelseDokumentvalgNotat(request: HentDokumentValgRequest? = null): ResponseEntity<Map<String, DokumentMalDetaljer>> {
-        return httpHeaderTestRestTemplate.postForEntity(
+    fun utførHentForsendelseDokumentvalgNotat(request: HentDokumentValgRequest? = null): ResponseEntity<Map<String, DokumentMalDetaljer>> =
+        httpHeaderTestRestTemplate.postForEntity(
             "${rootUri()}/dokumentvalg/notat",
             request?.let { HttpEntity(request) },
         )
-    }
 
-    fun utførHentDokumentvalg(request: HentDokumentValgRequest? = null): ResponseEntity<Map<String, DokumentMalDetaljer>> {
-        return httpHeaderTestRestTemplate.exchange(
+    fun utførHentDokumentvalg(request: HentDokumentValgRequest? = null): ResponseEntity<Map<String, DokumentMalDetaljer>> =
+        httpHeaderTestRestTemplate.exchange(
             "${rootUri()}/dokumentvalg",
             HttpMethod.POST,
             request?.let { HttpEntity(request) },
             object : ParameterizedTypeReference<Map<String, DokumentMalDetaljer>>() {},
         )
-    }
 }

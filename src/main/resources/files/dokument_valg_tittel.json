@@ -5,7 +5,7 @@
         "INNKREVING"
       ],
       "behandlingStatus": "IKKE_FATTET",
-      "engangsbelopType": "SAERTILSKUDD",
+      "engangsbelopType": "SÆRBIDRAG",
       "soknadFra": [],
       "titler": [
         "Varsel innkreving bidrag til særlige utgifter",
@@ -45,7 +45,7 @@
         "FASTSETTELSE",
         "ENDRING"
       ],
-      "engangsbelopType": "SAERTILSKUDD",
+      "engangsbelopType": "SÆRBIDRAG",
       "behandlingStatus": "IKKE_FATTET",
       "soknadFra": [],
       "titler": [
