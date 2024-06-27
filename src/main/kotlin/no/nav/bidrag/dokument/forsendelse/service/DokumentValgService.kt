@@ -91,7 +91,7 @@ class DokumentValgService(
                 ?.let {
                     val behandlingType =
                         if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
-                    val erFattetBeregnet = false // it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
+                    val erFattetBeregnet = true // it.grunnlagListe.any { gr -> gr.type == Grunnlagstype.SLUTTBEREGNING_BBM }
                     val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
                     request.copy(
                         behandlingType = behandlingType,
