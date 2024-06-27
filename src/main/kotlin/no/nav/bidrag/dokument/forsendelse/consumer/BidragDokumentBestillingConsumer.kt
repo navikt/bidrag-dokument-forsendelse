@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -31,8 +33,11 @@ class BidragDokumentBestillingConsumer(
     }
 
     private fun createUri(path: String?) =
-        UriComponentsBuilder.fromUri(url)
-            .path(path ?: "").build().toUri()
+        UriComponentsBuilder
+            .fromUri(url)
+            .path(path ?: "")
+            .build()
+            .toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun bestill(
@@ -56,12 +61,12 @@ class BidragDokumentBestillingConsumer(
 
     @Cacheable(DOKUMENTMALER_CACHE)
     fun støttedeDokumentmaler(): List<String> {
-        return optionsForEntity(createUri("/brevkoder"), null)
+        val headers = HttpHeaders()
+        headers.accept = listOf(MediaType.TEXT_PLAIN)
+        return optionsForEntity(createUri("/brevkoder"), headers)
             ?: emptyList()
     }
 
     @Cacheable(DOKUMENTMALDETALJER_CACHE)
-    fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
-        return getForEntity(createUri("/dokumentmal/detaljer")) ?: emptyMap()
-    }
+    fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> = getForEntity(createUri("/dokumentmal/detaljer")) ?: emptyMap()
 }

@@ -385,6 +385,7 @@ class StubUtils {
             WireMock.post(WireMock.urlMatching("/bestilling/dokument/$dokumentmalId")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
+                    .withHeader(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .withBody(DOKUMENT_FIL.toByteArray()),
             ),
         )
