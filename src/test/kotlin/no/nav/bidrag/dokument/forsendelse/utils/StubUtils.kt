@@ -147,6 +147,7 @@ class StubUtils {
             WireMock.post(WireMock.urlMatching("/person/spraak")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
+                    .withHeader(HttpHeaders.CONTENT_TYPE, "text/plain")
                     .withBody(result),
             ),
         )
