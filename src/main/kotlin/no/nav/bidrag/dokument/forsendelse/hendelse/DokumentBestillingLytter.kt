@@ -156,8 +156,8 @@ class DokumentBestillingLytter(
         dokument: Dokument,
     ): DokumentArkivSystemDto? {
         val dokumentMalId = dokument.dokumentmalId!!
-        val erOpprettetGjennomNyLøsning = forsendelse.behandlingInfo?.behandlingId != null && forsendelse.behandlingInfo?.vedtakId != null
-        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId) || erOpprettetGjennomNyLøsning) {
+
+        if (forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
             val bestilling = tilForespørsel(forsendelse, dokument)
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
@@ -223,8 +223,13 @@ class DokumentBestillingLytter(
         )
     }
 
-    private fun kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
-        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.kanBestilles ?: false
+    private fun Forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
+        val dokumentDetaljer = dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
+        val erFattetGjennomNyLøsning = behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
+        val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
+        return dokumentDetaljer?.kanBestilles ?: false ||
+            erFattetGjennomNyLøsning ||
+            erOpprettetGjennomNyLøsning && dokumentDetaljer?.kreverBehandling == true
     }
 
     private fun erStatiskDokument(dokumentMal: String): Boolean {

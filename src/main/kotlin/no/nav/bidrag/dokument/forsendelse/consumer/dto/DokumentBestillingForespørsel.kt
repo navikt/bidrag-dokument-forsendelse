@@ -48,6 +48,8 @@ data class DokumentMalDetaljer(
     val redigerbar: Boolean = false,
     val beskrivelse: String = tittel,
     val statiskInnhold: Boolean = false,
+    val kreverVedtak: Boolean = false,
+    val kreverBehandling: Boolean = false,
     val innholdType: DokumentmalInnholdType? = null,
     val gruppeVisningsnavn: String? = null,
     val språk: List<String> = emptyList(),
