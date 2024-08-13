@@ -7,6 +7,8 @@ import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
@@ -224,12 +226,15 @@ class DokumentBestillingLytter(
     }
 
     private fun Forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
-        val dokumentDetaljer = dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
+        val dokumentDetaljer =
+            dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
+                ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
         val erFattetGjennomNyLøsning = behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
-        return dokumentDetaljer?.kanBestilles ?: false ||
-            erFattetGjennomNyLøsning ||
-            erOpprettetGjennomNyLøsning && dokumentDetaljer?.kreverBehandling == true
+//        if (dokumentDetaljer.kanBestilles) {
+//            return !(dokumentDetaljer.kreverBehandling && !erOpprettetGjennomNyLøsning)
+//        }
+        return dokumentDetaljer.kanBestilles || erFattetGjennomNyLøsning || dokumentDetaljer.kreverBehandling && erOpprettetGjennomNyLøsning
     }
 
     private fun erStatiskDokument(dokumentMal: String): Boolean {
