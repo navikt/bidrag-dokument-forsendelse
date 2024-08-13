@@ -58,6 +58,7 @@ data class DokumentMalDetaljer(
 )
 
 enum class DokumentmalInnholdType {
+    NOTAT,
     VARSEL,
     VEDTAK,
     VEDLEGG_VEDTAK,
