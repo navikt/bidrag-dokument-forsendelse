@@ -54,11 +54,10 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             required = false,
         )
         beforeDate: LocalDate?,
-    ): List<Map<String, String?>> {
-        return forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay()).map {
+    ): List<Map<String, String?>> =
+        forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay()).map {
             it.mapToResponse()
         }
-    }
 
     @PostMapping("/synkForsendelseDistribusjonStatus/{forsendelseId}")
     @Operation(
@@ -94,13 +93,13 @@ Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis
             required = false,
             defaultValue = "false",
         ) oppdaterStatus: Boolean = false,
-    ): List<Map<String, String?>> {
-        return forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
-            forsendelse.dokumenter.flatMap {
-                dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, oppdaterStatus)
-            }.map { it.mapToResponse() }
+    ): List<Map<String, String?>> =
+        forsendelseTjeneste.medForsendelseId(forsendelseId.numerisk)?.let { forsendelse ->
+            forsendelse.dokumenter
+                .flatMap {
+                    dokumentHendelseLytter.sjekkOmDokumentErFerdigstiltOgOppdaterStatus(it, oppdaterStatus)
+                }.map { it.mapToResponse() }
         } ?: emptyList()
-    }
 
     @PostMapping("/sjekkOgOppdaterStatus")
     @Operation(
@@ -126,10 +125,10 @@ Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis
             required = false,
         )
         beforeDate: LocalDate?,
-    ): List<Map<String, String?>> {
-        return dokumentHendelseLytter.oppdaterStatusPaFerdigstilteDokumenter(limit, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay())
+    ): List<Map<String, String?>> =
+        dokumentHendelseLytter
+            .oppdaterStatusPaFerdigstilteDokumenter(limit, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay())
             .map { it.mapToResponse() }
-    }
 }
 
 fun Forsendelse.mapToResponse(): Map<String, String?> {

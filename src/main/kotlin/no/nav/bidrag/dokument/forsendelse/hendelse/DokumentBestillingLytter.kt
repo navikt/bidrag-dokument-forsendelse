@@ -7,6 +7,8 @@ import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
@@ -156,8 +158,8 @@ class DokumentBestillingLytter(
         dokument: Dokument,
     ): DokumentArkivSystemDto? {
         val dokumentMalId = dokument.dokumentmalId!!
-        val erOpprettetGjennomNyLøsning = forsendelse.behandlingInfo?.behandlingId != null && forsendelse.behandlingInfo?.vedtakId != null
-        if (kanBestillesFraBidragDokumentBestilling(dokumentMalId) || erOpprettetGjennomNyLøsning) {
+
+        if (forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
             val bestilling = tilForespørsel(forsendelse, dokument)
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
@@ -223,8 +225,16 @@ class DokumentBestillingLytter(
         )
     }
 
-    private fun kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
-        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.kanBestilles ?: false
+    private fun Forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
+        val dokumentDetaljer =
+            dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
+                ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
+        val erFattetGjennomNyLøsning = behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
+        val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
+//        if (dokumentDetaljer.kanBestilles) {
+//            return !(dokumentDetaljer.kreverBehandling && !erOpprettetGjennomNyLøsning)
+//        }
+        return dokumentDetaljer.kanBestilles || erFattetGjennomNyLøsning || dokumentDetaljer.kreverBehandling && erOpprettetGjennomNyLøsning
     }
 
     private fun erStatiskDokument(dokumentMal: String): Boolean {
