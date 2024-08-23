@@ -54,8 +54,20 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             required = false,
         )
         beforeDate: LocalDate?,
+        @RequestParam(
+            required = false,
+        ) sjekketNavNoRedistribusjonTilSentralPrint: Boolean = false,
+        @RequestParam(
+            required = false,
+        ) pageSize: Int = 500,
     ): List<Map<String, String?>> =
-        forsendelseSkedulering.resynkDistribusjoninfoNavNo(simulering, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay()).map {
+        forsendelseSkedulering.resynkDistribusjoninfoNavNo(
+            simulering,
+            afterDate?.atStartOfDay(),
+            beforeDate?.atStartOfDay(),
+            sjekketNavNoRedistribusjonTilSentralPrint,
+            pageSize,
+        ).map {
             it.mapToResponse()
         }
 
@@ -142,6 +154,7 @@ fun Forsendelse.mapToResponse(): Map<String, String?> {
     node[Forsendelse::opprettetAvNavn.name] = opprettetAvNavn
     node[Forsendelse::distribuertTidspunkt.name] = distribuertTidspunkt.toString()
     node[Forsendelse::distribusjonKanal.name] = distribusjonKanal?.name
+    node[Forsendelse::status.name] = status?.name
     return node.mapValues { it.value ?: "" }
 }
 
