@@ -190,11 +190,11 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     inner class ResynkDistribusjonkanalNAVNOTest {
         @Test
         fun `skal resynke distribusjoninfo til sentral distribusjon`() {
-            val forsendelseNavNo1 = opprettDistribuertForsendelse(48, kanal = DistribusjonKanal.NAV_NO)
+            val forsendelseNavNo1 = opprettDistribuertForsendelse(96, kanal = DistribusjonKanal.NAV_NO)
             val forsendelseNavNo2 = opprettDistribuertForsendelse(23, kanal = DistribusjonKanal.NAV_NO)
-            val forsendelseNavNo3 = opprettDistribuertForsendelse(55, kanal = DistribusjonKanal.NAV_NO)
-            val forsendelseNavNo4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.NAV_NO)
-            val forsendelseSentralUtskrift4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.SENTRAL_UTSKRIFT)
+            val forsendelseNavNo3 = opprettDistribuertForsendelse(190, kanal = DistribusjonKanal.NAV_NO)
+            val forsendelseNavNo4 = opprettDistribuertForsendelse(190, kanal = DistribusjonKanal.NAV_NO)
+            val forsendelseSentralUtskrift4 = opprettDistribuertForsendelse(190, kanal = DistribusjonKanal.SENTRAL_UTSKRIFT)
             opprettDistribuertForsendelse(8)
             opprettDistribuertForsendelse(7)
             opprettIkkeDistribuertForsendelse()
@@ -253,8 +253,8 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         fun `skal ikke hente forsendelse som er markert som sjekket for redistribusjon`() {
             val forsendelseNavNo1 = opprettDistribuertForsendelse(48, kanal = DistribusjonKanal.NAV_NO, true)
             val forsendelseNavNo2 = opprettDistribuertForsendelse(44, kanal = DistribusjonKanal.NAV_NO, true)
-            val forsendelseNavNo3 = opprettDistribuertForsendelse(55, kanal = DistribusjonKanal.NAV_NO)
-            val forsendelseNavNo4 = opprettDistribuertForsendelse(60, kanal = DistribusjonKanal.NAV_NO)
+            val forsendelseNavNo3 = opprettDistribuertForsendelse(140, kanal = DistribusjonKanal.NAV_NO)
+            val forsendelseNavNo4 = opprettDistribuertForsendelse(180, kanal = DistribusjonKanal.NAV_NO)
             opprettDistribuertForsendelse(8)
             opprettDistribuertForsendelse(7)
             opprettIkkeDistribuertForsendelse()
