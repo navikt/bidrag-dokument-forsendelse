@@ -37,14 +37,16 @@ class ForsendelseTjeneste(
         limit: Int,
         afterDateInput: LocalDateTime?,
         beforeDateInput: LocalDateTime?,
+        sjekketNavNoRedistribusjonTilSentralPrint: Boolean = false,
     ): List<Forsendelse> {
-        val beforeDate = beforeDateInput ?: LocalDateTime.now().minusDays(2)
-        val afterDate = afterDateInput ?: LocalDateTime.now().minusDays(100)
+        val beforeDate = beforeDateInput ?: LocalDateTime.now().minusDays(4)
+        val afterDate = afterDateInput ?: LocalDateTime.now().minusDays(200)
         LOGGER.info { "Henter distribuerte forsendelser med kanal NAV_NO fra $afterDate til $beforeDate" }
         return forsendelseRepository.hentDistribuerteForsendelseTilNAVNO(
             Pageable.ofSize(limit),
             beforeDate,
             afterDate,
+            sjekketNavNoRedistribusjonTilSentralPrint.toString(),
         )
     }
 

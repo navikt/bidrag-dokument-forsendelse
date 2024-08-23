@@ -135,8 +135,16 @@ class ForsendelseSkedulering(
         simulering: Boolean = false,
         afterDate: LocalDateTime? = null,
         beforeDate: LocalDateTime? = null,
+        sjekketNavNoRedistribusjonTilSentralPrint: Boolean = false,
+        pageSize: Int? = null,
     ): List<Forsendelse> {
-        val forsendelseListe = forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(distInfoPageSize, afterDate, beforeDate)
+        val forsendelseListe =
+            forsendelseTjeneste.hentDistribuerteForsendelserDistribuertTilNavNo(
+                pageSize ?: distInfoPageSize,
+                afterDate,
+                beforeDate,
+                sjekketNavNoRedistribusjonTilSentralPrint,
+            )
         LOGGER.info {
             """Fant ${forsendelseListe.size} forsendelser som har blitt distribuert til NAV_NO. 
                 Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize
@@ -198,6 +206,13 @@ class ForsendelseSkedulering(
                                     bestiltNyDistribusjon = forsendelse.distribusjonKanal != null,
                                     distribusjonBestillingsId = distInfo.bestillingId ?: forsendelse.distribusjonBestillingsId,
                                     distribusjonKanal = DistribusjonKanal.valueOf(distInfo.kanal),
+                                    status =
+                                        when (distInfo.journalstatus) {
+                                            JournalpostStatus.DISTRIBUERT -> ForsendelseStatus.FERDIGSTILT
+                                            JournalpostStatus.EKSPEDERT -> ForsendelseStatus.DISTRIBUERT
+                                            JournalpostStatus.FEILREGISTRERT -> ForsendelseStatus.AVBRUTT
+                                            else -> ForsendelseStatus.FERDIGSTILT
+                                        },
                                 ),
                             )
                         }
