@@ -92,6 +92,20 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             simulering,
         )?.mapToResponse()
 
+    @PostMapping("/synkForsendelseDistribusjonStatus")
+    @Operation(
+        summary = "Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk",
+        description = """
+Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk. Dette skal brukes hvis feks en dokument er ferdigstilt i midlertidlig brevlager men status i databasen er fortsatt "under redigering"
+Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
+        """,
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
+    fun synkForsendelseDistribusjonStatusForAlle() {
+        forsendelseSkedulering.oppdaterDistribusjonstatus()
+    }
+
     @PostMapping("/synkForsendelseDistribusjonStatus/{forsendelseId}")
     @Operation(
         summary = "Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk",
