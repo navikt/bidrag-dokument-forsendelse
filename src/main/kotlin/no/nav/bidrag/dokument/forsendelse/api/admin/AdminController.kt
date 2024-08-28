@@ -71,6 +71,41 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             it.mapToResponse()
         }
 
+    @PostMapping("/distribusjon/navno/{forsendelseId}")
+    @Operation(
+        summary = "Resynk distribusjonkanal for forsendelse",
+        description = """
+Resynk distribusjonkanal. Hvis forsendelse er distribuert via nav.no og mottaker ikke har åpnet dokumentet i løpet av 48 timer vil forsendelsen bli redistribuert via sentral print. 
+Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no for å oppdatere til riktig distribusjonstatus. Dette kjøres også som en egen skedulert jobb.
+        """,
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    fun distTilNavNoMenHarKanalSentralPrintForForsendelse(
+        @PathVariable forsendelseId: Long,
+        @RequestParam(
+            required = false,
+            defaultValue = "true",
+        ) simulering: Boolean = true,
+    ): Map<String, String?>? =
+        forsendelseSkedulering.resynkDistribusjoninfoNavNoForForsendelse(
+            forsendelseId,
+            simulering,
+        )?.mapToResponse()
+
+    @PostMapping("/synkForsendelseDistribusjonStatus")
+    @Operation(
+        summary = "Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk",
+        description = """
+Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk. Dette skal brukes hvis feks en dokument er ferdigstilt i midlertidlig brevlager men status i databasen er fortsatt "under redigering"
+Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis det er det. Bruk denne tjenesten istedenfor å oppdatere databasen direkte da ferdigstilt notat blir automatisk arkivert i Joark.
+        """,
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @ApiResponses(value = [ApiResponse(responseCode = "400", description = "Fant ikke forsendelse med oppgitt forsendelsid")])
+    fun synkForsendelseDistribusjonStatusForAlle() {
+        forsendelseSkedulering.oppdaterDistribusjonstatus()
+    }
+
     @PostMapping("/synkForsendelseDistribusjonStatus/{forsendelseId}")
     @Operation(
         summary = "Sjekk status på dokumentene i en enkel forsendelse og oppdater status hvis det er ute av synk",

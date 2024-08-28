@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.model.BIDRAG_DOKUMENT_FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.ForsendelseMetadataDo
@@ -131,6 +132,34 @@ class ForsendelseSkedulering(
      * Hvis forsendelse distribuert til NAVNO ikke blir lest etter 40 timer så sendes forsendelse via sentral print istedenfor.
      * Denne jobben skal resynke kanal som forsendelse ble distribuert til. Dette er mest nyttig for statistikk
      */
+    fun resynkDistribusjoninfoNavNoForForsendelse(
+        forsendelseId: Long,
+        simulering: Boolean,
+    ): Forsendelse? {
+        LOGGER.info { "Synker distribusjonskanal for forsendelse $forsendelseId. simulering=$simulering" }
+        return forsendelseTjeneste.medForsendelseId(forsendelseId)?.let {
+            if (!simulering && it.distribusjonKanal == DistribusjonKanal.NAV_NO) {
+                forsendelseTjeneste.lagre(
+                    it.copy(
+                        metadata =
+                            run {
+                                val metadata = it.metadata ?: ForsendelseMetadataDo()
+                                metadata.markerSomSjekketNavNoRedistribusjon()
+                                metadata.copy()
+                            },
+                    ),
+                )
+            }
+
+            lagreDistribusjonInfo(it, simulering)
+            return it
+        }
+    }
+
+    /**
+     * Hvis forsendelse distribuert til NAVNO ikke blir lest etter 40 timer så sendes forsendelse via sentral print istedenfor.
+     * Denne jobben skal resynke kanal som forsendelse ble distribuert til. Dette er mest nyttig for statistikk
+     */
     fun resynkDistribusjoninfoNavNo(
         simulering: Boolean = false,
         afterDate: LocalDateTime? = null,
@@ -186,6 +215,7 @@ class ForsendelseSkedulering(
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
                     ?.takeIf {
+                        secureLogger.info { "Hentet distribusjonsinfo $it for forsendelse ${forsendelse.forsendelseId}" }
                         forsendelse.distribusjonKanal == null || DistribusjonKanal.valueOf(
                             it.kanal,
                         ) != forsendelse.distribusjonKanal
