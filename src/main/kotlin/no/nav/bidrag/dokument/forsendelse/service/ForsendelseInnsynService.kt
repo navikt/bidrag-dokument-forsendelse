@@ -13,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -39,6 +40,10 @@ class ForsendelseInnsynService(
         val journalpostDtoer =
             forsendelseTjeneste.hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
                 .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
+                .filter {
+                    it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT && it.bestiltNyDistribusjon ||
+                        it.distribusjonKanal != DistribusjonKanal.SENTRAL_UTSKRIFT
+                }
                 .map {
                     ForsendelseIkkeDistribuertResponsTo(
                         enhet = it.enhet,

@@ -44,7 +44,7 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     fun hentFerdigstilteArkivertIJoarkIkkeDistribuert(): List<Forsendelse>
 
     @Query(
-        "select f from forsendelse f where (f.status = 'UNDER_PRODUKSJON' or f.status = 'FERDIGSTILT') and f.distribusjonKanal != 'INGEN_DISTRIBUSJON' and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date",
+        "select f from forsendelse f where (f.status = 'UNDER_PRODUKSJON' or f.status = 'FERDIGSTILT' ) and (f.distribusjonKanal != 'INGEN_DISTRIBUSJON' or f.distribusjonKanal is null) and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date",
     )
     fun hentUnderProduksjonOpprettetFørDagensDato(): List<Forsendelse>
 }
