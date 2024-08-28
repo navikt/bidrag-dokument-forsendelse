@@ -48,7 +48,7 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
             "and (" +
             "(f.distribusjonKanal != 'INGEN_DISTRIBUSJON' and f.distribusjonKanal != 'SENTRAL_UTSKRIFT') " +
             "or f.distribusjonKanal is null " +
-            "or (f.distribusjonKanal = 'SENTRAL_UTSKRIFT' and f.bestiltNyDistribusjon = true)" +
+            "or (f.distribusjonKanal = 'SENTRAL_UTSKRIFT' and f.bestiltNyDistribusjon = false)" +
             ") " +
             "and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date",
     )
