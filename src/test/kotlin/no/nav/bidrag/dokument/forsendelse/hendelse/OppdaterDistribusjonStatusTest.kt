@@ -292,7 +292,7 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
             skedulering.oppdaterDistribusjonstatus()
         }
 
-        stubUtils.Valider().hentDistribusjonInfoKalt(4)
+        stubUtils.Valider().hentDistribusjonInfoKalt(1)
 
         val forsendelseEtter = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)
         assertSoftly {
