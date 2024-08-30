@@ -39,7 +39,7 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     ): List<Forsendelse>
 
     @Query(
-        "select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE'",
+        "select f from forsendelse f where f.status = 'FERDIGSTILT' and f.journalpostIdFagarkiv is not null and f.forsendelseType = 'UTGÅENDE' and (f.distribusjonKanal is null or f.distribusjonKanal != 'INGEN_DISTRIBUSJON')",
     )
     fun hentFerdigstilteArkivertIJoarkIkkeDistribuert(): List<Forsendelse>
 

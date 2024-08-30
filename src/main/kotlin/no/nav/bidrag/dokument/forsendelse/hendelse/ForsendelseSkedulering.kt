@@ -71,7 +71,8 @@ class ForsendelseSkedulering(
                         it.journalstatus == JournalpostStatus.DISTRIBUERT ||
                             it.journalstatus == JournalpostStatus.EKSPEDERT ||
                             it.journalstatus == JournalpostStatus.FEILREGISTRERT ||
-                            it.kanal == Kanal.INGEN_DISTRIBUSJON.name
+                            it.kanal == Kanal.INGEN_DISTRIBUSJON.name ||
+                            it.kanal == Kanal.LOKAL_UTSKRIFT.name
                     }
                     ?.let { distInfo ->
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
