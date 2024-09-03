@@ -223,7 +223,7 @@ class ForsendelseSkedulering(
                     }
                     ?.let { distInfo ->
                         LOGGER.info {
-                            "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId}" +
+                            "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
                                 "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +
                                 "${forsendelse.dokumenter.size} dokumenter, " +
                                 "kanal ${distInfo.kanal} og status ${distInfo.journalstatus}. " +
@@ -239,8 +239,7 @@ class ForsendelseSkedulering(
                                     distribusjonKanal = DistribusjonKanal.valueOf(distInfo.kanal),
                                     status =
                                         when (distInfo.journalstatus) {
-                                            JournalpostStatus.DISTRIBUERT -> ForsendelseStatus.FERDIGSTILT
-                                            JournalpostStatus.EKSPEDERT -> ForsendelseStatus.DISTRIBUERT
+                                            JournalpostStatus.DISTRIBUERT, JournalpostStatus.EKSPEDERT -> ForsendelseStatus.DISTRIBUERT
                                             JournalpostStatus.FEILREGISTRERT -> ForsendelseStatus.AVBRUTT
                                             else -> ForsendelseStatus.FERDIGSTILT
                                         },
