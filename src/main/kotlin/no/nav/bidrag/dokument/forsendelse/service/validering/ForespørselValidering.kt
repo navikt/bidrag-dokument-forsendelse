@@ -19,6 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.transport.dokument.Fagomrade
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 object ForespørselValidering {
@@ -119,7 +120,7 @@ object ForespørselValidering {
             )
         }
 
-        if (this.dokumentDato != null && this.dokumentDato.isAfter(LocalDateTime.now())) {
+        if (this.dokumentDato != null && this.dokumentDato.toLocalDate().isAfter(LocalDate.now())) {
             feilmeldinger.add("Dokumentdato kan ikke være senere enn dagens dato")
         }
 
