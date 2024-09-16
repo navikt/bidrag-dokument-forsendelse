@@ -19,20 +19,20 @@
     <bidrag-felles.version>2024.08.09.145654</bidrag-felles.version>
     <logback-encoder.version>7.4</logback-encoder.version>
     <token-support.version>3.2.0</token-support.version>
-    <springdoc-openapi-ui.version>2.3.0</springdoc-openapi-ui.version>
+    <springdoc-openapi-ui.version>2.6.0</springdoc-openapi-ui.version>
     <springframework-cloud.version>4.1.0</springframework-cloud.version>
     <kotest.version>5.8.0</kotest.version>
     <mockk.version>4.0.2</mockk.version>
     <flyway.version>10.11.0</flyway.version>
     <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
-    <testcontainers.version>1.19.4</testcontainers.version>
+    <testcontainers.version>1.19.7</testcontainers.version>
     <shedlock.version>5.12.0</shedlock.version>
     <google-cloud-storage.version>2.32.0</google-cloud-storage.version>
-    <google-cloud-libraries-bom.version>26.36.0</google-cloud-libraries-bom.version>
+    <google-cloud-libraries-bom.version>26.42.0</google-cloud-libraries-bom.version>
     <google-tink-gcpkms.version>1.9.0</google-tink-gcpkms.version>
     <google-tink.version>1.12.0</google-tink.version>
     <grpc.version>1.57.2</grpc.version>
-    <pdfbox.version>3.0.1</pdfbox.version>
+    <pdfbox.version>3.0.2</pdfbox.version>
     <verapdf.version>1.24.1</verapdf.version>
     <ktlint.version>1.1.1</ktlint.version>
     <skipOwasp>false</skipOwasp>
@@ -56,7 +56,7 @@
       <dependency>
         <groupId>org.scala-lang</groupId>
         <artifactId>scala-library</artifactId>
-        <version>2.13.12</version>
+        <version>2.13.14</version>
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
