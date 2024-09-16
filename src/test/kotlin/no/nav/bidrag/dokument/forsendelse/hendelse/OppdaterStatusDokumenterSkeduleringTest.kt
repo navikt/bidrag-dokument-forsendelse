@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
@@ -33,6 +34,7 @@ class OppdaterStatusDokumenterSkeduleringTest : TestContainerRunner() {
 
     @BeforeEach
     fun setupMocks() {
+        clearAllMocks(recordedCalls = true)
         stubUtils.stubHentSaksbehandler()
         stubUtils.stubBestillDokument()
         stubUtils.stubBestillDokumenDetaljer()
