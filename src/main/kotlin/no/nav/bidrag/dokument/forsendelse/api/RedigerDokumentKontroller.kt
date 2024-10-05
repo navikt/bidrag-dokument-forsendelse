@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResponsDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
@@ -14,8 +15,12 @@ import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.RedigerDokumentService
 import no.nav.bidrag.dokument.forsendelse.service.pdf.convertToPDFA
+import no.nav.bidrag.dokument.forsendelse.service.pdf.lastOgReparerPDF
 import no.nav.bidrag.dokument.forsendelse.service.pdf.validerPDFA
 import no.nav.security.token.support.core.api.Protected
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,6 +28,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+
+private val log = KotlinLogging.logger {}
 
 @RestController
 @Protected
@@ -107,6 +116,74 @@ class RedigerDokumentKontroller(
     ): DokumentRedigeringMetadataResponsDto {
         val forsendelseId = forsendelseIdMedPrefix.numerisk
         return redigerDokumentService.hentDokumentredigeringMetadata(forsendelseId, dokumentreferanse)
+    }
+
+    @PostMapping("/reparerPDF")
+    @Operation(
+        summary = "Reparer PDF hvis den er korrupt",
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        content = [
+            Content(
+                mediaType = "application/pdf",
+                schema = Schema(type = "string", format = "binary"),
+            ),
+        ],
+    )
+    @ApiResponse(
+        content = [
+            Content(
+                mediaType = "application/pdf",
+                schema = Schema(type = "string", format = "binary"),
+            ),
+        ],
+    )
+    fun reparerPDF(
+        @RequestBody pdf: ByteArray,
+    ): ResponseEntity<ByteArray> {
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "inline; filename=dokument.pdf",
+            )
+            .body(lastOgReparerPDF(pdf))
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    @PostMapping("/reparerPDFBase64")
+    @Operation(
+        summary = "Reparer PDF hvis den er korrupt",
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        content = [
+            Content(
+                mediaType = "application/pdf",
+                schema = Schema(type = "string", format = "byte"),
+            ),
+        ],
+    )
+    @ApiResponse(
+        content = [
+            Content(
+                mediaType = "application/pdf",
+                schema = Schema(type = "string", format = "binary"),
+            ),
+        ],
+    )
+    fun reparerPDFBase64(
+        @RequestBody base64PDF: String,
+    ): ResponseEntity<ByteArray> {
+        val pdf = Base64.decode(base64PDF)
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "inline; filename=dokument.pdf",
+            )
+            .body(lastOgReparerPDF(pdf))
     }
 
     @PostMapping("/validerPDF")

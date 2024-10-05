@@ -3,6 +3,10 @@ package no.nav.bidrag.dokument.forsendelse.service.pdf
 import jakarta.persistence.spi.TransformerException
 import mu.KotlinLogging
 import org.apache.pdfbox.Loader
+import org.apache.pdfbox.io.IOUtils
+import org.apache.pdfbox.io.MemoryUsageSetting
+import org.apache.pdfbox.io.RandomAccessReadBuffer
+import org.apache.pdfbox.pdfwriter.compress.CompressParameters
 import org.apache.pdfbox.pdmodel.common.PDMetadata
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent
 import org.apache.xmpbox.XMPMetadata
@@ -52,6 +56,26 @@ fun erGyldigPDFA(
     } catch (e: Exception) {
         log.warn(e) { "Det skjedde en feil ved validering av PDF" }
         return false
+    }
+}
+
+fun lastOgReparerPDF(pdfBytes: ByteArray): ByteArray {
+    val documentByteStream = ByteArrayOutputStream()
+    try {
+        Loader.loadPDF(
+            RandomAccessReadBuffer(pdfBytes),
+            MemoryUsageSetting.setupTempFileOnly().streamCache,
+        ).use { document ->
+            document.isAllSecurityToBeRemoved = true
+            document.save(documentByteStream, CompressParameters.NO_COMPRESSION)
+            document.close()
+            return documentByteStream.toByteArray()
+        }
+    } catch (e: Exception) {
+        log.error(e) { "Det skjedde en feil ved prossesering av PDF dokument" }
+        return pdfBytes
+    } finally {
+        IOUtils.closeQuietly(documentByteStream)
     }
 }
 
