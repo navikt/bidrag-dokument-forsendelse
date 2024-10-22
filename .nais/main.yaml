@@ -22,8 +22,8 @@ env:
   BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
   BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
 
-  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak-syntetisk
-  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak-syntetisk
+  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak-q2
+  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak-q2
 
   BIDRAG_BEHANDLING_URL:  http://bidrag-behandling
   BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling
@@ -55,7 +55,7 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
-   - bidrag-vedtak-syntetisk
+   - bidrag-vedtak-q2
    - bidrag-behandling
 outbound-access-hosts:
    - bidrag-dokument.dev-fss-pub.nais.io
