@@ -13,20 +13,20 @@ env:
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.dev-fss-pub.nais.io/bidrag-dokument
   BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument
 
-  BIDRAG_SAK_URL: https://bidrag-sak.dev-fss-pub.nais.io/bidrag-sak
-  BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak
+  BIDRAG_SAK_URL: https://bidrag-sak-q2.dev-fss-pub.nais.io/bidrag-sak
+  BIDRAG_SAK_SCOPE: dev-fss.bidrag.bidrag-sak-q2
 
   BIDRAG_TILGANGSKONTROLL_URL: http://bidrag-tilgangskontroll
   BIDRAG_TILGANGSKONTROLL_SCOPE: dev-gcp.bidrag.bidrag-tilgangskontroll
 
-  BIDRAG_PERSON_URL: https://bidrag-person.dev-fss-pub.nais.io/bidrag-person
-  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person
+  BIDRAG_PERSON_URL: https://bidrag-person-q1.dev-fss-pub.nais.io/bidrag-person
+  BIDRAG_PERSON_SCOPE: dev-fss.bidrag.bidrag-person-q1
 
-  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak-syntetisk
-  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak-syntetisk
+  BIDRAG_VEDTAK_URL:  http://bidrag-vedtak-q2
+  BIDRAG_VEDTAK_SCOPE: dev-gcp.bidrag.bidrag-vedtak-q2
 
-  BIDRAG_BEHANDLING_URL:  http://bidrag-behandling
-  BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling
+  BIDRAG_BEHANDLING_URL:  http://bidrag-behandling-q2
+  BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling-q2
 
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
@@ -55,12 +55,12 @@ kafka:
 outbound-access-apps:
    - bidrag-tilgangskontroll
    - bidrag-dokument-bestilling
-   - bidrag-vedtak-syntetisk
-   - bidrag-behandling
+   - bidrag-vedtak-q2
+   - bidrag-behandling-q2
 outbound-access-hosts:
    - bidrag-dokument.dev-fss-pub.nais.io
-   - bidrag-person.dev-fss-pub.nais.io
-   - bidrag-sak.dev-fss-pub.nais.io
+   - bidrag-person-q2.dev-fss-pub.nais.io
+   - bidrag-sak-q2.dev-fss-pub.nais.io
    - bidrag-organisasjon.dev-fss-pub.nais.io
    - kodeverk-api.nav.no
 azure_access_inbound:
