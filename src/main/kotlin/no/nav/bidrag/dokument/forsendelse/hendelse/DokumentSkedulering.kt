@@ -33,7 +33,13 @@ class DokumentSkedulering(
     }
 
     fun bestillFeiledeDokumenterPåNytt() {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
+        val threshold = LocalDateTime.now().minusMinutes(10)
+        val dokumenter =
+            dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet().filter {
+                val bestiltTidspunkt = it.metadata.hentBestiltTidspunkt()
+                val bestiltFørTerskel = bestiltTidspunkt != null && bestiltTidspunkt <= threshold
+                it.metadata.hentDokumentBestiltAntallGanger() < 20 && bestiltFørTerskel
+            }
         LOGGER.info {
             "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. " +
                 "Prøver å bestille dokumentene på nytt."

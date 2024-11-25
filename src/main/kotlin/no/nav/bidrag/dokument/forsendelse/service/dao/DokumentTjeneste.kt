@@ -42,9 +42,7 @@ class DokumentTjeneste(
         forsendelse: Forsendelse,
         forespørsel: OpprettDokumentForespørsel,
         indeks: Int? = null,
-    ): Dokument {
-        return forespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse, indeks ?: forsendelse.dokumenter.size)
-    }
+    ): Dokument = forespørsel.tilDokumentDoMedOriginalLenketDokument(forsendelse, indeks ?: forsendelse.dokumenter.size)
 
     fun opprettNyttDokument(
         forsendelse: Forsendelse,
@@ -68,33 +66,25 @@ class DokumentTjeneste(
         return nyDokumenter
     }
 
-    fun hentDokumenterMedReferanse(dokumentreferanse: String): List<Dokument> {
-        return dokumentRepository.hentDokumenterMedDokumentreferanse(dokumentreferanse, dokumentreferanse.utenPrefiks.toLong())
-    }
+    fun hentDokumenterMedReferanse(dokumentreferanse: String): List<Dokument> =
+        dokumentRepository.hentDokumenterMedDokumentreferanse(dokumentreferanse, dokumentreferanse.utenPrefiks.toLong())
 
-    fun hentDokument(dokumentreferanse: String): Dokument? {
-        return dokumentRepository.findByDokumentId(dokumentreferanse.utenPrefiks.toLong())
-    }
+    fun hentDokument(dokumentreferanse: String): Dokument? = dokumentRepository.findByDokumentId(dokumentreferanse.utenPrefiks.toLong())
 
-    fun hentDokumenterSomHarStatusBestillingFeilet(): List<Dokument> {
-        return dokumentRepository.hentDokumenterSomHarStatusBestillingFeilet()
-    }
+    fun hentDokumenterSomHarStatusBestillingFeilet(): List<Dokument> = dokumentRepository.hentDokumenterSomHarStatusBestillingFeilet()
 
-    fun hentDokumenterSomHarStatusUnderProduksjon(): List<Dokument> {
-        return dokumentRepository.hentDokumenterSomHarStatusUnderProduksjon()
-    }
+    fun hentDokumenterSomHarStatusUnderProduksjon(): List<Dokument> = dokumentRepository.hentDokumenterSomHarStatusUnderProduksjon()
 
     fun hentDokumenterSomErUnderRedigering(
         limit: Int,
         afterDate: LocalDateTime? = null,
         beforeDate: LocalDateTime? = null,
-    ): List<Dokument> {
-        return dokumentRepository.hentDokumentIkkeFerdigstiltFørDato(
+    ): List<Dokument> =
+        dokumentRepository.hentDokumentIkkeFerdigstiltFørDato(
             Pageable.ofSize(limit),
             beforeDate ?: LocalDateTime.now().minusHours(12),
             afterDate ?: LocalDateTime.now().minusMonths(6),
         )
-    }
 
     private fun bestillDokumentHvisNødvendig(dokument: Dokument) {
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT) {

@@ -185,29 +185,30 @@ class DokumentBestillingLytter(
     ) {
         try {
             val dokumentMalId = dokument.dokumentmalId!!
-            meterRegistry.counter(
-                DOKUMENTMAL_COUNTER_NAME,
-                "dokumentMalId",
-                dokumentMalId,
-                "type",
-                forsendelse.forsendelseType.name,
-                "spraak",
-                dokument.språk ?: forsendelse.språk,
-                "enhet",
-                forsendelse.enhet,
-                "tema",
-                forsendelse.tema.name,
-                "tittel",
-                if (dokumentMalId == "BI01S02") {
-                    "Fritekstbrev"
-                } else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) {
-                    "Notat"
-                } else {
-                    dokument.tittel
-                },
-                "er_statisk_dokument",
-                if (dokument.erStatiskDokument()) "true" else "false",
-            ).increment()
+            meterRegistry
+                .counter(
+                    DOKUMENTMAL_COUNTER_NAME,
+                    "dokumentMalId",
+                    dokumentMalId,
+                    "type",
+                    forsendelse.forsendelseType.name,
+                    "spraak",
+                    dokument.språk ?: forsendelse.språk,
+                    "enhet",
+                    forsendelse.enhet,
+                    "tema",
+                    forsendelse.tema.name,
+                    "tittel",
+                    if (dokumentMalId == "BI01S02") {
+                        "Fritekstbrev"
+                    } else if (forsendelse.forsendelseType == ForsendelseType.NOTAT) {
+                        "Notat"
+                    } else {
+                        dokument.tittel
+                    },
+                    "er_statisk_dokument",
+                    if (dokument.erStatiskDokument()) "true" else "false",
+                ).increment()
         } catch (e: Exception) {
             LOGGER.warn(e) { "Det skjedde en feil ved måling av bestilt dokumentmal for forsendelse ${forsendelse.forsendelseId}" }
         }
@@ -216,14 +217,13 @@ class DokumentBestillingLytter(
     private fun tilKafkaMelding(
         forsendelse: Forsendelse,
         dokument: Dokument,
-    ): DokumentHendelse {
-        return DokumentHendelse(
+    ): DokumentHendelse =
+        DokumentHendelse(
             hendelseType = DokumentHendelseType.BESTILLING,
             forsendelseId = forsendelse.forsendelseId.toString(),
             dokumentreferanse = dokument.dokumentreferanse,
             sporingId = CorrelationId.fetchCorrelationIdForThread(),
         )
-    }
 
     private fun Forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
         val dokumentDetaljer =
@@ -237,17 +237,14 @@ class DokumentBestillingLytter(
         return dokumentDetaljer.kanBestilles || erFattetGjennomNyLøsning || dokumentDetaljer.kreverBehandling && erOpprettetGjennomNyLøsning
     }
 
-    private fun erStatiskDokument(dokumentMal: String): Boolean {
-        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
-    }
+    private fun erStatiskDokument(dokumentMal: String): Boolean =
+        dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
 
-    private fun erRedigerbar(dokumentMal: String): Boolean {
-        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.redigerbar ?: false
-    }
+    private fun erRedigerbar(dokumentMal: String): Boolean =
+        dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.redigerbar ?: false
 
-    private fun erSkjema(dokumentMal: String): Boolean {
-        return dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.innholdType == DokumentmalInnholdType.SKJEMA
-    }
+    private fun erSkjema(dokumentMal: String): Boolean =
+        dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.innholdType == DokumentmalInnholdType.SKJEMA
 
     private fun tilForespørsel(
         forsendelse: Forsendelse,
