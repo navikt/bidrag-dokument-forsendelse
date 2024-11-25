@@ -33,7 +33,10 @@ class DokumentSkedulering(
     }
 
     fun bestillFeiledeDokumenterPåNytt() {
-        val dokumenter = dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet()
+        val dokumenter =
+            dokumentTjeneste.hentDokumenterSomHarStatusBestillingFeilet().filter {
+                it.metadata.hentDokumentBestiltAntallGanger() < 20
+            }
         LOGGER.info {
             "Fant ${dokumenter.size} dokumenter som har status ${DokumentStatus.BESTILLING_FEILET.name}. " +
                 "Prøver å bestille dokumentene på nytt."

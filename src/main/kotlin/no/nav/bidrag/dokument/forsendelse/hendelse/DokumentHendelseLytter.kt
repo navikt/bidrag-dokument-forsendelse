@@ -170,13 +170,12 @@ class DokumentHendelseLytter(
     private fun erKvitteringForProdusertDokument(
         dokument: Dokument,
         dokumentHendelse: DokumentHendelse,
-    ): Boolean {
-        return dokument.dokumentStatus == DokumentStatus.UNDER_PRODUKSJON &&
+    ): Boolean =
+        dokument.dokumentStatus == DokumentStatus.UNDER_PRODUKSJON &&
             (
                 dokumentHendelse.status == DokumentStatusDto.UNDER_REDIGERING ||
                     dokumentHendelse.status == DokumentStatusDto.FERDIGSTILT
             )
-    }
 
     private fun sendJournalposthendelseHvisKlarForDistribusjon(dokumenter: List<Dokument>) {
         dokumenter.forEach {
