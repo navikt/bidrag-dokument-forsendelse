@@ -51,6 +51,9 @@ class OppdaterForsendelseService(
         forsendelseId: Long,
         forespørsel: OppdaterForsendelseForespørsel,
     ): OppdaterForsendelseResponse {
+        personConsumer.hentPersonSpråk(
+            forespørsel.mottaker?.ident!!,
+        )
         val forsendelse =
             forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeForsendelse(forsendelseId)
@@ -256,10 +259,10 @@ class OppdaterForsendelseService(
     ): List<Dokument> {
         if (forespørsel.dokumenter.isEmpty()) return forsendelse.dokumenter
         val logiskSlettetDokumenterFraForespørsel =
-            forsendelse.dokumenter.filter {
-                forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde && !it.metadata.erStatiskDokument()
-            }
-                .map {
+            forsendelse.dokumenter
+                .filter {
+                    forespørsel.skalDokumentSlettes(it.dokumentreferanse) && !it.erFraAnnenKilde && !it.metadata.erStatiskDokument()
+                }.map {
                     it.copy(
                         slettetTidspunkt = LocalDate.now(),
                     )
@@ -310,13 +313,13 @@ class OppdaterForsendelseService(
     private fun validerIkkeLagtTilDuplikatDokument(oppdaterteDokumenter: List<Dokument>) {
         oppdaterteDokumenter.forEach { oppdatertDokument ->
             val originalDokument = dokumentTjeneste.hentOriginalDokument(oppdatertDokument)
-            oppdaterteDokumenter.filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
+            oppdaterteDokumenter
+                .filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
                 .any {
                     it.erFraAnnenKilde &&
                         it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal &&
                         it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
-                }
-                .ifTrue {
+                }.ifTrue {
                     throw UgyldigForespørsel(
                         "Kan ikke legge til samme dokument flere ganger til forsendelse." +
                             " Original dokument ${originalDokument.dokumentreferanse} " +

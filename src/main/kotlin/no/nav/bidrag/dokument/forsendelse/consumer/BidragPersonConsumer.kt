@@ -9,9 +9,7 @@ import no.nav.bidrag.transport.person.PersonDto
 import no.nav.bidrag.transport.person.PersonRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -49,9 +47,7 @@ class BidragPersonConsumer(
     @BrukerCacheable(PERSON_SPRAAK_CACHE)
     fun hentPersonSpråk(personId: String): String? {
         return try {
-            val headers = HttpHeaders()
-            headers.accept = listOf(MediaType.TEXT_PLAIN)
-            postForEntity(createUri("/spraak"), PersonRequest(Personident(personId)), headers)
+            postForEntity(createUri("/spraak"), PersonRequest(Personident(personId)))
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.NOT_FOUND) {
                 return null

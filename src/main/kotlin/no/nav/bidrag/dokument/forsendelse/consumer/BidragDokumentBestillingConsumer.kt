@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -60,12 +58,9 @@ class BidragDokumentBestillingConsumer(
     }
 
     @Cacheable(DOKUMENTMALER_CACHE)
-    fun støttedeDokumentmaler(): List<String> {
-        val headers = HttpHeaders()
-        headers.accept = listOf(MediaType.TEXT_PLAIN)
-        return optionsForEntity(createUri("/brevkoder"), headers)
+    fun støttedeDokumentmaler(): List<String> =
+        optionsForEntity(createUri("/brevkoder"))
             ?: emptyList()
-    }
 
     @Cacheable(DOKUMENTMALDETALJER_CACHE)
     fun dokumentmalDetaljer(): Map<String, DokumentMalDetaljer> = getForEntity(createUri("/dokumentmal/detaljer")) ?: emptyMap()
