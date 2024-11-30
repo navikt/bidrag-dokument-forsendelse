@@ -8,9 +8,7 @@ import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.TILGANG_T
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeSak
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -25,16 +23,17 @@ class BidragTIlgangskontrollConsumer(
     @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-tilgangskontroll") {
     private fun createUri(path: String?) =
-        UriComponentsBuilder.fromUri(url)
-            .path(path ?: "").build().toUri()
+        UriComponentsBuilder
+            .fromUri(url)
+            .path(path ?: "")
+            .build()
+            .toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     @BrukerCacheable(TILGANG_SAK_CACHE)
     fun sjekkTilgangSak(saksnummer: String): Boolean {
         return try {
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.TEXT_PLAIN
-            postForEntity(createUri("/api/tilgang/sak"), saksnummer, headers) ?: false
+            postForEntity(createUri("/api/tilgang/sak"), saksnummer) ?: false
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             if (e.statusCode == HttpStatus.NOT_FOUND) fantIkkeSak(saksnummer)
@@ -46,9 +45,7 @@ class BidragTIlgangskontrollConsumer(
     @BrukerCacheable(TILGANG_PERSON_CACHE)
     fun sjekkTilgangPerson(personnummer: String): Boolean {
         return try {
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.TEXT_PLAIN
-            postForEntity(createUri("/api/tilgang/person"), personnummer, headers) ?: false
+            postForEntity(createUri("/api/tilgang/person"), personnummer) ?: false
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             throw e
@@ -59,9 +56,7 @@ class BidragTIlgangskontrollConsumer(
     @BrukerCacheable(TILGANG_TEMA_CACHE)
     fun sjekkTilgangTema(tema: String): Boolean {
         return try {
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.TEXT_PLAIN
-            postForEntity(createUri("/api/tilgang/tema"), tema, headers) ?: false
+            postForEntity(createUri("/api/tilgang/tema"), tema) ?: false
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             throw e
