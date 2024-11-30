@@ -51,9 +51,6 @@ class OppdaterForsendelseService(
         forsendelseId: Long,
         forespørsel: OppdaterForsendelseForespørsel,
     ): OppdaterForsendelseResponse {
-        personConsumer.hentPersonSpråk(
-            forespørsel.mottaker?.ident!!,
-        )
         val forsendelse =
             forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeForsendelse(forsendelseId)
