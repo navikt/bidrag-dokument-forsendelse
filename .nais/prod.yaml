@@ -31,7 +31,7 @@ env:
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
-  KODEVERK_URL: https://kodeverk-api.nav.no
+  KODEVERK_URL: https://bidrag-kodeverk.intern.nav.no
 
   LAGRE_DIST_INFO_PAGE_SIZE: 500
   LAGRE_DIST_INFO_CRON: "0 0 */3 * * ?"
