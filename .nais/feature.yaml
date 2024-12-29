@@ -31,7 +31,7 @@ env:
   BIDRAG_BEHANDLING_URL:  http://bidrag-behandling-q1
   BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling-q1
 
-  KODEVERK_URL: https://kodeverk-api.nav.no
+  KODEVERK_URL: http://bidrag-kodeverk
 
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 
@@ -57,6 +57,7 @@ outbound-access-apps:
    - bidrag-tilgangskontroll-feature
    - bidrag-vedtak-q1
    - bidrag-behandling-q1
+   - bidrag-kodeverk
 outbound-access-hosts:
    - bidrag-dokument-feature.dev-fss-pub.nais.io
    - bidrag-person-q1.dev-fss-pub.nais.io

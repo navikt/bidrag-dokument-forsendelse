@@ -31,7 +31,7 @@ env:
   TOPIC_DOKUMENT: bidrag.dokument
   TOPIC_JOURNALPOST: bidrag.journalpost
 
-  KODEVERK_URL: https://kodeverk-api.nav.no
+  KODEVERK_URL: http://bidrag-kodeverk
 
   LAGRE_DIST_INFO_PAGE_SIZE: 500
   LAGRE_DIST_INFO_CRON: "0 0 */3 * * ?"
@@ -55,6 +55,7 @@ outbound-access-apps:
    - bidrag-dokument-bestilling
    - bidrag-vedtak
    - bidrag-behandling
+   - bidrag-kodeverk
 outbound-access-hosts:
    - bidrag-dokument.prod-fss-pub.nais.io
    - bidrag-person.prod-fss-pub.nais.io

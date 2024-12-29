@@ -101,7 +101,7 @@ class StubUtils {
         status: HttpStatus = HttpStatus.OK,
     ) {
         WireMock.stubFor(
-            WireMock.get(WireMock.urlPathMatching(".*/kodeverk/Postnummer.*")).willReturn(
+            WireMock.get(WireMock.urlPathMatching("/kodeverk/kodeverk/Postnummer.*")).willReturn(
                 if (response != null) {
                     aClosedJsonResponse().withStatus(status.value()).withBody(
                         ObjectMapper().findAndRegisterModules().writeValueAsString(response),
