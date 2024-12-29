@@ -31,7 +31,7 @@ env:
   BIDRAG_BEHANDLING_URL:  http://bidrag-behandling-q1
   BIDRAG_BEHANDLING_SCOPE: dev-gcp.bidrag.bidrag-behandling-q1
 
-  KODEVERK_URL: https://bidrag-kodeverk.intern.dev.nav.no
+  KODEVERK_URL: http://bidrag-kodeverk
 
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 
