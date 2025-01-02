@@ -116,9 +116,7 @@ class ForsendelseMetadataDo : MutableMap<String, String> by hashMapOf() {
         value?.let { put(key, value) }
     }
 
-    fun copy(): ForsendelseMetadataDo {
-        return from(this)
-    }
+    fun copy(): ForsendelseMetadataDo = from(this)
 }
 
 class ForsendelseMetadataDoConverter : ImmutableType<ForsendelseMetadataDo>(ForsendelseMetadataDo::class.java) {
@@ -141,20 +139,16 @@ class ForsendelseMetadataDoConverter : ImmutableType<ForsendelseMetadataDo>(Fors
         st.setObject(index, value?.toMap())
     }
 
-    override fun getSqlType(): Int {
-        return Types.OTHER
-    }
+    override fun getSqlType(): Int = Types.OTHER
 
     override fun compare(
         p0: Any?,
         p1: Any?,
         p2: SessionFactoryImplementor?,
-    ): Int {
-        return 0
-    }
+    ): Int = 0
 
-    override fun fromStringValue(sequence: CharSequence?): ForsendelseMetadataDo? {
-        return try {
+    override fun fromStringValue(sequence: CharSequence?): ForsendelseMetadataDo? =
+        try {
             sequence?.let { JacksonUtil.fromString(sequence as String, ForsendelseMetadataDo::class.java) }
         } catch (e: Exception) {
             throw IllegalArgumentException(
@@ -164,5 +158,4 @@ class ForsendelseMetadataDoConverter : ImmutableType<ForsendelseMetadataDo>(Fors
                 ),
             )
         }
-    }
 }

@@ -127,12 +127,11 @@ class RedigerForsendelseIt : KontrollerTestContainerRunner() {
     fun utførOpphevFerdigstillDokument(
         forsendelseId: String,
         dokumentreferanse: String,
-    ): ResponseEntity<DokumentRespons> {
-        return httpHeaderTestRestTemplate.exchange<DokumentRespons>(
+    ): ResponseEntity<DokumentRespons> =
+        httpHeaderTestRestTemplate.exchange<DokumentRespons>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill/opphev",
             HttpMethod.PATCH,
             null,
             DokumentRespons::class.java,
         )
-    }
 }

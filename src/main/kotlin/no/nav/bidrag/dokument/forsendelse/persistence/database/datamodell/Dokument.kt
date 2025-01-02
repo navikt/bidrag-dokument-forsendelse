@@ -77,9 +77,7 @@ data class Dokument(
     @JoinColumn(name = "forsendelse_id")
     var forsendelse: Forsendelse,
 ) {
-    override fun toString(): String {
-        return this.toStringByReflection(listOf("forsendelse"))
-    }
+    override fun toString(): String = this.toStringByReflection(listOf("forsendelse"))
 
     val erFraAnnenKilde get() = !(dokumentreferanseOriginal == null && journalpostIdOriginal == null)
     val erLenkeTilEnAnnenForsendelse get() = erFraAnnenKilde && arkivsystem == DokumentArkivSystem.FORSENDELSE
@@ -204,9 +202,7 @@ class DokumentMetadataDo : MutableMap<String, String> by hashMapOf() {
         value?.let { put(key, value) }
     }
 
-    fun copy(): DokumentMetadataDo {
-        return from(this)
-    }
+    fun copy(): DokumentMetadataDo = from(this)
 }
 
 class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMetadataDo::class.java) {
@@ -229,20 +225,16 @@ class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMe
         st.setObject(index, value?.toMap())
     }
 
-    override fun getSqlType(): Int {
-        return Types.OTHER
-    }
+    override fun getSqlType(): Int = Types.OTHER
 
     override fun compare(
         p0: Any?,
         p1: Any?,
         p2: SessionFactoryImplementor?,
-    ): Int {
-        return 0
-    }
+    ): Int = 0
 
-    override fun fromStringValue(sequence: CharSequence?): DokumentMetadataDo {
-        return try {
+    override fun fromStringValue(sequence: CharSequence?): DokumentMetadataDo =
+        try {
             JacksonUtil.fromString(sequence as String?, DokumentMetadataDo::class.java)
         } catch (e: Exception) {
             throw IllegalArgumentException(
@@ -252,5 +244,4 @@ class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMe
                 ),
             )
         }
-    }
 }

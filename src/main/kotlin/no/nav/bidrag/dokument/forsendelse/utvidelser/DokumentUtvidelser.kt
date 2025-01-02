@@ -11,10 +11,11 @@ fun List<Dokument>.exists(dokumentreferanse: String?) = hentDokument(dokumentref
 
 fun List<Dokument>.hentDokument(dokumentreferanse: String?) =
     dokumenterIkkeSlettet.find {
-        dokumentreferanse.isNotNullOrEmpty() && (
-            it.dokumentreferanseOriginal == dokumentreferanse ||
-                it.dokumentreferanse == dokumentreferanse
-        )
+        dokumentreferanse.isNotNullOrEmpty() &&
+            (
+                it.dokumentreferanseOriginal == dokumentreferanse ||
+                    it.dokumentreferanse == dokumentreferanse
+            )
     }
 
 val List<Dokument>.erAlleFerdigstilt

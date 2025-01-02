@@ -590,8 +590,12 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
             oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
             oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
-            oppdatertForsendelse.dokumenter.vedlegger[0].metadata.erSkjema() shouldBe true
-            oppdatertForsendelse.dokumenter.vedlegger[0].metadata.erStatiskDokument() shouldBe true
+            oppdatertForsendelse.dokumenter.vedlegger[0]
+                .metadata
+                .erSkjema() shouldBe true
+            oppdatertForsendelse.dokumenter.vedlegger[0]
+                .metadata
+                .erStatiskDokument() shouldBe true
             stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
         }
     }

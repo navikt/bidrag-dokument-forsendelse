@@ -7,20 +7,17 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.Forsen
 import org.springframework.stereotype.Component
 
 @Component
-class TestDataManager(val forsendelseRepository: ForsendelseRepository, val dokumentRepository: DokumentRepository) {
+class TestDataManager(
+    val forsendelseRepository: ForsendelseRepository,
+    val dokumentRepository: DokumentRepository,
+) {
     @Transactional
-    fun hentForsendelse(forsendelseId: Long): Forsendelse? {
-        return forsendelseRepository.findById(forsendelseId).get()
-    }
+    fun hentForsendelse(forsendelseId: Long): Forsendelse? = forsendelseRepository.findById(forsendelseId).get()
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    fun lagreForsendelse(forsendelseToSave: Forsendelse): Forsendelse {
-        return forsendelseRepository.save(forsendelseToSave)
-    }
+    fun lagreForsendelse(forsendelseToSave: Forsendelse): Forsendelse = forsendelseRepository.save(forsendelseToSave)
 
-    fun lagreForsendelseNotNewTransaction(forsendelseToSave: Forsendelse): Forsendelse {
-        return forsendelseRepository.save(forsendelseToSave)
-    }
+    fun lagreForsendelseNotNewTransaction(forsendelseToSave: Forsendelse): Forsendelse = forsendelseRepository.save(forsendelseToSave)
 
     @OpprettForsendelseTestdataDsl
     @Transactional(Transactional.TxType.REQUIRES_NEW)

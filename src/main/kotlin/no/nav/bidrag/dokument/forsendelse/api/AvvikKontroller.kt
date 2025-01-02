@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestHeader
 
 @ForsendelseApiKontroller
 @Timed
-class AvvikKontroller(val avvikService: AvvikService) {
+class AvvikKontroller(
+    val avvikService: AvvikService,
+) {
     @PostMapping("/journal/{forsendelseIdMedPrefix}/avvik")
     @Operation(
         summary = "Utfør avvikshåndtering",
@@ -30,9 +32,7 @@ class AvvikKontroller(val avvikService: AvvikService) {
         @RequestHeader(EnhetFilter.X_ENHET_HEADER, required = false) enhet: String?,
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @RequestBody avvikshendelse: Avvikshendelse,
-    ) {
-        return avvikService.utførAvvik(forsendelseIdMedPrefix.numerisk, avvikshendelse, enhet)
-    }
+    ) = avvikService.utførAvvik(forsendelseIdMedPrefix.numerisk, avvikshendelse, enhet)
 
     @GetMapping("/journal/{forsendelseIdMedPrefix}/avvik")
     @Operation(description = "Hent gyldige avvikstyper for forsendelse")
@@ -44,7 +44,5 @@ class AvvikKontroller(val avvikService: AvvikService) {
     )
     fun hentAvvik(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-    ): List<AvvikType> {
-        return avvikService.hentAvvik(forsendelseIdMedPrefix.numerisk)
-    }
+    ): List<AvvikType> = avvikService.hentAvvik(forsendelseIdMedPrefix.numerisk)
 }

@@ -1,6 +1,6 @@
 name: bidrag-dokument-forsendelse-feature
 bucket_name: bidrag-dokument-forsendelse-feature
-min_replicas: 1
+min_replicas: 2
 ingresses:
   - https://bidrag-dokument-forsendelse-feature.intern.dev.nav.no
 env:

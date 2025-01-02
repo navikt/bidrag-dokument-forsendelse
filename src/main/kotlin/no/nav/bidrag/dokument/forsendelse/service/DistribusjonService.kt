@@ -32,9 +32,8 @@ class DistribusjonService(
     private val hendelseBestillingService: ForsendelseHendelseBestillingService,
     private val meterRegistry: MeterRegistry,
 ) {
-    fun harDistribuert(forsendelse: Forsendelse): Boolean {
-        return forsendelse.status == ForsendelseStatus.DISTRIBUERT || forsendelse.status == ForsendelseStatus.DISTRIBUERT_LOKALT
-    }
+    fun harDistribuert(forsendelse: Forsendelse): Boolean =
+        forsendelse.status == ForsendelseStatus.DISTRIBUERT || forsendelse.status == ForsendelseStatus.DISTRIBUERT_LOKALT
 
     fun størrelseIMb(forsendelseId: Long): Long {
         val fileSize = bytesToMb(dokumentStorageService.totalStørrelse(forsendelseId))
@@ -204,18 +203,17 @@ class DistribusjonService(
     }
 
     private fun measureIngenDistribusjon(forsendelse: Forsendelse) {
-        meterRegistry.counter(
-            "forsendelse_ingen_distribusjon",
-            "enhet",
-            forsendelse.enhet,
-            "tema",
-            forsendelse.tema.name,
-        ).increment()
+        meterRegistry
+            .counter(
+                "forsendelse_ingen_distribusjon",
+                "enhet",
+                forsendelse.enhet,
+                "tema",
+                forsendelse.tema.name,
+            ).increment()
     }
 
-    fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? {
-        return bidragDokumentConsumer.hentDistribusjonInfo(journalpostId)
-    }
+    fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? = bidragDokumentConsumer.hentDistribusjonInfo(journalpostId)
 
     fun bytesToMb(bytes: Long): Float {
         val kilobyte = 1024F

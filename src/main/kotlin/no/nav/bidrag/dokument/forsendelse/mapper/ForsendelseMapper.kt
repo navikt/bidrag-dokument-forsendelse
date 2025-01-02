@@ -188,22 +188,16 @@ class DokumentDtoMetadata : MutableMap<String, String> by hashMapOf() {
         originalJournalpostid?.let { put(ORIGINAL_JOURNALPOST_ID, originalJournalpostid) }
     }
 
-    fun hentOriginalJournalpostId(): String? {
-        return get(ORIGINAL_JOURNALPOST_ID)
-    }
+    fun hentOriginalJournalpostId(): String? = get(ORIGINAL_JOURNALPOST_ID)
 
     fun oppdaterOriginalDokumentreferanse(originalDokumentreferanse: String?) {
         remove(ORIGINAL_DOKUMENTREFERANSE)
         originalDokumentreferanse?.let { put(ORIGINAL_DOKUMENTREFERANSE, originalDokumentreferanse) }
     }
 
-    fun hentOriginalDokumentreferanse(): String? {
-        return get(ORIGINAL_DOKUMENTREFERANSE)
-    }
+    fun hentOriginalDokumentreferanse(): String? = get(ORIGINAL_DOKUMENTREFERANSE)
 
-    fun copy(): DokumentDtoMetadata {
-        return from(this)
-    }
+    fun copy(): DokumentDtoMetadata = from(this)
 }
 
 fun Forsendelse.tilForsendelseStatusTo() =
@@ -296,9 +290,10 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
                         dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalDokumentreferanse()
                             ?: it.dokumentreferanseOriginal,
                     originalJournalpostId =
-                        dokumenterMetadata?.get(
-                            it.dokumentreferanse,
-                        )?.hentOriginalJournalpostId() ?: it.journalpostIdOriginal,
+                        dokumenterMetadata
+                            ?.get(
+                                it.dokumentreferanse,
+                            )?.hentOriginalJournalpostId() ?: it.journalpostIdOriginal,
                     forsendelseId = it.forsendelseId?.toString(),
                     tittel = it.tittel,
                     journalpostId = it.journalpostId,

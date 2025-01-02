@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody
 
 @ForsendelseApiKontroller
 @Timed
-class EndreForsendelseKontroller(val oppdaterForsendelseService: OppdaterForsendelseService) {
+class EndreForsendelseKontroller(
+    val oppdaterForsendelseService: OppdaterForsendelseService,
+) {
     @PatchMapping("/{forsendelseIdMedPrefix}")
     @Operation(
         summary = "Endre forsendelse",

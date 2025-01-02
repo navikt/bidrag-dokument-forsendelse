@@ -36,12 +36,11 @@ class RestConfig(
     fun clientRequestObservationConvention() = DefaultClientRequestObservationConvention()
 
     @Bean
-    fun jackson2ObjectMapperBuilder(): Jackson2ObjectMapperBuilder {
-        return Jackson2ObjectMapperBuilder()
+    fun jackson2ObjectMapperBuilder(): Jackson2ObjectMapperBuilder =
+        Jackson2ObjectMapperBuilder()
             .dateFormat(StdDateFormat())
             .failOnUnknownProperties(false)
             .serializationInclusion(JsonInclude.Include.NON_NULL)
-    }
 
     @Bean("azureLongerTimeout")
     @Scope("prototype")
@@ -54,8 +53,7 @@ class RestConfig(
             val pb = PoolingHttpClientConnectionManagerBuilder.create().setDefaultSocketConfig(sc).build()
             val connectionManager = HttpClientBuilder.create().setConnectionManager(pb).build()
             HttpComponentsClientHttpRequestFactory(connectionManager)
-        }
-        .additionalInterceptors(bearerTokenClientInterceptor)
+        }.additionalInterceptors(bearerTokenClientInterceptor)
         .build()
 }
 

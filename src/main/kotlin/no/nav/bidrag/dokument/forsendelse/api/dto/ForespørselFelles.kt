@@ -73,9 +73,7 @@ sealed class DokumentForespørsel(
         JournalpostId? = null,
     @Schema(description = "Arkivsystem hvor dokument er lagret", enumAsRef = true) open val arkivsystem: DokumentArkivSystemDto? = null,
 ) {
-    override fun toString(): String {
-        return this.toStringByReflection(mask = listOf("fysiskDokument"))
-    }
+    override fun toString(): String = this.toStringByReflection(mask = listOf("fysiskDokument"))
 }
 
 data class MottakerTo(

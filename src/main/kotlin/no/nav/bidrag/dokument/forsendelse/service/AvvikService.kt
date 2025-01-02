@@ -68,9 +68,7 @@ class AvvikService(
     private fun isValidAvvikForForsendelse(
         forsendelseId: Long,
         avvikType: AvvikType,
-    ): Boolean {
-        return hentAvvik(forsendelseId).contains(avvikType)
-    }
+    ): Boolean = hentAvvik(forsendelseId).contains(avvikType)
 
     private fun endreFagområde(
         forsendelseId: Long,

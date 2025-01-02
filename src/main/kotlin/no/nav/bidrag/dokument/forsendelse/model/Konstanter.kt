@@ -31,7 +31,9 @@ fun bytesIntoHumanReadable(bytes: Long): String {
 }
 
 @Suppress("ktlint:standard:class-naming")
-enum class KLAGE_ANKE_ENHET(val kode: String) {
+enum class KLAGE_ANKE_ENHET(
+    val kode: String,
+) {
     ENHET_KLANKE_OSLO_AKERSHUS("4291"),
     ENHET_KLANKE_VEST("4294"),
     ENHET_KLANKE_OST("4293"),

@@ -18,7 +18,5 @@ class DokumentBestillingService(
         applicationEventPublisher.publishEvent(DokumentBestilling(forsendelseId, dokumentreferanse))
     }
 
-    fun hentDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
-        return dokumentBestillingKonsumer.dokumentmalDetaljer()
-    }
+    fun hentDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> = dokumentBestillingKonsumer.dokumentmalDetaljer()
 }

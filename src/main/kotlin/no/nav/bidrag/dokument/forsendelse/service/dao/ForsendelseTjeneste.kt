@@ -29,9 +29,8 @@ class ForsendelseTjeneste(
         return forsendelse
     }
 
-    fun hentDistribuerteForsendelserUtenDistribusjonKanal(limit: Int): List<Forsendelse> {
-        return forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
-    }
+    fun hentDistribuerteForsendelserUtenDistribusjonKanal(limit: Int): List<Forsendelse> =
+        forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
 
     fun hentDistribuerteForsendelserDistribuertTilNavNo(
         limit: Int,
@@ -50,9 +49,7 @@ class ForsendelseTjeneste(
         )
     }
 
-    fun hentFerdigstilteIkkeDistribuert(): List<Forsendelse> {
-        return forsendelseRepository.hentFerdigstilteArkivertIJoarkIkkeDistribuert()
-    }
+    fun hentFerdigstilteIkkeDistribuert(): List<Forsendelse> = forsendelseRepository.hentFerdigstilteArkivertIJoarkIkkeDistribuert()
 
     fun hentForsendelserOpprettetFørDagensDatoIkkeDistribuert(): List<Forsendelse> {
         val forsendelser = forsendelseRepository.hentUnderProduksjonOpprettetFørDagensDato()

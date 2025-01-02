@@ -18,7 +18,9 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 @Aspect
 @Suppress("ktlint:standard:max-line-length")
-class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
+class HendelseCorrelationAspect(
+    private val objectMapper: ObjectMapper,
+) {
     @Before(
         value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter.prossesserDokumentHendelse(..)) && args(hendelse)",
     )
@@ -45,15 +47,14 @@ class HendelseCorrelationAspect(private val objectMapper: ObjectMapper) {
         MDC.put(CORRELATION_ID_HEADER, CorrelationId.existing(korrelasjonsId).get())
     }
 
-    private fun hentSporingFraHendelse(hendelse: ConsumerRecord<String, String>): String? {
-        return try {
+    private fun hentSporingFraHendelse(hendelse: ConsumerRecord<String, String>): String? =
+        try {
             val jsonNode = objectMapper.readTree(hendelse.value())
             jsonNode["sporingId"].asText()
         } catch (e: Exception) {
             LOGGER.error("Det skjedde en feil ved konverting av melding fra hendelse", e)
             null
         }
-    }
 
     @After(value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.*.*(..))")
     fun clearCorrelationId(joinPoint: JoinPoint) {

@@ -58,9 +58,7 @@ class FysiskDokumentService(
         throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
     }
 
-    fun hentStatiskDokument(malId: String): ByteArray? {
-        return bidragDokumentBestillingConsumer.hentDokument(malId)
-    }
+    fun hentStatiskDokument(malId: String): ByteArray? = bidragDokumentBestillingConsumer.hentDokument(malId)
 
     fun hentDokument(dokumentreferanse: String): ByteArray {
         val dokument =
@@ -84,8 +82,8 @@ class FysiskDokumentService(
         )
     }
 
-    fun hentFysiskDokument(dokumentMetadata: DokumentMetadata): ByteArray {
-        return if (dokumentMetadata.arkivsystem == DokumentArkivSystemDto.BIDRAG) {
+    fun hentFysiskDokument(dokumentMetadata: DokumentMetadata): ByteArray =
+        if (dokumentMetadata.arkivsystem == DokumentArkivSystemDto.BIDRAG) {
             hentDokument(
                 dokumentMetadata.journalpostId!!.numerisk,
                 dokumentMetadata.dokumentreferanse!!,
@@ -96,7 +94,6 @@ class FysiskDokumentService(
                 dokumentMetadata.dokumentreferanse,
             )!!
         }
-    }
 
     fun hentFysiskDokument(dokument: Dokument): ByteArray {
         return if (dokument.arkivsystem == DokumentArkivSystem.BIDRAG || dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {

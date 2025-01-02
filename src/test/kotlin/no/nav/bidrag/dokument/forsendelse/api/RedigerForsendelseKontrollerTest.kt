@@ -255,21 +255,19 @@ class RedigerForsendelseKontrollerTest : KontrollerTestRunner() {
         forsendelseId: String,
         dokumentreferanse: String,
         nyMetadata: String,
-    ): ResponseEntity<DokumentRedigeringMetadataResponsDto> {
-        return httpHeaderTestRestTemplate.exchange<DokumentRedigeringMetadataResponsDto>(
+    ): ResponseEntity<DokumentRedigeringMetadataResponsDto> =
+        httpHeaderTestRestTemplate.exchange<DokumentRedigeringMetadataResponsDto>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse",
             HttpMethod.PATCH,
             HttpEntity(nyMetadata),
             DokumentRedigeringMetadataResponsDto::class.java,
         )
-    }
 
     fun utførHentRedigeringmetadata(
         forsendelseId: String,
         dokumentreferanse: String,
-    ): ResponseEntity<DokumentRedigeringMetadataResponsDto> {
-        return httpHeaderTestRestTemplate.getForEntity<DokumentRedigeringMetadataResponsDto>(
+    ): ResponseEntity<DokumentRedigeringMetadataResponsDto> =
+        httpHeaderTestRestTemplate.getForEntity<DokumentRedigeringMetadataResponsDto>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse",
         )
-    }
 }

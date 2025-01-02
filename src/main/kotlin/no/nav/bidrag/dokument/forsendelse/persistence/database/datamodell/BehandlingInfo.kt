@@ -74,11 +74,10 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
         p1: Int,
         session: SharedSessionContractImplementor?,
         owner: Any?,
-    ): BarnIBehandling {
-        return rs.getObject(p1)?.let {
+    ): BarnIBehandling =
+        rs.getObject(p1)?.let {
             BarnIBehandling.fromString(it as String)
         } ?: BarnIBehandling()
-    }
 
     override fun set(
         st: PreparedStatement,
@@ -89,20 +88,16 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
         st.setObject(index, if (value.isNullOrEmpty()) null else value.asString())
     }
 
-    override fun getSqlType(): Int {
-        return Types.OTHER
-    }
+    override fun getSqlType(): Int = Types.OTHER
 
     override fun compare(
         p0: Any?,
         p1: Any?,
         p2: SessionFactoryImplementor?,
-    ): Int {
-        return 0
-    }
+    ): Int = 0
 
-    override fun fromStringValue(sequence: CharSequence?): BarnIBehandling {
-        return try {
+    override fun fromStringValue(sequence: CharSequence?): BarnIBehandling =
+        try {
             BarnIBehandling.fromString(sequence as String)
         } catch (e: Exception) {
             throw IllegalArgumentException(
@@ -112,5 +107,4 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
                 ),
             )
         }
-    }
 }

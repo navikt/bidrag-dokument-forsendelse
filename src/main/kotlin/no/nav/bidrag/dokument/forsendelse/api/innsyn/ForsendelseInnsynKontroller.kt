@@ -59,49 +59,35 @@ class ForsendelseInnsynKontroller(
     )
     fun hentJournal(
         @PathVariable saksnummer: String,
-    ): List<ForsendelseResponsTo> {
-        return forsendelseInnsynService.hentForsendelseForSak(saksnummer)
-    }
+    ): List<ForsendelseResponsTo> = forsendelseInnsynService.hentForsendelseForSak(saksnummer)
 
     @RequestMapping("/dokumentmaler", method = [RequestMethod.OPTIONS])
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
-    fun støttedeDokumentmaler(): List<String> {
-        return bidragDokumentBestillingConsumer.støttedeDokumentmaler()
-    }
+    fun støttedeDokumentmaler(): List<String> = bidragDokumentBestillingConsumer.støttedeDokumentmaler()
 
     @RequestMapping("/dokumentmaler/detaljer", method = [RequestMethod.OPTIONS])
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
-    fun støttedeDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> {
-        return bidragDokumentBestillingConsumer.dokumentmalDetaljer()
-    }
+    fun støttedeDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> = bidragDokumentBestillingConsumer.dokumentmalDetaljer()
 
     @GetMapping("/dokumentvalg/forsendelse/{forsendelseIdMedPrefix}")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValgForForsendelse(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-    ): Map<String, DokumentMalDetaljer> {
-        return forsendelseInnsynService.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
-    }
+    ): Map<String, DokumentMalDetaljer> = forsendelseInnsynService.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
 
     @PostMapping("/dokumentvalg")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValg(
         @RequestBody(required = false) request: HentDokumentValgRequest? = null,
-    ): Map<String, DokumentMalDetaljer> {
-        return dokumentValgService.hentDokumentMalListe(request)
-    }
+    ): Map<String, DokumentMalDetaljer> = dokumentValgService.hentDokumentMalListe(request)
 
     @PostMapping("/dokumentvalg/notat")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValgNotater(
         @RequestBody(required = false) request: HentDokumentValgRequest? = null,
-    ): Map<String, DokumentMalDetaljer> {
-        return dokumentValgService.hentNotatListe(request)
-    }
+    ): Map<String, DokumentMalDetaljer> = dokumentValgService.hentNotatListe(request)
 
     @GetMapping("/dokumentvalg/notat")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen", deprecated = true)
-    fun hentDokumentValgNotaterGet(): Map<String, DokumentMalDetaljer> {
-        return dokumentValgService.hentNotatListe()
-    }
+    fun hentDokumentValgNotaterGet(): Map<String, DokumentMalDetaljer> = dokumentValgService.hentNotatListe()
 }
