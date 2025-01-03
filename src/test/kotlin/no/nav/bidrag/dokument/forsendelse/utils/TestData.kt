@@ -219,10 +219,11 @@ fun opprettForsendelse2(
     behandlingInfo: BehandlingInfo? = null,
     endretAvIdent: String = SAKSBEHANDLER_IDENT,
     metadata: ForsendelseMetadataDo? = null,
+    medId: Boolean = false,
 ): Forsendelse {
     val forsendelse =
         Forsendelse(
-            forsendelseId = 1L,
+            forsendelseId = if (medId) 1 else null,
             forsendelseType = if (erNotat) ForsendelseType.NOTAT else ForsendelseType.UTGÅENDE,
             enhet = journalførendeenhet,
             status = status,

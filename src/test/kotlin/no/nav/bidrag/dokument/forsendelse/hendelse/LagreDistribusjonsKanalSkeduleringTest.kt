@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -28,6 +29,9 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     @Autowired
     private lateinit var skedulering: ForsendelseSkedulering
 
+    @Autowired
+    private lateinit var entityManager: EntityManager
+
     @BeforeEach
     fun setupMocks() {
         WireMock.resetAllRequests()
@@ -40,11 +44,11 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     }
 
     private fun opprettIkkeDistribuertForsendelse(): Forsendelse =
-        testDataManager.lagreForsendelseNotNewTransaction(
+        testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.UNDER_PRODUKSJON,
                 dokumenter =
-                    listOf(
+                    mutableListOf(
                         nyttDokument(
                             dokumentreferanseOriginal = null,
                             journalpostId = null,
@@ -68,7 +72,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
                 distribusjonsTidspunkt = LocalDateTime.now().minusHours(distTidspunktMinusHours),
                 kanal = kanal,
                 dokumenter =
-                    listOf(
+                    arrayListOf(
                         nyttDokument(
                             dokumentreferanseOriginal = null,
                             journalpostId = null,
@@ -110,6 +114,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDistribusjonInfo(forsendelseSentralPrint.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
 
         skedulering.lagreDistribusjoninfo()
+        entityManager.flush()
 
         stubUtils.Valider().hentDistribusjonInfoKalt(5)
 
@@ -146,6 +151,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         )
 
         skedulering.lagreDistribusjoninfo()
+        entityManager.flush()
 
         // Pga retry så blir endepunktet kalt flere ganger
         stubUtils.Valider().hentDistribusjonInfoKalt(7)

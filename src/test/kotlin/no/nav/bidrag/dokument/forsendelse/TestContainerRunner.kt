@@ -22,11 +22,12 @@ class TestContainerRunner : CommonTestRunner() {
     companion object {
         @Container
         protected val postgreSqlDb =
-            PostgreSQLContainer("postgres:latest").apply {
+            PostgreSQLContainer("postgres:15.4").apply {
                 withDatabaseName("bidrag-dokument-forsendelse")
                 withUsername("cloudsqliamuser")
                 withPassword("admin")
                 portBindings = listOf("7777:5432")
+                start()
             }
 
         @Container
