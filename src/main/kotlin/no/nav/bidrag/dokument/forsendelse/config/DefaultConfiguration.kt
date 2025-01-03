@@ -46,19 +46,17 @@ import javax.sql.DataSource
 @EnableSaksbehandlernavnProvider
 class DefaultConfiguration {
     @Bean
-    fun lockProvider(dataSource: DataSource): LockProvider {
-        return JdbcTemplateLockProvider(
-            JdbcTemplateLockProvider.Configuration.builder()
+    fun lockProvider(dataSource: DataSource): LockProvider =
+        JdbcTemplateLockProvider(
+            JdbcTemplateLockProvider.Configuration
+                .builder()
                 .withJdbcTemplate(JdbcTemplate(dataSource))
                 .usingDbTime()
                 .build(),
         )
-    }
 
     @Bean
-    fun timedAspect(registry: MeterRegistry): TimedAspect {
-        return TimedAspect(registry)
-    }
+    fun timedAspect(registry: MeterRegistry): TimedAspect = TimedAspect(registry)
 
     @Bean
     fun unleashConfig(
@@ -66,7 +64,8 @@ class DefaultConfiguration {
         @Value("\${UNLEASH_SERVER_API_URL}") apiUrl: String,
         @Value("\${UNLEASH_SERVER_API_TOKEN}") apiToken: String,
         @Value("\${UNLEASH_SERVER_API_ENV}") environment: String,
-    ) = UnleashConfig.builder()
+    ) = UnleashConfig
+        .builder()
         .appName(appName)
         .unleashAPI("$apiUrl/api/")
         .instanceId(appName)
@@ -84,7 +83,8 @@ class DefaultConfiguration {
 class DefaultUnleashContextProvider : UnleashContextProvider {
     override fun getContext(): UnleashContext {
         val userId = MDC.get("user")
-        return UnleashContext.builder()
+        return UnleashContext
+            .builder()
             .userId(userId)
             .appName(MDC.get("applicationKey"))
             .build()

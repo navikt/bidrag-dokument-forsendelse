@@ -923,7 +923,9 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val responseForsendelse = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
         responseForsendelse.statusCode shouldBe HttpStatus.OK
-        responseForsendelse.body!!.journalpost!!.dokumenter.size shouldBe 2
+        responseForsendelse.body!!
+            .journalpost!!
+            .dokumenter.size shouldBe 2
     }
 
     @Test

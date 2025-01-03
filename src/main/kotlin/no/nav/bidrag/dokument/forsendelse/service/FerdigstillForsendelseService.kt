@@ -140,9 +140,8 @@ class FerdigstillForsendelseService(
         return respons
     }
 
-    fun begrensDokumentdatoTilIdagEllerTidligere(date: LocalDateTime): LocalDateTime {
-        return if (date.isAfter(LocalDateTime.now())) LocalDateTime.now() else date
-    }
+    fun begrensDokumentdatoTilIdagEllerTidligere(date: LocalDateTime): LocalDateTime =
+        if (date.isAfter(LocalDateTime.now())) LocalDateTime.now() else date
 
     fun opprettTittelMedBeskjedForLokalUtskrift(tittel: String): String {
         val beskjed = "dokumentet er sendt per post med vedlegg"

@@ -66,15 +66,15 @@ class ForsendelseSkedulering(
     fun oppdaterForsendelsestatusTilDistribuert(forsendelse: Forsendelse) {
         try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
-                distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
+                distribusjonService
+                    .hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
                     ?.takeIf {
                         it.journalstatus == JournalpostStatus.DISTRIBUERT ||
                             it.journalstatus == JournalpostStatus.EKSPEDERT ||
                             it.journalstatus == JournalpostStatus.FEILREGISTRERT ||
                             it.kanal == Kanal.INGEN_DISTRIBUSJON.name ||
                             it.kanal == Kanal.LOKAL_UTSKRIFT.name
-                    }
-                    ?.let { distInfo ->
+                    }?.let { distInfo ->
                         val kanal = DistribusjonKanal.valueOf(distInfo.kanal)
                         if (distInfo.journalstatus == JournalpostStatus.FEILREGISTRERT) {
                             LOGGER.info {
@@ -180,21 +180,22 @@ class ForsendelseSkedulering(
                 Sjekker distribusjon kanal på nytt for forsendelsene for å se om de har blitt redistribuert til sentral print. lesStørrelse=$distInfoPageSize
             """"
         }
-        return forsendelseListe.mapNotNull {
-            if (!simulering) {
-                forsendelseTjeneste.lagre(
-                    it.copy(
-                        metadata =
-                            run {
-                                val metadata = it.metadata ?: ForsendelseMetadataDo()
-                                metadata.markerSomSjekketNavNoRedistribusjon()
-                                metadata.copy()
-                            },
-                    ),
-                )
-            }
-            lagreDistribusjonInfo(it, simulering)
-        }.filter { simulering || it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
+        return forsendelseListe
+            .mapNotNull {
+                if (!simulering) {
+                    forsendelseTjeneste.lagre(
+                        it.copy(
+                            metadata =
+                                run {
+                                    val metadata = it.metadata ?: ForsendelseMetadataDo()
+                                    metadata.markerSomSjekketNavNoRedistribusjon()
+                                    metadata.copy()
+                                },
+                        ),
+                    )
+                }
+                lagreDistribusjonInfo(it, simulering)
+            }.filter { simulering || it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
     }
 
     fun lagreDistribusjoninfo() {
@@ -214,14 +215,15 @@ class ForsendelseSkedulering(
     ): Forsendelse? {
         return try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
-                distribusjonService.hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
+                distribusjonService
+                    .hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
                     ?.takeIf {
                         secureLogger.info { "Hentet distribusjonsinfo $it for forsendelse ${forsendelse.forsendelseId}" }
-                        forsendelse.distribusjonKanal == null || DistribusjonKanal.valueOf(
-                            it.kanal,
-                        ) != forsendelse.distribusjonKanal
-                    }
-                    ?.let { distInfo ->
+                        forsendelse.distribusjonKanal == null ||
+                            DistribusjonKanal.valueOf(
+                                it.kanal,
+                            ) != forsendelse.distribusjonKanal
+                    }?.let { distInfo ->
                         LOGGER.info {
                             "Lagrer forsendelse distribusjon info for forsendelse ${forsendelse.forsendelseId} " +
                                 "med JOARK journalpostId ${forsendelse.journalpostIdFagarkiv}, bestillingId=${distInfo.bestillingId}, " +

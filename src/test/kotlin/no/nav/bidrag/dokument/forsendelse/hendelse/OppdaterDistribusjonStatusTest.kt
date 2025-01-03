@@ -59,9 +59,7 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
     @Autowired
     lateinit var httpHeaderTestRestTemplate: TestRestTemplate
 
-    protected fun rootUri(): String {
-        return "http://localhost:$port/api/forsendelse"
-    }
+    protected fun rootUri(): String = "http://localhost:$port/api/forsendelse"
 
     @BeforeEach
     fun resetSpys() {
@@ -69,8 +67,8 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         WireMock.resetAllRequests()
     }
 
-    private fun opprettForsendelseFerdigstiltIkkeDistribuert(): Forsendelse {
-        return testDataManager.lagreForsendelse(
+    private fun opprettForsendelseFerdigstiltIkkeDistribuert(): Forsendelse =
+        testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.FERDIGSTILT,
                 arkivJournalpostId = (10000..20000).random().toString(),
@@ -87,10 +85,9 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                     ),
             ),
         )
-    }
 
-    private fun opprettForsendelseUnderProduksjon(): Forsendelse {
-        return testDataManager.lagreForsendelse(
+    private fun opprettForsendelseUnderProduksjon(): Forsendelse =
+        testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.UNDER_PRODUKSJON,
                 dokumenter =
@@ -106,10 +103,9 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                     ),
             ),
         )
-    }
 
-    private fun opprettForsendelseDistribuert(): Forsendelse {
-        return testDataManager.lagreForsendelse(
+    private fun opprettForsendelseDistribuert(): Forsendelse =
+        testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 distribusjonsTidspunkt = LocalDateTime.now(),
@@ -127,7 +123,6 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
                 arkivJournalpostId = (10000..20000).random().toString(),
             ),
         )
-    }
 
     @Test
     fun `skal oppdatere distribusjon status`() {
@@ -368,12 +363,11 @@ class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null,
-    ): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
+    ): ResponseEntity<DistribuerJournalpostResponse> =
+        httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
             forespørsel?.let { HttpEntity(it) },
         )
-    }
 
     @Test
     @Disabled("Skru på dette hvis hendelse skal også bli sendt etter online distribusjon")

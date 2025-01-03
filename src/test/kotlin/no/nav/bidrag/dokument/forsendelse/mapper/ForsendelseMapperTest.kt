@@ -27,6 +27,7 @@ class ForsendelseMapperTest {
         val dokumentId3 = 3L
         val forsendelse =
             opprettForsendelse2(
+                medId = true,
                 dokumenter =
                     listOf(
                         nyttDokument(
@@ -135,6 +136,7 @@ class ForsendelseMapperTest {
     fun `Skal mappe forsendelse med hoveddokument tittel hvis forsendelse ikke har tittel`() {
         val forsendelse =
             opprettForsendelse2(
+                medId = true,
                 tittel = null,
                 dokumenter =
                     listOf(

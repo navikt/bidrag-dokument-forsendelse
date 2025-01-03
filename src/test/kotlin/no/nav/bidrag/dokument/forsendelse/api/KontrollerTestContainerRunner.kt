@@ -49,9 +49,7 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     @MockkBean
     lateinit var journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent
 
-    protected fun rootUri(): String {
-        return "http://localhost:$port/api/forsendelse"
-    }
+    protected fun rootUri(): String = "http://localhost:$port/api/forsendelse"
 
     @BeforeEach
     fun setupMocks() {
@@ -70,10 +68,12 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     fun initBucket(retryCount: Int = 0) {
         if (retryCount > 3) return
         val storage =
-            StorageOptions.newBuilder()
+            StorageOptions
+                .newBuilder()
                 .setHost(host)
                 .setProjectId("bidrag-local")
-                .setCredentials(NoCredentials.getInstance()).build()
+                .setCredentials(NoCredentials.getInstance())
+                .build()
         try {
             storage.service.create(BucketInfo.of(bucketNavn))
         } catch (e: Exception) {
@@ -84,80 +84,71 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
 
     protected fun utførOpprettForsendelseForespørsel(
         opprettForsendelseForespørsel: OpprettForsendelseForespørsel,
-    ): ResponseEntity<OpprettForsendelseRespons> {
-        return httpHeaderTestRestTemplate.postForEntity<OpprettForsendelseRespons>(
+    ): ResponseEntity<OpprettForsendelseRespons> =
+        httpHeaderTestRestTemplate.postForEntity<OpprettForsendelseRespons>(
             rootUri(),
             HttpEntity(opprettForsendelseForespørsel),
         )
-    }
 
     protected fun utførOppdaterForsendelseForespørsel(
         forsendelseId: String,
         oppdaterForespørsel: OppdaterForsendelseForespørsel,
-    ): ResponseEntity<OppdaterForsendelseResponse> {
-        return httpHeaderTestRestTemplate.exchange(
+    ): ResponseEntity<OppdaterForsendelseResponse> =
+        httpHeaderTestRestTemplate.exchange(
             "${rootUri()}/$forsendelseId",
             HttpMethod.PATCH,
             HttpEntity(oppdaterForespørsel),
             OppdaterForsendelseResponse::class.java,
         )
-    }
 
     protected fun utførHentForsendelse(
         forsendelseId: String,
         saksnummer: String? = null,
-    ): ResponseEntity<ForsendelseResponsTo> {
-        return httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
+    ): ResponseEntity<ForsendelseResponsTo> =
+        httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
             "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
         )
-    }
 
-    protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> {
-        return httpHeaderTestRestTemplate.getForEntity<JournalpostResponse>("${rootUri()}/journal/$forsendelseId")
-    }
+    protected fun utførHentJournalpost(forsendelseId: String): ResponseEntity<JournalpostResponse> = httpHeaderTestRestTemplate.getForEntity<JournalpostResponse>("${rootUri()}/journal/$forsendelseId")
 
     protected fun utførDistribuerForsendelse(
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null,
-    ): ResponseEntity<DistribuerJournalpostResponse> {
-        return httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
+    ): ResponseEntity<DistribuerJournalpostResponse> =
+        httpHeaderTestRestTemplate.postForEntity<DistribuerJournalpostResponse>(
             "${rootUri()}/journal/distribuer/$forsendelseId${batchId?.let { "?batchId=$it" }}",
             forespørsel?.let { HttpEntity(it) },
         )
-    }
 
     fun utførFerdigstillDokument(
         forsendelseId: String,
         dokumentreferanse: String,
         request: FerdigstillDokumentRequest,
-    ): ResponseEntity<DokumentRespons> {
-        return httpHeaderTestRestTemplate.exchange<DokumentRespons>(
+    ): ResponseEntity<DokumentRespons> =
+        httpHeaderTestRestTemplate.exchange<DokumentRespons>(
             "${rootUri()}/redigering/$forsendelseId/$dokumentreferanse/ferdigstill",
             HttpMethod.PATCH,
             HttpEntity(request),
             DokumentRespons::class.java,
         )
-    }
 
     fun utførHentDokumentMetadata(
         forsendelseId: String,
         dokumentreferanse: String,
-    ): ResponseEntity<List<DokumentMetadata>> {
-        return httpHeaderTestRestTemplate.exchange(
+    ): ResponseEntity<List<DokumentMetadata>> =
+        httpHeaderTestRestTemplate.exchange(
             "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse",
             HttpMethod.OPTIONS,
             null,
             object : ParameterizedTypeReference<List<DokumentMetadata>>() {},
         )
-    }
 
     fun utførHentDokument(
         forsendelseId: String,
         dokumentreferanse: String,
-    ): ResponseEntity<ByteArray> {
-        return httpHeaderTestRestTemplate.getForEntity<ByteArray>(
+    ): ResponseEntity<ByteArray> =
+        httpHeaderTestRestTemplate.getForEntity<ByteArray>(
             "${rootUri()}/dokument/$forsendelseId/$dokumentreferanse",
         )
-    }
 }

@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.hendelse
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -28,6 +29,9 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
     @Autowired
     private lateinit var skedulering: ForsendelseSkedulering
 
+    @Autowired
+    private lateinit var entityManager: EntityManager
+
     @BeforeEach
     fun setupMocks() {
         WireMock.resetAllRequests()
@@ -39,12 +43,12 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDistribusjonInfo()
     }
 
-    private fun opprettIkkeDistribuertForsendelse(): Forsendelse {
-        return testDataManager.lagreForsendelseNotNewTransaction(
+    private fun opprettIkkeDistribuertForsendelse(): Forsendelse =
+        testDataManager.lagreForsendelse(
             opprettForsendelse2(
                 status = ForsendelseStatus.UNDER_PRODUKSJON,
                 dokumenter =
-                    listOf(
+                    mutableListOf(
                         nyttDokument(
                             dokumentreferanseOriginal = null,
                             journalpostId = null,
@@ -56,20 +60,19 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
                     ),
             ),
         )
-    }
 
     private fun opprettDistribuertForsendelse(
         distTidspunktMinusHours: Long,
         kanal: DistribusjonKanal? = null,
         markerSjekketForRedistribusjon: Boolean = false,
-    ): Forsendelse {
-        return testDataManager.lagreForsendelseNotNewTransaction(
+    ): Forsendelse =
+        testDataManager.lagreForsendelseNotNewTransaction(
             opprettForsendelse2(
                 status = ForsendelseStatus.DISTRIBUERT,
                 distribusjonsTidspunkt = LocalDateTime.now().minusHours(distTidspunktMinusHours),
                 kanal = kanal,
                 dokumenter =
-                    listOf(
+                    arrayListOf(
                         nyttDokument(
                             dokumentreferanseOriginal = null,
                             journalpostId = null,
@@ -92,7 +95,6 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
                     },
             ),
         )
-    }
 
     @Test
     fun `skal lagre distribusjoninfo`() {
@@ -112,6 +114,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         stubUtils.stubHentDistribusjonInfo(forsendelseSentralPrint.journalpostIdFagarkiv, DistribusjonKanal.SENTRAL_UTSKRIFT.name)
 
         skedulering.lagreDistribusjoninfo()
+        entityManager.flush()
 
         stubUtils.Valider().hentDistribusjonInfoKalt(5)
 
@@ -119,9 +122,10 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
             testDataManager.hentForsendelse(forsendelseNy)?.distribusjonKanal shouldBe null
             testDataManager.hentForsendelse(forsendelseNavNo)?.distribusjonKanal shouldBe DistribusjonKanal.NAV_NO
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SDP
-            testDataManager.hentForsendelse(
-                forsendelseSentralPrint.forsendelseId!!,
-            )?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager
+                .hentForsendelse(
+                    forsendelseSentralPrint.forsendelseId!!,
+                )?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
         }
     }
 
@@ -147,6 +151,7 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
         )
 
         skedulering.lagreDistribusjoninfo()
+        entityManager.flush()
 
         // Pga retry så blir endepunktet kalt flere ganger
         stubUtils.Valider().hentDistribusjonInfoKalt(7)
@@ -156,9 +161,10 @@ class LagreDistribusjonsKanalSkeduleringTest : TestContainerRunner() {
             testDataManager.hentForsendelse(forsendelseNavNo)?.bestiltNyDistribusjon shouldBe false
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.bestiltNyDistribusjon shouldBe false
             testDataManager.hentForsendelse(forsendelseSDP.forsendelseId!!)?.distribusjonKanal shouldBe DistribusjonKanal.SDP
-            testDataManager.hentForsendelse(
-                forsendelseSentralPrint.forsendelseId!!,
-            )?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
+            testDataManager
+                .hentForsendelse(
+                    forsendelseSentralPrint.forsendelseId!!,
+                )?.distribusjonKanal shouldBe DistribusjonKanal.SENTRAL_UTSKRIFT
             testDataManager.hentForsendelse(foresendelseFeil.forsendelseId!!)?.distribusjonKanal shouldBe null
         }
     }

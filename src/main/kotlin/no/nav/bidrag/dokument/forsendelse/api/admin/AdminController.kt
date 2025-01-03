@@ -61,15 +61,16 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             required = false,
         ) pageSize: Int = 500,
     ): List<Map<String, String?>> =
-        forsendelseSkedulering.resynkDistribusjoninfoNavNo(
-            simulering,
-            afterDate?.atStartOfDay(),
-            beforeDate?.atStartOfDay(),
-            sjekketNavNoRedistribusjonTilSentralPrint,
-            pageSize,
-        ).map {
-            it.mapToResponse()
-        }
+        forsendelseSkedulering
+            .resynkDistribusjoninfoNavNo(
+                simulering,
+                afterDate?.atStartOfDay(),
+                beforeDate?.atStartOfDay(),
+                sjekketNavNoRedistribusjonTilSentralPrint,
+                pageSize,
+            ).map {
+                it.mapToResponse()
+            }
 
     @PostMapping("/distribusjon/navno/{forsendelseId}")
     @Operation(
@@ -87,10 +88,11 @@ Denne tjenesten trigger en resynk av alle forsendelser som er sendt via nav.no f
             defaultValue = "true",
         ) simulering: Boolean = true,
     ): Map<String, String?>? =
-        forsendelseSkedulering.resynkDistribusjoninfoNavNoForForsendelse(
-            forsendelseId,
-            simulering,
-        )?.mapToResponse()
+        forsendelseSkedulering
+            .resynkDistribusjoninfoNavNoForForsendelse(
+                forsendelseId,
+                simulering,
+            )?.mapToResponse()
 
     @PostMapping("/synkForsendelseDistribusjonStatus")
     @Operation(

@@ -24,14 +24,15 @@ class TestRestTemplateConfiguration {
     private lateinit var clientId: String
 
     @Bean
-    fun httpHeaderTestRestTemplate(): TestRestTemplate {
-        return TestRestTemplate(
-            RestTemplateBuilder().additionalInterceptors({ request, body, execution ->
-                request.headers.add(HttpHeaders.AUTHORIZATION, generateBearerToken())
-                execution.execute(request, body)
-            }).requestFactory { _ -> HttpComponentsClientHttpRequestFactory() },
+    fun httpHeaderTestRestTemplate(): TestRestTemplate =
+        TestRestTemplate(
+            RestTemplateBuilder()
+                .additionalInterceptors({ request, body, execution ->
+                    request.headers.add(HttpHeaders.AUTHORIZATION, generateBearerToken())
+                    execution.execute(request, body)
+                })
+                .requestFactory { _ -> HttpComponentsClientHttpRequestFactory() },
         )
-    }
 
     //    private fun generateBearerToken(): String {
 //        val token = mockOAuth2Server.issueToken("aad", SAKSBEHANDLER_IDENT, clientId)

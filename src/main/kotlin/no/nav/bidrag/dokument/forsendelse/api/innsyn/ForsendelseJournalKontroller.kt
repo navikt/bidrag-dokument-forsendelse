@@ -57,9 +57,7 @@ class ForsendelseJournalKontroller(
     fun hentJournal(
         @PathVariable saksnummer: String,
         @RequestParam(name = "fagomrade") temaListe: List<JournalTema> = emptyList(),
-    ): List<JournalpostDto> {
-        return forsendelseInnsynService.hentForsendelseForSakJournal(saksnummer, temaListe)
-    }
+    ): List<JournalpostDto> = forsendelseInnsynService.hentForsendelseForSakJournal(saksnummer, temaListe)
 
     @GetMapping("/journal/ikkedistribuert")
     @Operation(
@@ -73,7 +71,6 @@ class ForsendelseJournalKontroller(
             ),
         ],
     )
-    fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
-        return forsendelseInnsynService.hentForsendelserIkkeDistribuert()
-    }
+    fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> =
+        forsendelseInnsynService.hentForsendelserIkkeDistribuert()
 }

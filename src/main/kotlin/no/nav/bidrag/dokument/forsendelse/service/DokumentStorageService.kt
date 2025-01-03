@@ -38,7 +38,5 @@ class DokumentStorageService(
         return gcpCloudStorage.hentFil("$folderName/$filenameWithExtension")
     }
 
-    fun totalStørrelse(forsendelseId: Long): Long {
-        return gcpCloudStorage.totalStørrelse(forsendelseId)
-    }
+    fun totalStørrelse(forsendelseId: Long): Long = gcpCloudStorage.totalStørrelse(forsendelseId)
 }

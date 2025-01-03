@@ -62,15 +62,16 @@ fun erGyldigPDFA(
 fun lastOgReparerPDF(pdfBytes: ByteArray): ByteArray {
     val documentByteStream = ByteArrayOutputStream()
     try {
-        Loader.loadPDF(
-            RandomAccessReadBuffer(pdfBytes),
-            MemoryUsageSetting.setupTempFileOnly().streamCache,
-        ).use { document ->
-            document.isAllSecurityToBeRemoved = true
-            document.save(documentByteStream, CompressParameters.NO_COMPRESSION)
-            document.close()
-            return documentByteStream.toByteArray()
-        }
+        Loader
+            .loadPDF(
+                RandomAccessReadBuffer(pdfBytes),
+                MemoryUsageSetting.setupTempFileOnly().streamCache,
+            ).use { document ->
+                document.isAllSecurityToBeRemoved = true
+                document.save(documentByteStream, CompressParameters.NO_COMPRESSION)
+                document.close()
+                return documentByteStream.toByteArray()
+            }
     } catch (e: Exception) {
         log.error(e) { "Det skjedde en feil ved prossesering av PDF dokument" }
         return pdfBytes
@@ -92,9 +93,12 @@ fun validerPDFA(pdfBytes: ByteArray): String? {
         val pagesCount = pageTree.pageCount
         val invalidObjects =
             (0..pagesCount - 1).flatMap { i ->
-                pageTree.getPage(i).resources.xObjectNames.filter { name ->
-                    pageTree.getPage(i).resources.getXObject(name) == null
-                }.map { name -> name.value }
+                pageTree
+                    .getPage(i)
+                    .resources.xObjectNames
+                    .filter { name ->
+                        pageTree.getPage(i).resources.getXObject(name) == null
+                    }.map { name -> name.value }
             }
         if (!result.isCompliant) {
             return "Dokumentet har ugyldig Xobject $invalidObjects Dokument er ikke en gyldig PDF/A: ${result.readableMessage()}"

@@ -22,11 +22,12 @@ class TestContainerRunner : CommonTestRunner() {
     companion object {
         @Container
         protected val postgreSqlDb =
-            PostgreSQLContainer("postgres:latest").apply {
+            PostgreSQLContainer("postgres:15.4").apply {
                 withDatabaseName("bidrag-dokument-forsendelse")
                 withUsername("cloudsqliamuser")
                 withPassword("admin")
                 portBindings = listOf("7777:5432")
+                start()
             }
 
         @Container
@@ -50,13 +51,16 @@ class TestContainerRunner : CommonTestRunner() {
                     "}"
             )
             val req =
-                HttpRequest.newBuilder()
+                HttpRequest
+                    .newBuilder()
                     .uri(URI.create(modifyExternalUrlRequestUri))
                     .header("Content-Type", "application/json")
                     .PUT(BodyPublishers.ofString(updateExternalUrlJson))
                     .build()
             val response =
-                HttpClient.newBuilder().build()
+                HttpClient
+                    .newBuilder()
+                    .build()
                     .send(req, BodyHandlers.discarding())
             if (response.statusCode() != 200) {
                 throw RuntimeException(

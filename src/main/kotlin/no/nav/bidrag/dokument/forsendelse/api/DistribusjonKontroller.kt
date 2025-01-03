@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @ForsendelseApiKontroller
 @Timed
-class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
+class DistribusjonKontroller(
+    val distribusjonService: DistribusjonService,
+) {
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/size")
     @Operation(
         summary = "Hent størrelse på dokumentene i forsendelsen",
@@ -28,9 +30,7 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
     )
     fun henStørrelsePåDokumenter(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-    ): Long {
-        return distribusjonService.størrelseIMb(forsendelseIdMedPrefix.numerisk)
-    }
+    ): Long = distribusjonService.størrelseIMb(forsendelseIdMedPrefix.numerisk)
 
     @GetMapping("/journal/distribuer/{forsendelseIdMedPrefix}/enabled")
     @Operation(
@@ -50,14 +50,13 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
     )
     fun kanDistribuere(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
-    ): ResponseEntity<String> {
-        return try {
+    ): ResponseEntity<String> =
+        try {
             distribusjonService.validerKanDistribuere(forsendelseIdMedPrefix.numerisk)
             ResponseEntity.ok().build()
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.message)
         }
-    }
 
     @PostMapping("/journal/distribuer/{forsendelseIdMedPrefix}")
     @Operation(description = "Bestill distribusjon av forsendelse")
@@ -73,7 +72,6 @@ class DistribusjonKontroller(val distribusjonService: DistribusjonService) {
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @RequestParam(required = false) batchId: String?,
         @RequestParam(required = false) ingenDistribusjon: Boolean = false,
-    ): DistribuerJournalpostResponse {
-        return distribusjonService.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest, batchId, ingenDistribusjon)
-    }
+    ): DistribuerJournalpostResponse =
+        distribusjonService.distribuer(forsendelseIdMedPrefix.numerisk, distribuerJournalpostRequest, batchId, ingenDistribusjon)
 }

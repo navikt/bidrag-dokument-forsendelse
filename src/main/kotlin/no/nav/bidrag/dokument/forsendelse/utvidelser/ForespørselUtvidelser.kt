@@ -26,7 +26,8 @@ internal fun List<OpprettDokumentForespørsel>.harFlereDokumenterMedSammeJournal
         .filter { it.journalpostId == dokument.journalpostId || it.arkivsystem == dokument.arkivsystem }
         .filter {
             it.dokumentreferanse.isNotNullOrEmpty() &&
-                dokument.dokumentreferanse.isNotNullOrEmpty() && it.dokumentreferanse == dokument.dokumentreferanse
+                dokument.dokumentreferanse.isNotNullOrEmpty() &&
+                it.dokumentreferanse == dokument.dokumentreferanse
         }.size > 1
 
 fun List<OpprettDokumentForespørsel>.harNotat(dokumentmalDetaljer: Map<String, DokumentMalDetaljer>) =
@@ -38,7 +39,10 @@ fun OppdaterForsendelseForespørsel.skalDokumentSlettes(dokumentreferanse: Strin
 fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse: Forsendelse) {
     val feilmeldinger = mutableListOf<String>()
     if (dokumenter.isNotEmpty()) {
-        val forsendelseDokumentreferanse = eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet.map { it.dokumentreferanse }.toSet()
+        val forsendelseDokumentreferanse =
+            eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet
+                .map { it.dokumentreferanse }
+                .toSet()
         val forespørselDokumentreferanser = this.dokumenter.map { it.dokumentreferanse }.toSet()
         val forsendelseHarAlleDokumenterSomSkalEndres = forespørselDokumentreferanser.containsAll(forsendelseDokumentreferanse)
 
@@ -50,7 +54,8 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
             eksisterendeForsendelse.dokumenter.dokumenterIkkeSlettet
                 .any { forsendelseDok ->
 
-                    this.dokumenter.filter { !forespørselDokumentreferanser.contains(it.dokumentreferanse) }
+                    this.dokumenter
+                        .filter { !forespørselDokumentreferanser.contains(it.dokumentreferanse) }
                         .any {
                             it.journalpostId == forsendelseDok.journalpostIdOriginal ||
                                 it.dokumentreferanse == forsendelseDok.dokumentreferanseOriginal

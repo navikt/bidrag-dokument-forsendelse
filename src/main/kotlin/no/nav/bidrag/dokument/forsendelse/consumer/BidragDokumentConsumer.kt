@@ -24,30 +24,32 @@ class BidragDokumentConsumer(
     @Qualifier("azureLongerTimeout") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-dokument") {
     private fun createUri(path: String?) =
-        UriComponentsBuilder.fromUri(url)
-            .path(path ?: "").build().toUri()
+        UriComponentsBuilder
+            .fromUri(url)
+            .path(path ?: "")
+            .build()
+            .toUri()
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
-        return postForEntity(createUri("/journalpost/JOARK"), opprettJournalpostRequest)
-    }
+    fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? =
+        postForEntity(createUri("/journalpost/JOARK"), opprettJournalpostRequest)
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun erFerdigstilt(dokumentreferanse: String): Boolean {
-        return getForNonNullEntity(createUri("/dokumentreferanse/$dokumentreferanse/erFerdigstilt"))
-    }
+    fun erFerdigstilt(dokumentreferanse: String): Boolean =
+        getForNonNullEntity(createUri("/dokumentreferanse/$dokumentreferanse/erFerdigstilt"))
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun hentDokumentMetadata(
         journalpostId: String,
         dokumentId: String?,
-    ): List<DokumentMetadata> {
-        return optionsForEntity(
-            UriComponentsBuilder.fromUri(url)
+    ): List<DokumentMetadata> =
+        optionsForEntity(
+            UriComponentsBuilder
+                .fromUri(url)
                 .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}")
-                .build().toUri(),
+                .build()
+                .toUri(),
         ) ?: emptyList()
-    }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 300, maxDelay = 2000, multiplier = 2.0))
     fun hentDokument(
@@ -56,20 +58,25 @@ class BidragDokumentConsumer(
     ): ByteArray? {
         if (journalpostId.isNullOrEmpty()) return hentDokument(dokumentId)
         return getForEntity(
-            UriComponentsBuilder.fromUri(url)
-                .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}").queryParam("optimizeForPrint", "false")
-                .build().toUri(),
+            UriComponentsBuilder
+                .fromUri(url)
+                .path("/dokument/$journalpostId${dokumentId?.let { "/$it" } ?: ""}")
+                .queryParam("optimizeForPrint", "false")
+                .build()
+                .toUri(),
         )
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
-    fun hentDokument(dokumentId: String?): ByteArray? {
-        return getForEntity(
-            UriComponentsBuilder.fromUri(url)
-                .path("/dokumentreferanse/$dokumentId").queryParam("optimizeForPrint", "false")
-                .build().toUri(),
+    fun hentDokument(dokumentId: String?): ByteArray? =
+        getForEntity(
+            UriComponentsBuilder
+                .fromUri(url)
+                .path("/dokumentreferanse/$dokumentId")
+                .queryParam("optimizeForPrint", "false")
+                .build()
+                .toUri(),
         )
-    }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun hentDistribusjonInfo(journalpostId: String): DistribusjonInfoDto? {

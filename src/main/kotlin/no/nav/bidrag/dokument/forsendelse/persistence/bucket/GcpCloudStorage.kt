@@ -42,14 +42,19 @@ class GcpCloudStorage(
 ) {
     private var keyVersion = -1
     private val retrySetting =
-        RetrySettings.newBuilder()
+        RetrySettings
+            .newBuilder()
             .setMaxAttempts(3)
-            .setTotalTimeout(Duration.ofMillis(3000)).build()
+            .setTotalTimeout(Duration.ofMillis(3000))
+            .build()
     private val storage =
-        StorageOptions.newBuilder()
+        StorageOptions
+            .newBuilder()
             .setHost(host)
             .setCredentials(if (host != null) NoCredentials.getInstance() else GoogleCredentials.getApplicationDefault())
-            .setRetrySettings(retrySetting).build().service
+            .setRetrySettings(retrySetting)
+            .build()
+            .service
 
     init {
         AeadConfig.register()
@@ -67,7 +72,10 @@ class GcpCloudStorage(
         KeyManagementServiceClient.create().use { client ->
             val keyName = CryptoKeyName.parse(kmsClientsideFilename.replace("gcp-kms://", ""))
             val key = client.getCryptoKey(keyName)
-            keyVersion = key.primary.name.split("cryptoKeyVersions/")[1].toInt()
+            keyVersion =
+                key.primary.name
+                    .split("cryptoKeyVersions/")[1]
+                    .toInt()
         }
     }
 
@@ -79,17 +87,18 @@ class GcpCloudStorage(
         return handle.getPrimitive(Aead::class.java)
     }
 
-    fun totalStørrelse(forsendelseId: Long): Long {
-        return try {
-            storage.list(bucketNavn, Storage.BlobListOption.prefix("dokumenter/forsendelse_$forsendelseId"))
-                .values.takeIf { it.count() > 0 }
+    fun totalStørrelse(forsendelseId: Long): Long =
+        try {
+            storage
+                .list(bucketNavn, Storage.BlobListOption.prefix("dokumenter/forsendelse_$forsendelseId"))
+                .values
+                .takeIf { it.count() > 0 }
                 ?.map { it.asBlobInfo().size }
                 ?.reduce { acc, size -> acc + size } ?: -1
         } catch (e: Exception) {
             LOGGER.error(e) { "Det skjedde en feil ved henting av dokumentstørrelse for forsendelse $forsendelseId" }
             -1
         }
-    }
 
     fun slettFil(filnavn: String) {
         LOGGER.info("Sletter fil $filnavn fra GCP-bucket: $bucketNavn")
@@ -121,9 +130,7 @@ class GcpCloudStorage(
         }
     }
 
-    private fun getGcpWriter(blobInfo: BlobInfo): WriteChannel {
-        return storage.writer(blobInfo, createObjectUploadPrecondition(blobInfo))
-    }
+    private fun getGcpWriter(blobInfo: BlobInfo): WriteChannel = storage.writer(blobInfo, createObjectUploadPrecondition(blobInfo))
 
     private fun decryptFile(
         file: ByteArray,
@@ -151,19 +158,18 @@ class GcpCloudStorage(
         return tinkClient.encrypt(file, associatedData)
     }
 
-    private fun createObjectUploadPrecondition(blobInfo: BlobInfo): Storage.BlobWriteOption {
-        return if (storage.get(blobInfo.blobId) == null) {
+    private fun createObjectUploadPrecondition(blobInfo: BlobInfo): Storage.BlobWriteOption =
+        if (storage.get(blobInfo.blobId) == null) {
             Storage.BlobWriteOption.doesNotExist()
         } else {
             Storage.BlobWriteOption.generationMatch(
                 storage.get(blobInfo.blobId).generation,
             )
         }
-    }
 
-    private fun lagBlobinfo(filnavn: String): BlobInfo {
-        return BlobInfo.newBuilder(bucketNavn, filnavn)
+    private fun lagBlobinfo(filnavn: String): BlobInfo =
+        BlobInfo
+            .newBuilder(bucketNavn, filnavn)
             .setContentType("application/pdf")
             .build()
-    }
 }

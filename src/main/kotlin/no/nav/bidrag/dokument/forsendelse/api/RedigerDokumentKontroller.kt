@@ -141,15 +141,14 @@ class RedigerDokumentKontroller(
     )
     fun reparerPDF(
         @RequestBody pdf: ByteArray,
-    ): ResponseEntity<ByteArray> {
-        return ResponseEntity.ok()
+    ): ResponseEntity<ByteArray> =
+        ResponseEntity
+            .ok()
             .contentType(MediaType.APPLICATION_PDF)
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=dokument.pdf",
-            )
-            .body(lastOgReparerPDF(pdf))
-    }
+            ).body(lastOgReparerPDF(pdf))
 
     @OptIn(ExperimentalEncodingApi::class)
     @PostMapping("/reparerPDFBase64")
@@ -177,13 +176,13 @@ class RedigerDokumentKontroller(
         @RequestBody base64PDF: String,
     ): ResponseEntity<ByteArray> {
         val pdf = Base64.decode(base64PDF)
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .contentType(MediaType.APPLICATION_PDF)
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=dokument.pdf",
-            )
-            .body(lastOgReparerPDF(pdf))
+            ).body(lastOgReparerPDF(pdf))
     }
 
     @PostMapping("/validerPDF")
@@ -201,9 +200,7 @@ class RedigerDokumentKontroller(
     )
     fun validerPDF(
         @RequestBody pdf: ByteArray,
-    ): String? {
-        return validerPDFA(pdf)
-    }
+    ): String? = validerPDFA(pdf)
 
     @PostMapping("/convertToPDFA")
     @Operation(
@@ -220,7 +217,5 @@ class RedigerDokumentKontroller(
     )
     fun convertToPDFA2(
         @RequestBody pdf: ByteArray,
-    ): ByteArray? {
-        return convertToPDFA(pdf, "")
-    }
+    ): ByteArray? = convertToPDFA(pdf, "")
 }

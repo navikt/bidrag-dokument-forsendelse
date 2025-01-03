@@ -37,7 +37,8 @@ class ForsendelseInnsynService(
 ) {
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
         val journalpostDtoer =
-            forsendelseTjeneste.hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
+            forsendelseTjeneste
+                .hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
                 .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
                 .map {
                     ForsendelseIkkeDistribuertResponsTo(
@@ -76,8 +77,8 @@ class ForsendelseInnsynService(
         } ?: journalpostDto
     }
 
-    private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> {
-        return dokumenter.associate {
+    private fun tilDokumenterMetadata(dokumenter: List<Dokument>): Map<String, DokumentDtoMetadata> =
+        dokumenter.associate {
             it.dokumentreferanse to
                 run {
                     val metadata = DokumentDtoMetadata()
@@ -97,7 +98,6 @@ class ForsendelseInnsynService(
                     metadata.copy()
                 }
         }
-    }
 
     fun hentForsendelseJournal(
         forsendelseId: Long,

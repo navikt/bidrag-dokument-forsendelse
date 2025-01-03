@@ -254,8 +254,10 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         assertSoftly {
             dokument4.metadata.hentDokumentBestiltAntallGanger() shouldBe 10
             dokument4.metadata.hentBestiltTidspunkt()!! shouldHaveHour
-                LocalDateTime.now()
-                    .minusHours(2).hour
+                LocalDateTime
+                    .now()
+                    .minusHours(2)
+                    .hour
             dokument2.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
             dokument3.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
             dokument2.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour

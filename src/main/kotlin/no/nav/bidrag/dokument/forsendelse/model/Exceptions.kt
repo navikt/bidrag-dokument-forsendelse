@@ -3,28 +3,51 @@ package no.nav.bidrag.dokument.forsendelse.model
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 
-class KunneIkkBestilleDokument(melding: String) : RuntimeException(melding)
+class KunneIkkBestilleDokument(
+    melding: String,
+) : RuntimeException(melding)
 
-class UgyldigForespørsel(melding: String) : RuntimeException(melding)
+class UgyldigForespørsel(
+    melding: String,
+) : RuntimeException(melding)
 
-class UgyldigAvvikForForsendelse(melding: String) : RuntimeException(melding)
+class UgyldigAvvikForForsendelse(
+    melding: String,
+) : RuntimeException(melding)
 
-class UgyldigEndringAvForsendelse(melding: String) : RuntimeException(melding)
+class UgyldigEndringAvForsendelse(
+    melding: String,
+) : RuntimeException(melding)
 
-class KanIkkeFerdigstilleForsendelse(melding: String) : RuntimeException(melding)
+class KanIkkeFerdigstilleForsendelse(
+    melding: String,
+) : RuntimeException(melding)
 
-class FantIkkeDokument(melding: String) : RuntimeException(melding)
+class FantIkkeDokument(
+    melding: String,
+) : RuntimeException(melding)
 
-class FantIkkeForsendelse(forsendelseId: Long) : RuntimeException("Fant ikke forsendelse med forsendelseId=$forsendelseId")
+class FantIkkeForsendelse(
+    forsendelseId: Long,
+) : RuntimeException("Fant ikke forsendelse med forsendelseId=$forsendelseId")
 
-class KanIkkeDistribuereForsendelse(forsendelseId: Long) : RuntimeException("Kunne ikke distribuere forsendelseId=$forsendelseId")
+class KanIkkeDistribuereForsendelse(
+    forsendelseId: Long,
+) : RuntimeException("Kunne ikke distribuere forsendelseId=$forsendelseId")
 
-class KunneIkkeLeseMeldingFraHendelse(melding: String?, throwable: Throwable) : RuntimeException(melding, throwable)
+class KunneIkkeLeseMeldingFraHendelse(
+    melding: String?,
+    throwable: Throwable,
+) : RuntimeException(melding, throwable)
 
-class HentVedtakFeiletException(melding: String, throwable: Throwable) : RuntimeException(melding, throwable)
+class HentVedtakFeiletException(
+    melding: String,
+    throwable: Throwable,
+) : RuntimeException(melding, throwable)
 
-class KunneIkkeFerdigstilleForsendelse(forsendelseId: Long) :
-    HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved ferdigstilling av forsendelse $forsendelseId")
+class KunneIkkeFerdigstilleForsendelse(
+    forsendelseId: Long,
+) : HttpClientErrorException(HttpStatus.BAD_REQUEST, "Det skjedde en feil ved ferdigstilling av forsendelse $forsendelseId")
 
 fun ugyldigEndringAvForsendelse(melding: String): Nothing = throw UgyldigEndringAvForsendelse(melding)
 

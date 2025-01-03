@@ -160,8 +160,8 @@ class RedigerDokumentService(
         dokumenter: List<Dokument>,
         dokumentreferanse: String,
         lagreFilResponse: LagreFilResponse,
-    ): List<Dokument> {
-        return dokumenter
+    ): List<Dokument> =
+        dokumenter
             .map {
                 (it.dokumentreferanse == dokumentreferanse).ifTrue {
                     it.copy(
@@ -175,7 +175,6 @@ class RedigerDokumentService(
                     )
                 } ?: it
             }
-    }
 
     private fun Dokument.hentStatusFerdigstilt() =
         when (dokumentStatus) {
@@ -261,8 +260,8 @@ class RedigerDokumentService(
         )
     }
 
-    private fun hentDokumentMetadata(dokument: Dokument): List<DokumentMetadata> {
-        return if (dokument.erFraAnnenKilde && dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) {
+    private fun hentDokumentMetadata(dokument: Dokument): List<DokumentMetadata> =
+        if (dokument.erFraAnnenKilde && dokument.arkivsystem != DokumentArkivSystem.FORSENDELSE) {
             bidragDokumentConsumer.hentDokumentMetadata(
                 dokument.journalpostId!!,
                 dokument.dokumentreferanseOriginal,
@@ -272,7 +271,6 @@ class RedigerDokumentService(
         } else {
             fysiskDokumentService.hentDokumentMetadata(dokument.forsendelseId!!, dokument.dokumentreferanse)
         }
-    }
 
     private fun oppdaterDokumentRedigeringMetadata(
         forsendelse: Forsendelse,
@@ -295,11 +293,10 @@ class RedigerDokumentService(
     private fun oppdaterDokumentRedigeringMetadata(
         dokument: Dokument,
         redigeringMetadata: String,
-    ): DokumentMetadataDo {
-        return redigeringMetadata.let { rd ->
+    ): DokumentMetadataDo =
+        redigeringMetadata.let { rd ->
             val metadata = dokument.metadata
             metadata.lagreRedigeringmetadata(rd)
             metadata.copy()
         }
-    }
 }

@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod
 
 @ForsendelseApiKontroller
 @Timed
-class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
+class DokumentKontroller(
+    val fysiskDokumentService: FysiskDokumentService,
+) {
     @GetMapping("/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}")
     @Operation(
         summary = "Hent fysisk dokument som byte",
@@ -26,15 +28,14 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
     fun hentDokument(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @PathVariable dokumentreferanse: String,
-    ): ResponseEntity<ByteArray> {
-        return ResponseEntity.ok()
+    ): ResponseEntity<ByteArray> =
+        ResponseEntity
+            .ok()
             .contentType(MediaType.APPLICATION_PDF)
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=$dokumentreferanse.pdf",
-            )
-            .body(fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse))
-    }
+            ).body(fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse))
 
     @GetMapping("/dokumentreferanse/{dokumentreferanse}")
     @Operation(
@@ -43,15 +44,14 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
     )
     fun hentDokumentForReferanse(
         @PathVariable dokumentreferanse: String,
-    ): ResponseEntity<ByteArray> {
-        return ResponseEntity.ok()
+    ): ResponseEntity<ByteArray> =
+        ResponseEntity
+            .ok()
             .contentType(MediaType.APPLICATION_PDF)
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=$dokumentreferanse.pdf",
-            )
-            .body(fysiskDokumentService.hentDokument(dokumentreferanse))
-    }
+            ).body(fysiskDokumentService.hentDokument(dokumentreferanse))
 
     @RequestMapping(
         *["/dokument/{forsendelseIdMedPrefix}/{dokumentreferanse}", "/dokument/{forsendelseIdMedPrefix}"],
@@ -64,9 +64,7 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
     fun hentDokumentMetadata(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @PathVariable(required = false) dokumentreferanse: String?,
-    ): List<DokumentMetadata> {
-        return fysiskDokumentService.hentDokumentMetadata(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
-    }
+    ): List<DokumentMetadata> = fysiskDokumentService.hentDokumentMetadata(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
 
     @RequestMapping(
         *["/dokumentreferanse/{dokumentreferanse}"],
@@ -78,7 +76,5 @@ class DokumentKontroller(val fysiskDokumentService: FysiskDokumentService) {
     )
     fun hentDokumentMetadataForReferanse(
         @PathVariable dokumentreferanse: String,
-    ): List<DokumentMetadata> {
-        return fysiskDokumentService.hentDokumentMetadataForReferanse(dokumentreferanse)
-    }
+    ): List<DokumentMetadata> = fysiskDokumentService.hentDokumentMetadataForReferanse(dokumentreferanse)
 }

@@ -1,6 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.model
 
-enum class DistribusjonKanal(val beskrivelse: String) {
+enum class DistribusjonKanal(
+    val beskrivelse: String,
+) {
     NAV_NO("Nav.no"),
     NAV_NO_UINNLOGGET("Nav.no uten ID-porten-pålogging"),
     NAV_NO_CHAT("Innlogget samtale"),
