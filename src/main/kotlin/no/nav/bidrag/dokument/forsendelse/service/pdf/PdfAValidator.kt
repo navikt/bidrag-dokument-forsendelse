@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service.pdf
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.persistence.spi.TransformerException
-import mu.KotlinLogging
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.io.IOUtils
 import org.apache.pdfbox.io.MemoryUsageSetting

@@ -1,8 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Distribusjo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utvidelser.tilDto
 import no.nav.bidrag.dokument.forsendelse.utvidelser.validerKanDistribuere
 import no.nav.bidrag.transport.dokument.DistribuerJournalpostRequest
 import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
@@ -166,18 +167,25 @@ class DistribusjonService(
                     poststed = it.poststed ?: hentNorskPoststed(it.postnummer, it.landkode),
                 )
             }
+        val ettersendingsoppgave =
+            forsendelse.ettersendingsoppgave?.tilDto()
         val resultat =
-            bidragDokumentConsumer.distribuer("JOARK-${forsendelse.journalpostIdFagarkiv}", adresse, batchId = batchId)
+            bidragDokumentConsumer.distribuer(
+                "JOARK-${forsendelse.journalpostIdFagarkiv}",
+                adresse,
+                batchId = batchId,
+                ettersendingsoppgave = ettersendingsoppgave,
+            )
                 ?: distribusjonFeilet(forsendelseId)
 
-        log.info(
+        log.info {
             "Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv}, " +
-                "bestillingId=${resultat.bestillingsId} og batchId=$batchId",
-        )
-        SIKKER_LOGG.info(
+                "bestillingId=${resultat.bestillingsId} og batchId=$batchId"
+        }
+        SIKKER_LOGG.info {
             "Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, " +
-                "journalpostId=${forsendelse.journalpostIdFagarkiv}, bestillingId=${resultat.bestillingsId} og batchId=$batchId",
-        )
+                "journalpostId=${forsendelse.journalpostIdFagarkiv}, bestillingId=${resultat.bestillingsId} og batchId=$batchId"
+        }
 
         forsendelseTjeneste.lagre(
             forsendelse.copy(
@@ -190,6 +198,11 @@ class DistribusjonService(
                     saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
                         ?: forsendelse.endretAvIdent,
                 endretTidspunkt = LocalDateTime.now(),
+                ettersendingsoppgave =
+                    forsendelse.ettersendingsoppgave?.let {
+                        it.innsendingsId = resultat.ettersendingsoppgave?.innsendingsId
+                        it
+                    },
             ),
         )
 

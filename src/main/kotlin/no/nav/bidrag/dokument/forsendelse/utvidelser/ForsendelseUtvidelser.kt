@@ -5,14 +5,18 @@ import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.domene.enums.diverse.Språk
 import no.nav.bidrag.domene.enums.rolle.Rolletype
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
+import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveVedleggDto
+import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
 
 val Forsendelse.dokumentDato get() = dokumenter.hoveddokument?.dokumentDato
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
@@ -31,6 +35,21 @@ fun Forsendelse.validerKanDistribuere() {
             forsendelseId,
             "Forsendelse har feil status ${this.status}",
         )
+    }
+
+    if (this@validerKanDistribuere.ettersendingsoppgave != null) {
+        if (this@validerKanDistribuere.ettersendingsoppgave!!.vedleggsliste.isEmpty()) {
+            kanIkkeDistribuereForsendelse(
+                forsendelseId,
+                "Forsendelse har varsel for ettersendelse uten vedleggsliste",
+            )
+        }
+        if (ettersendingsoppgave!!.tittel.isNullOrEmpty()) {
+            kanIkkeDistribuereForsendelse(
+                forsendelseId,
+                "Varsel ettersendelse mangler tittel",
+            )
+        }
     }
 }
 
@@ -120,3 +139,18 @@ fun BehandlingInfo.tilBeskrivelse(
     }
     return stringBuilder.joinToString(" ")
 }
+
+fun Ettersendingsoppgave.tilDto() =
+    OpprettEttersendingsppgaveDto(
+        tittel = tittel!!,
+        skjemaId = skjemaId!!,
+        innsendingsFristDager = innsendingsfristDager,
+        språk = Språk.valueOf(forsendelse.språk.uppercase()),
+        vedleggsliste =
+            vedleggsliste.map { vedlegg ->
+                OpprettEttersendingsoppgaveVedleggDto(
+                    vedleggsnr = vedlegg.skjemaId!!,
+                    tittel = vedlegg.tittel,
+                )
+            },
+    )

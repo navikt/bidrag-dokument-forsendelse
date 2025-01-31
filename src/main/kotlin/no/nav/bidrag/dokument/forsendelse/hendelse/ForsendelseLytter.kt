@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseHendelseBestilling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import org.springframework.stereotype.Component

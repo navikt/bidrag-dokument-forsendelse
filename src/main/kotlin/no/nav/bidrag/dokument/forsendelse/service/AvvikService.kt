@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigAvvikForForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ugyldigAvviksForespørsel

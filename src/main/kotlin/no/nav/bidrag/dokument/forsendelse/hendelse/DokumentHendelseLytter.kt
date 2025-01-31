@@ -1,8 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst.medApplikasjonKontekst
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer

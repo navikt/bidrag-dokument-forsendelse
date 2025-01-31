@@ -1,8 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.matchers.shouldNotBe
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.utils.jsonToString
 import no.nav.bidrag.transport.dokument.DokumentHendelse
