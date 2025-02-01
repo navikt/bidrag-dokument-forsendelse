@@ -147,7 +147,7 @@ fun Ettersendingsoppgave.tilDto() =
         innsendingsFristDager = innsendingsfristDager,
         språk = Språk.valueOf(forsendelse.språk.uppercase()),
         vedleggsliste =
-            vedleggsliste.map { vedlegg ->
+            vedleggsliste.sortedBy { it.opprettetTidspunkt }.map { vedlegg ->
                 OpprettEttersendingsoppgaveVedleggDto(
                     vedleggsnr = vedlegg.skjemaId!!,
                     tittel = vedlegg.tittel,

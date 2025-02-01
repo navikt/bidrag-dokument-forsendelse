@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
@@ -116,7 +117,11 @@ class FerdigstillForsendelseService(
                 ettersendingsoppgave = forsendelse.ettersendingsoppgave?.tilDto(),
             )
 
+        secureLogger.info { "Oppretter journalpost for forsendelse $forsendelseId med forespørsel $opprettJournalpostRequest" }
+
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
+
+        secureLogger.info { "Opprettet journalpost for forsendelse $forsendelseId med respons $respons" }
 
         forsendelseTjeneste.lagre(
             forsendelse.copy(

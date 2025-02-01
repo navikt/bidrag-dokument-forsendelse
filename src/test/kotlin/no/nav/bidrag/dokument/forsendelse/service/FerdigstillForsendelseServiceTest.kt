@@ -2,13 +2,17 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.collections.shouldBeIn
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.EttersendingsoppgaveVedlegg
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -21,6 +25,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.NY_JOURNALPOSTID
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettAdresseDo
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
+import no.nav.bidrag.domene.enums.diverse.Språk
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import org.junit.jupiter.api.BeforeEach
@@ -92,6 +97,7 @@ class FerdigstillForsendelseServiceTest {
                 withArg {
                     it.referanseId shouldBe "BIF_123_1609462923"
                     it.referanseId shouldBe forsendelse.opprettReferanseId()
+                    it.ettersendingsoppgave shouldBe null
                 },
             )
 
@@ -99,6 +105,69 @@ class FerdigstillForsendelseServiceTest {
                 withArg {
                     it.referanseId shouldBe "BIF_123_1609462923"
                     it.referanseId shouldBe forsendelse.opprettReferanseId()
+                },
+            )
+        }
+    }
+
+    @Test
+    fun `skal oprette journalpost med ettersendingsinfo`() {
+        val opprettetTidspunkt = LocalDateTime.parse("2021-01-01T01:02:03")
+
+        val forsendelse =
+            opprettForsendelse2(
+                tittel = null,
+                erNotat = true,
+                dokumenter =
+                    listOf(
+                        nyttDokument(
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            rekkefølgeIndeks = 0,
+                            tittel = "Hoveddokument tittel",
+                        ).copy(dokumentId = 1L),
+                        nyttDokument(
+                            journalpostId = null,
+                            dokumentreferanseOriginal = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "Tittel vedlegg",
+                            dokumentMalId = "BI100",
+                            rekkefølgeIndeks = 1,
+                        ).copy(dokumentId = 2L),
+                    ),
+            ).copy(forsendelseId = 123L, opprettetTidspunkt = opprettetTidspunkt)
+        val ettersendingsoppgave =
+            Ettersendingsoppgave(
+                tittel = "Ettersendingsoppgave tittel",
+                innsendingsfristDager = 18,
+                ettersendelseForJournalpostId = "123",
+                skjemaId = "NAV_SKJEMA",
+                innsendingsId = null,
+                forsendelse = forsendelse,
+            )
+        ettersendingsoppgave.vedleggsliste =
+            mutableSetOf(
+                EttersendingsoppgaveVedlegg(
+                    tittel = "Vedlegg tittel",
+                    skjemaId = "NAV_SKJEMA",
+                    ettersendingsoppgave = ettersendingsoppgave,
+                ),
+            )
+        forsendelse.ettersendingsoppgave = ettersendingsoppgave
+        every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
+        ferdigstillForsendelseService.ferdigstillForsendelse(123213L, false)
+
+        verify {
+            bidragDokumentConsumer.opprettJournalpost(
+                withArg {
+                    it.ettersendingsoppgave.shouldNotBeNull()
+                    val ettersendingsoppgaveForespørsel = it.ettersendingsoppgave!!
+                    ettersendingsoppgaveForespørsel.vedleggsliste.shouldHaveSize(1)
+                    ettersendingsoppgaveForespørsel.tittel shouldBe "Ettersendingsoppgave tittel"
+                    ettersendingsoppgaveForespørsel.skjemaId shouldBe "NAV_SKJEMA"
+                    ettersendingsoppgaveForespørsel.språk shouldBe Språk.NB
+                    ettersendingsoppgaveForespørsel.innsendingsFristDager shouldBe 18
+                    ettersendingsoppgaveForespørsel.vedleggsliste.first().tittel shouldBe "Vedlegg tittel"
+                    ettersendingsoppgaveForespørsel.vedleggsliste.first().vedleggsnr shouldBe "NAV_SKJEMA"
                 },
             )
         }

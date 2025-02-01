@@ -9,7 +9,6 @@ import jakarta.validation.Valid
 import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.api.dto.EttersendingsoppgaveDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.HentEttersendingsoppgaverRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterEttersendingsoppgaveRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettEttersendingsoppgaveRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgave
@@ -43,7 +42,7 @@ class EttersendingsoppgaveController(
     ): EttersendingsoppgaveDto {
         SIKKER_LOGG.info { "Oppretter ny ettersendingsoppgave $request" }
         val forsendelse = forsenelseTjeneste.medForsendelseId(request.forsendelseId)!!
-        ettersendingsOppgaveService.opprettVarselEttersendelse(request)
+        ettersendingsOppgaveService.opprettEttersendingsoppgave(request)
         return forsendelse.ettersendingsoppgave!!.tilEttersendingsoppaveDto()
     }
 
@@ -58,7 +57,7 @@ class EttersendingsoppgaveController(
     ): EttersendingsoppgaveDto {
         SIKKER_LOGG.info { "Oppdaterer ettersendingsoppave $request" }
         val forsendelse = forsenelseTjeneste.medForsendelseId(request.forsendelseId)!!
-        ettersendingsOppgaveService.oppdaterVarselEttersendelse(request)
+        ettersendingsOppgaveService.oppdaterEttersendingsoppgave(request)
         return forsendelse.ettersendingsoppgave!!.tilEttersendingsoppaveDto()
     }
 
@@ -98,18 +97,9 @@ class EttersendingsoppgaveController(
     ): EttersendingsoppgaveDto {
         log.info { "Sletter varsel ettersendelse $request" }
         val forsendelse = forsenelseTjeneste.medForsendelseId(request.forsendelseId)!!
-        ettersendingsOppgaveService.slettVarselEttersendelseDokument(request)
+        ettersendingsOppgaveService.slettEttersendingsoppgaveVedlegg(request)
         return forsendelse.ettersendingsoppgave!!.tilEttersendingsoppaveDto()
     }
-
-    @PostMapping("/ettersendingsoppgave/oppgaver")
-    @Operation(
-        summary = "Hent ettersendingsoppgaver",
-        security = [SecurityRequirement(name = "bearer-key")],
-    )
-    fun hentEksisterendeEttersendingsoppgaver(
-        @RequestBody request: HentEttersendingsoppgaverRequest,
-    ) = ettersendingsOppgaveService.hentEttersendingsoppgaver(request.forsendelseId.numerisk, request.skjemaIder)
 
     @GetMapping("/ettersendingsoppgave/oppgaver/{forsendelseId}")
     @Operation(

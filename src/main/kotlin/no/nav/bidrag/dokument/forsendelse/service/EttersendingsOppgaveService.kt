@@ -3,22 +3,20 @@ package no.nav.bidrag.dokument.forsendelse.service
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.service.hentNavSkjemaKodeverk
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterEttersendingsoppgaveRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettEttersendingsoppgaveRequest
 import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgaveVedleggRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.InnsendingConsumer
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.Brukernotifikasjonstype
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentSoknadDto
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.EksternEttersendingsOppgave
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.HentEtterseningsoppgaveRequest
-import no.nav.bidrag.dokument.forsendelse.consumer.dto.InnsendtVedleggDto
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
+import no.nav.bidrag.dokument.forsendelse.model.ugyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.EttersendingsoppgaveVedlegg
-import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.valider
 import no.nav.bidrag.transport.dokument.DokumentType
@@ -64,34 +62,14 @@ class EttersendingsOppgaveService(
             }
     }
 
-    fun sendVarsel(forsendelse: Forsendelse) {
-        val varselEttersendelse =
-            forsendelse.ettersendingsoppgave ?: run {
-                log.warn { "Forsendelse ${forsendelse.forsendelseId} har ingen varseloppgave" }
-                return
-            }
-        innsendingConsumer.opprettEttersendingsoppgave(
-            EksternEttersendingsOppgave(
-                brukerId = forsendelse.gjelderIdent,
-                skjemanr = varselEttersendelse.skjemaId!!,
-                sprak = forsendelse.språk,
-                tittel = varselEttersendelse.tittel,
-                tema = forsendelse.tema.name,
-                brukernotifikasjonstype = Brukernotifikasjonstype.oppgave,
-                vedleggsListe =
-                    varselEttersendelse.vedleggsliste.map {
-                        InnsendtVedleggDto(
-                            vedleggsnr = it.skjemaId!!,
-                            tittel = it.tittel,
-                        )
-                    },
-            ),
-        )
-    }
-
     @Transactional
-    fun opprettVarselEttersendelse(request: OpprettEttersendingsoppgaveRequest) {
+    fun opprettEttersendingsoppgave(request: OpprettEttersendingsoppgaveRequest) {
+        log.info { "Oppretter ettersendingsoppgave for forsendelse ${request.forsendelseId}" }
+        secureLogger.info { "Oppretter ettersendingsoppgave $request" }
         val forsendelse = forsendelseService.medForsendelseId(request.forsendelseId) ?: fantIkkeForsendelse(request.forsendelseId)
+        if (forsendelse.ettersendingsoppgave != null) {
+            ugyldigForespørsel("Forsendelse ${request.forsendelseId} har allerede en ettersendingsoppgave")
+        }
         forsendelse.ettersendingsoppgave =
             Ettersendingsoppgave(
                 forsendelse = forsendelse,
@@ -102,12 +80,14 @@ class EttersendingsOppgaveService(
     }
 
     @Transactional
-    fun oppdaterVarselEttersendelse(request: OppdaterEttersendingsoppgaveRequest) {
+    fun oppdaterEttersendingsoppgave(request: OppdaterEttersendingsoppgaveRequest) {
+        log.info { "Oppdaterer ettersendingsoppgave for forsendelse ${request.forsendelseId}" }
+        secureLogger.info { "Oppdaterer ettersendingsoppgave $request" }
         request.valider()
         val forsendelse = forsendelseService.medForsendelseId(request.forsendelseId) ?: fantIkkeForsendelse(request.forsendelseId)
         val varselEttersendelse =
             forsendelse.ettersendingsoppgave
-                ?: throw IllegalArgumentException("Fant ikke varsel ettersendelse i forsendelse ${request.forsendelseId}")
+                ?: ugyldigForespørsel("Fant ikke ettersendingsoppgave i forsendelse ${request.forsendelseId}")
 
         if (request.oppdaterDokument != null) {
             val oppdaterDokument =
@@ -119,42 +99,42 @@ class EttersendingsOppgaveService(
                     nyDokument
                 } else {
                     varselEttersendelse.vedleggsliste.find { it.id == request.oppdaterDokument.id }
-                        ?: throw IllegalArgumentException("Fant ikke varsel ettersendelse dokument med id ${request.oppdaterDokument.id}")
+                        ?: ugyldigForespørsel("Fant ikke ettersendingsoppgave vedlegg med id ${request.oppdaterDokument.id}")
                 }
 
             oppdaterDokument.tittel = request.oppdaterDokument.tittel.fjernKontrollTegn()
             oppdaterDokument.skjemaId = request.oppdaterDokument.skjemaId
         }
 
-        if (request.tittel != null) {
-            varselEttersendelse.tittel = request.tittel.fjernKontrollTegn()
+        request.tittel?.let {
+            varselEttersendelse.tittel = it.fjernKontrollTegn()
         }
-
-        if (request.innsendingsfristDager != null) {
-            varselEttersendelse.innsendingsfristDager = request.innsendingsfristDager
+        request.innsendingsfristDager?.let {
+            varselEttersendelse.innsendingsfristDager = it
         }
-        if (request.ettersendelseForJournalpostId != null) {
-            varselEttersendelse.ettersendelseForJournalpostId = request.ettersendelseForJournalpostId
+        request.ettersendelseForJournalpostId?.let {
+            varselEttersendelse.ettersendelseForJournalpostId = it
             varselEttersendelse.skjemaId = request.skjemaId
         }
     }
 
     @Transactional
-    fun slettVarselEttersendelseDokument(request: SlettEttersendingsoppgaveVedleggRequest) {
+    fun slettEttersendingsoppgaveVedlegg(request: SlettEttersendingsoppgaveVedleggRequest) {
         val forsendelse = forsendelseService.medForsendelseId(request.forsendelseId) ?: fantIkkeForsendelse(request.forsendelseId)
         val varselEttersendelse =
             forsendelse.ettersendingsoppgave
-                ?: throw IllegalArgumentException("Fant ikke varsel ettersendelse i forsendelse ${request.forsendelseId}")
+                ?: ugyldigForespørsel("Fant ikke varsel ettersendelse i forsendelse ${request.forsendelseId}")
 
         val slettDokument =
             varselEttersendelse.vedleggsliste.find { it.id == request.id }
-                ?: throw IllegalArgumentException("Fant ikke varsel ettersendelse dokument med id ${request.id}")
+                ?: ugyldigForespørsel("Fant ikke varsel ettersendelse dokument med id ${request.id}")
 
         varselEttersendelse.vedleggsliste.remove(slettDokument)
     }
 
     @Transactional
     fun slettEttersendingsoppave(request: SlettEttersendingsoppgave) {
+        log.info { "Sletter ettersendingsoppgave for forsendelse ${request.forsendelseId}" }
         val forsendelse = forsendelseService.medForsendelseId(request.forsendelseId) ?: fantIkkeForsendelse(request.forsendelseId)
 
         forsendelse.ettersendingsoppgave = null
