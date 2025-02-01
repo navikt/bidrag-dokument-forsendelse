@@ -426,27 +426,6 @@
     <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
     <plugins>
       <plugin>
-        <groupId>org.openapitools</groupId>
-        <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>7.11.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <inputSpec>https://innsending-api-gcp.intern.dev.nav.no/v3/api-docs</inputSpec>
-              <modelPackage>com.my.path.to.api</modelPackage>
-              <generatorName>kotlin</generatorName>
-              <generateApis>false</generateApis>
-              <generateModels>true</generateModels>
-              <generateModelDocumentation>false</generateModelDocumentation>
-              <generateModelTests>false</generateModelTests>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${project.parent.version}</version>
