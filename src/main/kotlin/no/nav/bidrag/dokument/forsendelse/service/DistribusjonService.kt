@@ -150,6 +150,46 @@ class DistribusjonService(
         )
     }
 
+    fun bestillDistribusjonOpprettEttersending(
+        forsendelseId: Long,
+        forsendelse: Forsendelse,
+    ): DistribuerJournalpostResponse {
+        if (forsendelse.status != ForsendelseStatus.DISTRIBUERT) {
+            throw IllegalStateException("Forsendelse $forsendelseId er ikke distribuert")
+        }
+        val ettersendingsoppgave =
+            forsendelse.ettersendingsoppgave?.tilDto()
+        if (ettersendingsoppgave == null) {
+            throw IllegalStateException("Forsendelse $forsendelseId har ingen ettersendingsoppgave")
+        }
+        val resultat =
+            bidragDokumentConsumer.distribuer(
+                "JOARK-${forsendelse.journalpostIdFagarkiv}",
+                ettersendingsoppgave = ettersendingsoppgave,
+            )
+                ?: distribusjonFeilet(forsendelseId)
+
+        log.info {
+            "Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv} " +
+                "for å trigge ny opprettelse av ettersendingsoppgave. " +
+                "Opprettet ettersendingsoppgave med innsendingsid=${resultat.ettersendingsoppgave?.innsendingsId}"
+        }
+        forsendelseTjeneste.lagre(
+            forsendelse.copy(
+                endretAvIdent =
+                    saksbehandlerInfoManager.hentSaksbehandlerBrukerId()
+                        ?: forsendelse.endretAvIdent,
+                endretTidspunkt = LocalDateTime.now(),
+                ettersendingsoppgave =
+                    forsendelse.ettersendingsoppgave?.let {
+                        it.innsendingsId = resultat.ettersendingsoppgave?.innsendingsId
+                        it
+                    },
+            ),
+        )
+        return resultat
+    }
+
     private fun bestillDistribusjon(
         forsendelseId: Long,
         distribuerJournalpostRequest: DistribuerJournalpostRequest?,

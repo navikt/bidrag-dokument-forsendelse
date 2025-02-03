@@ -29,6 +29,8 @@ class ForsendelseTjeneste(
         return forsendelse
     }
 
+    fun hentForsendelserHvorEttersendingIkkeOpprettet(): List<Forsendelse> = forsendelseRepository.hentEttersendingerSomIkkeErOpprettet()
+
     fun hentDistribuerteForsendelserUtenDistribusjonKanal(limit: Int): List<Forsendelse> =
         forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))
 

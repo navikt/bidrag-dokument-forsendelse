@@ -28,6 +28,13 @@ class ForsendelseSkedulering(
     private val forsendelseHendelseBestilling: ForsendelseHendelseBestillingService,
     @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int,
 ) {
+    @Scheduled(cron = "0 */5 * * * *")
+    @SchedulerLock(name = "opprettEttersendingsoppgave", lockAtLeastFor = "10m")
+    @Transactional
+    fun opprettEttersendingsoppgave() {
+        opprettEttersendingHvisIkkeOpprettet()
+    }
+
     @Scheduled(cron = "\${LAGRE_DIST_INFO_CRON}")
     @SchedulerLock(name = "lagreDistribusjonsinfo", lockAtLeastFor = "10m")
     @Transactional
@@ -196,6 +203,16 @@ class ForsendelseSkedulering(
                 }
                 lagreDistribusjonInfo(it, simulering)
             }.filter { simulering || it.distribusjonKanal == DistribusjonKanal.SENTRAL_UTSKRIFT }
+    }
+
+    fun opprettEttersendingHvisIkkeOpprettet() {
+        val forsendelseListe = forsendelseTjeneste.hentForsendelserHvorEttersendingIkkeOpprettet()
+        LOGGER.info {
+            "Fant ${forsendelseListe.size} forsendelser som har blitt distribuert men ettersendelse ikke er opprettet "
+        }
+        forsendelseListe.forEach {
+            distribusjonService.bestillDistribusjonOpprettEttersending(it.forsendelseId!!, it)
+        }
     }
 
     fun lagreDistribusjoninfo() {

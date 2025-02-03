@@ -53,4 +53,9 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
             "and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date",
     )
     fun hentUnderProduksjonOpprettetFørDagensDato(): List<Forsendelse>
+
+    @Query(
+        "select f from forsendelse f where f.ettersendingsoppgave is not null and f.ettersendingsoppgave.innsendingsId is null and f.status = 'DISTRIBUERT' and f.journalpostIdFagarkiv is not null",
+    )
+    fun hentEttersendingerSomIkkeErOpprettet(): List<Forsendelse>
 }
