@@ -57,7 +57,7 @@ class InnsendingConsumer(
         } catch (e: HttpStatusCodeException) {
             LOGGER.info { "Det skjedde en feil ved henting av ettersendingsoppgave" }
             secureLogger.error("Det skjedde en feil ved henting av ettersendingsoppgave $oppgave", e)
-            return emptyList()
+            throw e
         }
     }
 }

@@ -53,12 +53,17 @@ class EttersendingsOppgaveService(
 
         return skjemaIder
             .associateWith {
-                innsendingConsumer.hentEttersendingsoppgave(
-                    HentEtterseningsoppgaveRequest(
-                        brukerId = forsendelse.gjelderIdent,
-                        skjemanr = it,
-                    ),
-                )
+                try {
+                    innsendingConsumer.hentEttersendingsoppgave(
+                        HentEtterseningsoppgaveRequest(
+                            brukerId = forsendelse.gjelderIdent,
+                            skjemanr = it,
+                        ),
+                    )
+                } catch (e: Exception) {
+                    log.error(e) { "Feil ved henting av ettersendingsoppgaver" }
+                    emptyList()
+                }
             }
     }
 
