@@ -140,6 +140,15 @@ fun BehandlingInfo.tilBeskrivelse(
     return stringBuilder.joinToString(" ")
 }
 
+val vedleggskodeAnnet = "N6"
+val vedleggLenkeMap =
+    mapOf(
+        "W3" to
+            "https://www.nav.no/_/attachment/inline/7ee5c0c6-7b2c-466d-bb88-2ff51475513b:c1a1c3c4f1ff4518b61142e2394ac3733a271049/Skolens%20bekreftelse%20p%C3%A5%20skolegang.docx",
+        "N6_BL" to
+            "https://www.nav.no/_/attachment/inline/6066e804-b944-4206-b454-82f5fb8a6940:c9f0c0064dd56ae893beb749d1342afa3e3e7338/Bekreftelse%20p%C3%A5%20nedsatt%20arbeidsevne%20grunnet%20helsemessige%20forhold.docx",
+    )
+
 fun Ettersendingsoppgave.tilDto() =
     OpprettEttersendingsppgaveDto(
         tittel = tittel!!,
@@ -149,8 +158,9 @@ fun Ettersendingsoppgave.tilDto() =
         vedleggsliste =
             vedleggsliste.sortedBy { it.opprettetTidspunkt }.map { vedlegg ->
                 OpprettEttersendingsoppgaveVedleggDto(
-                    vedleggsnr = vedlegg.skjemaId!!,
+                    vedleggsnr = if (vedlegg.skjemaId!!.startsWith(vedleggskodeAnnet)) vedleggskodeAnnet else vedlegg.skjemaId!!,
                     tittel = vedlegg.tittel,
+                    url = vedleggLenkeMap[vedlegg.skjemaId!!],
                 )
             },
     )
