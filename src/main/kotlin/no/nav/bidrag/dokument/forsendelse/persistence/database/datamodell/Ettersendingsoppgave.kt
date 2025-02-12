@@ -19,7 +19,7 @@ open class Ettersendingsoppgave(
     @JoinColumn(name = "forsendelse_id", nullable = false)
     open val forsendelse: Forsendelse,
     open var tittel: String? = null,
-    open var innsendingsfristDager: Int = 14,
+    open var innsendingsfristDager: Int = 21,
     open var ettersendelseForJournalpostId: String? = null,
     open var innsendingsId: String? = null,
     open var skjemaId: String? = null,
