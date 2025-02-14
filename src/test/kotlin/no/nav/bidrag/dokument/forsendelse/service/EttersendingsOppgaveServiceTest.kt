@@ -356,7 +356,7 @@ class EttersendingsOppgaveServiceTest {
             ),
         )
         forsendelse.ettersendingsoppgave!!.tittel shouldBe "Ny tittel"
-        forsendelse.ettersendingsoppgave!!.innsendingsfristDager shouldBe 14
+        forsendelse.ettersendingsoppgave!!.innsendingsfristDager shouldBe 21
         forsendelse.ettersendingsoppgave!!.ettersendelseForJournalpostId shouldBe "333"
         forsendelse.ettersendingsoppgave!!.skjemaId shouldBe "213213"
     }
