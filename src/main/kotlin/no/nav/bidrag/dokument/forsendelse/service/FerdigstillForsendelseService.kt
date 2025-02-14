@@ -54,7 +54,7 @@ class FerdigstillForsendelseService(
         ingenDistribusjon: Boolean = false,
     ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
-        forsendelse.validerKanFerdigstilleForsendelse()
+        forsendelse.validerKanFerdigstilleForsendelse(lokalUtskrift, ingenDistribusjon)
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
         val hovedtittel = forsendelse.dokumenter.hoveddokument?.tittel!!
