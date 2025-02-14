@@ -33,6 +33,9 @@ env:
 
   KODEVERK_URL: http://bidrag-kodeverk
 
+  INNSENDING_API_URL: https://innsending-api-gcp.intern.dev.nav.no
+  INNSENDING_API_SCOPE: dev-gcp.team-soknad.innsending-api
+
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 
   LAGRE_DIST_INFO_PAGE_SIZE: 100
@@ -63,7 +66,7 @@ outbound-access-hosts:
    - bidrag-person-q1.dev-fss-pub.nais.io
    - bidrag-sak-q1.dev-fss-pub.nais.io
    - bidrag-organisasjon-feature.dev-fss-pub.nais.io
-   - kodeverk-api.nav.no
+   - innsending-api-gcp.intern.dev.nav.no
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

@@ -8,6 +8,8 @@ import io.kotest.matchers.string.shouldContain
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.EttersendingsoppgaveVedlegg
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -284,6 +286,108 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "journalposttype":"UTGÅENDE",
                     "referanseId":"$referanseId",
                     "journalførendeEnhet":"${forsendelse.enhet}"
+                }
+                """.trimIndent().replace("\n", "").replace("  ", "")
+
+            stubUtils.Valider().opprettJournalpostKaltMed(expectedJson)
+            stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
+        }
+
+        verify {
+            forsendelseHendelseProdusent.publiserForsendelse(
+                withArg {
+                    it.forsendelseId shouldBe forsendelse.forsendelseId
+                },
+            )
+        }
+    }
+
+    @Test
+    fun `skal distribuere forsendelse med ettersendingsoppgave`() {
+        val bestillingId = "asdasdasd-asd213123-adsda231231231-ada"
+        val innsendingsid = "ddddd-asd213123-adsda231231231-ada"
+        val nyJournalpostId = "21313331231"
+        stubUtils.stubHentDokument()
+        stubUtils.stubBestillDistribusjon(bestillingId, innsendingsid = innsendingsid)
+        val forsendelse =
+            opprettForsendelse2(
+                dokumenter =
+                    listOf(
+                        nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
+                        nyttDokument(
+                            journalpostId = null,
+                            dokumentreferanseOriginal = null,
+                            dokumentStatus = DokumentStatus.FERDIGSTILT,
+                            tittel = "Tittel vedlegg",
+                            dokumentMalId = "BI100",
+                            rekkefølgeIndeks = 1,
+                        ),
+                    ),
+            )
+        val ettersendingsoppgave =
+            Ettersendingsoppgave(
+                tittel = "Ettersendingsoppgave tittel",
+                innsendingsfristDager = 18,
+                ettersendelseForJournalpostId = "123",
+                skjemaId = "NAV_SKJEMA",
+                innsendingsId = null,
+                forsendelse = forsendelse,
+            )
+        ettersendingsoppgave.vedleggsliste =
+            mutableSetOf(
+                EttersendingsoppgaveVedlegg(
+                    tittel = "Vedlegg tittel",
+                    skjemaId = "N6_BL",
+                    ettersendingsoppgave = ettersendingsoppgave,
+                ),
+            )
+        forsendelse.ettersendingsoppgave = ettersendingsoppgave
+        testDataManager.lagreForsendelse(forsendelse)
+
+        stubUtils.stubOpprettJournalpost(
+            nyJournalpostId,
+            forsendelse.dokumenter.map { OpprettDokumentDto(it.tittel, dokumentreferanse = "JOARK${it.dokumentreferanse}") },
+        )
+
+        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
+
+        response.statusCode shouldBe HttpStatus.OK
+
+        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelse.forsendelseId!!)!!
+
+        val referanseId = oppdatertForsendelse.opprettReferanseId()
+        assertSoftly {
+            oppdatertForsendelse.distribusjonBestillingsId shouldBe bestillingId
+            oppdatertForsendelse.distribuertTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            oppdatertForsendelse.distribuertAvIdent shouldBe SAKSBEHANDLER_IDENT
+            oppdatertForsendelse.status shouldBe ForsendelseStatus.DISTRIBUERT
+            oppdatertForsendelse.referanseId shouldBe referanseId
+            oppdatertForsendelse.ettersendingsoppgave!!.innsendingsId shouldBe innsendingsid
+
+            oppdatertForsendelse.dokumenter.forEach {
+                it.dokumentreferanseFagarkiv shouldBe "JOARK${it.dokumentreferanse}"
+            }
+            @Language("Json")
+            val expectedJson =
+                """
+                {
+                    "skalFerdigstilles":true,
+                    "tittel":"Tittel på hoveddokument",
+                    "gjelderIdent":"12312333123",
+                    "avsenderMottaker":{"navn":"Nils Nilsen","ident":"2312333123","type":"FNR","adresse":null},
+                    "dokumenter":[{"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
+                    {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}],
+                    "tilknyttSaker":["21312312"],
+                    "tema":"BID",
+                    "journalposttype":"UTGÅENDE",
+                    "referanseId":"$referanseId",
+                    "journalførendeEnhet":"4806",
+                    "ettersendingsoppgave":{
+                        "tittel":"Ettersendingsoppgave tittel",
+                        "skjemaId":"NAV_SKJEMA",
+                        "språk":"NB",
+                        "innsendingsFristDager":18,
+                        "vedleggsliste":[{"tittel":"Vedlegg tittel","url":"https://www.nav.no/_/attachment/inline/6066e804-b944-4206-b454-82f5fb8a6940:c9f0c0064dd56ae893beb749d1342afa3e3e7338/Bekreftelse%20p%C3%A5%20nedsatt%20arbeidsevne%20grunnet%20helsemessige%20forhold.docx","vedleggsnr":"N6"}]}
                 }
                 """.trimIndent().replace("\n", "").replace("  ", "")
 

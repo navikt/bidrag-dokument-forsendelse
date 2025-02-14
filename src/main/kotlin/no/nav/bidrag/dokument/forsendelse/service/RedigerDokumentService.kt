@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResponsDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons

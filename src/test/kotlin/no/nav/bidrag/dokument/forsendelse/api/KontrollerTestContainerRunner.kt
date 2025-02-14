@@ -4,8 +4,8 @@ import com.google.cloud.NoCredentials
 import com.google.cloud.storage.BucketInfo
 import com.google.cloud.storage.StorageOptions
 import com.ninjasquad.springmockk.MockkBean
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.mockk.every
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest

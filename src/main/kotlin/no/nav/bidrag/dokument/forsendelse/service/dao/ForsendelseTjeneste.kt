@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service.dao
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
@@ -28,6 +28,8 @@ class ForsendelseTjeneste(
         forsendelse?.let { tilgangskontrollService.sjekkTilgangForsendelse(it) }
         return forsendelse
     }
+
+    fun hentForsendelserHvorEttersendingIkkeOpprettet(): List<Forsendelse> = forsendelseRepository.hentEttersendingerSomIkkeErOpprettet()
 
     fun hentDistribuerteForsendelserUtenDistribusjonKanal(limit: Int): List<Forsendelse> =
         forsendelseRepository.hentDistribuerteForsendelseUtenKanal(Pageable.ofSize(limit), LocalDateTime.now().minusHours(2))

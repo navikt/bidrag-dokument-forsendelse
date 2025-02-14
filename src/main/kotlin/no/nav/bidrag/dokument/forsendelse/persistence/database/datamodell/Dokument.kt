@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.hypersistence.utils.hibernate.type.ImmutableType
 import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import jakarta.persistence.Column
@@ -14,7 +15,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
-import mu.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem

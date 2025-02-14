@@ -43,6 +43,7 @@ import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentMetadata
 import no.nav.bidrag.transport.dokument.JournalpostStatus
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveResponseDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.Assert
@@ -300,12 +301,13 @@ class StubUtils {
     fun stubBestillDistribusjon(
         bestillingId: String,
         journalpostId: String = "324324234",
+        innsendingsid: String? = null,
     ) {
         WireMock.stubFor(
             WireMock.post(WireMock.urlMatching("/dokument/journal/distribuer/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withBody(jsonToString(DistribuerJournalpostResponse(journalpostId, bestillingId))),
+                    .withBody(jsonToString(DistribuerJournalpostResponse(journalpostId, bestillingId, ettersendingsoppgave = innsendingsid?.let { OpprettEttersendingsoppgaveResponseDto(it) }))),
             ),
         )
     }

@@ -18,6 +18,7 @@ data class ForsendelseResponsTo(
     @Schema(description = "NAV-enheten som oppretter forsendelsen") val enhet: String? = null,
     @Schema(description = "Tema på forsendelsen") val tema: String? = null,
     @Schema(description = "Detaljer om behandling forsendelse er knyttet til") val behandlingInfo: BehandlingInfoResponseDto? = null,
+    @Schema(description = "Detaljer om varsel ettersendelse") val ettersendingsoppgave: EttersendingsoppgaveDto? = null,
     @Schema(description = "Ident på saksbehandler eller applikasjon som opprettet forsendelsen") val opprettetAvIdent: String? = null,
     @Schema(description = "Navn på saksbehandler eller applikasjon som opprettet forsendelsen") val opprettetAvNavn: String? = null,
     @Schema(description = "Tittel på hoveddokumentet i forsendelsen") val tittel: String? = null,
@@ -35,6 +36,20 @@ data class ForsendelseResponsTo(
 ) {
     fun hentHoveddokument() = if (dokumenter.isEmpty()) null else dokumenter[0]
 }
+
+data class EttersendingsoppgaveDto(
+    val tittel: String? = null,
+    val ettersendelseForJournalpostId: String? = null,
+    val skjemaId: String? = null,
+    val innsendingsfristDager: Int? = null,
+    val vedleggsliste: List<EttersendingsoppgaveVedleggDto> = emptyList(),
+)
+
+data class EttersendingsoppgaveVedleggDto(
+    val tittel: String,
+    val skjemaId: String? = null,
+    val id: Long,
+)
 
 @Schema(description = "Metadata om behandling")
 data class BehandlingInfoResponseDto(

@@ -1,8 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer

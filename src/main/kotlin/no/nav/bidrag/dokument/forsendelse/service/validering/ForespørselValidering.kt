@@ -169,12 +169,24 @@ object ForespørselValidering {
         }
     }
 
-    fun Forsendelse.validerKanFerdigstilleForsendelse() {
+    fun Forsendelse.validerKanFerdigstilleForsendelse(
+        lokalUtskrift: Boolean,
+        ingenDistribusjon: Boolean,
+    ) {
         if (this.status == ForsendelseStatus.FERDIGSTILT) {
             throw KanIkkeFerdigstilleForsendelse("Forsendelse med forsendelseId=${this.forsendelseId} er allerede ferdigstillt")
         }
 
         val feilmeldinger = mutableListOf<String>()
+
+        if (ettersendingsoppgave != null) {
+            if (lokalUtskrift) {
+                feilmeldinger.add("Kan ikke bestille lokal utskrift for forsendelse med ettersendingsoppgave")
+            }
+            if (ingenDistribusjon) {
+                feilmeldinger.add("Kan ikke bestille ingen distribusjon for forsendelse med ettersendingsoppgave")
+            }
+        }
 
         if (this.forsendelseType == ForsendelseType.UTGÅENDE && this.mottaker == null) {
             feilmeldinger.add("Forsendelse med type ${this.forsendelseType} mangler mottaker")

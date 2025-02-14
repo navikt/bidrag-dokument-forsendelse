@@ -5,14 +5,18 @@ import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
 import no.nav.bidrag.dokument.forsendelse.model.kanIkkeDistribuereForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.domene.enums.diverse.Språk
 import no.nav.bidrag.domene.enums.rolle.Rolletype
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
+import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveVedleggDto
+import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
 
 val Forsendelse.dokumentDato get() = dokumenter.hoveddokument?.dokumentDato
 val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
@@ -31,6 +35,21 @@ fun Forsendelse.validerKanDistribuere() {
             forsendelseId,
             "Forsendelse har feil status ${this.status}",
         )
+    }
+
+    if (this@validerKanDistribuere.ettersendingsoppgave != null) {
+        if (this@validerKanDistribuere.ettersendingsoppgave!!.vedleggsliste.isEmpty()) {
+            kanIkkeDistribuereForsendelse(
+                forsendelseId,
+                "Forsendelse har varsel for ettersendelse uten vedleggsliste",
+            )
+        }
+        if (ettersendingsoppgave!!.tittel.isNullOrEmpty()) {
+            kanIkkeDistribuereForsendelse(
+                forsendelseId,
+                "Varsel ettersendelse mangler tittel",
+            )
+        }
     }
 }
 
@@ -120,3 +139,28 @@ fun BehandlingInfo.tilBeskrivelse(
     }
     return stringBuilder.joinToString(" ")
 }
+
+val vedleggskodeAnnet = "N6"
+val vedleggLenkeMap =
+    mapOf(
+        "W3" to
+            "https://www.nav.no/_/attachment/inline/7ee5c0c6-7b2c-466d-bb88-2ff51475513b:c1a1c3c4f1ff4518b61142e2394ac3733a271049/Skolens%20bekreftelse%20p%C3%A5%20skolegang.docx",
+        "N6_BL" to
+            "https://www.nav.no/_/attachment/inline/6066e804-b944-4206-b454-82f5fb8a6940:c9f0c0064dd56ae893beb749d1342afa3e3e7338/Bekreftelse%20p%C3%A5%20nedsatt%20arbeidsevne%20grunnet%20helsemessige%20forhold.docx",
+    )
+
+fun Ettersendingsoppgave.tilDto() =
+    OpprettEttersendingsppgaveDto(
+        tittel = tittel!!,
+        skjemaId = skjemaId!!,
+        innsendingsFristDager = innsendingsfristDager,
+        språk = Språk.valueOf(forsendelse.språk.uppercase()),
+        vedleggsliste =
+            vedleggsliste.sortedBy { it.opprettetTidspunkt }.map { vedlegg ->
+                OpprettEttersendingsoppgaveVedleggDto(
+                    vedleggsnr = if (vedlegg.skjemaId!!.startsWith(vedleggskodeAnnet)) vedleggskodeAnnet else vedlegg.skjemaId!!,
+                    tittel = vedlegg.tittel,
+                    url = vedleggLenkeMap[vedlegg.skjemaId!!],
+                )
+            },
+    )

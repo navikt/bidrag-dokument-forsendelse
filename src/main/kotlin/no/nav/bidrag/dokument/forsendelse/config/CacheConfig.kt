@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.commons.cache.EnableUserCache
 import no.nav.bidrag.commons.cache.InvaliderCacheFørStartenAvArbeidsdag
 import no.nav.bidrag.commons.service.organisasjon.SaksbehandlernavnProvider.Companion.SAKSBEHANDLERINFO_CACHE

@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.aop
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.CorrelationId.Companion.CORRELATION_ID_HEADER
 import org.apache.kafka.clients.consumer.ConsumerRecord

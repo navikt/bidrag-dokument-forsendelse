@@ -33,6 +33,9 @@ env:
 
   KODEVERK_URL: http://bidrag-kodeverk
 
+  INNSENDING_API_URL: https://innsending-api-gcp.intern.nav.no
+  INNSENDING_API_SCOPE: prod-gcp.team-soknad.innsending-api
+
   LAGRE_DIST_INFO_PAGE_SIZE: 500
   LAGRE_DIST_INFO_CRON: "0 0 */3 * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 0 */12 * * ?"
@@ -61,7 +64,7 @@ outbound-access-hosts:
    - bidrag-person.prod-fss-pub.nais.io
    - bidrag-sak.prod-fss-pub.nais.io
    - bidrag-organisasjon.prod-fss-pub.nais.io
-   - kodeverk-api.nav.no
+   - innsending-api-gcp.intern.nav.no
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

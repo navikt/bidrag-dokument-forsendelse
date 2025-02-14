@@ -7,6 +7,8 @@ import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
 import no.nav.bidrag.transport.dokument.DistribuerTilAdresse
 import no.nav.bidrag.transport.dokument.DistribusjonInfoDto
 import no.nav.bidrag.transport.dokument.DokumentMetadata
+import no.nav.bidrag.transport.dokument.JournalpostDto
+import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostRequest
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import org.springframework.beans.factory.annotation.Qualifier
@@ -29,6 +31,18 @@ class BidragDokumentConsumer(
             .path(path ?: "")
             .build()
             .toUri()
+
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun hentJournal(saksnummer: String): List<JournalpostDto> =
+        getForNonNullEntity(
+            UriComponentsBuilder
+                .fromUri(url)
+                .path("/sak/$saksnummer/journal")
+                .queryParam("fagomrade", "BID")
+                .queryParam("fagomrade", "FAR")
+                .build()
+                .toUri(),
+        )
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
     fun opprettJournalpost(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? =
@@ -88,11 +102,15 @@ class BidragDokumentConsumer(
     fun distribuer(
         journalpostId: String,
         adresse: DistribuerTilAdresse? = null,
+        ettersendingsoppgave: OpprettEttersendingsppgaveDto? = null,
         lokalUtskrift: Boolean = false,
         batchId: String? = null,
     ): DistribuerJournalpostResponse? {
         var url = UriComponentsBuilder.fromUri(url).path("/journal/distribuer/$journalpostId")
         if (batchId.isNotNullOrEmpty()) url = url.queryParam("batchId", batchId)
-        return postForEntity(url.build().toUri(), DistribuerJournalpostRequest(adresse = adresse, lokalUtskrift = lokalUtskrift))
+        return postForEntity(
+            url.build().toUri(),
+            DistribuerJournalpostRequest(adresse = adresse, lokalUtskrift = lokalUtskrift, ettersendingsoppgave = ettersendingsoppgave),
+        )
     }
 }

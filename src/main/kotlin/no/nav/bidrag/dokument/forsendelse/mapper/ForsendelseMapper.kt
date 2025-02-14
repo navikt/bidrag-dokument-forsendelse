@@ -3,6 +3,8 @@ package no.nav.bidrag.dokument.forsendelse.mapper
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoResponseDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
 import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.EttersendingsoppgaveDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.EttersendingsoppgaveVedleggDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
@@ -10,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -240,6 +243,7 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
                         },
                 )
             },
+        ettersendingsoppgave = this@tilForsendelseRespons.ettersendingsoppgave?.let { it.tilEttersendingsoppaveDto() },
         behandlingInfo =
             this.behandlingInfo?.let {
                 BehandlingInfoResponseDto(
@@ -303,6 +307,22 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
                     erSkjema = it.metadata.erSkjema(),
                     dokumentDato = it.dokumentDato,
                     status = it.tilDokumentStatusTo(),
+                )
+            },
+    )
+
+fun Ettersendingsoppgave.tilEttersendingsoppaveDto() =
+    EttersendingsoppgaveDto(
+        tittel = tittel,
+        ettersendelseForJournalpostId = ettersendelseForJournalpostId,
+        skjemaId = skjemaId,
+        innsendingsfristDager = innsendingsfristDager,
+        vedleggsliste =
+            vedleggsliste.sortedBy { it.opprettetTidspunkt }.map { dokument ->
+                EttersendingsoppgaveVedleggDto(
+                    tittel = dokument.tittel,
+                    id = dokument.id!!,
+                    skjemaId = dokument.skjemaId,
                 )
             },
     )

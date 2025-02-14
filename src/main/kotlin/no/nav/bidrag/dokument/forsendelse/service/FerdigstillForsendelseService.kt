@@ -1,7 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import mu.KotlinLogging
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
@@ -16,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.dokument.forsendelse.utvidelser.tilDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
 import no.nav.bidrag.transport.dokument.JournalpostType
@@ -52,7 +54,7 @@ class FerdigstillForsendelseService(
         ingenDistribusjon: Boolean = false,
     ): OpprettJournalpostResponse? {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: return null
-        forsendelse.validerKanFerdigstilleForsendelse()
+        forsendelse.validerKanFerdigstilleForsendelse(lokalUtskrift, ingenDistribusjon)
         log.info { "Ferdigstiller forsendelse $forsendelseId med type ${forsendelse.forsendelseType} og tema ${forsendelse.tema}." }
 
         val hovedtittel = forsendelse.dokumenter.hoveddokument?.tittel!!
@@ -112,9 +114,14 @@ class FerdigstillForsendelseService(
                     },
                 tittel = hovedtittel,
                 datoDokument = if (forsendelse.erNotat) dokumentDato else null,
+                ettersendingsoppgave = forsendelse.ettersendingsoppgave?.tilDto(),
             )
 
+        secureLogger.info { "Oppretter journalpost for forsendelse $forsendelseId med forespørsel $opprettJournalpostRequest" }
+
         val respons = bidragDokumentConsumer.opprettJournalpost(opprettJournalpostRequest)
+
+        secureLogger.info { "Opprettet journalpost for forsendelse $forsendelseId med respons $respons" }
 
         forsendelseTjeneste.lagre(
             forsendelse.copy(

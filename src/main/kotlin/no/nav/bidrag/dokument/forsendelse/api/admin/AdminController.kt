@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokume
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.security.token.support.core.api.Protected
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -178,6 +179,17 @@ Denne tjenesten vil sjekke om dokumentet er ferdigstilt og oppdatere status hvis
         dokumentHendelseLytter
             .oppdaterStatusPaFerdigstilteDokumenter(limit, afterDate?.atStartOfDay(), beforeDate?.atStartOfDay())
             .map { it.mapToResponse() }
+
+    @GetMapping("/ettersendingIkkeOpprettet")
+    @Operation(
+        summary = "Sjekk status på dokumentene i forsendelser og oppdater status hvis det er ute av synk",
+        description = """Hent forsendelser som har ettersending som ikke er oppretttet""",
+        security = [SecurityRequirement(name = "bearer-key")],
+    )
+    fun forsendelserEttersendingIkkeOpprettet(): List<Map<String, String?>> =
+        forsendelseTjeneste.hentForsendelserHvorEttersendingIkkeOpprettet().map {
+            it.mapToResponse()
+        }
 }
 
 fun Forsendelse.mapToResponse(): Map<String, String?> {
@@ -192,6 +204,9 @@ fun Forsendelse.mapToResponse(): Map<String, String?> {
     node[Forsendelse::distribuertTidspunkt.name] = distribuertTidspunkt.toString()
     node[Forsendelse::distribusjonKanal.name] = distribusjonKanal?.name
     node[Forsendelse::status.name] = status?.name
+    node["ettersending_tittel"] = ettersendingsoppgave?.tittel
+    node["ettersending_frist"] = ettersendingsoppgave?.innsendingsfristDager?.toString()
+    node["ettersending_skjemaId"] = ettersendingsoppgave?.skjemaId
     return node.mapValues { it.value ?: "" }
 }
 

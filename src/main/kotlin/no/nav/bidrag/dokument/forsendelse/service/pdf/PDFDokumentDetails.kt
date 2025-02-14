@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service.pdf
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.pdfbox.Loader
 
 private val log = KotlinLogging.logger {}

@@ -110,3 +110,5 @@ fun ugyldigAvviksForespørsel(melding: String): Nothing =
     )
 
 fun ingenTilgang(message: String): Nothing = throw HttpClientErrorException(HttpStatus.FORBIDDEN, message)
+
+fun ugyldigForespørsel(melding: String): Nothing = throw HttpClientErrorException(HttpStatus.BAD_REQUEST, melding)

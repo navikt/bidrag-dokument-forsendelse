@@ -20,6 +20,7 @@ KODEVERK_URL: http://localhost:${wiremock.server.port}/kodeverk
 BIDRAG_TILGANGSKONTROLL_URL: http://localhost:${wiremock.server.port}/tilgangskontroll
 BIDRAG_VEDTAK_URL: http://localhost:${wiremock.server.port}/vedtak
 BIDRAG_BEHANDLING_URL: http://localhost:${wiremock.server.port}/behandling
+INNSENDING_API_URL: http://localhost:${wiremock.server.port}/innsending
 UNLEASH_SERVER_API_URL: http://localhost:${wiremock.server.port}/unleash
 KAFKA_BROKERS: localhost:9093
 KAFKA_MAX_RETRY: 0

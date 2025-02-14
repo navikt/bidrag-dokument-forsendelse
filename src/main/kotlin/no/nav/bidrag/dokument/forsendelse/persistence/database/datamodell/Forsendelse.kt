@@ -70,6 +70,13 @@ data class Forsendelse(
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
     val journalpostIdFagarkiv: String? = null,
+    @OneToOne(
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL],
+        mappedBy = "forsendelse",
+        orphanRemoval = true,
+    )
+    var ettersendingsoppgave: Ettersendingsoppgave? = null,
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val mottaker: Mottaker? = null,
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
