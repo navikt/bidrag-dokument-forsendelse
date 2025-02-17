@@ -387,7 +387,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                         "skjemaId":"NAV_SKJEMA",
                         "språk":"NB",
                         "innsendingsFristDager":18,
-                        "vedleggsliste":[{"tittel":"Vedlegg tittel","url":"https://www.nav.no/_/attachment/inline/6066e804-b944-4206-b454-82f5fb8a6940:c9f0c0064dd56ae893beb749d1342afa3e3e7338/Bekreftelse%20p%C3%A5%20nedsatt%20arbeidsevne%20grunnet%20helsemessige%20forhold.docx","vedleggsnr":"N6"}]}
+                        "vedleggsliste":[{"tittel":"Vedlegg tittel (lenke til dokumentet)","url":"https://www.nav.no/_/attachment/inline/6066e804-b944-4206-b454-82f5fb8a6940:c9f0c0064dd56ae893beb749d1342afa3e3e7338/Bekreftelse%20p%C3%A5%20nedsatt%20arbeidsevne%20grunnet%20helsemessige%20forhold.docx","vedleggsnr":"N6"}]}
                 }
                 """.trimIndent().replace("\n", "").replace("  ", "")
 
