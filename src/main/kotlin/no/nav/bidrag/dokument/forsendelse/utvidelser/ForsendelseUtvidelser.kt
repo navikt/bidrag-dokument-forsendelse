@@ -157,11 +157,10 @@ fun Ettersendingsoppgave.tilDto() =
         språk = Språk.valueOf(forsendelse.språk.uppercase()),
         vedleggsliste =
             vedleggsliste.sortedBy { it.opprettetTidspunkt }.map { vedlegg ->
-                val url = vedleggLenkeMap[vedlegg.skjemaId!!]
                 OpprettEttersendingsoppgaveVedleggDto(
                     vedleggsnr = if (vedlegg.skjemaId!!.startsWith(vedleggskodeAnnet)) vedleggskodeAnnet else vedlegg.skjemaId!!,
-                    tittel = if (url != null) "${vedlegg.tittel} (lenke til dokumentet)" else vedlegg.tittel,
-                    url = url,
+                    tittel = vedlegg.tittel,
+                    url = vedleggLenkeMap[vedlegg.skjemaId!!],
                 )
             },
     )
