@@ -69,8 +69,8 @@ class DokumentValgAlternativeTitlerTest {
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 2
-            fritekstBrev.alternativeTitler shouldContain "Varsel innkreving bidrag til særlige utgifter"
-            fritekstBrev.alternativeTitler shouldContain "Orientering innkreving bidrag til særlige utgifter"
+            fritekstBrev.alternativeTitler shouldContain "Varsel innkreving bidrag til særbidrag"
+            fritekstBrev.alternativeTitler shouldContain "Orientering innkreving bidrag til særbidrag"
         }
     }
 
