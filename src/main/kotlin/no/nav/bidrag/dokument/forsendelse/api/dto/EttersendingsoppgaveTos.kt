@@ -2,7 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.api.dto
 
 data class OpprettEttersendingsoppgaveRequest(
     val forsendelseId: Long,
-    val tittel: String,
+    val tittel: String?,
     val ettersendelseForJournalpostId: String,
     val skjemaId: String,
 )

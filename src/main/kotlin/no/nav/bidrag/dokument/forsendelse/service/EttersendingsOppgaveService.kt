@@ -78,7 +78,7 @@ class EttersendingsOppgaveService(
         forsendelse.ettersendingsoppgave =
             Ettersendingsoppgave(
                 forsendelse = forsendelse,
-                tittel = request.tittel.fjernKontrollTegn(),
+                tittel = request.tittel?.fjernKontrollTegn(),
                 ettersendelseForJournalpostId = request.ettersendelseForJournalpostId,
                 skjemaId = request.skjemaId,
             )

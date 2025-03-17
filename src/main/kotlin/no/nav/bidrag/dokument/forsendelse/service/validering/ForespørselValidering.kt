@@ -180,6 +180,9 @@ object ForespørselValidering {
         val feilmeldinger = mutableListOf<String>()
 
         if (ettersendingsoppgave != null) {
+            if (ettersendingsoppgave!!.tittel.isNullOrEmpty()) {
+                feilmeldinger.add("Kan ikke bestille ettersendingsoppgave for forsendelse uten tittel")
+            }
             if (lokalUtskrift) {
                 feilmeldinger.add("Kan ikke bestille lokal utskrift for forsendelse med ettersendingsoppgave")
             }
