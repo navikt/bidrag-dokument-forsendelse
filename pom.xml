@@ -16,21 +16,21 @@
   <properties>
     <java.version>21</java.version>
     <kotlin.version>2.1.0</kotlin.version>
-    <bidrag-felles.version>2025.03.16.122629</bidrag-felles.version>
+    <bidrag-felles.version>2025.03.17.104606</bidrag-felles.version>
     <logback-encoder.version>8.0</logback-encoder.version>
     <token-support.version>5.0.19</token-support.version>
     <springdoc-openapi-ui.version>2.8.4</springdoc-openapi-ui.version>
     <springframework-cloud.version>4.1.0</springframework-cloud.version>
     <kotest.version>5.9.1</kotest.version>
     <mockk.version>4.0.2</mockk.version>
-    <flyway.version>11.1.0</flyway.version>
+    <flyway.version>11.4.0</flyway.version>
     <kotlin-logging-jvm.version>7.0.3</kotlin-logging-jvm.version>
     <testcontainers.version>1.19.7</testcontainers.version>
     <shedlock.version>5.16.0</shedlock.version>
     <google-cloud-storage.version>2.32.0</google-cloud-storage.version>
-    <google-cloud-libraries-bom.version>26.42.0</google-cloud-libraries-bom.version>
-    <google-tink-gcpkms.version>1.9.0</google-tink-gcpkms.version>
-    <google-tink.version>1.13.0</google-tink.version>
+    <google-cloud-libraries-bom.version>26.56.0</google-cloud-libraries-bom.version>
+    <google-tink-gcpkms.version>1.10.0</google-tink-gcpkms.version>
+    <google-tink.version>1.17.0</google-tink.version>
     <grpc.version>1.57.2</grpc.version>
     <pdfbox.version>3.0.3</pdfbox.version>
     <verapdf.version>1.26.1</verapdf.version>
