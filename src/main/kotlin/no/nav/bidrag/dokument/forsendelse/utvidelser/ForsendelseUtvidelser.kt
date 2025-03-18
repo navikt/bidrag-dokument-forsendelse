@@ -147,6 +147,8 @@ val vedleggLenkeMap =
         "N6_FYLLUT_BIDRAG18ÅR" to "https://www.nav.no/fyllut/nav550063",
         "N6_FYLLUT_FORSKUDD" to "https://www.nav.no/fyllut/nav540009",
         "N6_FYLLUT_SÆRBIDRAG" to "https://www.nav.no/fyllut/nav540013",
+        "N6_FYLLUT_SØKNAD_18_SVAR" to "https://www.nav.no/fyllut/nav540010",
+        "N6_FYLLUT_SØKNAD_18" to "https://www.nav.no/fyllut/nav540006",
         "W3" to
             "https://www.nav.no/_/attachment/inline/7ee5c0c6-7b2c-466d-bb88-2ff51475513b:c1a1c3c4f1ff4518b61142e2394ac3733a271049/Skolens%20bekreftelse%20p%C3%A5%20skolegang.docx",
         "N6_BL" to
