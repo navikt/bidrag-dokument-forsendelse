@@ -79,7 +79,7 @@ class DokumentValgService(
             hentDokumentMalListeForRequest(requestUtfylt)
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
 
-        return maler.toList().sortedBy { (a, b) -> if (a == FRITEKSTBREV) -1 else 1 }.toMap()
+        return maler.toList().sortedBy { (a, b) -> if (a == FRITEKSTBREV) 1 else -1 }.toMap()
     }
 
     private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? =
