@@ -23,7 +23,10 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentSoknadDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.VedleggDto
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.EttersendingsoppgaveVedlegg
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BP
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.DokumentType
@@ -175,7 +178,7 @@ class EttersendingsOppgaveServiceTest {
 
     @Test
     fun `skal oppdatere ettersendingsoppgave`() {
-        val forsendelse = opprettForsendelse2()
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT))
         val ettersendingsoppgave =
             Ettersendingsoppgave(
                 forsendelse = forsendelse,
@@ -207,7 +210,7 @@ class EttersendingsOppgaveServiceTest {
 
     @Test
     fun `skal opprette ettersendingsoppgave vedlegg`() {
-        val forsendelse = opprettForsendelse2()
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT))
         val ettersendingsoppgave =
             Ettersendingsoppgave(
                 forsendelse = forsendelse,
@@ -246,7 +249,7 @@ class EttersendingsOppgaveServiceTest {
 
     @Test
     fun `skal oppdatere ettersendingsoppgave vedlegg`() {
-        val forsendelse = opprettForsendelse2()
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT))
         val ettersendingsoppgave =
             Ettersendingsoppgave(
                 forsendelse = forsendelse,
@@ -344,7 +347,7 @@ class EttersendingsOppgaveServiceTest {
 
     @Test
     fun `skal opprette ettersendingsoppgave`() {
-        val forsendelse = opprettForsendelse2()
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT))
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
 
         ettersendingsOppgaveService.opprettEttersendingsoppgave(
@@ -372,7 +375,7 @@ class EttersendingsOppgaveServiceTest {
                 ettersendelseForJournalpostId = "123",
                 skjemaId = "123",
             )
-        val forsendelse = opprettForsendelse2()
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT))
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
 
         val exception =
@@ -381,6 +384,26 @@ class EttersendingsOppgaveServiceTest {
             }
 
         exception.message shouldContain "Fant ikke ettersendingsoppgave i forsendelse 1"
+    }
+
+    @Test
+    fun `skal kaste exception hvis mottaker ikke er lik gjelder`() {
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT_BP))
+        every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
+
+        val exception =
+            shouldThrow<HttpClientErrorException> {
+                ettersendingsOppgaveService.opprettEttersendingsoppgave(
+                    OpprettEttersendingsoppgaveRequest(
+                        forsendelseId = 1,
+                        tittel = "Ny tittel",
+                        ettersendelseForJournalpostId = "333",
+                        skjemaId = "213213",
+                    ),
+                )
+            }
+
+        exception.message shouldContain "Kan ikke opprette ettersendingsoppgave hvis gjelder er ulik mottaker"
     }
 
     @Test
@@ -393,7 +416,7 @@ class EttersendingsOppgaveServiceTest {
                 innsendingsfristDager = 10,
                 ettersendelseForJournalpostId = "123",
             )
-        val forsendelse = opprettForsendelse2()
+        val forsendelse = opprettForsendelse2(mottaker = Mottaker(ident = GJELDER_IDENT))
         every { forsendelseTjeneste.medForsendelseId(any()) } returns forsendelse
 
         val exception =

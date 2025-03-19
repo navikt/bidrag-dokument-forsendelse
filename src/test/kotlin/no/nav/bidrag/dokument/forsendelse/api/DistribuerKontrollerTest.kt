@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.EttersendingsoppgaveVedlegg
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -18,6 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
 import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
+import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.HOVEDDOKUMENT_DOKUMENTMAL
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.bidrag.dokument.forsendelse.utils.med
@@ -311,6 +313,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         stubUtils.stubBestillDistribusjon(bestillingId, innsendingsid = innsendingsid)
         val forsendelse =
             opprettForsendelse2(
+                mottaker = Mottaker(ident = GJELDER_IDENT),
                 dokumenter =
                     listOf(
                         nyttDokument(dokumentStatus = DokumentStatus.FERDIGSTILT, rekkefølgeIndeks = 0),
@@ -374,7 +377,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                     "skalFerdigstilles":true,
                     "tittel":"Tittel på hoveddokument",
                     "gjelderIdent":"12312333123",
-                    "avsenderMottaker":{"navn":"Nils Nilsen","ident":"2312333123","type":"FNR","adresse":null},
+                    "avsenderMottaker":{"navn":null,"ident":"12312333123","type":"FNR","adresse":null},
                     "dokumenter":[{"tittel":"Tittel på hoveddokument","brevkode":"BI091","dokumentmalId":"BI091","dokumentreferanse":"${forsendelse.dokumenter[0].dokumentreferanse}"},
                     {"tittel":"Tittel vedlegg","brevkode":"BI100","dokumentmalId":"BI100","dokumentreferanse":"${forsendelse.dokumenter[1].dokumentreferanse}"}],
                     "tilknyttSaker":["21312312"],

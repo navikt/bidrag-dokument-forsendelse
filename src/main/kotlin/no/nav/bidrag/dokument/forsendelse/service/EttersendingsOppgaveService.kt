@@ -72,6 +72,9 @@ class EttersendingsOppgaveService(
         log.info { "Oppretter ettersendingsoppgave for forsendelse ${request.forsendelseId}" }
         secureLogger.info { "Oppretter ettersendingsoppgave $request" }
         val forsendelse = forsendelseService.medForsendelseId(request.forsendelseId) ?: fantIkkeForsendelse(request.forsendelseId)
+        if (forsendelse.gjelderIdent != forsendelse.mottaker?.ident) {
+            ugyldigForespørsel("Kan ikke opprette ettersendingsoppgave hvis gjelder er ulik mottaker")
+        }
         if (forsendelse.ettersendingsoppgave != null) {
             ugyldigForespørsel("Forsendelse ${request.forsendelseId} har allerede en ettersendingsoppgave")
         }
