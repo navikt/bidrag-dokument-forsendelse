@@ -88,8 +88,8 @@ class EttersendingsOppgaveService(
     fun oppdaterEttersendingsoppgave(request: OppdaterEttersendingsoppgaveRequest) {
         log.info { "Oppdaterer ettersendingsoppgave for forsendelse ${request.forsendelseId}" }
         secureLogger.info { "Oppdaterer ettersendingsoppgave $request" }
-        request.valider()
         val forsendelse = forsendelseService.medForsendelseId(request.forsendelseId) ?: fantIkkeForsendelse(request.forsendelseId)
+        request.valider(forsendelse)
         val varselEttersendelse =
             forsendelse.ettersendingsoppgave
                 ?: ugyldigForespørsel("Fant ikke ettersendingsoppgave i forsendelse ${request.forsendelseId}")
