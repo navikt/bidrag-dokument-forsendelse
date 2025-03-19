@@ -44,6 +44,12 @@ fun Forsendelse.validerKanDistribuere() {
                 "Forsendelse har varsel for ettersendelse uten vedleggsliste",
             )
         }
+        if (gjelderIdent != mottaker?.ident) {
+            kanIkkeDistribuereForsendelse(
+                forsendelseId,
+                "Kan ikke distribuere forsendelse med ettersendingsoppgave hvis gjelder er ulik mottaker",
+            )
+        }
         if (ettersendingsoppgave!!.tittel.isNullOrEmpty()) {
             kanIkkeDistribuereForsendelse(
                 forsendelseId,
