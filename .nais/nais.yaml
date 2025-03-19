@@ -70,10 +70,9 @@ spec:
             envVarPrefix: DB
   resources:
     requests:
-      cpu: 300m
+      cpu: 100m
       memory: 1024Mi
     limits:
-      cpu: 1500m
       memory: 4096Mi
   replicas:
       min: {{min_replicas}}
