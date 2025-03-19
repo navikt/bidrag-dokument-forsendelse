@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java21-debian12:nonroot
+FROM gcr.io/distroless/java21
 LABEL maintainer="Team Bidrag" \
       email="bidrag@nav.no"
 
