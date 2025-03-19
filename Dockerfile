@@ -9,7 +9,7 @@ WORKDIR /app
 COPY ./target/bidrag-dokument-forsendelse-*.jar app.jar
 
 EXPOSE 8080
-ENV TZ="Europe/Oslo"
+ENV LANG='nb_NO.UTF-8' LANGUAGE='nb_NO:nb' LC_ALL='nb:NO.UTF-8' TZ="Europe/Oslo"
 ENV SPRING_PROFILES_ACTIVE=nais
 
 CMD ["app.jar"]
