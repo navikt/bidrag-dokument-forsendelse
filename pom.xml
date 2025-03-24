@@ -23,7 +23,7 @@
     <springframework-cloud.version>4.2.0</springframework-cloud.version>
     <kotest.version>5.9.1</kotest.version>
     <mockk.version>4.0.2</mockk.version>
-    <flyway.version>11.4.0</flyway.version>
+    <flyway.version>11.4.1</flyway.version>
     <kotlin-logging-jvm.version>7.0.5</kotlin-logging-jvm.version>
     <testcontainers.version>1.20.6</testcontainers.version>
     <shedlock.version>6.3.0</shedlock.version>
