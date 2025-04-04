@@ -195,7 +195,11 @@ class DokumentHendelseLytter(
                         "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} " +
                             "med type NOTAT er ferdigstilt. Ferdigstiller forsendelse."
                     }
-                    ferdigstillForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
+                    try {
+                        ferdigstillForsendelseService.ferdigstillForsendelse(forsendelse.forsendelseId!!)
+                    } catch (e: Exception) {
+                        log.error(e) { "Kunne ikke ferdigstille forsendelse ${it.forsendelseId}." }
+                    }
                 }
             }
         }
