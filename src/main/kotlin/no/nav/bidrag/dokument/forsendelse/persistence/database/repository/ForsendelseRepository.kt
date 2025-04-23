@@ -50,7 +50,7 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
             "or f.distribusjonKanal is null " +
             "or (f.distribusjonKanal = 'SENTRAL_UTSKRIFT' and f.bestiltNyDistribusjon = false)" +
             ") " +
-            "and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date",
+            "and f.forsendelseType = 'UTGÅENDE' and f.opprettetTidspunkt < current_date and exists (select 1 from f.dokumenter d where d.dokumentStatus = 'FERDIGSTILT' or d.dokumentStatus = 'KONTROLLERT')",
     )
     fun hentUnderProduksjonOpprettetFørDagensDato(): List<Forsendelse>
 
