@@ -17,10 +17,12 @@ springdoc:
   packages-to-scan: no.nav.bidrag.dokument.forsendelse.api
   swagger-ui:
     path: /
-    
+
 spring.main.banner-mode: off
 #springfox.documentation.swagger-ui.base-url: /
 spring.application.name: ${NAIS_APP_NAME:bidrag-dokument-forsendelse}
+management.metrics.distribution.percentiles-histogram.http.server.requests: true
+management.metrics.distribution.percentiles-histogram.http.client.requests: true
 ---
 spring.config.activate.on-profile: nais,lokal-nais
 
