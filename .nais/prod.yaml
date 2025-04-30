@@ -78,6 +78,9 @@ azure_access_inbound:
   - application: bidrag-behandling
     namespace: bidrag
     cluster: prod-gcp
+  - application: bidrag-automatisk-jobb
+    namespace: bidrag
+    cluster: prod-gcp
 unleash:
   env: production
   secret_name: bidrag-dokument-forsendelse-unleash-api-token
