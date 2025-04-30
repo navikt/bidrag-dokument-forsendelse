@@ -1,15 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
-import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
-import no.nav.bidrag.dokument.forsendelse.api.dto.JournalpostId
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.arkivsystem
-import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
-import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.model.PersonIdent
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.model.erSamhandler
@@ -24,6 +14,16 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentSta
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.service.hentNorskPoststed
+import no.nav.bidrag.transport.dokument.forsendelse.JournalTema
+import no.nav.bidrag.transport.dokument.forsendelse.JournalpostId
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerIdentTypeTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.arkivsystem
+import no.nav.bidrag.transport.dokument.forsendelse.erForsendelse
+import no.nav.bidrag.transport.dokument.forsendelse.utenPrefiks
 import no.nav.bidrag.transport.person.PersonDto
 import java.time.LocalDateTime
 

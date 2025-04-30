@@ -2,10 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResponsDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseStatusTo
@@ -26,6 +22,10 @@ import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.transport.dokument.DokumentMetadata
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentDetaljer
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRedigeringMetadataResponsDto
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
+import no.nav.bidrag.transport.dokument.forsendelse.FerdigstillDokumentRequest
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 

@@ -7,9 +7,6 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
@@ -48,6 +45,9 @@ import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.JournalpostDto
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentStatusTo
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseStatusTo
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseTypeTo
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod

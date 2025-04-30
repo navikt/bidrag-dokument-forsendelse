@@ -1,15 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
-import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoResponseDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.EttersendingsoppgaveDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.EttersendingsoppgaveVedleggDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseTypeTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
@@ -40,6 +30,16 @@ import no.nav.bidrag.transport.dokument.JournalpostDto
 import no.nav.bidrag.transport.dokument.JournalpostStatus
 import no.nav.bidrag.transport.dokument.KodeDto
 import no.nav.bidrag.transport.dokument.MottakerAdresseTo
+import no.nav.bidrag.transport.dokument.forsendelse.BehandlingInfoResponseDto
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentStatusTo
+import no.nav.bidrag.transport.dokument.forsendelse.EttersendingsoppgaveDto
+import no.nav.bidrag.transport.dokument.forsendelse.EttersendingsoppgaveVedleggDto
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseResponsTo
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseStatusTo
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseTypeTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 
 fun Dokument.tilDokumentStatusDto() =
     when (dokumentStatus) {
@@ -230,7 +230,7 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
                     navn = it.navn,
                     adresse =
                         it.adresse?.let { adresse ->
-                            no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo(
+                            no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo(
                                 adresselinje1 = adresse.adresselinje1,
                                 adresselinje2 = adresse.adresselinje2,
                                 adresselinje3 = adresse.adresselinje3,

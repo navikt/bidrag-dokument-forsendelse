@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingTittelDetaljer
@@ -19,6 +18,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTil
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
@@ -62,11 +62,11 @@ class DokumentValgService(
         } else if (request.erKlage()) {
             true
         } else if (!request.vedtakId.isNullOrEmpty()) {
-            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == Vedtakstype.KLAGE }
+            bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId!!)?.let { it.type == Vedtakstype.KLAGE }
                 ?: false
         } else if (!request.behandlingId.isNullOrEmpty()) {
             behandlingConsumer
-                .hentBehandling(behandlingId = request.behandlingId)
+                .hentBehandling(behandlingId = request.behandlingId!!)
                 ?.let { it.vedtakstype == Vedtakstype.KLAGE } ?: false
         } else {
             false
@@ -87,7 +87,7 @@ class DokumentValgService(
             null
         } else if (request.vedtakId != null && hentDetaljerFraVedtakBehandlingEnabled) {
             bidragVedtakConsumer
-                .hentVedtak(vedtakId = request.vedtakId)
+                .hentVedtak(vedtakId = request.vedtakId!!)
                 ?.let {
                     val behandlingType =
                         if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
@@ -104,7 +104,7 @@ class DokumentValgService(
         } else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) {
             behandlingConsumer
                 .hentBehandling(
-                    request.behandlingId,
+                    request.behandlingId!!,
                 )?.let {
                     request.copy(
                         behandlingType = it.stønadstype?.name ?: it.engangsbeløptype?.name,
@@ -246,3 +246,17 @@ class DokumentValgService(
             throw RuntimeException("Kunne ikke laste fil", e)
         }
 }
+
+fun HentDokumentValgRequest.tilBehandlingInfo(): BehandlingInfo =
+    BehandlingInfo(
+        vedtakId = this.vedtakId,
+        behandlingId = this.behandlingId,
+        vedtakType = this.vedtakType,
+        engangsBelopType = this.engangsBelopType,
+        stonadType = this.stonadType,
+        soknadType = this.soknadType,
+        erFattetBeregnet = this.erFattetBeregnet,
+        erVedtakIkkeTilbakekreving = this.erVedtakIkkeTilbakekreving,
+        soknadFra = this.soknadFra,
+        behandlingType = this.behandlingType,
+    )

@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.service.OpprettForsendelseService
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseRespons
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 

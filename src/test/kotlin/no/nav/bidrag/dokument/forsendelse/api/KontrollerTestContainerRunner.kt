@@ -7,18 +7,18 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.mockk.every
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import no.nav.bidrag.transport.dokument.DistribuerJournalpostRequest
 import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
 import no.nav.bidrag.transport.dokument.DokumentMetadata
 import no.nav.bidrag.transport.dokument.JournalpostResponse
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
+import no.nav.bidrag.transport.dokument.forsendelse.FerdigstillDokumentRequest
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseResponsTo
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseResponse
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseRespons
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -30,6 +30,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
+import kotlin.jvm.java
 
 private val log = KotlinLogging.logger {}
 
