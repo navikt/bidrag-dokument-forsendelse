@@ -5,10 +5,6 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRedigeringMetadataResponsDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentStatusTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseStatusTo
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.LagreFilResponse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
@@ -19,6 +15,10 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettDokumentMetadata
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentDetaljer
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRedigeringMetadataResponsDto
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentStatusTo
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseStatusTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.web.client.getForEntity

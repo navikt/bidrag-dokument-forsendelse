@@ -3,11 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
@@ -21,6 +16,11 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
+import no.nav.bidrag.transport.dokument.forsendelse.JournalTema
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseRespons
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -115,7 +115,7 @@ class OpprettForsendelseService(
                 opprettetAvIdent = bruker?.ident ?: "UKJENT",
                 endretAvIdent = bruker?.ident ?: "UKJENT",
                 opprettetAvNavn = bruker?.navn,
-                mottaker = forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk),
+                mottaker = forespørsel.mottaker!!.tilMottakerDo(mottakerInfo, mottakerSpråk),
                 status = if (forespørsel.dokumenter.isEmpty()) ForsendelseStatus.UNDER_OPPRETTELSE else ForsendelseStatus.UNDER_PRODUKSJON,
                 tema =
                     when (forespørsel.tema) {

@@ -1,9 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.service.validering
 
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.harArkivPrefiks
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
@@ -19,6 +15,10 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harFlereDokumenterMedSammeJournalpostIdOgReferanse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.transport.dokument.Fagomrade
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.harArkivPrefiks
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -64,11 +64,11 @@ object ForespørselValidering {
     ) {
         val feilmeldinger: MutableList<String> = mutableListOf()
         feilmeldinger.validerErSann(
-            this.tittel == null || this.tittel.isNotEmpty(),
+            this.tittel == null || this.tittel!!.isNotEmpty(),
             "Tittel på dokument kan ikke være tom",
         )
         feilmeldinger.validerErSann(
-            this.tittel != null && this.tittel.length < 500,
+            this.tittel != null && this.tittel!!.length < 500,
             "Tittel på dokument kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel?.length} tegn)",
         )
         feilmeldinger.validerErSann(
@@ -82,7 +82,7 @@ object ForespørselValidering {
         )
 
         feilmeldinger.validerErSann(
-            this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
+            this.dokumentDato == null || !this.dokumentDato!!.isAfter(LocalDateTime.now()),
             "Dokumentdato kan ikke bli satt til fram i tid",
         )
         if (feilmeldinger.isNotEmpty()) {
@@ -110,7 +110,7 @@ object ForespørselValidering {
                     "settes hvis dokumentereferanse er satt dokumentreferanse=${this.dokumentreferanse}.",
             )
             feilmeldinger.validerErSann(
-                !this.journalpostId.isNullOrEmpty() && (this.journalpostId.harArkivPrefiks || this.arkivsystem != null),
+                !this.journalpostId.isNullOrEmpty() && (this.journalpostId!!.harArkivPrefiks || this.arkivsystem != null),
                 "JournalpostId må innholde arkiv prefiks eller arkivsystem må være satt",
             )
         } else {
@@ -120,7 +120,7 @@ object ForespørselValidering {
             )
         }
 
-        if (this.dokumentDato != null && this.dokumentDato.toLocalDate().isAfter(LocalDate.now())) {
+        if (this.dokumentDato != null && this.dokumentDato!!.toLocalDate().isAfter(LocalDate.now())) {
             feilmeldinger.add("Dokumentdato kan ikke være senere enn dagens dato")
         }
 

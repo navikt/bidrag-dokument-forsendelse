@@ -8,11 +8,6 @@ import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
@@ -52,6 +47,11 @@ import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.JournalpostStatus
+import no.nav.bidrag.transport.dokument.forsendelse.BehandlingInfoDto
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerIdentTypeTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
