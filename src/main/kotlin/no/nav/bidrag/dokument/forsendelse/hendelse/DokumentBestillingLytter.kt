@@ -229,11 +229,9 @@ class DokumentBestillingLytter(
         val dokumentDetaljer =
             dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
                 ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
-        val erFattetGjennomNyLøsning = behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
+        val erFattetGjennomNyLøsning =
+            (behandlingInfo?.soknadId == null || behandlingInfo?.behandlingId != null) && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
-//        if (dokumentDetaljer.kanBestilles) {
-//            return !(dokumentDetaljer.kreverBehandling && !erOpprettetGjennomNyLøsning)
-//        }
         return dokumentDetaljer.kanBestilles || erFattetGjennomNyLøsning || dokumentDetaljer.kreverBehandling && erOpprettetGjennomNyLøsning
     }
 
