@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
@@ -25,6 +26,7 @@ import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.erStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
@@ -38,6 +40,7 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 class DokumentBestillingLytter(
     val dokumentBestillingKonsumer: BidragDokumentBestillingConsumer,
+    val vedtakConsumer: BidragVedtakConsumer,
     val forsendelseRepository: ForsendelseRepository,
     val dokumentTjeneste: DokumentTjeneste,
     val dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent,
@@ -230,9 +233,22 @@ class DokumentBestillingLytter(
             dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
                 ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
         val erFattetGjennomNyLøsning =
-            (behandlingInfo?.soknadId == null || behandlingInfo?.behandlingId != null) && behandlingInfo?.vedtakId != null
+            behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
-        return dokumentDetaljer.kanBestilles || erFattetGjennomNyLøsning || dokumentDetaljer.kreverBehandling && erOpprettetGjennomNyLøsning
+        val erAldersjusteringFattetGjennomNyLøsning =
+            if (behandlingInfo?.vedtakType == Vedtakstype.ALDERSJUSTERING &&
+                behandlingInfo.vedtakId != null
+            ) {
+                val vedtak = vedtakConsumer.hentVedtak(behandlingInfo.vedtakId)
+                vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
+            } else {
+                false
+            }
+        return dokumentDetaljer.kanBestilles ||
+            erFattetGjennomNyLøsning ||
+            dokumentDetaljer.kreverBehandling &&
+            erOpprettetGjennomNyLøsning ||
+            erAldersjusteringFattetGjennomNyLøsning
     }
 
     private fun erStatiskDokument(dokumentMal: String): Boolean =
