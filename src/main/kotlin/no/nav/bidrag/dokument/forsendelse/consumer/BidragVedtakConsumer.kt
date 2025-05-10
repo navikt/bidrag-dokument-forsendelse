@@ -42,4 +42,17 @@ class BidragVedtakConsumer(
             throw HentVedtakFeiletException("Henting av vedtak $vedtakId feilet", e)
         }
     }
+
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
+    @BrukerCacheable(CacheConfig.VEDTAK_CACHE2)
+    fun hentVedtakBrev(vedtakId: String): VedtakDto? {
+        try {
+            return getForEntity(createUri("/vedtak/$vedtakId"))
+        } catch (e: HttpStatusCodeException) {
+            if (e.statusCode == HttpStatus.NOT_FOUND) {
+                return null
+            }
+            throw HentVedtakFeiletException("Henting av vedtak $vedtakId feilet", e)
+        }
+    }
 }

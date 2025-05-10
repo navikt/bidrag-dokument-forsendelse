@@ -405,6 +405,7 @@ fun opprettVedtakDto(): VedtakDto =
         fastsattILand = "",
         innkrevingUtsattTilDato = LocalDate.now(),
         kildeapplikasjon = "",
+        unikReferanse = "",
     )
 
 fun opprettEngangsbelopDto(
@@ -442,6 +443,7 @@ fun opprettStonadsEndringDto() =
         eksternReferanse = "",
         førsteIndeksreguleringsår = 2044,
         grunnlagReferanseListe = emptyList(),
+        sisteVedtaksid = null,
     )
 
 fun opprettSak(): BidragssakDto =
