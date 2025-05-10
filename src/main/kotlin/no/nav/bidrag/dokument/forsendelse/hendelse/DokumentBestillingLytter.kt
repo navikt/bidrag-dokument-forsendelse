@@ -239,7 +239,7 @@ class DokumentBestillingLytter(
             if (behandlingInfo?.vedtakType == Vedtakstype.ALDERSJUSTERING &&
                 behandlingInfo.vedtakId != null
             ) {
-                val vedtak = vedtakConsumer.hentVedtak(behandlingInfo.vedtakId)
+                val vedtak = vedtakConsumer.hentVedtakBrev(behandlingInfo.vedtakId)
                 vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
             } else {
                 false
