@@ -16,6 +16,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -235,21 +236,25 @@ class DokumentBestillingLytter(
         val erFattetGjennomNyLøsning =
             behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
-        val erAldersjusteringFattetGjennomNyLøsning =
-            if (behandlingInfo?.vedtakType == Vedtakstype.ALDERSJUSTERING &&
-                behandlingInfo.vedtakId != null
-            ) {
-                val vedtak = vedtakConsumer.hentVedtakBrev(behandlingInfo.vedtakId)
-                vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
-            } else {
-                false
-            }
+        val erAldersjusteringFattetGjennomNyLøsning = behandlingInfo.erAldersjusteringFattetGjennomNyLøsning()
         return dokumentDetaljer.kanBestilles ||
             erFattetGjennomNyLøsning ||
             dokumentDetaljer.kreverBehandling &&
             erOpprettetGjennomNyLøsning ||
             erAldersjusteringFattetGjennomNyLøsning
     }
+
+    private fun BehandlingInfo?.erAldersjusteringFattetGjennomNyLøsning(): Boolean =
+        this?.let {
+            if (vedtakType == Vedtakstype.ALDERSJUSTERING &&
+                vedtakId != null
+            ) {
+                val vedtak = vedtakConsumer.hentVedtakBrev(vedtakId)
+                vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
+            } else {
+                false
+            }
+        } ?: false
 
     private fun erStatiskDokument(dokumentMal: String): Boolean =
         dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
@@ -266,6 +271,9 @@ class DokumentBestillingLytter(
     ): DokumentBestillingForespørsel {
         val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
         return DokumentBestillingForespørsel(
+            erBatchBrev =
+                forsendelse.opprettetAvIdent.contains("bidrag-automatisk-jobb") ||
+                    forsendelse.opprettetAvIdent == "Z994977",
             dokumentreferanse = dokument.dokumentreferanse,
             saksnummer = forsendelse.saksnummer,
             tittel = dokument.tittel,
