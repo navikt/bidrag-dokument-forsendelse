@@ -51,6 +51,7 @@ class ForsendelseTittelServiceTest {
                 sakService,
                 vedtakConsumer,
                 behandlingConsumer,
+                true,
             )
         every { sakService.hentSak(any()) } returns opprettSak()
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()

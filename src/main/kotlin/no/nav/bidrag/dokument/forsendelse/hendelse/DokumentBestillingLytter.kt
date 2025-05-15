@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import io.getunleash.Unleash
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
@@ -47,6 +48,7 @@ class DokumentBestillingLytter(
     val dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent,
     val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     val meterRegistry: MeterRegistry,
+    val unleash: Unleash,
 ) {
     @Suppress("ktlint:standard:property-naming")
     private val DOKUMENTMAL_COUNTER_NAME = "forsendelse_dokumentmal_opprettet"
@@ -268,10 +270,10 @@ class DokumentBestillingLytter(
         dokument: Dokument,
     ): DokumentBestillingForespørsel {
         val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
+        val erBatchbrev =
+            forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") || unleash.isEnabled("forsendelse.opprett_batchbrev", false)
         return DokumentBestillingForespørsel(
-            erBatchBrev =
-                forsendelse.opprettetAvIdent.contains("bidrag-automatisk-jobb") ||
-                    forsendelse.opprettetAvIdent == "Z994977",
+            erBatchBrev = erBatchbrev,
             dokumentreferanse = dokument.dokumentreferanse,
             saksnummer = forsendelse.saksnummer,
             tittel = dokument.tittel,
