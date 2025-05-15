@@ -67,6 +67,7 @@ outbound-access-hosts:
    - bidrag-sak-q2.dev-fss-pub.nais.io
    - bidrag-organisasjon.dev-fss-pub.nais.io
    - innsending-api-gcp.intern.dev.nav.no
+   - bidrag-unleash-api.nav.cloud.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
