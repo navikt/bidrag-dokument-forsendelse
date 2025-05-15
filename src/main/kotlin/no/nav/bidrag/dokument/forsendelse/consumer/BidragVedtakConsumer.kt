@@ -20,7 +20,6 @@ import java.net.URI
 class BidragVedtakConsumer(
     @Value("\${BIDRAG_VEDTAK_URL}") val url: URI,
     @Qualifier("azure") private val restTemplate: RestOperations,
-    @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}") val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) : AbstractRestClient(restTemplate, "bidrag-vedtak") {
     private fun createUri(path: String?) =
         UriComponentsBuilder
@@ -32,20 +31,6 @@ class BidragVedtakConsumer(
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
     @BrukerCacheable(CacheConfig.VEDTAK_CACHE)
     fun hentVedtak(vedtakId: String): VedtakDto? {
-        if (!hentDetaljerFraVedtakBehandlingEnabled) return null
-        try {
-            return getForEntity(createUri("/vedtak/$vedtakId"))
-        } catch (e: HttpStatusCodeException) {
-            if (e.statusCode == HttpStatus.NOT_FOUND) {
-                return null
-            }
-            throw HentVedtakFeiletException("Henting av vedtak $vedtakId feilet", e)
-        }
-    }
-
-    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
-    @BrukerCacheable(CacheConfig.VEDTAK_CACHE2)
-    fun hentVedtakBrev(vedtakId: String): VedtakDto? {
         try {
             return getForEntity(createUri("/vedtak/$vedtakId"))
         } catch (e: HttpStatusCodeException) {

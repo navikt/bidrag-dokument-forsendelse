@@ -246,10 +246,8 @@ class DokumentBestillingLytter(
 
     private fun BehandlingInfo?.erAldersjusteringFattetGjennomNyLøsning(): Boolean =
         this?.let {
-            if (vedtakType == Vedtakstype.ALDERSJUSTERING &&
-                vedtakId != null
-            ) {
-                val vedtak = vedtakConsumer.hentVedtakBrev(vedtakId)
+            if (vedtakType == Vedtakstype.ALDERSJUSTERING && vedtakId != null) {
+                val vedtak = vedtakConsumer.hentVedtak(vedtakId)
                 vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
             } else {
                 false

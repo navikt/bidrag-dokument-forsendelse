@@ -61,7 +61,7 @@ class DokumentValgService(
             false
         } else if (request.erKlage()) {
             true
-        } else if (!request.vedtakId.isNullOrEmpty()) {
+        } else if (!request.vedtakId.isNullOrEmpty() && hentDetaljerFraVedtakBehandlingEnabled) {
             bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId)?.let { it.type == Vedtakstype.KLAGE }
                 ?: false
         } else if (!request.behandlingId.isNullOrEmpty()) {
