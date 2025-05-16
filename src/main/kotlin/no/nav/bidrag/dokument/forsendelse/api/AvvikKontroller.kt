@@ -11,7 +11,6 @@ import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.AvvikService
 import no.nav.bidrag.transport.dokument.AvvikType
 import no.nav.bidrag.transport.dokument.Avvikshendelse
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -33,10 +32,7 @@ class AvvikKontroller(
         @RequestHeader(EnhetFilter.X_ENHET_HEADER, required = false) enhet: String?,
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @RequestBody avvikshendelse: Avvikshendelse,
-    ): ResponseEntity<Unit> {
-        avvikService.utførAvvik(forsendelseIdMedPrefix.numerisk, avvikshendelse, enhet)
-        return ResponseEntity.ok().build()
-    }
+    ) = avvikService.utførAvvik(forsendelseIdMedPrefix.numerisk, avvikshendelse, enhet)
 
     @GetMapping("/journal/{forsendelseIdMedPrefix}/avvik")
     @Operation(description = "Hent gyldige avvikstyper for forsendelse")
