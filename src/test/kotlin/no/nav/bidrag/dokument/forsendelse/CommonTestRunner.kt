@@ -2,6 +2,8 @@ package no.nav.bidrag.dokument.forsendelse
 
 import StubUtils
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.ninjasquad.springmockk.MockkBean
+import io.getunleash.Unleash
 import no.nav.bidrag.commons.service.AppContext
 import no.nav.bidrag.dokument.forsendelse.utils.TestDataManager
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
@@ -42,6 +44,9 @@ abstract class CommonTestRunner {
 
     @Value("classpath:__files/kodeverk/kodeverk_postnummer.json")
     private lateinit var kodeverkPostnummer: Resource
+
+    @MockkBean
+    lateinit var unleash: Unleash
 
     @BeforeEach
     fun initMocks() {

@@ -44,7 +44,7 @@ class DokumentValgServiceTest {
 
     @BeforeEach
     fun init() {
-        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, true)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, true)
         dokumentValgService =
             DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!, true)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()

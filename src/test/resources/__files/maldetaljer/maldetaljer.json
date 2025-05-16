@@ -909,8 +909,7 @@
     "tilhorerEnheter": []
   },
   "BI01B05": {
-    "tittel": "VEDTAK AUTOMATISK JUSTERING BARNEBIDRAG",
-    "beskrivelse": "VEDTAK AUTOMATISK JUSTERING BARNEBIDRAG",
+    "tittel": "Vedtak automatisk justering av barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
     "statiskInnhold": false,

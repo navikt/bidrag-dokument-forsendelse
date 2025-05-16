@@ -7,6 +7,7 @@ import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -23,6 +24,7 @@ import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -40,6 +42,9 @@ class ForsendelseTittelServiceTest {
     lateinit var behandlingConsumer: BidragBehandlingConsumer
 
     @MockkBean
+    lateinit var dokumentBestillingConsumer: BidragDokumentBestillingConsumer
+
+    @MockkBean
     lateinit var sakService: SakService
 
     lateinit var forsendelseTittelService: ForsendelseTittelService
@@ -51,11 +56,41 @@ class ForsendelseTittelServiceTest {
                 sakService,
                 vedtakConsumer,
                 behandlingConsumer,
+                dokumentBestillingConsumer,
                 true,
             )
+        every { dokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { sakService.hentSak(any()) } returns opprettSak()
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
+    }
+
+    @Test
+    fun `Skal opprette tittel dokument for batchbrev aldersjustering`() {
+        val dokument =
+            no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel(
+                dokumentmalId = "BI01B05",
+                bestillDokument = true,
+            )
+        val forespørsel =
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BM,
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = Stønadstype.BIDRAG,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
+                dokumenter = listOf(dokument),
+            )
+
+        val tittel =
+            forsendelseTittelService.opprettDokumentTittel(forespørsel, dokument)
+
+        tittel shouldBe "Vedtak automatisk justering av barnebidrag bidragsmottaker"
     }
 
     @Test

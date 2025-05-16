@@ -1,7 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse
 
-import com.ninjasquad.springmockk.MockkBean
-import io.getunleash.Unleash
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -21,9 +19,6 @@ private val log = KotlinLogging.logger {}
 @Testcontainers
 @ActiveProfiles(value = ["test", "testcontainer"])
 class TestContainerRunner : CommonTestRunner() {
-    @MockkBean
-    lateinit var unleash: Unleash
-
     companion object {
         @Container
         protected val postgreSqlDb =

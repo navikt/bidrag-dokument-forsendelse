@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
+import no.nav.bidrag.dokument.forsendelse.model.ugyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
@@ -79,7 +80,17 @@ class OpprettForsendelseService(
 //            return dokumenter.map { it.copy(tittel = nyTittel) }
 //        }
 
-        return dokumenter
+        return dokumenter.mapIndexed { index, it ->
+            if (it.tittel.isEmpty()) {
+                it.copy(
+                    tittel =
+                        forsendelseTittelService.opprettDokumentTittel(forespørsel, it)
+                            ?: ugyldigForespørsel("Tittel på dokument $index kan ikke være tom".replace("  ", "")),
+                )
+            } else {
+                it
+            }
+        }
     }
 
     private fun hentForsendelseType(forespørsel: OpprettForsendelseForespørsel): ForsendelseType {

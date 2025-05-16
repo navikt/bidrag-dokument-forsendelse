@@ -1,7 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -18,9 +20,25 @@ class ForsendelseTittelService(
     private val sakService: SakService,
     private val vedtakConsumer: BidragVedtakConsumer,
     private val behandlingConsumer: BidragBehandlingConsumer,
+    private val dokumentBestillingConsumer: BidragDokumentBestillingConsumer,
     @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}")
     private val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) {
+    fun opprettDokumentTittel(
+        forsendelse: OpprettForsendelseForespørsel,
+        dokument: OpprettDokumentForespørsel,
+    ): String? {
+        val sak = sakService.hentSak(forsendelse.saksnummer)
+        val detaljer = dokumentBestillingConsumer.dokumentmalDetaljer()
+        val dokumentMalId = dokument.dokumentmalId
+        if (dokumentMalId.isNullOrEmpty()) return null
+        val dokumentMal = detaljer[dokumentMalId] ?: return null
+        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent } ?: return null
+        val rolleNavn = rolleGjelder.type.name.lowercase()
+
+        return "${dokumentMal.tittel} $rolleNavn"
+    }
+
     fun opprettForsendelseTittel(forsendelse: Forsendelse): String {
         val sak = sakService.hentSak(forsendelse.saksnummer)
         val vedtak =
