@@ -47,8 +47,12 @@ class AvvikService(
         avvikshendelse: Avvikshendelse,
         enhet: String?,
     ) {
-        forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
+        val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         val avvikType = AvvikType.valueOf(avvikshendelse.avvikType)
+        if (avvikType == AvvikType.SLETT_JOURNALPOST && forsendelse.status == ForsendelseStatus.SLETTET) {
+            log.info { "Forsendelse $forsendelseId er allerede slettet. Ignorer forespørsel" }
+            return
+        }
         if (!isValidAvvikForForsendelse(
                 forsendelseId,
                 avvikType,
