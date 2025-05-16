@@ -90,7 +90,7 @@ class ForsendelseTittelServiceTest {
         val tittel =
             forsendelseTittelService.opprettDokumentTittel(forespørsel, dokument)
 
-        tittel shouldBe "Vedtak automatisk justering av barnebidrag bidragsmottaker"
+        tittel shouldBe "Vedtak automatisk justering av barnebidrag til bidragsmottaker"
     }
 
     @Test

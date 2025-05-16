@@ -36,7 +36,7 @@ class ForsendelseTittelService(
         val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent } ?: return null
         val rolleNavn = rolleGjelder.type.name.lowercase()
 
-        return "${dokumentMal.tittel} $rolleNavn"
+        return "${dokumentMal.tittel} til $rolleNavn"
     }
 
     fun opprettForsendelseTittel(forsendelse: Forsendelse): String {
