@@ -58,7 +58,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01B01"]!!.beskrivelse shouldBe "Vedtak barnebidrag"
             dokumentValgMap["BI01B01"]!!.type shouldBe DokumentMalType.UTGÅENDE
 
-            dokumentValgMap["BI01B05"]!!.beskrivelse shouldBe "VEDTAK AUTOMATISK JUSTERING BARNEBIDRAG"
+            dokumentValgMap["BI01B05"]!!.beskrivelse shouldBe "Vedtak automatisk justering av barnebidrag"
             dokumentValgMap["BI01B20"]!!.beskrivelse shouldBe "Vedtak utland skjønn fastsettelse"
             dokumentValgMap["BI01B21"]!!.beskrivelse shouldBe "Vedtak utland skjønn endring"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
