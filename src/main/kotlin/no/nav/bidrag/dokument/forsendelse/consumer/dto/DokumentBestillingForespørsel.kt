@@ -4,6 +4,7 @@ import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 
 data class DokumentBestillingForespørsel(
+    val erBatchBrev: Boolean = false,
     val mottaker: MottakerTo? = null,
     val saksbehandler: Saksbehandler? = null,
     val gjelderId: String? = null,

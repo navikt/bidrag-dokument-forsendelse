@@ -95,10 +95,10 @@ object ForespørselValidering {
         throwWhenInvalid: Boolean = true,
     ): List<String> {
         val feilmeldinger: MutableList<String> = mutableListOf()
-        feilmeldinger.validerIkkeNullEllerTom(
-            this.tittel,
-            "Tittel på dokument ${index ?: ""} kan ikke være tom".replace("  ", ""),
-        )
+//        feilmeldinger.validerIkkeNullEllerTom(
+//            this.tittel,
+//            "Tittel på dokument ${index ?: ""} kan ikke være tom".replace("  ", ""),
+//        )
         feilmeldinger.validerErSann(
             this.tittel.length < 500,
             "Tittel på dokument ${index ?: ""} kan ikke være lengre enn 500 tegn (tittel har lengde på ${this.tittel.length} tegn)",

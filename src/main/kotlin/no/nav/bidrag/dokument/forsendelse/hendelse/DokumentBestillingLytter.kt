@@ -1,11 +1,13 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
+import io.getunleash.Unleash
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
@@ -15,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
@@ -25,6 +28,7 @@ import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.erStatiskDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
@@ -38,11 +42,13 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 class DokumentBestillingLytter(
     val dokumentBestillingKonsumer: BidragDokumentBestillingConsumer,
+    val vedtakConsumer: BidragVedtakConsumer,
     val forsendelseRepository: ForsendelseRepository,
     val dokumentTjeneste: DokumentTjeneste,
     val dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent,
     val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     val meterRegistry: MeterRegistry,
+    val unleash: Unleash,
 ) {
     @Suppress("ktlint:standard:property-naming")
     private val DOKUMENTMAL_COUNTER_NAME = "forsendelse_dokumentmal_opprettet"
@@ -229,13 +235,26 @@ class DokumentBestillingLytter(
         val dokumentDetaljer =
             dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
                 ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
-        val erFattetGjennomNyLøsning = behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
+        val erFattetGjennomNyLøsning =
+            behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
-//        if (dokumentDetaljer.kanBestilles) {
-//            return !(dokumentDetaljer.kreverBehandling && !erOpprettetGjennomNyLøsning)
-//        }
-        return dokumentDetaljer.kanBestilles || erFattetGjennomNyLøsning || dokumentDetaljer.kreverBehandling && erOpprettetGjennomNyLøsning
+        val erAldersjusteringFattetGjennomNyLøsning = behandlingInfo.erAldersjusteringFattetGjennomNyLøsning()
+        return dokumentDetaljer.kanBestilles ||
+            erFattetGjennomNyLøsning ||
+            dokumentDetaljer.kreverBehandling &&
+            erOpprettetGjennomNyLøsning ||
+            erAldersjusteringFattetGjennomNyLøsning
     }
+
+    private fun BehandlingInfo?.erAldersjusteringFattetGjennomNyLøsning(): Boolean =
+        this?.let {
+            if (vedtakType == Vedtakstype.ALDERSJUSTERING && vedtakId != null) {
+                val vedtak = vedtakConsumer.hentVedtak(vedtakId)
+                vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
+            } else {
+                false
+            }
+        } ?: false
 
     private fun erStatiskDokument(dokumentMal: String): Boolean =
         dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false
@@ -251,7 +270,10 @@ class DokumentBestillingLytter(
         dokument: Dokument,
     ): DokumentBestillingForespørsel {
         val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
+        val erBatchbrev =
+            forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") || unleash.isEnabled("forsendelse.opprett_batchbrev", false)
         return DokumentBestillingForespørsel(
+            erBatchBrev = erBatchbrev,
             dokumentreferanse = dokument.dokumentreferanse,
             saksnummer = forsendelse.saksnummer,
             tittel = dokument.tittel,

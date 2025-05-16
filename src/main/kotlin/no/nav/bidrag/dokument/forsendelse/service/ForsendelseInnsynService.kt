@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
@@ -39,7 +40,7 @@ class ForsendelseInnsynService(
         val journalpostDtoer =
             forsendelseTjeneste
                 .hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
-                .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
+                .filter { it.tema == ForsendelseTema.BID || tilgangskontrollService.harTilgangTilTema(it.tema.name) }
                 .map {
                     ForsendelseIkkeDistribuertResponsTo(
                         enhet = it.enhet,
