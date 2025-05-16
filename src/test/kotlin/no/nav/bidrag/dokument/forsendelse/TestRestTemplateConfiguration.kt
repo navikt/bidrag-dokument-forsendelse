@@ -1,6 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse
 
 import com.nimbusds.jose.JOSEObjectType
+import io.getunleash.FakeUnleash
+import io.getunleash.Unleash
 import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
@@ -22,6 +24,13 @@ class TestRestTemplateConfiguration {
 
     @Value("\${AZURE_APP_CLIENT_ID}")
     private lateinit var clientId: String
+
+    @Bean
+    fun unleash(): Unleash {
+        val fu = FakeUnleash()
+        fu.disable("forsendelse.opprett_batchbrev")
+        return fu
+    }
 
     @Bean
     fun httpHeaderTestRestTemplate(): TestRestTemplate =
