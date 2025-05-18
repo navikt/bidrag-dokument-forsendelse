@@ -15,6 +15,7 @@ import java.time.LocalDateTime
 @Schema(description = "Metadata for opprettelse av forsendelse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class OpprettForsendelseForespørsel(
+    val unikReferanse: String? = null,
     @Schema(description = "Ident til brukeren som journalposten gjelder") val gjelderIdent: String,
     val mottaker: MottakerTo? = null,
     @Schema(
