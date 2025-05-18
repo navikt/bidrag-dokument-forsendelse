@@ -3,11 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilOpprettDokumentForespørsel
@@ -35,6 +30,11 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekk
 import no.nav.bidrag.dokument.forsendelse.utvidelser.skalDokumentSlettes
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
 import no.nav.bidrag.dokument.forsendelse.utvidelser.validerGyldigEndring
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseResponse
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -72,7 +72,7 @@ class OppdaterForsendelseService(
                                     mottakerIdent,
                                 )
                             } ?: forsendelse.språk
-                        forespørsel.mottaker.tilMottakerDo(mottakerInfo, mottakerSpråk)
+                        forespørsel.mottaker!!.tilMottakerDo(mottakerInfo, mottakerSpråk)
                     }
 
                 forsendelseTjeneste.lagre(

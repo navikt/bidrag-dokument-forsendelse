@@ -1,10 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.utvidelser
 
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
@@ -14,6 +9,11 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BarnIB
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
 import java.time.LocalDateTime
 
 val List<OppdaterDokumentForespørsel>.dokumenterIkkeSlettet get() = this.filter { it.fjernTilknytning == false }
@@ -67,7 +67,7 @@ fun OppdaterForsendelseForespørsel.validerGyldigEndring(eksisterendeForsendelse
     }
 
     feilmeldinger.validerErSann(
-        this.dokumentDato == null || !this.dokumentDato.isAfter(LocalDateTime.now()),
+        this.dokumentDato == null || !this.dokumentDato!!.isAfter(LocalDateTime.now()),
         "Dokumentdato kan ikke bli satt til fram i tid",
     )
 

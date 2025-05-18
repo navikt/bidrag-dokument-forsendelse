@@ -3,7 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.api
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
-import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
@@ -17,8 +16,8 @@ import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
@@ -220,7 +219,6 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
 
     @Test
     fun `Skal hente dokumentvalg for parametere`() {
-        val vedtakId = "123213213"
         stubUtils.stubVedtak(
             opprettVedtakDto().copy(
                 type = Vedtakstype.FASTSETTELSE,
