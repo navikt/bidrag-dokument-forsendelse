@@ -11,12 +11,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.Ordering
 import io.mockk.verify
 import jakarta.transaction.Transactional
-import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.FerdigstillDokumentRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -36,6 +30,12 @@ import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
+import no.nav.bidrag.transport.dokument.forsendelse.BehandlingInfoDto
+import no.nav.bidrag.transport.dokument.forsendelse.FerdigstillDokumentRequest
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseIkkeDistribuertResponsTo
+import no.nav.bidrag.transport.dokument.forsendelse.JournalTema
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.web.client.exchange

@@ -70,6 +70,7 @@ data class Forsendelse(
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
     val journalpostIdFagarkiv: String? = null,
+    val unikReferanse: String? = null,
     @OneToOne(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL],

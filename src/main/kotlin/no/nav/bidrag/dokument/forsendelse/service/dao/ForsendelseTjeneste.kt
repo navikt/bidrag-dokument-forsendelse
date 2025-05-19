@@ -7,6 +7,8 @@ import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.TilgangskontrollService
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 private val LOGGER = KotlinLogging.logger {}
@@ -17,6 +19,10 @@ class ForsendelseTjeneste(
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val tilgangskontrollService: TilgangskontrollService,
 ) {
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    fun hentForsendelseMedUnikReferanse(unikReferanse: String): Forsendelse? =
+        forsendelseRepository.hentForsendelseMedUnikReferanse(unikReferanse)
+
     fun hentAlleMedSaksnummer(saksnummer: String): List<Forsendelse> {
         tilgangskontrollService.sjekkTilgangSak(saksnummer)
         return forsendelseRepository.hentAlleMedSaksnummer(saksnummer)

@@ -4,13 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentRespons
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterForsendelseResponse
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import no.nav.bidrag.transport.dokument.AvvikType
@@ -18,6 +11,13 @@ import no.nav.bidrag.transport.dokument.Avvikshendelse
 import no.nav.bidrag.transport.dokument.DokumentMetadata
 import no.nav.bidrag.transport.dokument.JournalpostDto
 import no.nav.bidrag.transport.dokument.JournalpostResponse
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseResponsTo
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseResponse
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseRespons
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -128,6 +128,14 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     ): ResponseEntity<ForsendelseResponsTo> =
         httpHeaderTestRestTemplate.getForEntity<ForsendelseResponsTo>(
             "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
+        )
+
+    protected fun utførHentJournalpostMedFeil(
+        forsendelseId: String,
+        saksnummer: String? = null,
+    ): ResponseEntity<Any> =
+        httpHeaderTestRestTemplate.getForEntity<Any>(
+            "${rootUri()}/journal/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
         )
 
     protected fun utførHentJournalpost(

@@ -45,6 +45,21 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
 
     protected fun utførHentKanDistribuere(forsendelseId: String): ResponseEntity<String> = httpHeaderTestRestTemplate.getForEntity<String>("${rootUri()}/journal/distribuer/$forsendelseId/enabled")
 
+    protected fun utførDistribuerForsendelseMedFeil(
+        forsendelseId: String,
+        forespørsel: DistribuerJournalpostRequest? = null,
+        batchId: String? = null,
+        ingenDistribusjon: Boolean? = false,
+    ): ResponseEntity<Any> {
+        val url = UriComponentsBuilder.fromUriString("${rootUri()}/journal/distribuer/$forsendelseId")
+        batchId?.let { url.queryParam("batchId", it) }
+        ingenDistribusjon?.let { url.queryParam("ingenDistribusjon", it) }
+        return httpHeaderTestRestTemplate.postForEntity<Any>(
+            url.toUriString(),
+            forespørsel?.let { HttpEntity(it) },
+        )
+    }
+
     protected fun utførDistribuerForsendelse(
         forsendelseId: String,
         forespørsel: DistribuerJournalpostRequest? = null,
@@ -137,7 +152,7 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
                 ),
             )
 
-        val response = utførDistribuerForsendelse(forsendelse.forsendelseIdMedPrefix)
+        val response = utførDistribuerForsendelseMedFeil(forsendelse.forsendelseIdMedPrefix)
 
         response.statusCode shouldBe HttpStatus.BAD_REQUEST
         response.headers["Warning"]!![0] shouldContain "Alle dokumenter er ikke ferdigstilt"
