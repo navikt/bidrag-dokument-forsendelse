@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 @Suppress("ktlint:standard:max-line-length")
 interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
-    @Query("SELECT f FROM forsendelse f WHERE f.unikReferanse = :unikReferanse")
+    @Query("SELECT f FROM forsendelse f WHERE f.unikReferanse = :unikReferanse and status not in ('AVBRUTT', 'SLETTET')")
     fun hentForsendelseMedUnikReferanse(unikReferanse: String): Forsendelse?
 
     @Query("select f from forsendelse f where f.saksnummer = :saksnummer")
