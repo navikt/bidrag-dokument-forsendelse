@@ -130,6 +130,14 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
             "${rootUri()}/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
         )
 
+    protected fun utførHentJournalpostMedFeil(
+        forsendelseId: String,
+        saksnummer: String? = null,
+    ): ResponseEntity<Any> =
+        httpHeaderTestRestTemplate.getForEntity<Any>(
+            "${rootUri()}/journal/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
+        )
+
     protected fun utførHentJournalpost(
         forsendelseId: String,
         saksnummer: String? = null,

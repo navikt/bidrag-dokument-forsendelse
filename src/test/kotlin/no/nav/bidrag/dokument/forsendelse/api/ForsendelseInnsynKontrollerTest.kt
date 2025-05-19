@@ -480,7 +480,7 @@ class ForsendelseInnsynKontrollerTest : KontrollerTestRunner() {
             testDataManager.opprettOgLagreForsendelse {
                 +nyttDokument(dokumentStatus = DokumentStatus.UNDER_REDIGERING)
             }
-        val response = utførHentJournalpost(forsendelse.forsendelseId.toString(), "13213123")
+        val response = utførHentJournalpostMedFeil(forsendelse.forsendelseId.toString(), "13213123")
 
         response.statusCode shouldBe HttpStatus.NOT_FOUND
     }
