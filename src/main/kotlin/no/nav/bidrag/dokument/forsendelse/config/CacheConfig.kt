@@ -30,6 +30,7 @@ class CacheConfig {
         const val TILGANG_SAK_CACHE = "TILGANG_SAK_CACHE"
         const val VEDTAK_CACHE = "VEDTAK_CACHE"
         const val BEHANDLING_CACHE = "BEHANDLING_CACHE"
+        const val SAMHANDLER_CACHE = "SAMHANDLER_CACHE"
         const val TILGANG_PERSON_CACHE = "TILGANG_PERSON_CACHE"
         const val TILGANG_TEMA_CACHE = "TILGANG_TEMA_CACHE"
     }
@@ -62,6 +63,7 @@ class CacheConfig {
         )
         caffeineCacheManager.registerCustomCache(DOKUMENTMALER_CACHE, dokumentMalerCache.build())
         caffeineCacheManager.registerCustomCache(DOKUMENTMALDETALJER_CACHE, dokumentMalerCache.build())
+        caffeineCacheManager.registerCustomCache(SAMHANDLER_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_TEMA_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())

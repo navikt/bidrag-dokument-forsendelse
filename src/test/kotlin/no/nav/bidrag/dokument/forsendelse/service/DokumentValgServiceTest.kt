@@ -10,6 +10,7 @@ import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
@@ -32,6 +33,9 @@ class DokumentValgServiceTest {
     lateinit var bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer
 
     @MockkBean
+    lateinit var samhandlerConsumer: BidragSamhandlerConsumer
+
+    @MockkBean
     lateinit var bidragVedtakConsumer: BidragVedtakConsumer
 
     @MockkBean
@@ -44,7 +48,7 @@ class DokumentValgServiceTest {
 
     @BeforeEach
     fun init() {
-        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, true)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, true)
         dokumentValgService =
             DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!, true)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()

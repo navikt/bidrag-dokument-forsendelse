@@ -4,6 +4,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -12,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelseBehandlingType
+import no.nav.bidrag.domene.enums.rolle.Rolletype
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -21,6 +23,7 @@ class ForsendelseTittelService(
     private val vedtakConsumer: BidragVedtakConsumer,
     private val behandlingConsumer: BidragBehandlingConsumer,
     private val dokumentBestillingConsumer: BidragDokumentBestillingConsumer,
+    private val samhandlerConsumer: BidragSamhandlerConsumer,
     @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}")
     private val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) {
@@ -33,8 +36,18 @@ class ForsendelseTittelService(
         val dokumentMalId = dokument.dokumentmalId
         if (dokumentMalId.isNullOrEmpty()) return null
         val dokumentMal = detaljer[dokumentMalId] ?: return null
-        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent } ?: return null
-        val rolleNavn = rolleGjelder.type.name.lowercase()
+        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.mottaker?.ident } ?: return null
+        val rolleNavn =
+            when {
+                rolleGjelder.type == Rolletype.REELMOTTAKER && rolleGjelder.mottagerErVerge -> "verge"
+                rolleGjelder.type == Rolletype.REELMOTTAKER -> {
+                    samhandlerConsumer
+                        .hentSamhandler(rolleGjelder.fødselsnummer!!.verdi)
+                        ?.offentligIdType
+                        ?.lowercase() ?: ""
+                }
+                else -> rolleGjelder.type.name.lowercase()
+            }
 
         return "${dokumentMal.tittel} til $rolleNavn"
     }

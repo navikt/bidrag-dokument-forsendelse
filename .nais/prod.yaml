@@ -36,6 +36,9 @@ env:
   INNSENDING_API_URL: https://innsending-api-gcp.intern.nav.no
   INNSENDING_API_SCOPE: prod-gcp.team-soknad.innsending-api
 
+  BIDRAG_SAMHANDLER_URL: http://bidrag-samhandler
+  BIDRAG_SAMHANDLER_SCOPE: prod-gcp.bidrag.bidrag-samhandler
+
   LAGRE_DIST_INFO_PAGE_SIZE: 500
   LAGRE_DIST_INFO_CRON: "0 0 */3 * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 0 */12 * * ?"
@@ -59,6 +62,7 @@ outbound-access-apps:
    - bidrag-vedtak
    - bidrag-behandling
    - bidrag-kodeverk
+   - bidrag-samhandler
 outbound-access-hosts:
    - bidrag-dokument.prod-fss-pub.nais.io
    - bidrag-person.prod-fss-pub.nais.io
