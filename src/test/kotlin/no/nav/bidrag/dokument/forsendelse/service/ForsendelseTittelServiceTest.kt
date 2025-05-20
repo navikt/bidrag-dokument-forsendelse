@@ -29,8 +29,10 @@ import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.domene.ident.Personident
+import no.nav.bidrag.domene.ident.ReellMottaker
 import no.nav.bidrag.domene.ident.SamhandlerId
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.sak.ReellMottakerDto
 import no.nav.bidrag.transport.sak.RolleDto
 import no.nav.bidrag.transport.samhandler.Områdekode
 import no.nav.bidrag.transport.samhandler.SamhandlerDto
@@ -93,8 +95,15 @@ class ForsendelseTittelServiceTest {
                         listOf(
                             RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
                             RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
-                            RolleDto(Personident(GJELDER_IDENT_BA), Rolletype.BARN),
-                            RolleDto(Personident("80000000"), Rolletype.REELMOTTAKER, mottagerErVerge = true),
+                            RolleDto(
+                                Personident(GJELDER_IDENT_BA),
+                                Rolletype.BARN,
+                                reellMottaker =
+                                    ReellMottakerDto(
+                                        ReellMottaker("80000000"),
+                                        verge = true,
+                                    ),
+                            ),
                         ),
                 )
 
@@ -144,8 +153,15 @@ class ForsendelseTittelServiceTest {
                         listOf(
                             RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
                             RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
-                            RolleDto(Personident(GJELDER_IDENT_BA), Rolletype.BARN),
-                            RolleDto(Personident("80000000"), Rolletype.REELMOTTAKER),
+                            RolleDto(
+                                Personident(GJELDER_IDENT_BA),
+                                Rolletype.BARN,
+                                reellMottaker =
+                                    ReellMottakerDto(
+                                        ReellMottaker("80000000"),
+                                        verge = false,
+                                    ),
+                            ),
                         ),
                 )
 
