@@ -43,7 +43,8 @@ class ForsendelseTittelService(
                 rolleGjelder.type == Rolletype.REELMOTTAKER -> {
                     samhandlerConsumer
                         .hentSamhandler(rolleGjelder.fødselsnummer!!.verdi)
-                        ?.offentligIdType
+                        ?.områdekode
+                        ?.name
                         ?.lowercase() ?: ""
                 }
                 else -> rolleGjelder.type.name.lowercase()
