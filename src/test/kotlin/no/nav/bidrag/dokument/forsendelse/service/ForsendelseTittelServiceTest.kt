@@ -135,7 +135,7 @@ class ForsendelseTittelServiceTest {
             SamhandlerDto(
                 samhandlerId = SamhandlerId(""),
                 navn = "",
-                offentligIdType = Områdekode.BARNEVERNSINSTITUSJON.name,
+                områdekode = Områdekode.BARNEVERNSINSTITUSJON,
             )
         every { sakService.hentSak(any()) } returns
             opprettSak()
