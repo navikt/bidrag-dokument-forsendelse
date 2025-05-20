@@ -13,7 +13,6 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelseBehandlingType
-import no.nav.bidrag.domene.enums.rolle.Rolletype
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -36,18 +35,20 @@ class ForsendelseTittelService(
         val dokumentMalId = dokument.dokumentmalId
         if (dokumentMalId.isNullOrEmpty()) return null
         val dokumentMal = detaljer[dokumentMalId] ?: return null
-        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.mottaker?.ident } ?: return null
+        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.mottaker?.ident }
+        val gjelderRm = sak?.roller?.find { it.reellMottaker?.ident?.verdi == forsendelse.mottaker?.ident }?.reellMottaker
         val rolleNavn =
             when {
-                rolleGjelder.type == Rolletype.REELMOTTAKER && rolleGjelder.mottagerErVerge -> "verge"
-                rolleGjelder.type == Rolletype.REELMOTTAKER -> {
+                gjelderRm != null && gjelderRm.verge -> "verge"
+                gjelderRm != null -> {
                     samhandlerConsumer
-                        .hentSamhandler(rolleGjelder.fødselsnummer!!.verdi)
+                        .hentSamhandler(gjelderRm.ident.verdi)
                         ?.områdekode
                         ?.name
                         ?.lowercase() ?: ""
                 }
-                else -> rolleGjelder.type.name.lowercase()
+                rolleGjelder != null -> rolleGjelder.type.name.lowercase()
+                else -> return null
             }
 
         return "${dokumentMal.tittel} til $rolleNavn"
