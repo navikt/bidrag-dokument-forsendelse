@@ -4,6 +4,7 @@ import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -21,6 +22,7 @@ class ForsendelseTittelService(
     private val vedtakConsumer: BidragVedtakConsumer,
     private val behandlingConsumer: BidragBehandlingConsumer,
     private val dokumentBestillingConsumer: BidragDokumentBestillingConsumer,
+    private val samhandlerConsumer: BidragSamhandlerConsumer,
     @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}")
     private val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) {
@@ -33,8 +35,21 @@ class ForsendelseTittelService(
         val dokumentMalId = dokument.dokumentmalId
         if (dokumentMalId.isNullOrEmpty()) return null
         val dokumentMal = detaljer[dokumentMalId] ?: return null
-        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent } ?: return null
-        val rolleNavn = rolleGjelder.type.name.lowercase()
+        val rolleGjelder = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.mottaker?.ident }
+        val gjelderRm = sak?.roller?.find { it.reellMottaker?.ident?.verdi == forsendelse.mottaker?.ident }?.reellMottaker
+        val rolleNavn =
+            when {
+                gjelderRm != null && gjelderRm.verge -> "verge"
+                gjelderRm != null -> {
+                    samhandlerConsumer
+                        .hentSamhandler(gjelderRm.ident.verdi)
+                        ?.områdekode
+                        ?.name
+                        ?.lowercase() ?: ""
+                }
+                rolleGjelder != null -> rolleGjelder.type.name.lowercase()
+                else -> return null
+            }
 
         return "${dokumentMal.tittel} til $rolleNavn"
     }

@@ -5,9 +5,12 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
+import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
@@ -20,11 +23,19 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
+import no.nav.bidrag.domene.enums.rolle.Rolletype
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.domene.ident.Personident
+import no.nav.bidrag.domene.ident.ReellMottaker
+import no.nav.bidrag.domene.ident.SamhandlerId
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.sak.ReellMottakerDto
+import no.nav.bidrag.transport.sak.RolleDto
+import no.nav.bidrag.transport.samhandler.Områdekode
+import no.nav.bidrag.transport.samhandler.SamhandlerDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -45,6 +56,9 @@ class ForsendelseTittelServiceTest {
     lateinit var dokumentBestillingConsumer: BidragDokumentBestillingConsumer
 
     @MockkBean
+    lateinit var samhandlerConsumer: BidragSamhandlerConsumer
+
+    @MockkBean
     lateinit var sakService: SakService
 
     lateinit var forsendelseTittelService: ForsendelseTittelService
@@ -57,12 +71,124 @@ class ForsendelseTittelServiceTest {
                 vedtakConsumer,
                 behandlingConsumer,
                 dokumentBestillingConsumer,
+                samhandlerConsumer,
                 true,
             )
         every { dokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
+
         every { sakService.hentSak(any()) } returns opprettSak()
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { behandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
+    }
+
+    @Test
+    fun `Skal opprette tittel dokument for batchbrev aldersjustering for verge`() {
+        val dokument =
+            no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel(
+                dokumentmalId = "BI01B05",
+                bestillDokument = true,
+            )
+        every { sakService.hentSak(any()) } returns
+            opprettSak()
+                .copy(
+                    roller =
+                        listOf(
+                            RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
+                            RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
+                            RolleDto(
+                                Personident(GJELDER_IDENT_BA),
+                                Rolletype.BARN,
+                                reellMottaker =
+                                    ReellMottakerDto(
+                                        ReellMottaker("80000000"),
+                                        verge = true,
+                                    ),
+                            ),
+                        ),
+                )
+
+        val forespørsel =
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BM,
+                mottaker =
+                    MottakerTo(
+                        identType = MottakerIdentTypeTo.SAMHANDLER,
+                        ident = "80000000",
+                    ),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = Stønadstype.BIDRAG,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
+                dokumenter = listOf(dokument),
+            )
+
+        val tittel =
+            forsendelseTittelService.opprettDokumentTittel(forespørsel, dokument)
+
+        tittel shouldBe "Vedtak automatisk justering av barnebidrag til verge"
+    }
+
+    @Test
+    fun `Skal opprette tittel dokument for batchbrev aldersjustering for samhandler`() {
+        val dokument =
+            no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel(
+                dokumentmalId = "BI01B05",
+                bestillDokument = true,
+            )
+        every { samhandlerConsumer.hentSamhandler(any()) } returns
+            SamhandlerDto(
+                samhandlerId = SamhandlerId(""),
+                navn = "",
+                områdekode = Områdekode.BARNEVERNSINSTITUSJON,
+            )
+        every { sakService.hentSak(any()) } returns
+            opprettSak()
+                .copy(
+                    roller =
+                        listOf(
+                            RolleDto(Personident(GJELDER_IDENT_BM), Rolletype.BIDRAGSMOTTAKER),
+                            RolleDto(Personident(GJELDER_IDENT_BP), Rolletype.BIDRAGSPLIKTIG),
+                            RolleDto(
+                                Personident(GJELDER_IDENT_BA),
+                                Rolletype.BARN,
+                                reellMottaker =
+                                    ReellMottakerDto(
+                                        ReellMottaker("80000000"),
+                                        verge = false,
+                                    ),
+                            ),
+                        ),
+                )
+
+        val forespørsel =
+            OpprettForsendelseForespørsel(
+                enhet = "",
+                saksnummer = "",
+                gjelderIdent = GJELDER_IDENT_BM,
+                mottaker =
+                    MottakerTo(
+                        identType = MottakerIdentTypeTo.SAMHANDLER,
+                        ident = "80000000",
+                    ),
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        stonadType = Stønadstype.BIDRAG,
+                        vedtakType = Vedtakstype.FASTSETTELSE,
+                    ),
+                dokumenter = listOf(dokument),
+            )
+
+        val tittel =
+            forsendelseTittelService.opprettDokumentTittel(forespørsel, dokument)
+
+        tittel shouldBe "Vedtak automatisk justering av barnebidrag til barnevernsinstitusjon"
     }
 
     @Test
@@ -77,6 +203,11 @@ class ForsendelseTittelServiceTest {
                 enhet = "",
                 saksnummer = "",
                 gjelderIdent = GJELDER_IDENT_BM,
+                mottaker =
+                    MottakerTo(
+                        identType = MottakerIdentTypeTo.FNR,
+                        ident = GJELDER_IDENT_BM,
+                    ),
                 behandlingInfo =
                     BehandlingInfoDto(
                         erFattetBeregnet = true,
@@ -101,6 +232,11 @@ class ForsendelseTittelServiceTest {
                     enhet = "",
                     saksnummer = "",
                     gjelderIdent = GJELDER_IDENT_BM,
+                    mottaker =
+                        MottakerTo(
+                            identType = MottakerIdentTypeTo.FNR,
+                            ident = GJELDER_IDENT_BM,
+                        ),
                     behandlingInfo =
                         BehandlingInfoDto(
                             erFattetBeregnet = true,

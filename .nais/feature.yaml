@@ -36,6 +36,9 @@ env:
   INNSENDING_API_URL: https://innsending-api-gcp.intern.dev.nav.no
   INNSENDING_API_SCOPE: dev-gcp.team-soknad.innsending-api
 
+  BIDRAG_SAMHANDLER_URL: http://bidrag-samhandler-q1
+  BIDRAG_SAMHANDLER_SCOPE: dev-gcp.bidrag.bidrag-samhandler-q1
+
   JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xmx1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:MaxRAMPercentage=80.0 -XX:+UseContainerSupport
 
   LAGRE_DIST_INFO_PAGE_SIZE: 100
@@ -61,6 +64,7 @@ outbound-access-apps:
    - bidrag-vedtak-q1
    - bidrag-behandling-q1
    - bidrag-kodeverk
+   - bidrag-samhandler-q1
 outbound-access-hosts:
    - bidrag-dokument-feature.dev-fss-pub.nais.io
    - bidrag-person-q1.dev-fss-pub.nais.io
