@@ -158,7 +158,7 @@ class ForsendelseTittelServiceTest {
                                 Rolletype.BARN,
                                 reellMottaker =
                                     ReellMottakerDto(
-                                        ReellMottaker("80000000"),
+                                        ReellMottaker("85000000001"),
                                         verge = false,
                                     ),
                             ),
@@ -173,7 +173,7 @@ class ForsendelseTittelServiceTest {
                 mottaker =
                     MottakerTo(
                         identType = MottakerIdentTypeTo.SAMHANDLER,
-                        ident = "80000000",
+                        ident = "85000000001",
                     ),
                 behandlingInfo =
                     BehandlingInfoDto(
