@@ -13,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelseBehandlingType
+import no.nav.bidrag.domene.ident.SamhandlerId
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -40,7 +41,8 @@ class ForsendelseTittelService(
         val rolleNavn =
             when {
                 gjelderRm != null && gjelderRm.verge -> "verge"
-                gjelderRm != null -> {
+                // Kan være at RM er BM i saken
+                gjelderRm != null && SamhandlerId(gjelderRm.ident.verdi).gyldig() -> {
                     samhandlerConsumer
                         .hentSamhandler(gjelderRm.ident.verdi)
                         ?.områdekode
