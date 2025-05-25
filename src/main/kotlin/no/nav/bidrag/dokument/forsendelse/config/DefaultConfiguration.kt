@@ -3,7 +3,6 @@ package no.nav.bidrag.dokument.forsendelse.config
 import io.getunleash.DefaultUnleash
 import io.getunleash.UnleashContext
 import io.getunleash.UnleashContextProvider
-import io.getunleash.strategy.DefaultStrategy
 import io.getunleash.util.UnleashConfig
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
@@ -77,7 +76,7 @@ class DefaultConfiguration {
 
     @Bean
     @Scope("prototype")
-    fun unleashInstance(unleashConfig: UnleashConfig) = DefaultUnleash(unleashConfig, DefaultStrategy())
+    fun unleashInstance(unleashConfig: UnleashConfig) = DefaultUnleash(unleashConfig)
 }
 
 class DefaultUnleashContextProvider : UnleashContextProvider {
