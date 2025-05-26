@@ -32,7 +32,7 @@
     <google-tink-gcpkms.version>1.10.0</google-tink-gcpkms.version>
     <google-tink.version>1.17.0</google-tink.version>
     <grpc.version>1.57.2</grpc.version>
-    <pdfbox.version>3.0.3</pdfbox.version>
+    <pdfbox.version>3.0.5</pdfbox.version>
     <verapdf.version>1.26.1</verapdf.version>
     <ktlint.version>1.5.0</ktlint.version>
     <skipOwasp>false</skipOwasp>
