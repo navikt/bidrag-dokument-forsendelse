@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import io.getunleash.Unleash
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
 import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
@@ -17,6 +18,8 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erBatchForsendelse
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erBatchForsendelseIkkeDistribuertEldreEnn3Dager
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.transport.dokument.JournalpostDto
@@ -35,13 +38,18 @@ class ForsendelseInnsynService(
     private val dokumentValgService: DokumentValgService,
     private val dokumentTjeneste: DokumentTjeneste,
     private val forsendelseTittelService: ForsendelseTittelService,
+    val unleash: Unleash,
 ) {
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
         val journalpostDtoer =
             forsendelseTjeneste
                 .hentForsendelserOpprettetFørDagensDatoIkkeDistribuert()
                 .filter { it.tema == ForsendelseTema.BID || tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-                .map {
+                .filter {
+                    !it.erBatchForsendelse() ||
+                        it.erBatchForsendelseIkkeDistribuertEldreEnn3Dager() ||
+                        unleash.isEnabled("forsendelse.batchbrev_nyere_enn_3_dager")
+                }.map {
                     ForsendelseIkkeDistribuertResponsTo(
                         enhet = it.enhet,
                         forsendelseId = it.forsendelseIdMedPrefix,
@@ -63,7 +71,11 @@ class ForsendelseInnsynService(
             forsendelser.filtrerIkkeFerdigstiltEllerArkivert
                 .filter { temaListe.map { jt -> jt.name }.contains(it.tema.name) }
                 .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
-                .map { tilJournalpostDto(it) }
+                .filter {
+                    !it.erBatchForsendelse() ||
+                        it.erBatchForsendelseIkkeDistribuertEldreEnn3Dager() ||
+                        unleash.isEnabled("forsendelse.batchbrev_nyere_enn_3_dager")
+                }.map { tilJournalpostDto(it) }
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
         return forsendelserFiltrert
