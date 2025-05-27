@@ -107,5 +107,7 @@ fun OpprettForsendelseForespørsel.tilBehandlingInfo() =
 
 fun Forsendelse.erBatchForsendelse() = batchId != null
 
-fun Forsendelse.erBatchForsendelseEldreEnn3Dager(): Boolean =
-    batchId != null && this.opprettetTidspunkt.isBefore(LocalDateTime.now().minusDays(3))
+fun Forsendelse.erBatchForsendelseIkkeDistribuertEldreEnn3Dager(): Boolean =
+    batchId != null &&
+        this.opprettetTidspunkt.isBefore(LocalDateTime.now().minusDays(3)) &&
+        this.status == ForsendelseStatus.UNDER_PRODUKSJON

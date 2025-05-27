@@ -19,7 +19,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erBatchForsendelse
-import no.nav.bidrag.dokument.forsendelse.utvidelser.erBatchForsendelseEldreEnn3Dager
+import no.nav.bidrag.dokument.forsendelse.utvidelser.erBatchForsendelseIkkeDistribuertEldreEnn3Dager
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.transport.dokument.JournalpostDto
@@ -47,7 +47,7 @@ class ForsendelseInnsynService(
                 .filter { it.tema == ForsendelseTema.BID || tilgangskontrollService.harTilgangTilTema(it.tema.name) }
                 .filter {
                     !it.erBatchForsendelse() ||
-                        it.erBatchForsendelseEldreEnn3Dager() ||
+                        it.erBatchForsendelseIkkeDistribuertEldreEnn3Dager() ||
                         unleash.isEnabled("forsendelse.batchbrev_nyere_enn_3_dager")
                 }.map {
                     ForsendelseIkkeDistribuertResponsTo(
@@ -73,7 +73,7 @@ class ForsendelseInnsynService(
                 .filter { tilgangskontrollService.harTilgangTilTema(it.tema.name) }
                 .filter {
                     !it.erBatchForsendelse() ||
-                        it.erBatchForsendelseEldreEnn3Dager() ||
+                        it.erBatchForsendelseIkkeDistribuertEldreEnn3Dager() ||
                         unleash.isEnabled("forsendelse.batchbrev_nyere_enn_3_dager")
                 }.map { tilJournalpostDto(it) }
 
