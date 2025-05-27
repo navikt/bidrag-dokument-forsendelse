@@ -104,3 +104,8 @@ fun OpprettForsendelseForespørsel.tilBehandlingInfo() =
             barnIBehandling = BarnIBehandling.from(it.barnIBehandling),
         )
     }
+
+fun Forsendelse.erBatchForsendelse() = batchId != null
+
+fun Forsendelse.erBatchForsendelseEldreEnn3Dager(): Boolean =
+    batchId != null && this.opprettetTidspunkt.isBefore(LocalDateTime.now().minusDays(3))
