@@ -33,7 +33,7 @@
     <google-tink.version>1.17.0</google-tink.version>
     <grpc.version>1.57.2</grpc.version>
     <pdfbox.version>3.0.3</pdfbox.version>
-    <verapdf.version>1.26.1</verapdf.version>
+    <verapdf.version>1.28.1</verapdf.version>
     <ktlint.version>1.5.0</ktlint.version>
     <skipOwasp>false</skipOwasp>
 
