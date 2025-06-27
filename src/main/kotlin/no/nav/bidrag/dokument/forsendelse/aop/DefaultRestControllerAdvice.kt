@@ -8,6 +8,7 @@ import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigEndringAvForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.UgyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
+import no.nav.bidrag.transport.felles.ifTrue
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpHeaders
@@ -59,10 +60,13 @@ class DefaultRestControllerAdvice {
     fun handleHttpClientErrorException(exception: HttpStatusCodeException): ResponseEntity<*> {
         val errorMessage = getErrorMessage(exception)
         LOGGER.error(errorMessage, exception)
+        val payloadFeilmelding =
+            exception.responseBodyAsString.isEmpty().ifTrue { exception.message }
+                ?: exception.responseBodyAsString
         return ResponseEntity
             .status(exception.statusCode)
             .header(HttpHeaders.WARNING, errorMessage)
-            .build<Any>()
+            .body(payloadFeilmelding)
     }
 
     private fun getErrorMessage(exception: HttpStatusCodeException): String {

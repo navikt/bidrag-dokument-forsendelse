@@ -2,11 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.utils
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerAdresseTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Adresse
@@ -48,6 +43,11 @@ import no.nav.bidrag.transport.dokument.DokumentMetadata
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerIdentTypeTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
 import no.nav.bidrag.transport.sak.BidragssakDto
 import no.nav.bidrag.transport.sak.RolleDto
 import org.junit.Assert
