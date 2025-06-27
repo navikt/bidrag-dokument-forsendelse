@@ -25,6 +25,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domene.enums.rolle.Rolletype
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
+import no.nav.bidrag.domene.enums.samhandler.OffentligIdType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
@@ -144,6 +145,8 @@ class ForsendelseTittelServiceTest {
             SamhandlerDto(
                 samhandlerId = SamhandlerId(""),
                 navn = "",
+                offentligId = "",
+                offentligIdType = OffentligIdType.FNR,
                 områdekode = Områdekode.BARNEVERNSINSTITUSJON,
             )
         every { sakService.hentSak(any()) } returns
