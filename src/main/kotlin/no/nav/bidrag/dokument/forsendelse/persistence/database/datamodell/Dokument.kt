@@ -76,6 +76,7 @@ data class Dokument(
     @ManyToOne
     @JoinColumn(name = "forsendelse_id")
     var forsendelse: Forsendelse,
+    val ferdigstill: Boolean = false,
 ) {
     override fun toString(): String = this.toStringByReflection(listOf("forsendelse"))
 

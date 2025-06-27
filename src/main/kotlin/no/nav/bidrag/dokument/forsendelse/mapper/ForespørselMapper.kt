@@ -110,6 +110,7 @@ object ForespørselMapper {
         journalpostIdOriginal = this.journalpostId?.utenPrefiks,
         dokumentmalId = this.dokumentmalId,
         rekkefølgeIndeks = indeks,
+        ferdigstill = this.ferdigstill,
     )
 
     fun OppdaterDokumentForespørsel.tilOpprettDokumentForespørsel() =

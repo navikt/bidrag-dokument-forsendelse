@@ -271,7 +271,9 @@ class DokumentBestillingLytter(
     ): DokumentBestillingForespørsel {
         val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
         val erBatchbrev =
-            forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") || unleash.isEnabled("forsendelse.opprett_batchbrev", false)
+            dokument.ferdigstill ||
+                forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") ||
+                unleash.isEnabled("forsendelse.opprett_batchbrev", false)
         return DokumentBestillingForespørsel(
             erBatchBrev = erBatchbrev,
             dokumentreferanse = dokument.dokumentreferanse,

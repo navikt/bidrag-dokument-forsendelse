@@ -100,4 +100,8 @@ data class OpprettDokumentForespørsel(
             "Om dokumentet med dokumentmalId skal bestilles. " +
                 "Hvis dette er satt til false så antas det at kallende system bestiller dokumentet selv.",
     ) val bestillDokument: Boolean = true,
+    @Schema(
+        description =
+            "Om dokumentet skal automatisk ferdigstilles etter bestilling",
+    ) val ferdigstill: Boolean = false,
 ) : DokumentForespørsel()

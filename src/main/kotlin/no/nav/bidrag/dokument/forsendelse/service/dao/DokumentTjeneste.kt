@@ -137,6 +137,7 @@ class DokumentTjeneste(
             dokumentmalId = this.dokumentmalId ?: dokumentLenket.dokumentmalId,
             metadata = dokumentLenket.metadata,
             rekkefølgeIndeks = indeks,
+            ferdigstill = dokumentLenket.ferdigstill,
         )
     }
 
