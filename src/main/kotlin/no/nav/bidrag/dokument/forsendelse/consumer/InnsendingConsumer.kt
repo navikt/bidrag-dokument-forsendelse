@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.consumer
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.commons.web.client.AbstractRestClient
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentSoknadDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.EksternEttersendingsOppgave
