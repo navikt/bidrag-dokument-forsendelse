@@ -250,7 +250,7 @@ class DokumentBestillingLytter(
         this?.let {
             if (vedtakType == Vedtakstype.ALDERSJUSTERING && vedtakId != null) {
                 val vedtak = vedtakConsumer.hentVedtak(vedtakId)
-                vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
+                vedtak?.kildeapplikasjon != "bisys"
             } else {
                 false
             }
