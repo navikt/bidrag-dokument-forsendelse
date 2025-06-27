@@ -4,10 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerIdentTypeTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.MottakerTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
@@ -32,7 +28,11 @@ import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.domene.ident.Personident
 import no.nav.bidrag.domene.ident.ReellMottaker
 import no.nav.bidrag.domene.ident.SamhandlerId
+import no.nav.bidrag.transport.dokument.forsendelse.BehandlingInfoDto
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerIdentTypeTo
+import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
 import no.nav.bidrag.transport.sak.ReellMottakerDto
 import no.nav.bidrag.transport.sak.RolleDto
 import no.nav.bidrag.transport.samhandler.Områdekode
@@ -85,7 +85,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette tittel dokument for batchbrev aldersjustering for verge`() {
         val dokument =
-            no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel(
+            OpprettDokumentForespørsel(
                 dokumentmalId = "BI01B05",
                 bestillDokument = true,
             )
@@ -137,7 +137,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette tittel dokument for batchbrev aldersjustering for samhandler`() {
         val dokument =
-            no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel(
+            OpprettDokumentForespørsel(
                 dokumentmalId = "BI01B05",
                 bestillDokument = true,
             )
@@ -197,7 +197,7 @@ class ForsendelseTittelServiceTest {
     @Test
     fun `Skal opprette tittel dokument for batchbrev aldersjustering`() {
         val dokument =
-            no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel(
+            OpprettDokumentForespørsel(
                 dokumentmalId = "BI01B05",
                 bestillDokument = true,
             )
