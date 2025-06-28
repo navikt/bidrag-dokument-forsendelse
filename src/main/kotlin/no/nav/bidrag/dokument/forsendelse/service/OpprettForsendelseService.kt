@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.model.ConflictException
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.model.ugyldigForespørsel
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.ForsendelseMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
@@ -171,6 +172,12 @@ class OpprettForsendelseService(
                         else -> ForsendelseTema.BID
                     },
             )
+
+        if (forespørsel.distribuerAutomatiskEtterFerdigstilling) {
+            val metadata = ForsendelseMetadataDo()
+            metadata.markerDistribuerAutomatisk()
+            forsendelse.metadata = metadata
+        }
 
         return forsendelseTjeneste.lagre(forsendelse)
     }
