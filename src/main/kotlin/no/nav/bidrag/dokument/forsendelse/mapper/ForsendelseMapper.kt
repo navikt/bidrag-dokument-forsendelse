@@ -136,7 +136,7 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
             kotlin.run {
                 val tittel = if (this.status == ForsendelseStatus.UNDER_OPPRETTELSE) tittel else this.dokumenter.hoveddokument?.tittel
                 if (metadata?.skalDistribueresAutomatisk() == true) {
-                    "$tittel (Distribueres automatisk)"
+                    "(Distribueres automatisk) $tittel"
                 } else {
                     tittel
                 }
