@@ -157,6 +157,47 @@ class OpprettForsendelseServiceTest {
     }
 
     @Test
+    fun `Skal opprette forsendelse hvor dokument ferdigstilles og sendes automatisk`() {
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            ferdigstill = true,
+                            bestillDokument = true,
+                        ),
+                    ),
+                distribuerAutomatiskEtterFerdigstilling = true,
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        soknadType = "EGET_TILTAK",
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.ENDRING,
+                    ),
+            )
+        every { forsendelseTittelService.opprettDokumentTittel(any(), any()) } returns "Tittel"
+
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.metadata?.skalDistribueresAutomatisk() shouldBe true
+                },
+            )
+            dokumenttjeneste.opprettNyttDokument(
+                any<Forsendelse>(),
+                withArg<List<OpprettDokumentForespørsel>> {
+                    it[0].tittel shouldBe "Tittel"
+                    it[0].ferdigstill shouldBe true
+                },
+            )
+        }
+    }
+
+    @Test
     fun `Skal opprette forsendelse med forsendelse tittel (skal ikke opprette tittel)`() {
         val opprettForsendelseForespørsel =
             nyOpprettForsendelseForespørsel().copy(

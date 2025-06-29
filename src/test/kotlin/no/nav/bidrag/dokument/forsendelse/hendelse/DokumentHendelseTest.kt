@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.ForsendelseMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -333,6 +334,66 @@ class DokumentHendelseTest : KafkaHendelseTestRunner() {
                     "\"saksbehandlerIdent\":\"Z999444\"" +
                     "}",
             )
+        }
+    }
+
+    @Test
+    fun `Skal distribuere forsendelse hvis distribuer er satt og alle dokumenter er ferdigstilt`() {
+        val nyJournalpostId = "1331234412321"
+        stubUtils.stubHentDokument()
+        stubUtils.stubOpprettJournalpost(nyJournalpostId)
+        stubUtils.stubBestillDistribusjon(nyJournalpostId)
+        val forsendelseUtgående =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    erNotat = false,
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.UNDER_REDIGERING,
+                                tittel = "Forsendelse utgående",
+                                arkivsystem = DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER,
+                                dokumentDato = LocalDateTime.parse("2022-01-05T01:02:03"),
+                            ).copy(ferdigstill = true),
+                        ),
+                ).let {
+                    val metadata = ForsendelseMetadataDo()
+                    metadata.markerDistribuerAutomatisk()
+                    it.metadata = metadata
+                    it
+                },
+            )
+
+        val hendelse = opprettHendelse(forsendelseUtgående.dokumenter[0].dokumentreferanse, status = DokumentStatusDto.FERDIGSTILT)
+        sendMeldingTilDokumentHendelse(hendelse)
+
+        await.atMost(Duration.ofSeconds(5)).untilAsserted {
+            val forsendelseEtter = testDataManager.hentForsendelse(forsendelseUtgående.forsendelseId!!)!!
+
+            forsendelseEtter.status shouldBe ForsendelseStatus.DISTRIBUERT
+            forsendelseEtter.journalpostIdFagarkiv shouldBe nyJournalpostId
+            forsendelseEtter.ferdigstiltTidspunkt shouldNotBe null
+            forsendelseEtter.ferdigstiltTidspunkt!! shouldHaveSameDayAs LocalDateTime.now()
+            val referanseId = forsendelseEtter.opprettReferanseId()
+            stubUtils.Valider().opprettJournalpostKaltMed(
+                "{" +
+                    "\"skalFerdigstilles\":true," +
+                    "\"tittel\":\"Forsendelse utgående\"," +
+                    "\"gjelderIdent\":\"${forsendelseEtter.gjelderIdent}\"," +
+                    "\"avsenderMottaker\":{\"navn\":\"Nils Nilsen\",\"ident\":\"2312333123\",\"type\":\"FNR\",\"adresse\":null}," +
+                    "\"dokumenter\":[" +
+                    "{\"tittel\":\"Forsendelse utgående\",\"brevkode\":\"BI091\",\"dokumentmalId\":\"BI091\",\"dokumentreferanse\":\"${forsendelseEtter.dokumenter[0].dokumentreferanse}\"}]," +
+                    "\"tilknyttSaker\":[\"${forsendelseEtter.saksnummer}\"]," +
+                    "\"tema\":\"BID\"," +
+                    "\"journalposttype\":\"UTGÅENDE\"," +
+                    "\"referanseId\":\"$referanseId\"," +
+                    "\"journalførendeEnhet\":\"${forsendelseEtter.enhet}\"," +
+                    "\"saksbehandlerIdent\":\"Z999444\"" +
+                    "}",
+            )
+            stubUtils.Valider().bestillDistribusjonKaltMed("JOARK-$nyJournalpostId")
         }
     }
 }

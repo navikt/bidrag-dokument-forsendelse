@@ -170,7 +170,7 @@ class DokumentBestillingLytter(
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
                 "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} " +
-                    "for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}"
+                    "for dokumentreferanse ${bestilling.dokumentreferanse}. Dokument er satt til å bli ferdigstilt automatisk ${dokument.ferdigstill}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}"
             }
             return respons?.arkivSystem
         } else {

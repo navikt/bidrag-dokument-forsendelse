@@ -8,6 +8,7 @@ import io.mockk.Ordering
 import io.mockk.every
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.TestContainerRunner
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.DokumentMetadataDo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -19,6 +20,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_B
 import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
+import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -331,5 +333,41 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         }
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
         stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_2)
+    }
+
+    @Test
+    fun `Skal bestille dokument og ferdigstille hvis det er satt`() {
+        val forsendelse1 =
+            testDataManager.lagreForsendelse(
+                opprettForsendelse2(
+                    behandlingInfo =
+                        BehandlingInfo(
+                            vedtakType = Vedtakstype.ALDERSJUSTERING,
+                            vedtakId = "213",
+                        ),
+                    dokumenter =
+                        listOf(
+                            nyttDokument(
+                                dokumentreferanseOriginal = null,
+                                journalpostId = null,
+                                dokumentStatus = DokumentStatus.IKKE_BESTILT,
+                                tittel = "FORSENDELSE 1",
+                                arkivsystem = DokumentArkivSystem.UKJENT,
+                                dokumentMalId = DOKUMENTMAL_UTGÅENDE_2,
+                            ).copy(ferdigstill = true),
+                        ),
+                ),
+            )
+
+        skedulering.bestill(forsendelse1.dokumenter)
+
+        stubUtils.Valider().bestillDokumentKaltMed(
+            DOKUMENTMAL_UTGÅENDE_2,
+            "\"erBatchBrev\":true",
+            "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
+            "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\"",
+        )
+
+        stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
     }
 }
