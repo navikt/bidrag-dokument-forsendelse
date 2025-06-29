@@ -132,7 +132,15 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
         gjelderIdent = this.gjelderIdent,
         gjelderAktor = AktorDto(this.gjelderIdent),
         brevkode = KodeDto(this.dokumenter.hoveddokument?.dokumentmalId),
-        innhold = if (this.status == ForsendelseStatus.UNDER_OPPRETTELSE) tittel else this.dokumenter.hoveddokument?.tittel,
+        innhold =
+            kotlin.run {
+                val tittel = if (this.status == ForsendelseStatus.UNDER_OPPRETTELSE) tittel else this.dokumenter.hoveddokument?.tittel
+                if (metadata?.skalDistribueresAutomatisk() == true) {
+                    "$tittel (Distribueres automatisk)"
+                } else {
+                    tittel
+                }
+            },
         fagomrade =
             when (tema) {
                 ForsendelseTema.FAR -> Fagomrade.FARSKAP
