@@ -2,10 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import io.getunleash.Unleash
 import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseIkkeDistribuertResponsTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.ForsendelseResponsTo
-import no.nav.bidrag.dokument.forsendelse.api.dto.HentDokumentValgRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.JournalTema
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
@@ -24,6 +20,10 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.transport.dokument.JournalpostDto
 import no.nav.bidrag.transport.dokument.JournalpostResponse
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseIkkeDistribuertResponsTo
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseResponsTo
+import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
+import no.nav.bidrag.transport.dokument.forsendelse.JournalTema
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}

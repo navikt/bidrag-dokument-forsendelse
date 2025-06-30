@@ -51,14 +51,15 @@ class DistribusjonService(
     @Transactional
     fun distribuer(
         forsendelseId: Long,
-        distribuerJournalpostRequest: DistribuerJournalpostRequest?,
-        batchId: String?,
-        ingenDistribusjon: Boolean,
+        distribuerJournalpostRequest: DistribuerJournalpostRequest? = null,
+        batchId: String? = null,
+        ingenDistribusjon: Boolean = false,
     ): DistribuerJournalpostResponse {
+        val batchIdDistribusjon = batchId ?: distribuerJournalpostRequest?.batchId
         val distribuerLokalt = distribuerJournalpostRequest?.lokalUtskrift ?: false
         log.info {
             "Bestiller distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt, " +
-                "ingenDistribusjon=$ingenDistribusjon og batchId=$batchId"
+                "ingenDistribusjon=$ingenDistribusjon og batchId=$batchIdDistribusjon"
         }
 
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
@@ -83,15 +84,15 @@ class DistribusjonService(
             if (ingenDistribusjon) {
                 markerSomIngenDistribusjon(forsendelse)
             } else if (distribuerLokalt) {
-                bestillLokalDistribusjon(forsendelseId, forsendelse, batchId)
+                bestillLokalDistribusjon(forsendelseId, forsendelse, batchIdDistribusjon)
             } else {
-                bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchId)
+                bestillDistribusjon(forsendelseId, distribuerJournalpostRequest, forsendelse, batchIdDistribusjon)
             }
 
         hendelseBestillingService.bestill(forsendelseId)
         log.info {
             "Har bestilt distribusjon av forsendelse $forsendelseId med lokalUtskrift=$distribuerLokalt, " +
-                "ingenDistribusjon=$ingenDistribusjon og batchId=$batchId og sendt ut hendelse"
+                "ingenDistribusjon=$ingenDistribusjon og batchId=$batchIdDistribusjon og sendt ut hendelse"
         }
 
         return result

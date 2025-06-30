@@ -6,9 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.Ordering
 import io.mockk.every
 import io.mockk.verify
-import no.nav.bidrag.dokument.forsendelse.api.dto.BehandlingInfoDto
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettForsendelseForespørsel
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
@@ -37,6 +34,9 @@ import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.domene.ident.Personident
+import no.nav.bidrag.transport.dokument.forsendelse.BehandlingInfoDto
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
 import no.nav.bidrag.transport.person.PersonDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -151,6 +151,47 @@ class OpprettForsendelseServiceTest {
                     it.behandlingInfo!!.soknadType shouldBe "EGET_TILTAK"
                     it.behandlingInfo!!.stonadType shouldBe null
                     it.behandlingInfo!!.engangsBelopType shouldBe null
+                },
+            )
+        }
+    }
+
+    @Test
+    fun `Skal opprette forsendelse hvor dokument ferdigstilles og sendes automatisk`() {
+        val opprettForsendelseForespørsel =
+            nyOpprettForsendelseForespørsel().copy(
+                dokumenter =
+                    listOf(
+                        OpprettDokumentForespørsel(
+                            dokumentmalId = HOVEDDOKUMENT_DOKUMENTMAL,
+                            ferdigstill = true,
+                            bestillDokument = true,
+                        ),
+                    ),
+                distribuerAutomatiskEtterFerdigstilling = true,
+                behandlingInfo =
+                    BehandlingInfoDto(
+                        erFattetBeregnet = true,
+                        soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                        soknadType = "EGET_TILTAK",
+                        behandlingType = "AVSKRIVNING",
+                        vedtakType = Vedtakstype.ENDRING,
+                    ),
+            )
+        every { forsendelseTittelService.opprettDokumentTittel(any(), any()) } returns "Tittel"
+
+        opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørsel)
+        verify {
+            forsendelseTjeneste.lagre(
+                withArg {
+                    it.metadata?.skalDistribueresAutomatisk() shouldBe true
+                },
+            )
+            dokumenttjeneste.opprettNyttDokument(
+                any<Forsendelse>(),
+                withArg<List<OpprettDokumentForespørsel>> {
+                    it[0].tittel shouldBe "Tittel"
+                    it[0].ferdigstill shouldBe true
                 },
             )
         }

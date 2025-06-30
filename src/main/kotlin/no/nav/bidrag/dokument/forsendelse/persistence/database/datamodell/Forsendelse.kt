@@ -70,6 +70,7 @@ data class Forsendelse(
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
     val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
     val journalpostIdFagarkiv: String? = null,
+    val unikReferanse: String? = null,
     @OneToOne(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL],
@@ -88,7 +89,7 @@ data class Forsendelse(
     val referanseId: String? = null,
     @Type(ForsendelseMetadataDoConverter::class)
     @Column(columnDefinition = "hstore", name = "metadata")
-    val metadata: ForsendelseMetadataDo? = null,
+    var metadata: ForsendelseMetadataDo? = null,
 )
 
 fun Forsendelse.opprettReferanseId() = "BIF_${forsendelseId}_${opprettetTidspunkt.toEpochSecond(ZoneOffset.UTC)}"
@@ -107,13 +108,22 @@ class ForsendelseMetadataDo : MutableMap<String, String> by hashMapOf() {
     @Suppress("ktlint:standard:property-naming")
     // Indeksert i databasen basert på navn til nøkkelen. (sjekk migrering v1.4.3). Ikke endre uten å lage ny indeks
     private val SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT = "sjekket_navno_redistribusjon_til_sentral_print"
+
+    @Suppress("ktlint:standard:property-naming")
+    private val DISTRIBUER_AUTOMATISK = "distribuer_automatisk"
     private val objectMapper = ObjectMapper().findAndRegisterModules()
+
+    fun markerDistribuerAutomatisk() {
+        update(DISTRIBUER_AUTOMATISK, "true")
+    }
 
     fun markerSomSjekketNavNoRedistribusjon() {
         update(SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT, "true")
     }
 
     fun harSjekketForNavNoRedistribusjon(): Boolean = get(SJEKKET_OM_DIST_TIL_NAVNO_ER_REDISTRIBUERT) == "true"
+
+    fun skalDistribueresAutomatisk(): Boolean = get(DISTRIBUER_AUTOMATISK) == "true"
 
     private fun update(
         key: String,

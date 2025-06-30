@@ -4,10 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.service.hentNavSkjemaKodeverk
 import no.nav.bidrag.commons.util.secureLogger
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterEttersendingsoppgaveRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettEttersendingsoppgaveRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgave
-import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgaveVedleggRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.InnsendingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentSoknadDto
@@ -20,6 +16,10 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Etters
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.valider
 import no.nav.bidrag.transport.dokument.DokumentType
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterEttersendingsoppgaveRequest
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettEttersendingsoppgaveRequest
+import no.nav.bidrag.transport.dokument.forsendelse.SlettEttersendingsoppgave
+import no.nav.bidrag.transport.dokument.forsendelse.SlettEttersendingsoppgaveVedleggRequest
 import org.springframework.stereotype.Service
 
 private val log = KotlinLogging.logger {}
@@ -99,19 +99,19 @@ class EttersendingsOppgaveService(
 
         if (request.oppdaterDokument != null) {
             val oppdaterDokument =
-                if (request.oppdaterDokument.id ==
+                if (request.oppdaterDokument!!.id ==
                     null
                 ) {
                     val nyDokument = EttersendingsoppgaveVedlegg(ettersendingsoppgave = varselEttersendelse)
                     varselEttersendelse.vedleggsliste.add(nyDokument)
                     nyDokument
                 } else {
-                    varselEttersendelse.vedleggsliste.find { it.id == request.oppdaterDokument.id }
-                        ?: ugyldigForespørsel("Fant ikke ettersendingsoppgave vedlegg med id ${request.oppdaterDokument.id}")
+                    varselEttersendelse.vedleggsliste.find { it.id == request.oppdaterDokument!!.id }
+                        ?: ugyldigForespørsel("Fant ikke ettersendingsoppgave vedlegg med id ${request.oppdaterDokument!!.id}")
                 }
 
-            oppdaterDokument.tittel = request.oppdaterDokument.tittel.fjernKontrollTegn()
-            oppdaterDokument.skjemaId = request.oppdaterDokument.skjemaId
+            oppdaterDokument.tittel = request.oppdaterDokument!!.tittel.fjernKontrollTegn()
+            oppdaterDokument.skjemaId = request.oppdaterDokument!!.skjemaId
         }
 
         request.tittel?.let {

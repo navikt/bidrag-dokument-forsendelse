@@ -44,6 +44,7 @@ class JournalpostKafkaHendelseProdusent(
         publiser(
             JournalpostHendelse(
                 journalpostId = forsendelse.forsendelseIdMedPrefix,
+                journalpostIdFagarkiv = forsendelse.journalpostIdFagarkiv,
                 fnr = forsendelse.gjelderIdent,
                 tittel = forsendelse.dokumenter.hoveddokument?.tittel,
                 tema = forsendelse.tema.name,
@@ -52,6 +53,7 @@ class JournalpostKafkaHendelseProdusent(
                 enhet = forsendelse.enhet,
                 dokumentDato = forsendelse.opprettetTidspunkt.toLocalDate(),
                 journalfortDato = forsendelse.ferdigstiltTidspunkt?.toLocalDate(),
+                distribuertTidspunkt = forsendelse.distribuertTidspunkt,
                 sakstilknytninger = listOf(forsendelse.saksnummer),
                 sporing =
                     Sporingsdata(

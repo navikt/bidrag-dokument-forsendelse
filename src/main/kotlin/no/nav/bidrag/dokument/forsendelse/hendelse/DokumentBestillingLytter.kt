@@ -170,7 +170,7 @@ class DokumentBestillingLytter(
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
                 "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} " +
-                    "for dokumentreferanse ${bestilling.dokumentreferanse}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}"
+                    "for dokumentreferanse ${bestilling.dokumentreferanse}. Dokument er satt til å bli ferdigstilt automatisk ${dokument.ferdigstill}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}"
             }
             return respons?.arkivSystem
         } else {
@@ -250,7 +250,7 @@ class DokumentBestillingLytter(
         this?.let {
             if (vedtakType == Vedtakstype.ALDERSJUSTERING && vedtakId != null) {
                 val vedtak = vedtakConsumer.hentVedtak(vedtakId)
-                vedtak?.opprettetAv?.contains("bidrag-automatisk-jobb") == true
+                vedtak?.kildeapplikasjon != "bisys"
             } else {
                 false
             }
@@ -271,7 +271,9 @@ class DokumentBestillingLytter(
     ): DokumentBestillingForespørsel {
         val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
         val erBatchbrev =
-            forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") || unleash.isEnabled("forsendelse.opprett_batchbrev", false)
+            dokument.ferdigstill ||
+                forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") ||
+                unleash.isEnabled("forsendelse.opprett_batchbrev", false)
         return DokumentBestillingForespørsel(
             erBatchBrev = erBatchbrev,
             dokumentreferanse = dokument.dokumentreferanse,

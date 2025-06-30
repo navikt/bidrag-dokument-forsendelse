@@ -11,6 +11,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokume
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
+import no.nav.bidrag.dokument.forsendelse.service.DistribusjonService
 import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
 import no.nav.bidrag.dokument.forsendelse.service.FerdigstillForsendelseService
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
@@ -36,6 +37,7 @@ class DokumentHendelseLytter(
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
     val ferdigstillForsendelseService: FerdigstillForsendelseService,
+    val distribusjonService: DistribusjonService,
     @Value("\${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean,
 ) {
     /**
@@ -165,6 +167,7 @@ class DokumentHendelseLytter(
 
         sendJournalposthendelseHvisKlarForDistribusjon(oppdaterteDokumenter)
         ferdigstillHvisForsendelseErNotat(oppdaterteDokumenter)
+        distribuerHvisForsendelseSkalAutomatiskDistribueres(oppdaterteDokumenter)
     }
 
     private fun erKvitteringForProdusertDokument(
@@ -181,6 +184,29 @@ class DokumentHendelseLytter(
         dokumenter.forEach {
             if (it.forsendelse.kanDistribueres()) {
                 journalpostKafkaHendelseProdusent.publiserForsendelse(it.forsendelse)
+            }
+        }
+    }
+
+    private fun distribuerHvisForsendelseSkalAutomatiskDistribueres(dokumenter: List<Dokument>) {
+        dokumenter.forEach {
+            val forsendelse = it.forsendelse
+
+            if (forsendelse.metadata?.skalDistribueresAutomatisk() == true && forsendelse.dokumenter.erAlleFerdigstilt) {
+                medApplikasjonKontekst {
+                    log.info {
+                        "Alle dokumenter i forsendelse ${forsendelse.forsendelseId} ferdigstilt. " +
+                            "Forsendelse er markert til å distribueres automatisk. Distribuerer forsendelse"
+                    }
+                    try {
+                        distribusjonService.distribuer(
+                            forsendelse.forsendelseId!!,
+                            batchId = forsendelse.batchId,
+                        )
+                    } catch (e: Exception) {
+                        log.error(e) { "Kunne ikke distribuere forsendelse ${it.forsendelseId}." }
+                    }
+                }
             }
         }
     }

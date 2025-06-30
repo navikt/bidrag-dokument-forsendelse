@@ -2,7 +2,6 @@ package no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.hypersistence.utils.hibernate.type.ImmutableType
 import io.hypersistence.utils.hibernate.type.json.internal.JacksonUtil
 import jakarta.persistence.Column
@@ -15,11 +14,11 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
-import no.nav.bidrag.dokument.forsendelse.api.dto.DokumentDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
+import no.nav.bidrag.transport.dokument.forsendelse.DokumentDetaljer
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.Type
@@ -30,8 +29,6 @@ import java.sql.ResultSet
 import java.sql.Types
 import java.time.LocalDate
 import java.time.LocalDateTime
-
-private val log = KotlinLogging.logger {}
 
 @Entity(name = "dokument")
 @Table(
@@ -76,6 +73,7 @@ data class Dokument(
     @ManyToOne
     @JoinColumn(name = "forsendelse_id")
     var forsendelse: Forsendelse,
+    val ferdigstill: Boolean = false,
 ) {
     override fun toString(): String = this.toStringByReflection(listOf("forsendelse"))
 

@@ -12,11 +12,6 @@ import io.kotest.matchers.string.shouldContain
 import io.mockk.every
 import io.mockk.mockkStatic
 import no.nav.bidrag.commons.service.hentNavSkjemaKodeverk
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterEttersendelseDokumentRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.OppdaterEttersendingsoppgaveRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettEttersendingsoppgaveRequest
-import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgave
-import no.nav.bidrag.dokument.forsendelse.api.dto.SlettEttersendingsoppgaveVedleggRequest
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.InnsendingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentSoknadDto
@@ -32,6 +27,11 @@ import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.DokumentType
 import no.nav.bidrag.transport.dokument.JournalpostDto
 import no.nav.bidrag.transport.dokument.KodeDto
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterEttersendelseDokumentRequest
+import no.nav.bidrag.transport.dokument.forsendelse.OppdaterEttersendingsoppgaveRequest
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettEttersendingsoppgaveRequest
+import no.nav.bidrag.transport.dokument.forsendelse.SlettEttersendingsoppgave
+import no.nav.bidrag.transport.dokument.forsendelse.SlettEttersendingsoppgaveVedleggRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

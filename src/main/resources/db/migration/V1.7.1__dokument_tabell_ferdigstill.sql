@@ -1,0 +1,1 @@
+alter table dokument add column if not exists ferdigstill boolean default false;

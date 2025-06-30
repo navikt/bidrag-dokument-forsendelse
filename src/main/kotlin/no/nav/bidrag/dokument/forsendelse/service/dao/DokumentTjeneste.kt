@@ -1,9 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service.dao
 
 import jakarta.transaction.Transactional
-import no.nav.bidrag.dokument.forsendelse.api.dto.OpprettDokumentForespørsel
-import no.nav.bidrag.dokument.forsendelse.api.dto.erForsendelse
-import no.nav.bidrag.dokument.forsendelse.api.dto.utenPrefiks
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilDokumentDo
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.fjernKontrollTegn
@@ -18,6 +15,9 @@ import no.nav.bidrag.dokument.forsendelse.service.DokumentBestillingService
 import no.nav.bidrag.dokument.forsendelse.utvidelser.exists
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.transport.dokument.forsendelse.erForsendelse
+import no.nav.bidrag.transport.dokument.forsendelse.utenPrefiks
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -113,7 +113,7 @@ class DokumentTjeneste(
         indeks: Int,
     ): Dokument {
         val dokumentForsendelse =
-            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId.numerisk) }
+            this.journalpostId?.erForsendelse?.let { forsendelseTjeneste.medForsendelseId(this.journalpostId!!.numerisk) }
                 ?: return this.tilDokumentDo(forsendelse, indeks)
 
         if (this.dokumentreferanse.isNullOrEmpty()) {
@@ -137,6 +137,7 @@ class DokumentTjeneste(
             dokumentmalId = this.dokumentmalId ?: dokumentLenket.dokumentmalId,
             metadata = dokumentLenket.metadata,
             rekkefølgeIndeks = indeks,
+            ferdigstill = dokumentLenket.ferdigstill,
         )
     }
 
