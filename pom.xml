@@ -30,7 +30,7 @@
     <google-cloud-storage.version>2.32.0</google-cloud-storage.version>
     <google-cloud-libraries-bom.version>26.61.0</google-cloud-libraries-bom.version>
     <google-tink-gcpkms.version>1.10.0</google-tink-gcpkms.version>
-    <google-tink.version>1.17.0</google-tink.version>
+    <google-tink.version>1.18.0</google-tink.version>
     <grpc.version>1.57.2</grpc.version>
     <pdfbox.version>3.0.3</pdfbox.version>
     <verapdf.version>1.26.1</verapdf.version>
