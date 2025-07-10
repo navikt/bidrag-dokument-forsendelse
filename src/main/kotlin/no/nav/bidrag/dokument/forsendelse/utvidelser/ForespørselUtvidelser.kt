@@ -110,4 +110,4 @@ fun Forsendelse.erBatchForsendelse() = batchId != null
 fun Forsendelse.erBatchForsendelseIkkeDistribuertEldreEnn3Dager(): Boolean =
     batchId != null &&
         this.opprettetTidspunkt.isBefore(LocalDateTime.now().minusDays(3)) &&
-        this.status == ForsendelseStatus.UNDER_PRODUKSJON
+        !listOf(ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT_LOKALT).contains(status)
