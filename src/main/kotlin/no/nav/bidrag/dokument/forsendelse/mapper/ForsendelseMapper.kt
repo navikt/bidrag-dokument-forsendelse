@@ -1,9 +1,11 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArkivSystem
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -11,6 +13,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.MottakerIdentType
 import no.nav.bidrag.dokument.forsendelse.service.FORSENDELSE_APP_ID
+import no.nav.bidrag.dokument.forsendelse.service.hentSamhandler
 import no.nav.bidrag.dokument.forsendelse.utvidelser.dokumentDato
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erAlleFerdigstilt
 import no.nav.bidrag.dokument.forsendelse.utvidelser.erNotat
@@ -18,6 +21,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erUtgående
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.domene.ident.SamhandlerId
 import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
@@ -227,6 +231,23 @@ fun Forsendelse.tilForsendelseType() =
         ForsendelseType.UTGÅENDE -> ForsendelseTypeTo.UTGÅENDE
     }
 
+fun Mottaker.hentAdresse(): Adresse? =
+    if (SamhandlerId(ident ?: "").gyldig()) {
+        hentSamhandler(ident)?.adresse?.let { sa ->
+            Adresse(
+                adresselinje1 = sa.adresselinje1 ?: "",
+                adresselinje2 = sa.adresselinje2,
+                adresselinje3 = sa.adresselinje3,
+                poststed = sa.poststed,
+                postnummer = sa.postnr,
+                landkode = sa.land?.verdi?.let { alpha3LandkodeTilAlpha2(it) },
+                landkode3 = sa.land?.verdi,
+            )
+        } ?: adresse
+    } else {
+        adresse
+    }
+
 fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) =
     ForsendelseResponsTo(
         forsendelseId = forsendelseId!!,
@@ -237,7 +258,7 @@ fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDt
                     språk = it.språk,
                     navn = it.navn,
                     adresse =
-                        it.adresse?.let { adresse ->
+                        it.hentAdresse()?.let { adresse ->
                             no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo(
                                 adresselinje1 = adresse.adresselinje1,
                                 adresselinje2 = adresse.adresselinje2,
