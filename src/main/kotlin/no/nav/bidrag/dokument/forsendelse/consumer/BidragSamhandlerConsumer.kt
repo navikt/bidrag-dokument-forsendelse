@@ -2,12 +2,10 @@ package no.nav.bidrag.dokument.forsendelse.consumer
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.commons.web.client.AbstractRestClient
-import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.SAMHANDLER_CACHE
 import no.nav.bidrag.domene.ident.Ident
 import no.nav.bidrag.transport.samhandler.SamhandlerDto
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
@@ -31,8 +29,8 @@ class BidragSamhandlerConsumer(
             .build()
             .toUri()
 
+    //    @Cacheable(SAMHANDLER_CACHE)
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 500, maxDelay = 1500, multiplier = 2.0))
-    @Cacheable(SAMHANDLER_CACHE)
     fun hentSamhandler(samhandlerId: String): SamhandlerDto? {
         try {
             return postForNonNullEntity(createUri("/samhandler"), Ident(samhandlerId))
