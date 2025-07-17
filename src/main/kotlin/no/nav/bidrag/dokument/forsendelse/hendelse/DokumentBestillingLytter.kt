@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo
+import no.nav.bidrag.dokument.forsendelse.mapper.hentAdresse
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.model.KunneIkkBestilleDokument
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
@@ -293,7 +294,7 @@ class DokumentBestillingLytter(
                         mottaker.navn,
                         mottaker.språk,
                         adresse =
-                            mottaker.adresse?.let {
+                            mottaker.hentAdresse()?.let {
                                 MottakerAdresseTo(
                                     adresselinje1 = it.adresselinje1,
                                     adresselinje2 = it.adresselinje2,

@@ -117,7 +117,7 @@ fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMet
                             else -> AvsenderMottakerDtoIdType.FNR
                         },
                     adresse =
-                        it.adresse?.let { adresse ->
+                        it.hentAdresse()?.let { adresse ->
                             MottakerAdresseTo(
                                 adresselinje1 = adresse.adresselinje1,
                                 adresselinje2 = adresse.adresselinje2,
