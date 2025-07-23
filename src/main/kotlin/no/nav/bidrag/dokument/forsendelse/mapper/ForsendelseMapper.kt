@@ -239,7 +239,7 @@ fun Mottaker.hentAdresse(): Adresse? =
                 adresselinje2 = sa.adresselinje2,
                 adresselinje3 = sa.adresselinje3,
                 poststed = sa.poststed,
-                postnummer = sa.postnr,
+                postnummer = sa.postnummer,
                 landkode = sa.land?.verdi?.let { alpha3LandkodeTilAlpha2(it) },
                 landkode3 = sa.land?.verdi,
             )
