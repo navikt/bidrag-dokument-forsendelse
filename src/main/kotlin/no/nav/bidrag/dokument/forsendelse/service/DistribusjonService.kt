@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
+import no.nav.bidrag.dokument.forsendelse.mapper.hentAdresse
 import no.nav.bidrag.dokument.forsendelse.model.distribusjonFeilet
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -198,7 +199,7 @@ class DistribusjonService(
         batchId: String?,
     ): DistribuerJournalpostResponse {
         val adresse =
-            distribuerJournalpostRequest?.adresse ?: forsendelse.mottaker?.adresse?.let {
+            distribuerJournalpostRequest?.adresse ?: forsendelse.mottaker?.hentAdresse()?.let {
                 DistribuerTilAdresse(
                     adresselinje1 = it.adresselinje1,
                     adresselinje2 = it.adresselinje2,

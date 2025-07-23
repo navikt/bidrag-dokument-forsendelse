@@ -23,6 +23,18 @@ val Forsendelse.erNotat get() = forsendelseType == ForsendelseType.NOTAT
 val Forsendelse.erUtgående get() = forsendelseType == ForsendelseType.UTGÅENDE
 val Forsendelse.forsendelseIdMedPrefix get() = "BIF-$forsendelseId"
 
+fun <T, R> T?.takeIfNotNullOrEmpty(block: (T) -> R): R? =
+    if (this == null ||
+        this is String &&
+        this.trim().isEmpty() ||
+        this is List<*> &&
+        this.isEmpty()
+    ) {
+        null
+    } else {
+        block(this)
+    }
+
 fun Forsendelse.validerKanDistribuere() {
     val forsendelseId = this.forsendelseId!!
     if (this.forsendelseType != ForsendelseType.UTGÅENDE) kanIkkeDistribuereForsendelse(forsendelseId, "Forsendelse er ikke utgående")
