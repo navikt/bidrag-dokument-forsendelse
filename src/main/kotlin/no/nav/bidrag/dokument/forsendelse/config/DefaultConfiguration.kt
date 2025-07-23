@@ -15,6 +15,7 @@ import net.javacrumbs.shedlock.core.LockProvider
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock
 import no.nav.bidrag.commons.service.organisasjon.EnableSaksbehandlernavnProvider
+import no.nav.bidrag.commons.unleash.EnableUnleashFeatures
 import no.nav.bidrag.commons.web.CorrelationIdFilter
 import no.nav.bidrag.commons.web.DefaultCorsFilter
 import no.nav.bidrag.commons.web.MdcFilter
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.context.annotation.Scope
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.retry.annotation.EnableRetry
@@ -56,36 +58,9 @@ class DefaultConfiguration {
 
     @Bean
     fun timedAspect(registry: MeterRegistry): TimedAspect = TimedAspect(registry)
-
-    @Bean
-    fun unleashConfig(
-        @Value("\${NAIS_APP_NAME}") appName: String,
-        @Value("\${UNLEASH_SERVER_API_URL}") apiUrl: String,
-        @Value("\${UNLEASH_SERVER_API_TOKEN}") apiToken: String,
-        @Value("\${UNLEASH_SERVER_API_ENV}") environment: String,
-    ) = UnleashConfig
-        .builder()
-        .appName(appName)
-        .unleashAPI("$apiUrl/api/")
-        .instanceId(appName)
-        .environment(environment)
-        .synchronousFetchOnInitialisation(true)
-        .apiKey(apiToken)
-        .unleashContextProvider(DefaultUnleashContextProvider())
-        .build()
-
-    @Bean
-    @Scope("prototype")
-    fun unleashInstance(unleashConfig: UnleashConfig) = DefaultUnleash(unleashConfig)
 }
 
-class DefaultUnleashContextProvider : UnleashContextProvider {
-    override fun getContext(): UnleashContext {
-        val userId = MDC.get("user")
-        return UnleashContext
-            .builder()
-            .userId(userId)
-            .appName(MDC.get("applicationKey"))
-            .build()
-    }
-}
+@EnableUnleashFeatures
+@Profile("nais")
+@Configuration
+class UnleashConfiguration
