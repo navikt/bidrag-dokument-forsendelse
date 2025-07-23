@@ -1,9 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
-import io.getunleash.DefaultUnleash
-import io.getunleash.UnleashContext
-import io.getunleash.UnleashContextProvider
-import io.getunleash.util.UnleashConfig
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
@@ -20,14 +16,11 @@ import no.nav.bidrag.commons.web.CorrelationIdFilter
 import no.nav.bidrag.commons.web.DefaultCorsFilter
 import no.nav.bidrag.commons.web.MdcFilter
 import no.nav.bidrag.commons.web.UserMdcFilter
-import org.slf4j.MDC
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
-import org.springframework.context.annotation.Scope
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.annotation.EnableScheduling
