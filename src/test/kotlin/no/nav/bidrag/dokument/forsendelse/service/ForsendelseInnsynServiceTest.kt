@@ -1,7 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import com.ninjasquad.springmockk.MockkBean
-import io.getunleash.FakeUnleash
 import io.mockk.every
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
 import no.nav.bidrag.dokument.forsendelse.service.dao.DokumentTjeneste
@@ -37,7 +36,6 @@ class ForsendelseInnsynServiceTest {
                 dokumentValgService,
                 dokumentTjeneste,
                 forsendelseTittelService,
-                FakeUnleash(),
             )
         every { tilgangskontrollService.sjekkTilgangForsendelse(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit

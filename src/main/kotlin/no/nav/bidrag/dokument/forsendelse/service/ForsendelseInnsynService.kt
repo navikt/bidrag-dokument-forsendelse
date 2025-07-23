@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import io.getunleash.Unleash
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
@@ -38,7 +38,6 @@ class ForsendelseInnsynService(
     private val dokumentValgService: DokumentValgService,
     private val dokumentTjeneste: DokumentTjeneste,
     private val forsendelseTittelService: ForsendelseTittelService,
-    val unleash: Unleash,
 ) {
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
         val journalpostDtoer =
@@ -48,7 +47,7 @@ class ForsendelseInnsynService(
                 .filter {
                     !it.erBatchForsendelse() ||
                         it.erBatchForsendelseIkkeDistribuertEldreEnn3Dager() ||
-                        unleash.isEnabled("forsendelse.batchbrev_nyere_enn_3_dager")
+                        UnleashFeatures.VIS_BATCHBREV_NYERE_ENN_3_DAGER.isEnabled
                 }.map {
                     ForsendelseIkkeDistribuertResponsTo(
                         enhet = it.enhet,
@@ -74,7 +73,7 @@ class ForsendelseInnsynService(
                 .filter {
                     !it.erBatchForsendelse() ||
                         it.erBatchForsendelseIkkeDistribuertEldreEnn3Dager() ||
-                        unleash.isEnabled("forsendelse.batchbrev_nyere_enn_3_dager")
+                        UnleashFeatures.VIS_BATCHBREV_NYERE_ENN_3_DAGER.isEnabled
                 }.map { tilJournalpostDto(it) }
 
         log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
