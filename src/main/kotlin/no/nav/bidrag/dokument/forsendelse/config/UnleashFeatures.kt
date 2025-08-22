@@ -7,6 +7,7 @@ enum class UnleashFeatures(
     val featureName: String,
     defaultValue: Boolean,
 ) {
+    DOKUMENTVALG_FRA_VEDTAK_BEHANDLING("forsendelse.dokumentvalg_vedtak_behandling", false),
     OPPRETT_BATCHBREV("forsendelse.opprett_batchbrev", false),
     VIS_BATCHBREV_NYERE_ENN_3_DAGER("forsendelse.batchbrev_nyere_enn_3_dager", false),
     ;
