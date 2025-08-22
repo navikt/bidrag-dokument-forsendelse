@@ -34,7 +34,7 @@
     <grpc.version>1.57.2</grpc.version>
     <pdfbox.version>3.0.5</pdfbox.version>
     <verapdf.version>1.26.1</verapdf.version>
-    <ktlint.version>1.5.0</ktlint.version>
+    <ktlint.version>1.7.1</ktlint.version>
     <skipOwasp>false</skipOwasp>
 
   </properties>
