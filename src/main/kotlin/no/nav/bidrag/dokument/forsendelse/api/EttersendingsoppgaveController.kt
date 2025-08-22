@@ -40,7 +40,7 @@ class EttersendingsoppgaveController(
         @Valid @RequestBody
         request: OpprettEttersendingsoppgaveRequest,
     ): EttersendingsoppgaveDto {
-        SIKKER_LOGG.info { "Oppretter ny ettersendingsoppgave $request" }
+        SIKKER_LOGG.debug { "Oppretter ny ettersendingsoppgave $request" }
         val forsendelse = forsenelseTjeneste.medForsendelseId(request.forsendelseId)!!
         ettersendingsOppgaveService.opprettEttersendingsoppgave(request)
         return forsendelse.ettersendingsoppgave!!.tilEttersendingsoppaveDto()
@@ -55,7 +55,7 @@ class EttersendingsoppgaveController(
         @Valid @RequestBody
         request: OppdaterEttersendingsoppgaveRequest,
     ): EttersendingsoppgaveDto {
-        SIKKER_LOGG.info { "Oppdaterer ettersendingsoppave $request" }
+        SIKKER_LOGG.debug { "Oppdaterer ettersendingsoppave $request" }
         val forsendelse = forsenelseTjeneste.medForsendelseId(request.forsendelseId)!!
         ettersendingsOppgaveService.oppdaterEttersendingsoppgave(request)
         return forsendelse.ettersendingsoppgave!!.tilEttersendingsoppaveDto()
@@ -76,7 +76,7 @@ class EttersendingsoppgaveController(
         @Valid @RequestBody
         request: SlettEttersendingsoppgave,
     ) {
-        secureLogger.info { "Slett ettersendingsoppgave $request" }
+        secureLogger.debug { "Slett ettersendingsoppgave $request" }
         ettersendingsOppgaveService.slettEttersendingsoppave(request)
     }
 
@@ -95,7 +95,7 @@ class EttersendingsoppgaveController(
         @Valid @RequestBody
         request: SlettEttersendingsoppgaveVedleggRequest,
     ): EttersendingsoppgaveDto {
-        log.info { "Sletter varsel ettersendelse $request" }
+        log.debug { "Sletter varsel ettersendelse $request" }
         val forsendelse = forsenelseTjeneste.medForsendelseId(request.forsendelseId)!!
         ettersendingsOppgaveService.slettEttersendingsoppgaveVedlegg(request)
         return forsendelse.ettersendingsoppgave!!.tilEttersendingsoppaveDto()

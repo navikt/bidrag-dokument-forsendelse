@@ -47,7 +47,7 @@ class ForsendelseTjeneste(
     ): List<Forsendelse> {
         val beforeDate = beforeDateInput ?: LocalDateTime.now().minusDays(4)
         val afterDate = afterDateInput ?: LocalDateTime.now().minusDays(200)
-        LOGGER.info { "Henter distribuerte forsendelser med kanal NAV_NO fra $afterDate til $beforeDate" }
+        LOGGER.debug { "Henter distribuerte forsendelser med kanal NAV_NO fra $afterDate til $beforeDate" }
         return forsendelseRepository.hentDistribuerteForsendelseTilNAVNO(
             Pageable.ofSize(limit),
             beforeDate,

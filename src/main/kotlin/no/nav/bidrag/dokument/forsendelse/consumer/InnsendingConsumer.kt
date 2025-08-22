@@ -39,8 +39,7 @@ class InnsendingConsumer(
         try {
             return postForEntity(createUri(), oppgave)
         } catch (e: HttpStatusCodeException) {
-            LOGGER.info { "Det skjedde en feil ved henting av ettersendingsoppgave" }
-            secureLogger.error("Det skjedde en feil ved henting av ettersendingsoppgave $oppgave", e)
+            secureLogger.debug(e) { "Det skjedde en feil ved henting av ettersendingsoppgave $oppgave" }
             throw HentVedtakFeiletException("Henting av behandling ${oppgave.tittel} feilet", e)
         }
     }
@@ -56,8 +55,7 @@ class InnsendingConsumer(
                 )
             }!!
         } catch (e: HttpStatusCodeException) {
-            LOGGER.info { "Det skjedde en feil ved henting av ettersendingsoppgave" }
-            secureLogger.error("Det skjedde en feil ved henting av ettersendingsoppgave $oppgave", e)
+            secureLogger.error(e) { "Det skjedde en feil ved henting av ettersendingsoppgave $oppgave" }
             throw e
         }
     }

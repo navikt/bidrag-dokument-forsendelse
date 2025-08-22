@@ -52,7 +52,7 @@ class CacheConfig {
                 Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
             }
 
-        log.info { "Bruker cache $dokumentMalerCache for dokumentmaler. Kjører i cluster $clusterName" }
+        log.trace { "Bruker cache $dokumentMalerCache for dokumentmaler. Kjører i cluster $clusterName" }
         caffeineCacheManager.registerCustomCache(
             SAKSBEHANDLERINFO_CACHE,
             Caffeine.newBuilder().expireAfter(InvaliderCacheFørStartenAvArbeidsdag()).build(),

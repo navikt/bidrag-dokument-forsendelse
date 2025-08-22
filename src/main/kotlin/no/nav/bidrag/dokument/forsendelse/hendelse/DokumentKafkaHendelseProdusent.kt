@@ -20,8 +20,7 @@ class DokumentKafkaHendelseProdusent(
 ) {
     @Retryable(value = [Exception::class], maxAttempts = 10, backoff = Backoff(delay = 1000, maxDelay = 12000, multiplier = 2.0))
     fun publiser(dokumentHendelse: DokumentHendelse) {
-        log.info("Publiserer Dokumenthendelse for dokumentreferanse ${dokumentHendelse.dokumentreferanse}")
-        SIKKER_LOGG.info("Publiserer DokumentHendelse $dokumentHendelse")
+        SIKKER_LOGG.info { "Publiserer DokumentHendelse $dokumentHendelse" }
         kafkaTemplate.send(topic, dokumentHendelse.dokumentreferanse, objectMapper.writeValueAsString(dokumentHendelse))
     }
 }

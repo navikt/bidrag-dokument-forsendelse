@@ -57,7 +57,7 @@ class ForsendelseInnsynService(
                         tittel = it.dokumenter.hoveddokument?.tittel,
                     )
                 }
-        log.info { "Hentet ${journalpostDtoer.size} utgående forsendelser som ikke er distribuert" }
+        log.debug { "Hentet ${journalpostDtoer.size} utgående forsendelser som ikke er distribuert" }
         return journalpostDtoer
     }
 
@@ -76,7 +76,7 @@ class ForsendelseInnsynService(
                         UnleashFeatures.VIS_BATCHBREV_NYERE_ENN_3_DAGER.isEnabled
                 }.map { tilJournalpostDto(it) }
 
-        log.info { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
+        log.debug { "Hentet ${forsendelserFiltrert.size} forsendelser for sak $saksnummer og temaer $temaListe" }
         return forsendelserFiltrert
     }
 

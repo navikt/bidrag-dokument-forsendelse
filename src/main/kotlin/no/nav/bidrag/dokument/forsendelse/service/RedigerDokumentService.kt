@@ -61,7 +61,7 @@ class RedigerDokumentService(
         val oppdatertDokument = oppdatertForsendelse.dokumenter.hentDokument(dokumentreferanse)!!
         oppdaterStatusTilAlleDokumenter(dokumentreferanse, oppdatertDokument.dokumentStatus)
 
-        log.info { "Opphevet ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId" }
+        log.debug { "Opphevet ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId" }
         return DokumentRespons(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
@@ -79,7 +79,7 @@ class RedigerDokumentService(
             forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
-        log.info {
+        log.debug {
             "Ferdigstiller dokument $dokumentreferanse i forsendelse $forsendelseId med dokumentstørrelse ${
                 bytesIntoHumanReadable(
                     ferdigstillDokumentRequest.fysiskDokument.size.toLong(),
@@ -99,7 +99,7 @@ class RedigerDokumentService(
 
         oppdaterStatusTilAlleDokumenter(dokumentreferanse, oppdatertDokument.dokumentStatus)
 
-        log.info { "Ferdigstilt dokument $dokumentreferanse i forsendelse $forsendelseId" }
+        log.debug { "Ferdigstilt dokument $dokumentreferanse i forsendelse $forsendelseId" }
         return DokumentRespons(
             dokumentreferanse = oppdatertDokument.dokumentreferanse,
             tittel = oppdatertDokument.tittel,
@@ -205,7 +205,7 @@ class RedigerDokumentService(
             forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
-        log.info { "Oppdaterer dokument redigeringmetadata for dokument $dokumentreferanse i forsendelse $forsendelseId" }
+        log.debug { "Oppdaterer dokument redigeringmetadata for dokument $dokumentreferanse i forsendelse $forsendelseId" }
         forsendelseTjeneste.lagre(
             forsendelse.copy(
                 dokumenter = oppdaterDokumentRedigeringMetadata(forsendelse, dokumentreferanse, redigeringMetadata),
