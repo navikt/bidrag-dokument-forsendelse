@@ -2,11 +2,15 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import StubUtils
 import com.ninjasquad.springmockk.MockkBean
+import enableUnleashFeature
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.mockkObject
 import io.mockk.verify
+import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
@@ -48,6 +52,8 @@ class DokumentValgServiceTest {
 
     @BeforeEach
     fun init() {
+        mockkObject(UnleashFeaturesProvider)
+        enableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
         tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, true)
         dokumentValgService =
             DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!, true)
