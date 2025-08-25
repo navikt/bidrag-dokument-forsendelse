@@ -39,7 +39,7 @@ class DistribusjonService(
 
     fun størrelseIMb(forsendelseId: Long): Long {
         val fileSize = bytesToMb(dokumentStorageService.totalStørrelse(forsendelseId))
-        log.info { "Forsendelse $forsendelseId har dokumenter på total størrelse $fileSize Mb" }
+        log.debug { "Forsendelse $forsendelseId har dokumenter på total størrelse $fileSize Mb" }
         return fileSize.toLong()
     }
 
@@ -66,7 +66,7 @@ class DistribusjonService(
         var forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
 
         if (harDistribuert(forsendelse)) {
-            log.info {
+            log.debug {
                 "Forsendelse $forsendelseId er allerede distribuert med journalpostId " +
                     "${forsendelse.journalpostIdFagarkiv} og batchId ${forsendelse.batchId}"
             }
@@ -113,7 +113,7 @@ class DistribusjonService(
                 distribusjonKanal = DistribusjonKanal.INGEN_DISTRIBUSJON,
             ),
         )
-        log.info {
+        log.debug {
             "Forsendelsen ferdigstilt uten distribusjon. " +
                 "Forsendelse og Journalpost markert som ikke distribuert med kanal INGEN_DISTRIBUSJON."
         }
@@ -171,7 +171,7 @@ class DistribusjonService(
             )
                 ?: distribusjonFeilet(forsendelseId)
 
-        log.info {
+        log.debug {
             "Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv} " +
                 "for å trigge ny opprettelse av ettersendingsoppgave. " +
                 "Opprettet ettersendingsoppgave med innsendingsid=${resultat.ettersendingsoppgave?.innsendingsId}"
@@ -220,11 +220,11 @@ class DistribusjonService(
             )
                 ?: distribusjonFeilet(forsendelseId)
 
-        log.info {
+        log.debug {
             "Bestilte distribusjon for forsendelse $forsendelseId med journalpostId=${forsendelse.journalpostIdFagarkiv}, " +
                 "bestillingId=${resultat.bestillingsId} og batchId=$batchId"
         }
-        SIKKER_LOGG.info {
+        SIKKER_LOGG.debug {
             "Bestilte distribusjon for forsendelse $forsendelseId med adresse $adresse, " +
                 "journalpostId=${forsendelse.journalpostIdFagarkiv}, bestillingId=${resultat.bestillingsId} og batchId=$batchId"
         }

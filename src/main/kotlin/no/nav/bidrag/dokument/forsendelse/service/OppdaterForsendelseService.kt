@@ -57,8 +57,7 @@ class OppdaterForsendelseService(
         forsendelse.validerKanEndreForsendelse()
         forespørsel.validerGyldigEndring(forsendelse)
 
-        log.info { "Oppdaterer forsendelse $forsendelseId" }
-        SIKKER_LOGG.info { "Oppdaterer forsendelse $forsendelseId for forespørsel $forespørsel" }
+        SIKKER_LOGG.debug { "Oppdaterer forsendelse $forsendelseId for forespørsel $forespørsel" }
 
         val oppdatertForsendelse =
             if (forsendelse.status == ForsendelseStatus.UNDER_OPPRETTELSE) {
@@ -173,7 +172,7 @@ class OppdaterForsendelseService(
 
         val nyDokument = dokumentTjeneste.opprettDokumentDo(forsendelse, forespørsel)
 
-        log.info {
+        log.debug {
             "Knyttet nytt dokument til ${forsendelse.forsendelseId} med tittel=${forespørsel.tittel}, " +
                 "språk=${forespørsel.språk} dokumentmalId=${forespørsel.dokumentmalId}, " +
                 "dokumentreferanse=${nyDokument.dokumentreferanse} og journalpostId=${nyDokument.journalpostId}"
@@ -384,7 +383,7 @@ class OppdaterForsendelseService(
                 ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
 
-        log.info { "Opphever ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId" }
+        log.debug { "Opphever ferdigstilling av dokument $dokumentreferanse i forsendelse $forsendelseId" }
 
         val oppdatertForsendelse =
             forsendelseTjeneste.lagre(
@@ -413,7 +412,7 @@ class OppdaterForsendelseService(
         forsendelse.validerKanEndreForsendelse()
         forespørsel.valider(forsendelse, dokumentreferanse)
 
-        log.info { "Oppdaterer dokument $dokumentreferanse i forsendelse $forsendelseId" }
+        log.debug { "Oppdaterer dokument $dokumentreferanse i forsendelse $forsendelseId" }
 
         val oppdatertForsendelse =
             forsendelseTjeneste.lagre(
@@ -476,7 +475,7 @@ class OppdaterForsendelseService(
                 ?: fantIkkeForsendelse(forsendelseId)
         forsendelse.validerKanEndreForsendelse()
 
-        log.info { "Ferdgistiller dokument $dokumentreferanse i forsendelse $forsendelseId" }
+        log.debug { "Ferdgistiller dokument $dokumentreferanse i forsendelse $forsendelseId" }
 
         val oppdatertForsendelse =
             forsendelseTjeneste.lagre(

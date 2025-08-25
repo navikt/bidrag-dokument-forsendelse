@@ -85,7 +85,7 @@ class OpprettForsendelseService(
         val dokumenter =
             dokumenttjeneste.opprettNyttDokument(forsendelse, dokumenterMedOppdatertTittel(forespørsel, forsendelseType))
 
-        log.info {
+        log.debug {
             "Opprettet forsendelse ${forsendelse.forsendelseId} med dokumenter ${dokumenter.joinToString(
                 ",",
             ) { it.dokumentreferanse }}"

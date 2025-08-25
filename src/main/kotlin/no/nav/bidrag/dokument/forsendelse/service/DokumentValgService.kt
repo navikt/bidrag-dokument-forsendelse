@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
@@ -17,13 +18,20 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBeh
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTilbakekrevingLik
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
+import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.transport.behandling.felles.grunnlag.VirkningstidspunktGrunnlag
+import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåEgenReferanse
+import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
+import no.nav.bidrag.transport.behandling.vedtak.response.finnResultatFraAnnenVedtak
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+
+private val brevkodeAldersjustering = "BI01B05"
 
 @Component
 class DokumentValgService(
@@ -85,23 +93,50 @@ class DokumentValgService(
     private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? =
         if (request == null) {
             null
-        } else if (request.vedtakId != null && hentDetaljerFraVedtakBehandlingEnabled) {
+        } else if (request.vedtakId != null && UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled) {
             bidragVedtakConsumer
                 .hentVedtak(vedtakId = request.vedtakId!!)
                 ?.let {
                     val behandlingType =
                         if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
-                    val erFattetBeregnet = it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") }
+                    val virkningstidspunktGrunnlag =
+                        it.grunnlagListe
+                            .filtrerOgKonverterBasertPåEgenReferanse<VirkningstidspunktGrunnlag>(
+                                Grunnlagstype.VIRKNINGSTIDSPUNKT,
+                            )
+                    val erDirekteAvslag =
+                        virkningstidspunktGrunnlag.isNotEmpty() && virkningstidspunktGrunnlag.all { it.innhold.avslag != null }
+                    val erFattetBeregnet =
+                        it.type != Vedtakstype.INNKREVING && it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") } ||
+                            it.erOrkestrertVedtak && !erDirekteAvslag
                     val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+                    val inneholderAldersjustering =
+                        it.erOrkestrertVedtak &&
+                            it.stønadsendringListe.any { s ->
+                                s.periodeListe.any { p ->
+                                    val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
+                                    val vedtakstype =
+                                        resultatFraAnnenVedtak?.vedtakstype ?: run {
+                                            resultatFraAnnenVedtak?.vedtaksid?.let {
+                                                bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())?.type
+                                            }
+                                        }
+                                    vedtakstype == Vedtakstype.ALDERSJUSTERING && resultatFraAnnenVedtak != null
+                                }
+                            }
                     request.copy(
                         behandlingType = behandlingType,
                         vedtakType = it.type,
                         erFattetBeregnet = erFattetBeregnet,
+                        inneholderAldersjustering = inneholderAldersjustering,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
                         enhet = request.enhet ?: it.enhetsnummer?.verdi,
                     )
                 }
-        } else if (request.behandlingId != null && request.erFattetBeregnet == null && hentDetaljerFraVedtakBehandlingEnabled) {
+        } else if (request.behandlingId != null &&
+            request.erFattetBeregnet == null &&
+            UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled
+        ) {
             behandlingConsumer
                 .hentBehandling(
                     request.behandlingId!!,
@@ -125,13 +160,23 @@ class DokumentValgService(
         val behandlingType = request.behandlingtypeKonvertert
         val behandlingTypeConverted = if (behandlingType == "GEBYR_MOTTAKER") "GEBYR_SKYLDNER" else behandlingType
         val dokumentValg =
-            dokumentValgMap[behandlingTypeConverted]?.find {
-                it.soknadFra.contains(soknadFra) &&
-                    it.isVedtaktypeValid(vedtakType, soknadType) &&
-                    it.behandlingStatus.isValid(erFattetBeregnet) &&
-                    it.forvaltning.isValid(enhet) &&
-                    it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
-            }
+            dokumentValgMap[behandlingTypeConverted]
+                ?.find {
+                    it.soknadFra.contains(soknadFra) &&
+                        it.isVedtaktypeValid(vedtakType, soknadType) &&
+                        it.behandlingStatus.isValid(erFattetBeregnet) &&
+                        it.forvaltning.isValid(enhet) &&
+                        it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
+                }?.let {
+                    if (request.inneholderAldersjustering == true) {
+                        it.copy(
+                            brevkoder = (it.brevkoder + listOf(brevkodeAldersjustering)).toSet().toList(),
+                        )
+                    } else {
+                        it
+                    }
+                }
+
         val brevkoder =
             dokumentValg?.brevkoder?.let {
                 if (erFattetBeregnet != null) {

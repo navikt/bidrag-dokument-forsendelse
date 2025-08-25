@@ -43,8 +43,7 @@ class BidragDokumentBestillingConsumer(
         dokumentmalId: String,
     ): DokumentBestillingResponse? {
         val respons: DokumentBestillingResponse? = postForEntity(createUri("/bestill/$dokumentmalId"), forespørsel)
-        LOGGER.info("Bestilte dokument med dokumentmalId $dokumentmalId")
-        SIKKER_LOGG.info("Bestilte dokument med dokumentmalId $dokumentmalId og forespørsel $forespørsel")
+        SIKKER_LOGG.debug("Bestilte dokument med dokumentmalId $dokumentmalId og forespørsel $forespørsel")
         return respons
     }
 

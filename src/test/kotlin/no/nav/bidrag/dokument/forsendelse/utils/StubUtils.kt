@@ -8,8 +8,11 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import io.mockk.every
 import no.nav.bidrag.commons.service.AppContext
 import no.nav.bidrag.commons.service.KodeverkKoderBetydningerResponse
+import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.BehandlingDto
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingResponse
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
@@ -602,3 +605,15 @@ class StubUtils {
         }
     }
 }
+
+fun enableUnleashFeature(feature: UnleashFeatures) =
+    every {
+        UnleashFeaturesProvider
+            .isEnabled(feature = eq(feature.featureName), defaultValue = any())
+    } returns true
+
+fun disableUnleashFeature(feature: UnleashFeatures) =
+    every {
+        UnleashFeaturesProvider
+            .isEnabled(feature = eq(feature.featureName), defaultValue = any())
+    } returns false
