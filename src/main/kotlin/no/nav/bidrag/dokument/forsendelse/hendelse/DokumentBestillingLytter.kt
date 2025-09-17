@@ -73,12 +73,12 @@ class DokumentBestillingLytter(
 
         try {
             if (erStatiskDokument(dokument.dokumentmalId)) {
-                oppdaterStatusForStatiskDokument(dokument)
+                oppdaterStatusForDokumentProduksjon(dokument, true)
                 measureBestilling(forsendelse, dokument)
                 return
             }
             if (erFraDokumentProduksjon(dokument.dokumentmalId)) {
-                oppdaterStatusForStatiskDokument(dokument)
+                oppdaterStatusForDokumentProduksjon(dokument, false)
                 measureBestilling(forsendelse, dokument)
                 return
             }
@@ -122,7 +122,10 @@ class DokumentBestillingLytter(
         }
     }
 
-    private fun oppdaterStatusForStatiskDokument(dokument: Dokument) {
+    private fun oppdaterStatusForDokumentProduksjon(
+        dokument: Dokument,
+        erStatiskDokument: Boolean,
+    ) {
         if (erRedigerbar(dokument.dokumentmalId!!)) {
             LOGGER.info {
                 "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} " +
@@ -136,8 +139,10 @@ class DokumentBestillingLytter(
                     metadata =
                         run {
                             val metadata = dokument.metadata
-                            metadata.markerSomStatiskDokument()
-                            if (erSkjema(dokument.dokumentmalId)) metadata.markerSomSkjema()
+                            if (erStatiskDokument) {
+                                metadata.markerSomStatiskDokument()
+                                if (erSkjema(dokument.dokumentmalId)) metadata.markerSomSkjema()
+                            }
                             metadata.copy()
                         },
                 ),
@@ -156,7 +161,9 @@ class DokumentBestillingLytter(
                     metadata =
                         run {
                             val metadata = dokument.metadata
-                            metadata.markerSomStatiskDokument()
+                            if (erStatiskDokument) {
+                                metadata.markerSomStatiskDokument()
+                            }
                             metadata.copy()
                         },
                 ),
