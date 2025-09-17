@@ -4,7 +4,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
+import no.nav.bidrag.dokument.forsendelse.mapper.tilBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
+import no.nav.bidrag.dokument.forsendelse.mapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Component
 private val log = KotlinLogging.logger {}
 
 fun Dokument.erStatiskDokument() = arkivsystem == DokumentArkivSystem.BIDRAG && metadata.erStatiskDokument()
+
+fun Dokument.erDokumentFraProduksjon() = arkivsystem == DokumentArkivSystem.BIDRAG && !metadata.erStatiskDokument()
 
 @Component
 class FysiskDokumentService(
@@ -52,6 +56,10 @@ class FysiskDokumentService(
 
         if (dokument.erStatiskDokument()) {
             return hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
+        }
+        if (dokument.erDokumentFraProduksjon()) {
+            return bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel())
+                ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
         }
 
         val arkivSystem = dokument.arkivsystem

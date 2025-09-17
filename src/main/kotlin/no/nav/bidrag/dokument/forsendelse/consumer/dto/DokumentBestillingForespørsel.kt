@@ -48,6 +48,7 @@ data class DokumentMalDetaljer(
     val kanBestilles: Boolean = false,
     val redigerbar: Boolean = false,
     val beskrivelse: String = tittel,
+    val nyDokumentProduksjon: Boolean = false,
     val statiskInnhold: Boolean = false,
     val kreverVedtak: Boolean = false,
     val kreverBehandling: Boolean = false,

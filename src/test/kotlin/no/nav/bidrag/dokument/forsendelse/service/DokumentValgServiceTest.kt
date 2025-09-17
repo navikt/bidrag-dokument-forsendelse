@@ -54,9 +54,9 @@ class DokumentValgServiceTest {
     fun init() {
         mockkObject(UnleashFeaturesProvider)
         enableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
-        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, true)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer)
         dokumentValgService =
-            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!, true)
+            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()

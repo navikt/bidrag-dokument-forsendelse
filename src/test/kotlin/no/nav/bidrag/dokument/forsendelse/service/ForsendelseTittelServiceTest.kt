@@ -74,7 +74,6 @@ class ForsendelseTittelServiceTest {
                 behandlingConsumer,
                 dokumentBestillingConsumer,
                 samhandlerConsumer,
-                true,
             )
         every { dokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
 

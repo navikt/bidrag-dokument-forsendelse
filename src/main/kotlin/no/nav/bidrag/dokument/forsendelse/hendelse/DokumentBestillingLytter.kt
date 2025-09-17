@@ -77,6 +77,11 @@ class DokumentBestillingLytter(
                 measureBestilling(forsendelse, dokument)
                 return
             }
+            if (erFraDokumentProduksjon(dokument.dokumentmalId)) {
+                oppdaterStatusForStatiskDokument(dokument)
+                measureBestilling(forsendelse, dokument)
+                return
+            }
 
             val arkivSystem = sendBestilling(forsendelse, dokument)
             measureBestilling(forsendelse, dokument)
@@ -255,6 +260,9 @@ class DokumentBestillingLytter(
                 false
             }
         } ?: false
+
+    private fun erFraDokumentProduksjon(dokumentMal: String): Boolean =
+        dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.nyDokumentProduksjon ?: false
 
     private fun erStatiskDokument(dokumentMal: String): Boolean =
         dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false

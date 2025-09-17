@@ -32,6 +32,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 private val brevkodeAldersjustering = "BI01B05"
+private val brevkodeForsideVedtak = "FORSIDE_ORKESTRERT_OMGJØRING"
 
 @Component
 class DokumentValgService(
@@ -39,7 +40,6 @@ class DokumentValgService(
     val bidragVedtakConsumer: BidragVedtakConsumer,
     val behandlingConsumer: BidragBehandlingConsumer,
     val tittelService: ForsendelseTittelService,
-    @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}") val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) {
     @Suppress("ktlint:standard:property-naming")
     val FRITEKSTBREV = "BI01S02"
@@ -69,7 +69,7 @@ class DokumentValgService(
             false
         } else if (request.erKlage()) {
             true
-        } else if (!request.vedtakId.isNullOrEmpty() && hentDetaljerFraVedtakBehandlingEnabled) {
+        } else if (!request.vedtakId.isNullOrEmpty() && UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled) {
             bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId!!)?.let { it.type == Vedtakstype.KLAGE }
                 ?: false
         } else if (!request.behandlingId.isNullOrEmpty()) {
@@ -128,6 +128,7 @@ class DokumentValgService(
                         behandlingType = behandlingType,
                         vedtakType = it.type,
                         erFattetBeregnet = erFattetBeregnet,
+                        erOrkestrertVedtak = it.erOrkestrertVedtak,
                         inneholderAldersjustering = inneholderAldersjustering,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
                         enhet = request.enhet ?: it.enhetsnummer?.verdi,
@@ -168,13 +169,16 @@ class DokumentValgService(
                         it.forvaltning.isValid(enhet) &&
                         it.erVedtakIkkeTilbakekreving == erVedtakIkkeTilbakekreving
                 }?.let {
+                    val ekstraKoder = mutableListOf<String>()
                     if (request.inneholderAldersjustering == true) {
-                        it.copy(
-                            brevkoder = (it.brevkoder + listOf(brevkodeAldersjustering)).toSet().toList(),
-                        )
-                    } else {
-                        it
+                        ekstraKoder.add(brevkodeAldersjustering)
                     }
+                    if (request.erOrkestrertVedtak == true) {
+                        ekstraKoder.add(brevkodeForsideVedtak)
+                    }
+                    it.copy(
+                        brevkoder = it.brevkoder + ekstraKoder,
+                    )
                 }
 
         val brevkoder =

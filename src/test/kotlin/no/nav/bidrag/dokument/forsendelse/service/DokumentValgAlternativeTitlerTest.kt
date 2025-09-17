@@ -42,7 +42,7 @@ class DokumentValgAlternativeTitlerTest {
     @BeforeEach
     fun init() {
         dokumentValgService =
-            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService, true)
+            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
