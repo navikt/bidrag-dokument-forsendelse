@@ -32,7 +32,12 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 private val brevkodeAldersjustering = "BI01B05"
-private val brevkodeForsideVedtak = "FORSIDE_ORKESTRERT_OMGJØRING"
+private val brevkodeForsideVedtak = "VOFORSIDE"
+
+data class HentDokumentValgResponse(
+    val erOrkestrertVedtak: Boolean,
+    val dokumentMalDetaljer: Map<String, DokumentMalDetaljer>,
+)
 
 @Component
 class DokumentValgService(
