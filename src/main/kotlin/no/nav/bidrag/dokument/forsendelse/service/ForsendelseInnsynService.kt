@@ -6,6 +6,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
+import no.nav.bidrag.dokument.forsendelse.model.HentDokumentValgResponse
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
@@ -155,10 +156,10 @@ class ForsendelseInnsynService(
         } ?: forsendelseRespons
     }
 
-    fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> {
+    fun hentDokumentvalgForsendelseV2(forsendelseId: Long): HentDokumentValgResponse {
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         return forsendelse.behandlingInfo?.let {
-            dokumentValgService.hentDokumentMalListe(
+            dokumentValgService.hentDokumentMalListeV2(
                 HentDokumentValgRequest(
                     vedtakId = it.vedtakId,
                     behandlingId = it.behandlingId,
@@ -171,6 +172,9 @@ class ForsendelseInnsynService(
                     soknadType = it.soknadType,
                 ),
             )
-        } ?: dokumentValgService.hentDokumentMalListe()
+        } ?: dokumentValgService.hentDokumentMalListeV2()
     }
+
+    fun hentDokumentvalgForsendelse(forsendelseId: Long): Map<String, DokumentMalDetaljer> =
+        hentDokumentvalgForsendelseV2(forsendelseId).dokumentMalDetaljer
 }

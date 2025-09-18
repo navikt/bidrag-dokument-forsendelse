@@ -246,7 +246,7 @@ class DokumentBestillingLytter(
     private fun Forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
         val dokumentDetaljer =
             dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
-                ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
+                ?: DokumentMalDetaljer(dokumentMal, tittel = "", type = DokumentMalType.UTGÅENDE)
         val erFattetGjennomNyLøsning =
             behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null

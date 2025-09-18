@@ -9,6 +9,7 @@ import no.nav.bidrag.dokument.forsendelse.api.ForsendelseApiKontroller
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.ForsendelseId
+import no.nav.bidrag.dokument.forsendelse.model.HentDokumentValgResponse
 import no.nav.bidrag.dokument.forsendelse.model.numerisk
 import no.nav.bidrag.dokument.forsendelse.service.DokumentValgService
 import no.nav.bidrag.dokument.forsendelse.service.ForsendelseInnsynService
@@ -75,11 +76,23 @@ class ForsendelseInnsynKontroller(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
     ): Map<String, DokumentMalDetaljer> = forsendelseInnsynService.hentDokumentvalgForsendelse(forsendelseIdMedPrefix.numerisk)
 
+    @GetMapping("/dokumentvalg/forsendelseV2/{forsendelseIdMedPrefix}")
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun hentDokumentValgForForsendelseV2(
+        @PathVariable forsendelseIdMedPrefix: ForsendelseId,
+    ): HentDokumentValgResponse = forsendelseInnsynService.hentDokumentvalgForsendelseV2(forsendelseIdMedPrefix.numerisk)
+
     @PostMapping("/dokumentvalg")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
     fun hentDokumentValg(
         @RequestBody(required = false) request: HentDokumentValgRequest? = null,
     ): Map<String, DokumentMalDetaljer> = dokumentValgService.hentDokumentMalListe(request)
+
+    @PostMapping("/dokumentvalgV2")
+    @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")
+    fun hentDokumentValgV2(
+        @RequestBody(required = false) request: HentDokumentValgRequest? = null,
+    ) = dokumentValgService.hentDokumentMalListeV2(request)
 
     @PostMapping("/dokumentvalg/notat")
     @Operation(description = "Henter dokumentmaler som er støttet av applikasjonen")

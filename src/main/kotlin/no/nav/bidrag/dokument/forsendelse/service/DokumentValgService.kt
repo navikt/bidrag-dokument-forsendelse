@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsu
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
+import no.nav.bidrag.dokument.forsendelse.model.HentDokumentValgResponse
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
@@ -23,7 +24,9 @@ import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.felles.grunnlag.VirkningstidspunktGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåEgenReferanse
 import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
+import no.nav.bidrag.transport.behandling.vedtak.response.finnOrkestreringDetaljer
 import no.nav.bidrag.transport.behandling.vedtak.response.finnResultatFraAnnenVedtak
+import no.nav.bidrag.transport.behandling.vedtak.response.omgjøringsvedtakErEnesteVedtak
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
@@ -33,11 +36,6 @@ import java.nio.charset.StandardCharsets
 
 private val brevkodeAldersjustering = "BI01B05"
 private val brevkodeForsideVedtak = "VOFORSIDE"
-
-data class HentDokumentValgResponse(
-    val erOrkestrertVedtak: Boolean,
-    val dokumentMalDetaljer: Map<String, DokumentMalDetaljer>,
-)
 
 @Component
 class DokumentValgService(
@@ -85,14 +83,77 @@ class DokumentValgService(
             false
         }
 
-    fun hentDokumentMalListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> {
-        if (request == null) return standardBrevkoder.associateWith { mapToMalDetaljer(it) }
+    fun hentDokumentMalListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> =
+        hentDokumentMalListeV2(request).dokumentMalDetaljer
+
+    fun hentDokumentMalListeV2(request: HentDokumentValgRequest? = null): HentDokumentValgResponse {
+        if (request == null) return HentDokumentValgResponse(standardBrevkoder.associateWith { mapToMalDetaljer(it) })
         val requestUtfylt = hentUtfyltDokumentValgDetaljer(request)
         val maler =
             hentDokumentMalListeForRequest(requestUtfylt)
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
 
-        return maler.toList().sortedBy { (a, b) -> if (a == FRITEKSTBREV) 1 else -1 }.toMap()
+        val automatiskOpprettDokumenter = bestemDokumentMallisteForVedtak(request)
+        return HentDokumentValgResponse(
+            maler
+                .toList()
+                .sortedBy { (a, b) ->
+                    val automatiskOpprettDokumenterIds = automatiskOpprettDokumenter.map { it.malId }
+                    if (automatiskOpprettDokumenterIds.contains(a)) {
+                        automatiskOpprettDokumenterIds.indexOf(a)
+                    } else if (a == FRITEKSTBREV) {
+                        Int.MAX_VALUE
+                    } else {
+                        automatiskOpprettDokumenterIds.size
+                    }
+                }.toMap(),
+            bestemDokumentMallisteForVedtak(request),
+        )
+    }
+
+    private fun bestemDokumentMallisteForVedtak(request: HentDokumentValgRequest? = null): List<DokumentMalDetaljer> {
+        return if (request?.vedtakId != null) {
+            val it = bidragVedtakConsumer.hentVedtak(vedtakId = request.vedtakId!!) ?: return emptyList()
+            if (!it.erOrkestrertVedtak) {
+                return emptyList()
+            }
+            val virkningstidspunktGrunnlag =
+                it.grunnlagListe
+                    .filtrerOgKonverterBasertPåEgenReferanse<VirkningstidspunktGrunnlag>(
+                        Grunnlagstype.VIRKNINGSTIDSPUNKT,
+                    )
+
+            val erDirekteAvslag =
+                virkningstidspunktGrunnlag.isNotEmpty() && virkningstidspunktGrunnlag.all { it.innhold.avslag != null }
+            val inneholderAldersjustering =
+                it.erOrkestrertVedtak &&
+                    it.stønadsendringListe.any { s ->
+                        s.periodeListe.any { p ->
+                            val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
+                            val vedtakstype =
+                                resultatFraAnnenVedtak?.vedtakstype ?: run {
+                                    resultatFraAnnenVedtak?.vedtaksid?.let {
+                                        bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())?.type
+                                    }
+                                }
+                            vedtakstype == Vedtakstype.ALDERSJUSTERING && resultatFraAnnenVedtak != null
+                        }
+                    }
+
+            val dokumentmalListe = mutableListOf<String>()
+            if (!it.omgjøringsvedtakErEnesteVedtak) {
+                dokumentmalListe.add(brevkodeForsideVedtak)
+            }
+            if (!erDirekteAvslag) {
+                dokumentmalListe.add("BI01B50")
+            }
+            if (inneholderAldersjustering) {
+                dokumentmalListe.add(brevkodeAldersjustering)
+            }
+            dokumentmalListe.map { mapToMalDetaljer(it, request, true) }
+        } else {
+            emptyList()
+        }
     }
 
     private fun hentUtfyltDokumentValgDetaljer(request: HentDokumentValgRequest? = null): HentDokumentValgRequest? =
@@ -113,7 +174,7 @@ class DokumentValgService(
                         virkningstidspunktGrunnlag.isNotEmpty() && virkningstidspunktGrunnlag.all { it.innhold.avslag != null }
                     val erFattetBeregnet =
                         it.type != Vedtakstype.INNKREVING && it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") } ||
-                            it.erOrkestrertVedtak && !erDirekteAvslag
+                            it.kildeapplikasjon.startsWith("bidrag-behandling")
                     val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
                     val inneholderAldersjustering =
                         it.erOrkestrertVedtak &&
@@ -219,6 +280,7 @@ class DokumentValgService(
                 originalTittel
             }
         return DokumentMalDetaljer(
+            malId,
             tittel,
             beskrivelse = malInfo?.beskrivelse ?: tittel,
             type = malType,

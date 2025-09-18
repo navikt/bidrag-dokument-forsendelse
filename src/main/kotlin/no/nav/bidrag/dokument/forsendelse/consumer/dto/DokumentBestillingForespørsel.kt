@@ -43,6 +43,7 @@ data class DokumentBestillingResponse(
 )
 
 data class DokumentMalDetaljer(
+    val malId: String,
     val tittel: String,
     val type: DokumentMalType,
     val kanBestilles: Boolean = false,
