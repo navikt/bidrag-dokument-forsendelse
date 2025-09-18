@@ -596,6 +596,7 @@ class DokumentValgAlternativeTitlerTest {
         automatiskeOpprettetDokumentMalIder.shouldContain("BI01B50")
         automatiskeOpprettetDokumentMalIder.shouldContain(brevkodeAldersjustering)
         automatiskeOpprettetDokumentMalIder.shouldContain(brevkodeForsideVedtak)
+        dokumentValgListe.automatiskOpprettDokumenter.find { it.malId == brevkodeForsideVedtak }!!.tittel shouldBe "Forside for klagevedtak"
     }
 
     @Test

@@ -2813,8 +2813,8 @@
   },
   "VOFORSIDE": {
     "malId": "VOFORSIDE",
-    "tittel": "Forside for omgjøring/klagevedtak",
-    "beskrivelse": "Forside for omgjøring/klagevedtak",
+    "tittel": "Forside for omgjøringsvedtak",
+    "beskrivelse": "Forside for omgjøringsvedtak",
     "type": "UTGÅENDE",
     "kanBestilles": true,
     "kreverVedtak": true,

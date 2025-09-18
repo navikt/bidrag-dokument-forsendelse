@@ -150,7 +150,7 @@ class DokumentValgService(
             if (inneholderAldersjustering) {
                 dokumentmalListe.add(brevkodeAldersjustering)
             }
-            dokumentmalListe.map { mapToMalDetaljer(it, request, true) }
+            dokumentmalListe.map { mapToMalDetaljer(it, request, false) }
         } else {
             emptyList()
         }
