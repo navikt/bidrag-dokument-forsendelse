@@ -12,6 +12,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.model.HentDokumentValgResponse
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
+import no.nav.bidrag.dokument.forsendelse.model.ifTrue
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.BehandlingType
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBehandlingDetaljer
@@ -19,16 +20,15 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentBeh
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTilbakekrevingLik
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
+import no.nav.bidrag.dokument.forsendelse.utvidelser.gjelderKlage
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.felles.grunnlag.VirkningstidspunktGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåEgenReferanse
 import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
-import no.nav.bidrag.transport.behandling.vedtak.response.finnOrkestreringDetaljer
 import no.nav.bidrag.transport.behandling.vedtak.response.finnResultatFraAnnenVedtak
 import no.nav.bidrag.transport.behandling.vedtak.response.omgjøringsvedtakErEnesteVedtak
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import java.io.IOException
@@ -194,7 +194,7 @@ class DokumentValgService(
                         behandlingType = behandlingType,
                         vedtakType = it.type,
                         erFattetBeregnet = erFattetBeregnet,
-                        erOrkestrertVedtak = it.erOrkestrertVedtak,
+                        erOrkestrertVedtak = it.erOrkestrertVedtak && !it.omgjøringsvedtakErEnesteVedtak,
                         inneholderAldersjustering = inneholderAldersjustering,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
                         enhet = request.enhet ?: it.enhetsnummer?.verdi,
@@ -276,6 +276,10 @@ class DokumentValgService(
                     originalTittel,
                     request?.tilBehandlingInfo(),
                 )
+            } else if (malId == brevkodeForsideVedtak) {
+                request?.tilBehandlingInfo()?.gjelderKlage()?.ifTrue {
+                    originalTittel.replace("omgjøringsvedtak", "klagevedtak")
+                } ?: originalTittel
             } else {
                 originalTittel
             }
