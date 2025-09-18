@@ -165,13 +165,6 @@ class DokumentValgService(
                 ?.let {
                     val behandlingType =
                         if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
-                    val virkningstidspunktGrunnlag =
-                        it.grunnlagListe
-                            .filtrerOgKonverterBasertPåEgenReferanse<VirkningstidspunktGrunnlag>(
-                                Grunnlagstype.VIRKNINGSTIDSPUNKT,
-                            )
-                    val erDirekteAvslag =
-                        virkningstidspunktGrunnlag.isNotEmpty() && virkningstidspunktGrunnlag.all { it.innhold.avslag != null }
                     val erFattetBeregnet =
                         it.type != Vedtakstype.INNKREVING && it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") } ||
                             it.kildeapplikasjon.startsWith("bidrag-behandling")
