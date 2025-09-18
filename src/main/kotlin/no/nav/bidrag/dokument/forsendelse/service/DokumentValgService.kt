@@ -34,8 +34,8 @@ import org.springframework.stereotype.Component
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-private val brevkodeAldersjustering = "BI01B05"
-private val brevkodeForsideVedtak = "VOFORSIDE"
+val brevkodeAldersjustering = "BI01B05"
+val brevkodeForsideVedtak = "VOFORSIDE"
 
 @Component
 class DokumentValgService(
