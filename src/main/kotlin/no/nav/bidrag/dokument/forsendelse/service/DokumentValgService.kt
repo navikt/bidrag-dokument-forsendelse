@@ -263,7 +263,7 @@ class DokumentValgService(
         val malInfo = dokumentDetaljer[malId]
         val originalTittel = malInfo?.tittel ?: "Ukjent"
         val malType = malInfo?.type ?: DokumentMalType.UTGÅENDE
-        val tittel =
+        var tittel =
             if (leggTilPrefiksPåTittel) {
                 tittelService.hentTittelMedPrefiks(
                     originalTittel,
@@ -271,19 +271,21 @@ class DokumentValgService(
                 )
             } else {
                 originalTittel
-            }.let {
-                if (malId == brevkodeForsideVedtak) {
-                    request?.tilBehandlingInfo()?.gjelderKlage()?.ifTrue {
-                        originalTittel.replace("omgjøringsvedtak", "klagevedtak")
-                    } ?: originalTittel
-                } else {
-                    originalTittel
-                }
             }
+
+        var beskrivelse = malInfo?.beskrivelse ?: tittel
+        if (malId == brevkodeForsideVedtak) {
+            tittel =
+                request?.tilBehandlingInfo()?.gjelderKlage()?.ifTrue {
+                    originalTittel.replace("omgjøringsvedtak", "klagevedtak")
+                } ?: originalTittel
+            beskrivelse = tittel
+        }
+
         return DokumentMalDetaljer(
             malId,
             tittel,
-            beskrivelse = malInfo?.beskrivelse ?: tittel,
+            beskrivelse = beskrivelse,
             type = malType,
             alternativeTitler = hentAlternativeTitlerForMal(malId, request),
         )
