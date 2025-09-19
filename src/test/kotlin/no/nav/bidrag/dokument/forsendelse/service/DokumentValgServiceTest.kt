@@ -49,6 +49,7 @@ class DokumentValgServiceTest {
     lateinit var sakService: SakService
     var tittelService: ForsendelseTittelService? = null
     var dokumentValgService: DokumentValgService? = null
+    val vedtakId = "21321321"
 
     @BeforeEach
     fun init() {
@@ -59,6 +60,7 @@ class DokumentValgServiceTest {
             DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
     }
 
@@ -440,7 +442,6 @@ class DokumentValgServiceTest {
 
     @Test
     fun `Skal hente dokumentvalg for vedtak opphør 18 åring`() {
-        val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns
             opprettVedtakDto()
                 .copy(
