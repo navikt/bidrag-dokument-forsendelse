@@ -269,12 +269,16 @@ class DokumentValgService(
                     originalTittel,
                     request?.tilBehandlingInfo(),
                 )
-            } else if (malId == brevkodeForsideVedtak) {
-                request?.tilBehandlingInfo()?.gjelderKlage()?.ifTrue {
-                    originalTittel.replace("omgjøringsvedtak", "klagevedtak")
-                } ?: originalTittel
             } else {
                 originalTittel
+            }.let {
+                if (malId == brevkodeForsideVedtak) {
+                    request?.tilBehandlingInfo()?.gjelderKlage()?.ifTrue {
+                        originalTittel.replace("omgjøringsvedtak", "klagevedtak")
+                    } ?: originalTittel
+                } else {
+                    originalTittel
+                }
             }
         return DokumentMalDetaljer(
             malId,

@@ -88,7 +88,7 @@ class DokumentValgServiceTest {
         assertSoftly {
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01G01"
-            dokumentValgListe["BI01G01"]!!.beskrivelse shouldBe "Vedtak innkreving barnebidrag og gjeld"
+            dokumentValgListe["BI01G01"]!!.beskrivelse shouldBe "Vedtak innkreving av bidragsgjeld"
             dokumentValgListe shouldContainKey "BI01G02"
             dokumentValgListe["BI01G02"]!!.beskrivelse shouldBe "Vedtak innkreving opphør"
             dokumentValgListe shouldContainKey "BI01S02"
