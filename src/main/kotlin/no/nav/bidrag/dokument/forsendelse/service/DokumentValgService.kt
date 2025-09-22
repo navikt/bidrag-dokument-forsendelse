@@ -166,8 +166,13 @@ class DokumentValgService(
                     val behandlingType =
                         if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
                     val erFattetBeregnet =
-                        it.type != Vedtakstype.INNKREVING && it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") } ||
-                            it.kildeapplikasjon.startsWith("bidrag-behandling")
+                        if (!it.kildeapplikasjon.startsWith("bidrag-behandling")) {
+                            request.erFattetBeregnet
+                        } else {
+                            it.type != Vedtakstype.INNKREVING &&
+                                it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") } ||
+                                it.kildeapplikasjon.startsWith("bidrag-behandling")
+                        }
                     val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
                     val inneholderAldersjustering =
                         it.erOrkestrertVedtak &&
