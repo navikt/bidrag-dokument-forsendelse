@@ -1,1104 +1,2829 @@
 {
   "BI01P11": {
-    "tittel": "NOTAT P11 T",
-    "beskrivelse": "NOTAT P11 T",
+    "malId": "BI01P11",
+    "tittel": "Notat P11 T",
+    "beskrivelse": "Notat P11 T",
     "type": "NOTAT",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "NOTAT",
+    "tilhorerEnheter": []
+  },
+  "BI01P17": {
+    "malId": "BI01P17",
+    "tittel": "Uttalelse til klageinstans",
+    "beskrivelse": "Uttalelse til klageinstans",
+    "type": "NOTAT",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
+    "innholdType": "NOTAT",
     "tilhorerEnheter": []
   },
   "BI01P18": {
+    "malId": "BI01P18",
     "tittel": "Saksbehandlingsnotat",
     "beskrivelse": "Saksbehandlingsnotat",
     "type": "NOTAT",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "NOTAT",
     "tilhorerEnheter": []
   },
   "BI01X01": {
-    "tittel": "REFERAT FRA SAMTALE",
-    "beskrivelse": "REFERAT FRA SAMTALE",
+    "malId": "BI01X01",
+    "tittel": "Referat fra samtale",
+    "beskrivelse": "Referat fra samtale",
     "type": "NOTAT",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "NOTAT",
     "tilhorerEnheter": []
   },
   "BI01X02": {
-    "tittel": "ELEKTRONISK DIALOG",
-    "beskrivelse": "ELEKTRONISK DIALOG",
+    "malId": "BI01X02",
+    "tittel": "Elektronisk dialog",
+    "beskrivelse": "Elektronisk dialog",
     "type": "NOTAT",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "NOTAT",
     "tilhorerEnheter": []
   },
   "BI01S10": {
+    "malId": "BI01S10",
     "tittel": "Oversendelse av informasjon",
     "beskrivelse": "Oversendelse av informasjon",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VARSEL_STANDARD",
     "tilhorerEnheter": []
   },
   "BI01S67": {
+    "malId": "BI01S67",
     "tittel": "ADRESSEFORESPØRSEL",
     "beskrivelse": "ADRESSEFORESPØRSEL",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VARSEL_STANDARD",
     "tilhorerEnheter": []
   },
   "BI01S02": {
+    "malId": "BI01S02",
     "tittel": "Fritekstbrev",
     "beskrivelse": "Fritekstbrev",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB",
+      "DE",
+      "FR",
+      "NN",
+      "EN"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VARSEL_STANDARD",
     "tilhorerEnheter": []
   },
   "BI01A50": {
+    "malId": "BI01A50",
     "tittel": "Klage - Vedtak bidragsforskudd",
     "beskrivelse": "Klage - Vedtak bidragsforskudd",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01A01": {
+    "malId": "BI01A01",
     "tittel": "Vedtak bidragsforskudd",
     "beskrivelse": "Vedtak bidragsforskudd",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01A04": {
+    "malId": "BI01A04",
     "tittel": "Revurdering av bidragsforskudd",
     "beskrivelse": "Revurdering av bidragsforskudd",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S08": {
+    "malId": "BI01S08",
     "tittel": "Varsel revurd forskudd",
     "beskrivelse": "Varsel revurd forskudd",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": true,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S27": {
+    "malId": "BI01S27",
     "tittel": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
     "beskrivelse": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": true,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S28": {
+    "malId": "BI01S28",
     "tittel": "Varsel opphør av bidragsforskudd tilbake i tid",
     "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S29": {
+    "malId": "BI01S29",
     "tittel": "Varsel opphør av bidragsforskudd tilbake i tid",
     "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S30": {
+    "malId": "BI01S30",
     "tittel": "Varsel opphør av bidragsforskudd tilbake i tid",
     "beskrivelse": "Varsel opphør av bidragsforskudd tilbake i tid",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01G01": {
-    "tittel": "Vedtak innkrev. barnebidrag og gjeld",
-    "beskrivelse": "Vedtak innkrev. barnebidrag og gjeld",
+    "malId": "BI01G01",
+    "tittel": "Vedtak innkreving av bidragsgjeld",
+    "beskrivelse": "Vedtak innkreving av bidragsgjeld",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01G02": {
+    "malId": "BI01G02",
     "tittel": "Vedtak innkreving opphør",
     "beskrivelse": "Vedtak innkreving opphør",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S19": {
+    "malId": "BI01S19",
     "tittel": "Innkreving varsel til motparten",
     "beskrivelse": "Innkreving varsel til motparten",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01B50": {
+    "malId": "BI01B50",
     "tittel": "Klage - Vedtak barnebidrag",
     "beskrivelse": "Klage - Vedtak barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01G50": {
+    "malId": "BI01G50",
     "tittel": "Klage - vedtak innkreving",
     "beskrivelse": "Klage - vedtak innkreving",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
-    "tilhorerEnheter": []
-  },
-  "BI01P17": {
-    "tittel": "Uttalelse til klageinstans",
-    "beskrivelse": "Uttalelse til klageinstans",
-    "type": "NOTAT",
-    "kanBestilles": false,
-    "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S20": {
-    "tittel": "NAV har mottatt klage på vedtak",
-    "beskrivelse": "NAV har mottatt klage på vedtak",
+    "malId": "BI01S20",
+    "tittel": "Nav har mottatt klage på vedtak",
+    "beskrivelse": "Nav har mottatt klage på vedtak",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S21": {
+    "malId": "BI01S21",
     "tittel": "Du har klaget på vedtaket",
     "beskrivelse": "Du har klaget på vedtaket",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S60": {
-    "tittel": "Infobrev til partene oversendelse klageinstans",
-    "beskrivelse": "Infobrev til partene oversendelse klageinstans",
+    "malId": "BI01S60",
+    "tittel": "Klagen er sendt til Nav klageinstans",
+    "beskrivelse": "Klagen er sendt til Nav klageinstans",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S61": {
+    "malId": "BI01S61",
     "tittel": "Innhenting opplysninger paragraf 10 i barnelova",
     "beskrivelse": "Innhenting opplysninger paragraf 10 i barnelova",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S64": {
+    "malId": "BI01S64",
     "tittel": "Varsel klage fvt 35",
     "beskrivelse": "Varsel klage fvt 35",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S65": {
+    "malId": "BI01S65",
     "tittel": "Varsel om motregning",
     "beskrivelse": "Varsel om motregning",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01B10": {
+    "malId": "BI01B10",
     "tittel": "Opphørsvedtak",
     "beskrivelse": "Opphørsvedtak",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S07": {
-    "tittel": "Varsel om begrenset revurdering av barnebidrag",
-    "beskrivelse": "Varsel om begrenset revurdering av barnebidrag",
+    "malId": "BI01S07",
+    "tittel": "Vi skal fastsette barnebidraget",
+    "beskrivelse": "Varsel om fastsettelse begrenset revurdering barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01B01": {
+    "malId": "BI01B01",
     "tittel": "Vedtak barnebidrag",
     "beskrivelse": "Vedtak barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01B04": {
-    "tittel": "Revurdering Bidrags pga forskudd",
-    "beskrivelse": "Revurdering Bidrags pga forskudd",
+    "malId": "BI01B04",
+    "tittel": "Vedtak barnebidrag",
+    "beskrivelse": "Vedtak begrenset revurdering",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01B20": {
+    "malId": "BI01B20",
     "tittel": "Vedtak utland skjønn fastsettelse",
     "beskrivelse": "Vedtak utland skjønn fastsettelse",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01B21": {
+    "malId": "BI01B21",
     "tittel": "Vedtak utland skjønn endring",
     "beskrivelse": "Vedtak utland skjønn endring",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S06": {
-    "tittel": "Varsel om fastsettelse av barnebidrag fra barnets fødsel",
+    "malId": "BI01S06",
+    "tittel": "Vi skal fastsette barnebidraget",
     "beskrivelse": "Varsel om fastsettelse av barnebidrag fra barnets fødsel",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S31": {
+    "malId": "BI01S31",
     "tittel": "Fasts. eget tiltak uten innkr varsel til partene",
     "beskrivelse": "Fasts. eget tiltak uten innkr varsel til partene",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S32": {
-    "tittel": "Fastsettelse eget tiltak varsel til BM",
-    "beskrivelse": "Fastsettelse eget tiltak varsel til BM",
+    "malId": "BI01S32",
+    "tittel": "Fastsettelse eget tiltak varsel til Bidragsmottaker",
+    "beskrivelse": "Fastsettelse eget tiltak varsel til Bidragsmottaker",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S33": {
+    "malId": "BI01S33",
     "tittel": "Endring varsel eget tiltak pga 25%",
     "beskrivelse": "Endring varsel eget tiltak pga 25%",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S34": {
+    "malId": "BI01S34",
     "tittel": "Endring varsel eget tiltak pga barnetillegg",
     "beskrivelse": "Endring varsel eget tiltak pga barnetillegg",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S35": {
-    "tittel": "Varsel om endring av barnebidraget på grunn av forholdsmessig fordeling",
+    "malId": "BI01S35",
+    "tittel": "Vi skal endre barnebidraget",
     "beskrivelse": "Varsel om endring av barnebidraget på grunn av forholdsmessig fordeling",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S36": {
+    "malId": "BI01S36",
     "tittel": "Endring varsel eget tiltak pga forsørgingstillegg",
     "beskrivelse": "Endring varsel eget tiltak pga forsørgingstillegg",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S46": {
-    "tittel": "Varsel om endring av oppfostringsbidraget på grunn av forholdsmessig fordeling",
+    "malId": "BI01S46",
+    "tittel": "Vi skal endre oppfostringsbidraget",
     "beskrivelse": "Varsel om endring av oppfostringsbidraget på grunn av forholdsmessig fordeling",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S62": {
-    "tittel": "Varsel om fastsettelse av barnebidrag til den bidragspliktiges barnetillegg",
+    "malId": "BI01S62",
+    "tittel": "Vi skal endre barnebidraget",
     "beskrivelse": "Varsel om fastsettelse av barnebidrag til den bidragspliktiges barnetillegg",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S63": {
+    "malId": "BI01S63",
     "tittel": "Fastsettelse bidrag forsørgingstillegg varsel",
     "beskrivelse": "Fastsettelse bidrag forsørgingstillegg varsel",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S22": {
-    "tittel": "Revurdering bidrag pga bidragsforskudd til bidragsmottaker",
-    "beskrivelse": "Revurdering bidrag pga bidragsforskudd til bidragsmottaker",
+    "malId": "BI01S22",
+    "tittel": "Vi skal endre barnebidraget",
+    "beskrivelse": "Varsel om endring begrenset revurdering barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S23": {
-    "tittel": "Revurdering bidrag pga bidragsforskudd til bidragspliktig",
-    "beskrivelse": "Revurdering bidrag pga bidragsforskudd til bidragspliktig",
+    "malId": "BI01S23",
+    "tittel": "Vi skal endre barnebidraget",
+    "beskrivelse": "Varsel om endring begrenset revurdering barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S01": {
-    "tittel": "NAV har mottatt søknad om barnebidrag",
-    "beskrivelse": "NAV har mottatt søknad om barnebidrag",
+    "malId": "BI01S01",
+    "tittel": "Nav har mottatt søknad om barnebidrag",
+    "beskrivelse": "Nav har mottatt søknad om barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S12": {
+    "malId": "BI01S12",
     "tittel": "Du har søkt om barnebidrag",
     "beskrivelse": "Du har søkt om barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S52": {
+    "malId": "BI01S52",
     "tittel": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S53": {
+    "malId": "BI01S53",
     "tittel": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om oppfostringsbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S13": {
+    "malId": "BI01S13",
     "tittel": "Du har søkt om barnebidrag",
     "beskrivelse": "Du har søkt om barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01B02": {
+    "malId": "BI01B02",
     "tittel": "Vedtak tilleggsbidrag",
     "beskrivelse": "Vedtak tilleggsbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S05": {
-    "tittel": "NAV har mottatt søknad om sletting av bidragsgjeld",
-    "beskrivelse": "NAV har mottatt søknad om sletting av bidragsgjeld",
+    "malId": "BI01S05",
+    "tittel": "Nav har mottatt søknad om sletting av bidragsgjeld",
+    "beskrivelse": "Nav har mottatt søknad om sletting av bidragsgjeld",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S14": {
+    "malId": "BI01S14",
     "tittel": "Du har søkt om endring av barnebidraget",
     "beskrivelse": "Du har søkt om endring av barnebidraget",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S26": {
+    "malId": "BI01S26",
     "tittel": "Endring varsel til motparten",
     "beskrivelse": "Endring varsel til motparten",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S47": {
+    "malId": "BI01S47",
     "tittel": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S48": {
+    "malId": "BI01S48",
     "tittel": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S49": {
+    "malId": "BI01S49",
     "tittel": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "beskrivelse": "Forhåndsvarsel om mottatt søknad om endring av oppfostringsbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01I50": {
+    "malId": "BI01I50",
     "tittel": "Klage - vedtak ektefellebidrag",
     "beskrivelse": "Klage - vedtak ektefellebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01I01": {
+    "malId": "BI01I01",
     "tittel": "Vedtak ektefellebidrag",
     "beskrivelse": "Vedtak ektefellebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S43": {
+    "malId": "BI01S43",
     "tittel": "Fastsettelse ektefellebidrag orientering",
     "beskrivelse": "Fastsettelse ektefellebidrag orientering",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S44": {
-    "tittel": "Fastsettelse ektefellebidrag varsel til BP",
-    "beskrivelse": "Fastsettelse ektefellebidrag varsel til BP",
+    "malId": "BI01S44",
+    "tittel": "Fastsettelse ektefellebidrag varsel til Bidragspliktig",
+    "beskrivelse": "Fastsettelse ektefellebidrag varsel til Bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S37": {
-    "tittel": "Bortfall ektefellebidrag BP død orientering til BM",
-    "beskrivelse": "Bortfall ektefellebidrag BP død orientering til BM",
+    "malId": "BI01S37",
+    "tittel": "Bortfall ektefellebidrag Bidragspliktig død orientering til Bidragsmottaker",
+    "beskrivelse": "Bortfall ektefellebidrag Bidragspliktig død orientering til Bidragsmottaker",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S38": {
+    "malId": "BI01S38",
     "tittel": "Bortfall ektefellebidrag orientering til partene",
     "beskrivelse": "Bortfall ektefellebidrag orientering til partene",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S39": {
+    "malId": "BI01S39",
     "tittel": "Bortfall ektefellebidrag nytt ekteskap orientering",
     "beskrivelse": "Bortfall ektefellebidrag nytt ekteskap orientering",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S41": {
+    "malId": "BI01S41",
     "tittel": "Vedtak - bortfall nytt ekteskap",
     "beskrivelse": "Vedtak - bortfall nytt ekteskap",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S42": {
+    "malId": "BI01S42",
     "tittel": "Endring ektefellebidrag orientering til søkeren",
     "beskrivelse": "Endring ektefellebidrag orientering til søkeren",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S45": {
+    "malId": "BI01S45",
     "tittel": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
     "beskrivelse": "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01H01": {
+    "malId": "BI01H01",
     "tittel": "Farskap innkalling mor",
     "beskrivelse": "Farskap innkalling mor",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01H03": {
+    "malId": "BI01H03",
     "tittel": "Melding om blodprøver i farskapsak",
     "beskrivelse": "Melding om blodprøver i farskapsak",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01H04": {
+    "malId": "BI01H04",
     "tittel": "Pålegg om å framstille barn for å gi blodprøve",
     "beskrivelse": "Pålegg om å framstille barn for å gi blodprøve",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01H05": {
+    "malId": "BI01H05",
     "tittel": "Pålegg om blodprøve i farskapssak",
     "beskrivelse": "Pålegg om blodprøve i farskapssak",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01H02": {
+    "malId": "BI01H02",
     "tittel": "Innkalling farskapssak oppgitt far",
     "beskrivelse": "Innkalling farskapssak oppgitt far",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01J50": {
+    "malId": "BI01J50",
     "tittel": "Klage - vedtak gebyr",
     "beskrivelse": "Klage - vedtak gebyr",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S03": {
-    "tittel": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel",
-    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel",
+    "malId": "BI01S03",
+    "tittel": "Nav har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel",
+    "beskrivelse": "Nav har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01K50": {
+    "malId": "BI01K50",
     "tittel": "Klage - vedtak tilbakekreving",
     "beskrivelse": "Klage - vedtak tilbakekreving",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01A05": {
+    "malId": "BI01A05",
     "tittel": "Vedtak ikke tilbakekreving",
     "beskrivelse": "Vedtak ikke tilbakekreving",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01G04": {
-    "tittel": "Vedtak innkreving særtilskudd",
-    "beskrivelse": "Vedtak innkreving særtilskudd",
+    "malId": "BI01G04",
+    "tittel": "Vedtak innkreving særbidrag",
+    "beskrivelse": "Vedtak innkreving særbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01E50": {
-    "tittel": "Klage - vedtak bidrag til særlige utgifter",
-    "beskrivelse": "Klage - vedtak bidrag til særlige utgifter",
+    "malId": "BI01E50",
+    "tittel": "Klage - vedtak særbidrag",
+    "beskrivelse": "Klage - vedtak særbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01E01": {
-    "tittel": "Vedtak bidrag til særlige utgifter",
-    "beskrivelse": "Vedtak bidrag til særlige utgifter",
+    "malId": "BI01E01",
+    "tittel": "Vedtak særbidrag",
+    "beskrivelse": "Vedtak særbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01E02": {
-    "tittel": "Vedtak særtilskudd avslag",
-    "beskrivelse": "Vedtak særtilskudd avslag",
+    "malId": "BI01E02",
+    "tittel": "Vedtak særbidrag avslag",
+    "beskrivelse": "Vedtak særbidrag avslag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01E03": {
-    "tittel": "Vedtak bidrag til særlige utgifter tannregulering",
-    "beskrivelse": "Vedtak bidrag til særlige utgifter tannregulering",
+    "malId": "BI01E03",
+    "tittel": "Vedtak særbidrag tannregulering",
+    "beskrivelse": "Vedtak særbidrag tannregulering",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S04": {
-    "tittel": "NAV har mottatt søknad om bidrag til særlige utgifter",
-    "beskrivelse": "NAV har mottatt søknad om bidrag til særlige utgifter",
+    "malId": "BI01S04",
+    "tittel": "Nav har mottatt søknad om særbidrag",
+    "beskrivelse": "Nav har mottatt søknad om særbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": true,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S18": {
-    "tittel": "Du har søkt om bidrag til særlige utgifter",
-    "beskrivelse": "Du har søkt om bidrag til særlige utgifter",
+    "malId": "BI01S18",
+    "tittel": "Du har søkt om særbidrag",
+    "beskrivelse": "Du har søkt om særbidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": true,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01F50": {
+    "malId": "BI01F50",
     "tittel": "Klage - vedtak ettergivelse gjeld",
     "beskrivelse": "Klage - vedtak ettergivelse gjeld",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01F01": {
+    "malId": "BI01F01",
     "tittel": "Vedtak ettergivelse innvilget",
     "beskrivelse": "Vedtak ettergivelse innvilget",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01F02": {
+    "malId": "BI01F02",
     "tittel": "Vedtak ettergivelse avslag",
     "beskrivelse": "Vedtak ettergivelse avslag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S17": {
+    "malId": "BI01S17",
     "tittel": "Informasjon om din søknad om sletting av bidragsgjeld",
     "beskrivelse": "Informasjon om din søknad om sletting av bidragsgjeld",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S50": {
-    "tittel": "Ettergivelse oppfostringsbidrag orientering til BP",
-    "beskrivelse": "Ettergivelse oppfostringsbidrag orientering til BP",
+    "malId": "BI01S50",
+    "tittel": "Ettergivelse oppfostringsbidrag orientering til Bidragspliktig",
+    "beskrivelse": "Ettergivelse oppfostringsbidrag orientering til Bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S51": {
+    "malId": "BI01S51",
     "tittel": "Ettergivelse oppfostringsbidrag varsel kommune",
     "beskrivelse": "Ettergivelse oppfostringsbidrag varsel kommune",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01A02": {
+    "malId": "BI01A02",
     "tittel": "Vedtak tilbakekreving",
     "beskrivelse": "Vedtak tilbakekreving",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S54": {
+    "malId": "BI01S54",
     "tittel": "Varsel om tilbakekreving av bidragsforskudd - inntekt",
     "beskrivelse": "Varsel om tilbakekreving av bidragsforskudd - inntekt",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S55": {
+    "malId": "BI01S55",
     "tittel": "Varsel tilbakekreving av bidragsforskudd - partene bor sammen",
     "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - partene bor sammen",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S56": {
+    "malId": "BI01S56",
     "tittel": "Varsel tilbakekreving av bidragsforskudd - ikke opphold i Riket",
     "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - ikke opphold i Riket",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S57": {
+    "malId": "BI01S57",
     "tittel": "Varsel tilbakekreving av bidragsforskudd - direkte betalinger",
     "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - direkte betalinger",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S58": {
+    "malId": "BI01S58",
     "tittel": "Varsel tilbakekreving av bidragsforskudd - ikke omsorg",
     "beskrivelse": "Varsel tilbakekreving av bidragsforskudd - ikke omsorg",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S59": {
+    "malId": "BI01S59",
     "tittel": "Informasjon om din søknad om sletting av bidragsgjeld",
     "beskrivelse": "Informasjon om din søknad om sletting av bidragsgjeld",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S24": {
-    "tittel": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - innhenting av opplysninger",
-    "beskrivelse": "NAV har mottatt søknad om barnebidrag etter fylte 18 år - innhenting av opplysninger",
+    "malId": "BI01S24",
+    "tittel": "Nav har mottatt søknad om barnebidrag etter fylte 18 år - innhenting av opplysninger",
+    "beskrivelse": "Nav har mottatt søknad om barnebidrag etter fylte 18 år - innhenting av opplysninger",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01B03": {
+    "malId": "BI01B03",
     "tittel": "Vedtak barnebidrag etter fylte 18 år",
     "beskrivelse": "Vedtak barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S15": {
+    "malId": "BI01S15",
     "tittel": "Du har søkt om barnebidrag etter fylte 18 år",
     "beskrivelse": "Du har søkt om barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01S16": {
+    "malId": "BI01S16",
     "tittel": "Du har søkt om barnebidrag etter fylte 18 år",
     "beskrivelse": "Du har søkt om barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
   "BI01B11": {
+    "malId": "BI01B11",
     "tittel": "Vedtak tilleggsbidrag over 18 år",
     "beskrivelse": "Vedtak tilleggsbidrag over 18 år",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01B05": {
+    "malId": "BI01B05",
     "tittel": "Vedtak automatisk justering av barnebidrag",
+    "beskrivelse": "Vedtak automatisk justering av barnebidrag",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDTAK",
     "tilhorerEnheter": []
   },
   "BI01S09": {
+    "malId": "BI01S09",
     "tittel": "Varsel om opphør barnebidrag etter fylte 18 år",
     "beskrivelse": "Varsel om opphør barnebidrag etter fylte 18 år",
     "type": "UTGÅENDE",
     "kanBestilles": false,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": false,
+    "nyDokumentProduksjon": false,
     "innholdType": "VARSEL",
     "tilhorerEnheter": []
   },
-  "VARSEL_BM_EN": {
-    "tittel": "Response to Advance Notice Regarding Child Support Form for Custodial Parent",
-    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker (EN)",
-    "type": "UTGÅENDE",
-    "kanBestilles": true,
-    "statiskInnhold": true,
-    "innholdType": "VARSEL",
-    "tilhorerEnheter": [
-      "4865"
-    ]
-  },
-  "VARSEL_BP_EN": {
-    "tittel": "Response to Advance Notice Regarding Child Support Form for Non-Custodial Parent",
-    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig (EN)",
-    "type": "UTGÅENDE",
-    "kanBestilles": true,
-    "statiskInnhold": true,
-    "innholdType": "VARSEL",
-    "tilhorerEnheter": [
-      "4865"
-    ]
-  },
-  "VARSEL_BM_NB": {
+  "UTLAND_VARSEL_BM_NB": {
+    "malId": "UTLAND_VARSEL_BM_NB",
     "tittel": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker",
     "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": true,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VARSEL_BP_NB": {
+  "UTLAND_VARSEL_BM_EN": {
+    "malId": "UTLAND_VARSEL_BM_EN",
+    "tittel": "Response to Advance Notice Regarding Child Support Form for Custodial Parent",
+    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragsmottaker",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "EN"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
+    "tilhorerEnheter": [
+      "4865",
+      "4883"
+    ]
+  },
+  "UTLAND_VARSEL_BP_NB": {
+    "malId": "UTLAND_VARSEL_BP_NB",
     "tittel": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig",
     "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": true,
-    "innholdType": "VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "SVARSKJEMA_BP_FR": {
-    "tittel": "Réponse à l’avis concernant pension alimentaire pour enfant(s) - formulaire de réponse pour le parent débiteur",
-    "beskrivelse": "Svarskjema bidragspliktig (FR)",
+  "UTLAND_VARSEL_BP_EN": {
+    "malId": "UTLAND_VARSEL_BP_EN",
+    "tittel": "Response to Advance Notice Regarding Child Support Form for Non-Custodial Parent",
+    "beskrivelse": "Svar på forhåndsvarsel i sak om barnebidrag til bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "EN"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "SVARSKJEMA_BP_PL": {
-    "tittel": "Formularz dla rodzica zobowiązanego do płacenia alimentów",
-    "beskrivelse": "Svarskjema bidragspliktig (PL)",
-    "type": "UTGÅENDE",
-    "kanBestilles": true,
-    "statiskInnhold": true,
-    "innholdType": "SKJEMA",
-    "tilhorerEnheter": [
-      "4865"
-    ]
-  },
-  "SVARSKJEMA_BP_DE": {
+  "UTLAND_SVARSKJEMA_BP_DE": {
+    "malId": "UTLAND_SVARSKJEMA_BP_DE",
     "tittel": "Antwortformular für Unterhaltspflichtige",
-    "beskrivelse": "Svarskjema bidragspliktig (DE)",
+    "beskrivelse": "Svarskjema bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "DE"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VARSEL_EN": {
-    "tittel": "Attachment to advance notice. Claim for child support when one of the parties resides abroad",
-    "beskrivelse": "Vedlegg til forhåndsvarsel (EN)",
+  "UTLAND_SVARSKJEMA_BP_FR": {
+    "malId": "UTLAND_SVARSKJEMA_BP_FR",
+    "tittel": "Réponse à l’avis concernant pension alimentaire pour enfant(s) - formulaire de réponse pour le parent débiteur",
+    "beskrivelse": "Svarskjema bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "FR"
+    ],
     "statiskInnhold": true,
-    "innholdType": "VEDLEGG_VARSEL",
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VARSEL_NB": {
+  "UTLAND_SVARSKJEMA_BP_PL": {
+    "malId": "UTLAND_SVARSKJEMA_BP_PL",
+    "tittel": "Formularz dla rodzica zobowiązanego do płacenia alimentów",
+    "beskrivelse": "Svarskjema bidragspliktig",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "PL"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Skjema",
+    "tilhorerEnheter": [
+      "4865",
+      "4883"
+    ]
+  },
+  "UTLAND_VEDLEGG_VARSEL_NB": {
+    "malId": "UTLAND_VEDLEGG_VARSEL_NB",
     "tittel": "Vedlegg til forhåndsvarsel. Krav om barnebidrag når en av partene bor i utlandet",
     "beskrivelse": "Vedlegg til forhåndsvarsel",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Vedlegg til varselbrev",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VARSEL_DE": {
-    "tittel": "Anlage Zur Mitteilung",
-    "beskrivelse": "Vedlegg til forhåndsvarsel (DE)",
+  "UTLAND_VEDLEGG_VARSEL_EN": {
+    "malId": "UTLAND_VEDLEGG_VARSEL_EN",
+    "tittel": "Attachment to advance notice. Claim for child support when one of the parties resides abroad",
+    "beskrivelse": "Vedlegg til forhåndsvarsel",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "EN"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Vedlegg til varselbrev",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VEDTAK_BM_EN": {
-    "tittel": "Information to the custodial parent when one of the parties is living abroad",
-    "beskrivelse": "Vedlegg til vedtak bidragsmottaker (EN)",
+  "UTLAND_VEDLEGG_VARSEL_DE": {
+    "malId": "UTLAND_VEDLEGG_VARSEL_DE",
+    "tittel": "Anlage Zur Mitteilung. Festsetzung von Kindesunterhalt wenn eine Partei im Ausland lebt",
+    "beskrivelse": "Vedlegg til forhåndsvarsel",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "DE"
+    ],
     "statiskInnhold": true,
-    "innholdType": "VEDLEGG_VEDTAK",
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Vedlegg til varselbrev",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VEDTAK_BM_NB": {
+  "UTLAND_VEDLEGG_VEDTAK_BM_NB": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BM_NB",
     "tittel": "Orientering til bidragsmottakeren når en av partene bor i utlandet",
     "beskrivelse": "Vedlegg til vedtak bidragsmottaker",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VEDTAK_BM_DE": {
+  "UTLAND_VEDLEGG_VEDTAK_BM_EN": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BM_EN",
+    "tittel": "Information to the custodial parent when one of the parties is living abroad",
+    "beskrivelse": "Vedlegg til vedtak bidragsmottaker",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "EN"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
+    "tilhorerEnheter": [
+      "4865",
+      "4883"
+    ]
+  },
+  "UTLAND_VEDLEGG_VEDTAK_BM_DE": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BM_DE",
     "tittel": "Orientierung für den Unterhaltsempfänger, wenn eine der Parteien im Ausland lebt",
-    "beskrivelse": "Vedlegg til vedtak bidragsmottaker (DE)",
+    "beskrivelse": "Vedlegg til vedtak bidragsmottaker",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "DE"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
   },
-  "VEDLEGG_VEDTAK_BP_EN": {
-    "tittel": "Information to the non−custodial parent when one of the parties is living abroad",
-    "beskrivelse": "Vedlegg til vedtak bidragspliktig (EN)",
-    "type": "UTGÅENDE",
-    "kanBestilles": true,
-    "statiskInnhold": true,
-    "innholdType": "VEDLEGG_VEDTAK",
-    "tilhorerEnheter": [
-      "4865"
-    ]
-  },
-  "VEDLEGG_VEDTAK_BP_DE": {
-    "tittel": "Orientierung für den Unterhaltspflichtigen, wenn eine der Parteien im Ausland lebt",
-    "beskrivelse": "Vedlegg til vedtak bidragspliktig (DE)",
-    "type": "UTGÅENDE",
-    "kanBestilles": true,
-    "statiskInnhold": true,
-    "innholdType": "VEDLEGG_VEDTAK",
-    "tilhorerEnheter": [
-      "4865"
-    ]
-  },
-  "VEDLEGG_VEDTAK_BP_NB": {
+  "UTLAND_VEDLEGG_VEDTAK_BP_NB": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BP_NB",
     "tittel": "Orientering til den bidragspliktige når en av partene bor i utlandet",
     "beskrivelse": "Vedlegg til vedtak bidragspliktig",
     "type": "UTGÅENDE",
     "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
     "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
     "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
     "tilhorerEnheter": [
-      "4865"
+      "4865",
+      "4883"
     ]
+  },
+  "UTLAND_VEDLEGG_VEDTAK_BP_EN": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BP_EN",
+    "tittel": "Information to the non−custodial parent when one of the parties is living abroad",
+    "beskrivelse": "Vedlegg til vedtak bidragspliktig",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "EN"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
+    "tilhorerEnheter": [
+      "4865",
+      "4883"
+    ]
+  },
+  "UTLAND_VEDLEGG_VEDTAK_BP_DE": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BP_DE",
+    "tittel": "Orientierung für den Unterhaltspflichtigen, wenn eine der Parteien im Ausland lebt",
+    "beskrivelse": "Vedlegg til vedtak bidragspliktig",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "DE"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
+    "tilhorerEnheter": [
+      "4865",
+      "4883"
+    ]
+  },
+  "UTLAND_VEDLEGG_VEDTAK_BP_FR": {
+    "malId": "UTLAND_VEDLEGG_VEDTAK_BP_FR",
+    "tittel": "INFORMATIONS RELATIVES AUX PENSIONS ALIMENTAIRES",
+    "beskrivelse": "Vedlegg til vedtak bidragspliktig",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "FR"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Vedlegg til vedtakbrev",
+    "tilhorerEnheter": [
+      "4865",
+      "4883"
+    ]
+  },
+  "FARSKAP_INFO_OM_SAKSGANG_TIMEBESTILLING": {
+    "malId": "FARSKAP_INFO_OM_SAKSGANG_TIMEBESTILLING",
+    "tittel": "Informasjon om saksgang og timebestilling i farskapssaker",
+    "beskrivelse": "Informasjon om saksgang og timebestilling i farskapssaker",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Innkalling",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_BIDRAGFORSKUDD_BOR_IKKE_SAMMEN": {
+    "malId": "FARSKAP_BIDRAGFORSKUDD_BOR_IKKE_SAMMEN",
+    "tittel": "Informasjon om bidrag og bidragsforskudd – gjelder foreldre som ikke bor sammen",
+    "beskrivelse": "Informasjon om bidrag og bidragsforskudd – gjelder foreldre som ikke bor sammen",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Innkalling",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_FASTSETTELSE_OG_RETTSVIRKNINGER": {
+    "malId": "FARSKAP_FASTSETTELSE_OG_RETTSVIRKNINGER",
+    "tittel": "NAV 55-00.05 Fastsettelse og rettsvirkninger av farskap når foreldrene ikke er gift med hverandre",
+    "beskrivelse": "NAV 55-00.05 Fastsettelse og rettsvirkninger av farskap når foreldrene ikke er gift med hverandre",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Innkalling",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_ERKLARING_FARSKAP_NB": {
+    "malId": "FARSKAP_ERKLARING_FARSKAP_NB",
+    "tittel": "NAV 55-00.10 - Erklæring om farskap (bokmål)",
+    "beskrivelse": "NAV 55-00.10 - Erklæring om farskap (bokmål)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Erklæring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_ERKLARING_FARSKAP_NN": {
+    "malId": "FARSKAP_ERKLARING_FARSKAP_NN",
+    "tittel": "NAV 55-00.10 - Erklæring om farskap (nynorsk)",
+    "beskrivelse": "NAV 55-00.10 - Erklæring om farskap (nynorsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Erklæring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_ERKLARING_FARSKAP_EN": {
+    "malId": "FARSKAP_ERKLARING_FARSKAP_EN",
+    "tittel": "NAV 55-00.10 - DECLARATION OF PATERNITY (engelsk)",
+    "beskrivelse": "NAV 55-00.10 - DECLARATION OF PATERNITY (engelsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Erklæring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_ERKLARING_FARSKAP_UP_FRAMMOTE": {
+    "malId": "FARSKAP_ERKLARING_FARSKAP_UP_FRAMMOTE",
+    "tittel": "NAV 55-00.18 - Erklæring om farskap uten personlig fremmøte",
+    "beskrivelse": "NAV 55-00.18 - Erklæring om farskap uten personlig fremmøte",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Erklæring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_MELDING_PERSONREG_BFOGD_OM_FARSKAP": {
+    "malId": "FARSKAP_MELDING_PERSONREG_BFOGD_OM_FARSKAP",
+    "tittel": "NAV 55-00.25 - Melding til Personregisteret fra bidragsfogden (NAV) om farskap",
+    "beskrivelse": "NAV 55-00.25 - Melding til Personregisteret fra bidragsfogden (NAV) om farskap",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Erklæring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_SVARSLIPP_OPPLYSNING_OPPGITT_FAR": {
+    "malId": "FARSKAP_SVARSLIPP_OPPLYSNING_OPPGITT_FAR",
+    "tittel": "Svarslipp for opplysninger om oppgitt far",
+    "beskrivelse": "Svarslipp for opplysninger om oppgitt far",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Svarslipper",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_SVARSLIPP_OPPLYSNING_OPPGITT_MOR": {
+    "malId": "FARSKAP_SVARSLIPP_OPPLYSNING_OPPGITT_MOR",
+    "tittel": "Svarslipp for opplysninger om mor",
+    "beskrivelse": "Svarslipp for opplysninger om mor",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Svarslipper",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_SVARSLIPP_OPPLYSNING_OPPGITT_JURIDISK_FAR": {
+    "malId": "FARSKAP_SVARSLIPP_OPPLYSNING_OPPGITT_JURIDISK_FAR",
+    "tittel": "Svarslipp for opplysninger om juridiske far",
+    "beskrivelse": "Svarslipp for opplysninger om juridiske far",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Svarslipper",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_SVARSLIPP_SAMTYKKE_HENLEGGELSE": {
+    "malId": "FARSKAP_SVARSLIPP_SAMTYKKE_HENLEGGELSE",
+    "tittel": "Svarslipp for samtykke til henleggelse",
+    "beskrivelse": "Svarslipp for samtykke til henleggelse",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Svarslipper",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_BIDRAGFORSKUDD_BM_FARSKAP_HENLAGT": {
+    "malId": "FARSKAP_BIDRAGFORSKUDD_BM_FARSKAP_HENLAGT",
+    "tittel": "Informasjon om forskudd til bidragsmottaker hvor farskap er henlagt",
+    "beskrivelse": "Informasjon om forskudd til bidragsmottaker hvor farskap er henlagt",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Henleggelse",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_BARNELOVEN_11": {
+    "malId": "FARSKAP_VEDLEGG_BARNELOVEN_11",
+    "tittel": "Vedlegg: Utdrag fra barneloven § 11",
+    "beskrivelse": "Vedlegg: Utdrag fra barneloven § 11",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VARSEL",
+    "gruppeVisningsnavn": "Henleggelse",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_BARNELOVEN_6_7": {
+    "malId": "FARSKAP_BARNELOVEN_6_7",
+    "tittel": "Utdrag fra barnelova §§ 6 og 7",
+    "beskrivelse": "Utdrag fra barnelova §§ 6 og 7",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Endring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_PROVETAKING_JURIDSK_FARSKAP": {
+    "malId": "FARSKAP_PROVETAKING_JURIDSK_FARSKAP",
+    "tittel": "NAV 55-00.28 - Godkjenning av erklæring om farskap (juridiske far)",
+    "beskrivelse": "NAV 55-00.28 - Godkjenning av erklæring om farskap (juridiske far)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Endring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_SAMTYKKE_ENDRING_FARSKAP_18_AAR_NB": {
+    "malId": "FARSKAP_SAMTYKKE_ENDRING_FARSKAP_18_AAR_NB",
+    "tittel": "NAV 55-00.29 - Samtykke til endring av farskap (barn over 18 år)",
+    "beskrivelse": "NAV 55-00.29 - Samtykke til endring av farskap (barn over 18 år)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Endring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_SAMTYKKE_ENDRING_FARSKAP_EN": {
+    "malId": "FARSKAP_SAMTYKKE_ENDRING_FARSKAP_EN",
+    "tittel": "NAV 55-00.30 - Approval of acknowledgement of paternity at a norwegian foreign service mission",
+    "beskrivelse": "NAV 55-00.30 - Approval of acknowledgement of paternity at a norwegian foreign service mission",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "Endring",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_BARNELOVEN_81": {
+    "malId": "FARSKAP_VEDLEGG_BARNELOVEN_81",
+    "tittel": "Vedlegg: Barneloven § 81",
+    "beskrivelse": "Vedlegg: Barneloven § 81",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Fastsettelse av farskap i Norge",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_BARNELOVEN_4_81": {
+    "malId": "FARSKAP_VEDLEGG_BARNELOVEN_4_81",
+    "tittel": "Vedlegg: Barneloven § 4 og § 81",
+    "beskrivelse": "Vedlegg: Barneloven § 4 og § 81",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Fastsettelse av farskap i Norge",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_BARNELOVEN_81_ANDRE_LEDD": {
+    "malId": "FARSKAP_VEDLEGG_BARNELOVEN_81_ANDRE_LEDD",
+    "tittel": "Vedlegg: Barneloven § 81 annet ledd",
+    "beskrivelse": "Vedlegg: Barneloven § 81 annet ledd",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Fastsettelse av farskap i Norge",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_BARNELOVEN_4_FEMTE_LEDD": {
+    "malId": "FARSKAP_VEDLEGG_BARNELOVEN_4_FEMTE_LEDD",
+    "tittel": "Vedlegg: Barneloven § 4 femte ledd",
+    "beskrivelse": "Vedlegg: Barneloven § 4 femte ledd",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Fastsettelse av farskap i Norge",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_KLAGE": {
+    "malId": "FARSKAP_VEDLEGG_KLAGE",
+    "tittel": "Klage vedlegg",
+    "beskrivelse": "Klage vedlegg",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Klage",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_VEDLEGG_KLAGE_EN": {
+    "malId": "FARSKAP_VEDLEGG_KLAGE_EN",
+    "tittel": "Notification of the right to appeal against an administrative decision",
+    "beskrivelse": "Klage vedlegg (engelsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "VEDLEGG_VEDTAK",
+    "gruppeVisningsnavn": "Klage",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_PROVETAKING_FARSKAP": {
+    "malId": "FARSKAP_PROVETAKING_FARSKAP",
+    "tittel": "Refusjonsskjema for prøvetaking i farskapssak",
+    "beskrivelse": "Refusjonsskjema for prøvetaking i farskapssak",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_BIOLOGISK_FAR_NB": {
+    "malId": "FARSKAP_DNA_BIOLOGISK_FAR_NB",
+    "tittel": "NAV 55-00.34 - Prøve til DNA-analyse i sak om biologisk farskap (norsk)",
+    "beskrivelse": "NAV 55-00.34 - Prøve til DNA-analyse i sak om biologisk farskap (norsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_BIOLOGISK_FAR_EN": {
+    "malId": "FARSKAP_DNA_BIOLOGISK_FAR_EN",
+    "tittel": "NAV 55-00.34 - Prøve til DNA-analyse i sak om biologisk farskap (engelsk)",
+    "beskrivelse": "NAV 55-00.34 - Prøve til DNA-analyse i sak om biologisk farskap (engelsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_UTENRIKSSTASJON_NB": {
+    "malId": "FARSKAP_DNA_UTENRIKSSTASJON_NB",
+    "tittel": "NAV 55-00.37 - Prøvetaking for DNA-analyse ved norsk utenriksstasjon (norsk)",
+    "beskrivelse": "NAV 55-00.37 - Prøvetaking for DNA-analyse ved norsk utenriksstasjon (norsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_UTENRIKSSTASJON_EN": {
+    "malId": "FARSKAP_DNA_UTENRIKSSTASJON_EN",
+    "tittel": "NAV 55-00.37 - Prøvetaking for DNA-analyse ved norsk utenriksstasjon (engelsk)",
+    "beskrivelse": "NAV 55-00.37 - Prøvetaking for DNA-analyse ved norsk utenriksstasjon (engelsk)",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_UTENRIKSSTASJON_BIOLOGISK_FAR": {
+    "malId": "FARSKAP_DNA_UTENRIKSSTASJON_BIOLOGISK_FAR",
+    "tittel": "NAV 55-00.38 - Tilbud om å gi prøve til DNA-analyse ved norsk utenriksstasjon i sak om biologisk farskap",
+    "beskrivelse": "NAV 55-00.38 - Tilbud om å gi prøve til DNA-analyse ved norsk utenriksstasjon i sak om biologisk farskap",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_PALEGG_BIOLOGISK_FAR": {
+    "malId": "FARSKAP_DNA_PALEGG_BIOLOGISK_FAR",
+    "tittel": "NAV 55-00.39 - Pålegg om å gi prøve til DNA-analyse i sak om biologisk farskap",
+    "beskrivelse": "NAV 55-00.39 - Pålegg om å gi prøve til DNA-analyse i sak om biologisk farskap",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_MELDING_BIOLOGISK_FAR": {
+    "malId": "FARSKAP_DNA_MELDING_BIOLOGISK_FAR",
+    "tittel": "NAV 55-00.56 - Melding om prøver til DNA-analyse i sak om biologisk farskap",
+    "beskrivelse": "NAV 55-00.56 - Melding om prøver til DNA-analyse i sak om biologisk farskap",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_PROVE_ANALYSE": {
+    "malId": "FARSKAP_DNA_PROVE_ANALYSE",
+    "tittel": "NAV 55-00.64 - Prøve til DNA – analyse i farskapssak",
+    "beskrivelse": "NAV 55-00.64 - Prøve til DNA – analyse i farskapssak",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_PROVE_ANMODNING_ANALYSE_BARN_UTLAND": {
+    "malId": "FARSKAP_DNA_PROVE_ANMODNING_ANALYSE_BARN_UTLAND",
+    "tittel": "NAV 55-00.65 - Anmodning om å gi prøve til DNA – analyse i farskapssak når barnet er født i utlandet",
+    "beskrivelse": "NAV 55-00.65 - Anmodning om å gi prøve til DNA – analyse i farskapssak når barnet er født i utlandet",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "FARSKAP_DNA_PROVE_MELDING_ANALYSE_BARN_UTLAND": {
+    "malId": "FARSKAP_DNA_PROVE_MELDING_ANALYSE_BARN_UTLAND",
+    "tittel": "NAV 55-00.66 - Melding om prøve til DNA – analyse i farskapssak når barnet er født i utlandet",
+    "beskrivelse": "NAV 55-00.66 - Melding om prøve til DNA – analyse i farskapssak når barnet er født i utlandet",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [
+      "NB"
+    ],
+    "statiskInnhold": true,
+    "nyDokumentProduksjon": false,
+    "innholdType": "SKJEMA",
+    "gruppeVisningsnavn": "DNA",
+    "tilhorerEnheter": [
+      "4860"
+    ]
+  },
+  "VOFORSIDE": {
+    "malId": "VOFORSIDE",
+    "tittel": "Forside for omgjøringsvedtak",
+    "beskrivelse": "Forside for omgjøringsvedtak",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": true,
+    "kreverBehandling": false,
+    "redigerbar": false,
+    "språk": [],
+    "statiskInnhold": false,
+    "nyDokumentProduksjon": true,
+    "innholdType": "VEDTAK",
+    "tilhorerEnheter": []
   }
 }

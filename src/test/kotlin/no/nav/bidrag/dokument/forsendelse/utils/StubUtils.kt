@@ -327,14 +327,15 @@ class StubUtils {
 
     fun stubBestillDokumenDetaljer() {
         val dokumentMalDetaljerMap: MutableMap<String, DokumentMalDetaljer> = getDokumentMalDetaljerResponse()
-        dokumentMalDetaljerMap[DOKUMENTMAL_NOTAT] = DokumentMalDetaljer("Notat", DokumentMalType.NOTAT, true)
-        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, false)
-        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, false)
-        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
-        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_2] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
-        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_3] = DokumentMalDetaljer("Utgående", DokumentMalType.UTGÅENDE, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_NOTAT] = DokumentMalDetaljer(DOKUMENTMAL_NOTAT, "Notat", DokumentMalType.NOTAT, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES] = DokumentMalDetaljer(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES, "Utgående", DokumentMalType.UTGÅENDE, false)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2] = DokumentMalDetaljer(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2, "Utgående", DokumentMalType.UTGÅENDE, false)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE] = DokumentMalDetaljer(DOKUMENTMAL_UTGÅENDE, "Utgående", DokumentMalType.UTGÅENDE, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_2] = DokumentMalDetaljer(DOKUMENTMAL_UTGÅENDE_2, "Utgående", DokumentMalType.UTGÅENDE, true)
+        dokumentMalDetaljerMap[DOKUMENTMAL_UTGÅENDE_3] = DokumentMalDetaljer(DOKUMENTMAL_UTGÅENDE_3, "Utgående", DokumentMalType.UTGÅENDE, true)
         dokumentMalDetaljerMap[DOKUMENTMAL_STATISK_VEDLEGG] =
             DokumentMalDetaljer(
+                DOKUMENTMAL_STATISK_VEDLEGG,
                 "Dokument statisk vedlegg",
                 DokumentMalType.UTGÅENDE,
                 true,
@@ -344,6 +345,7 @@ class StubUtils {
             )
         dokumentMalDetaljerMap[DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR] =
             DokumentMalDetaljer(
+                DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR,
                 "Dokument statisk vedlegg",
                 DokumentMalType.UTGÅENDE,
                 true,

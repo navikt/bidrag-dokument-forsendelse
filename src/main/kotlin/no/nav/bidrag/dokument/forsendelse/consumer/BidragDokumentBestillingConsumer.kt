@@ -56,6 +56,15 @@ class BidragDokumentBestillingConsumer(
         return postForEntity(createUri("/dokument/$dokumentmalId"), forespørsel)
     }
 
+    @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 200, maxDelay = 1000, multiplier = 2.0))
+    fun produser(
+        dokumentmalId: String,
+        forespørsel: DokumentBestillingForespørsel? = null,
+    ): ByteArray? {
+        LOGGER.info("Henter dokument med dokumentmalId $dokumentmalId")
+        return postForEntity(createUri("/produser/$dokumentmalId"), forespørsel)
+    }
+
     @Cacheable(DOKUMENTMALER_CACHE)
     fun støttedeDokumentmaler(): List<String> =
         optionsForEntity(createUri("/brevkoder"))

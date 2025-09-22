@@ -73,7 +73,12 @@ class DokumentBestillingLytter(
 
         try {
             if (erStatiskDokument(dokument.dokumentmalId)) {
-                oppdaterStatusForStatiskDokument(dokument)
+                oppdaterStatusForDokumentProduksjon(dokument, true)
+                measureBestilling(forsendelse, dokument)
+                return
+            }
+            if (erFraDokumentProduksjon(dokument.dokumentmalId)) {
+                oppdaterStatusForDokumentProduksjon(dokument, false)
                 measureBestilling(forsendelse, dokument)
                 return
             }
@@ -117,7 +122,10 @@ class DokumentBestillingLytter(
         }
     }
 
-    private fun oppdaterStatusForStatiskDokument(dokument: Dokument) {
+    private fun oppdaterStatusForDokumentProduksjon(
+        dokument: Dokument,
+        erStatiskDokument: Boolean,
+    ) {
         if (erRedigerbar(dokument.dokumentmalId!!)) {
             LOGGER.info {
                 "Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} " +
@@ -131,8 +139,10 @@ class DokumentBestillingLytter(
                     metadata =
                         run {
                             val metadata = dokument.metadata
-                            metadata.markerSomStatiskDokument()
-                            if (erSkjema(dokument.dokumentmalId)) metadata.markerSomSkjema()
+                            if (erStatiskDokument) {
+                                metadata.markerSomStatiskDokument()
+                                if (erSkjema(dokument.dokumentmalId)) metadata.markerSomSkjema()
+                            }
                             metadata.copy()
                         },
                 ),
@@ -151,7 +161,9 @@ class DokumentBestillingLytter(
                     metadata =
                         run {
                             val metadata = dokument.metadata
-                            metadata.markerSomStatiskDokument()
+                            if (erStatiskDokument) {
+                                metadata.markerSomStatiskDokument()
+                            }
                             metadata.copy()
                         },
                 ),
@@ -234,7 +246,7 @@ class DokumentBestillingLytter(
     private fun Forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMal: String): Boolean {
         val dokumentDetaljer =
             dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]
-                ?: DokumentMalDetaljer(tittel = "", type = DokumentMalType.UTGÅENDE)
+                ?: DokumentMalDetaljer(dokumentMal, tittel = "", type = DokumentMalType.UTGÅENDE)
         val erFattetGjennomNyLøsning =
             behandlingInfo?.behandlingId != null && behandlingInfo?.vedtakId != null
         val erOpprettetGjennomNyLøsning = behandlingInfo?.behandlingId != null
@@ -255,6 +267,9 @@ class DokumentBestillingLytter(
                 false
             }
         } ?: false
+
+    private fun erFraDokumentProduksjon(dokumentMal: String): Boolean =
+        dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.nyDokumentProduksjon ?: false
 
     private fun erStatiskDokument(dokumentMal: String): Boolean =
         dokumentBestillingKonsumer.dokumentmalDetaljer()[dokumentMal]?.statiskInnhold ?: false

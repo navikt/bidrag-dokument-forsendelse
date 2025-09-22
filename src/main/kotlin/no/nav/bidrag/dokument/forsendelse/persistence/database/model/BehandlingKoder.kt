@@ -63,9 +63,9 @@ fun BehandlingStatus.isValid(erFattetBeregnet: Boolean? = null): Boolean =
     if (erFattetBeregnet == null) {
         this == BehandlingStatus.IKKE_RELEVANT || this == BehandlingStatus.IKKE_FATTET
     } else if (this == BehandlingStatus.FATTET_BEREGNET) {
-        erFattetBeregnet == true
+        erFattetBeregnet
     } else if (this == BehandlingStatus.FATTET_MANUELT) {
-        erFattetBeregnet == false
+        !erFattetBeregnet
     } else {
         this == BehandlingStatus.FATTET
     }

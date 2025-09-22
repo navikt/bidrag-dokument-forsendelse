@@ -43,11 +43,13 @@ data class DokumentBestillingResponse(
 )
 
 data class DokumentMalDetaljer(
+    val malId: String,
     val tittel: String,
     val type: DokumentMalType,
     val kanBestilles: Boolean = false,
     val redigerbar: Boolean = false,
     val beskrivelse: String = tittel,
+    val nyDokumentProduksjon: Boolean = false,
     val statiskInnhold: Boolean = false,
     val kreverVedtak: Boolean = false,
     val kreverBehandling: Boolean = false,

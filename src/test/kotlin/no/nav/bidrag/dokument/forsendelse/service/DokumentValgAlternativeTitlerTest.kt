@@ -1,27 +1,44 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import StubUtils
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.POJONode
 import com.ninjasquad.springmockk.MockkBean
+import disableUnleashFeature
+import enableUnleashFeature
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.mockkObject
+import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
+import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
+import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.domene.tid.ÅrMånedsperiode
+import no.nav.bidrag.transport.behandling.felles.grunnlag.GrunnlagDto
+import no.nav.bidrag.transport.behandling.felles.grunnlag.ResultatFraVedtakGrunnlag
+import no.nav.bidrag.transport.behandling.felles.grunnlag.VedtakOrkestreringDetaljerGrunnlag
+import no.nav.bidrag.transport.behandling.vedtak.response.VedtakPeriodeDto
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.YearMonth
 
 @ExtendWith(SpringExtension::class)
 class DokumentValgAlternativeTitlerTest {
@@ -41,8 +58,10 @@ class DokumentValgAlternativeTitlerTest {
 
     @BeforeEach
     fun init() {
+        mockkObject(UnleashFeaturesProvider)
+        disableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
         dokumentValgService =
-            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService, true)
+            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
@@ -455,6 +474,129 @@ class DokumentValgAlternativeTitlerTest {
         fritekstBrev.alternativeTitler shouldHaveSize 2
         fritekstBrev.alternativeTitler shouldContain "Vedtak om saksomkostninger til bidragspliktig"
         fritekstBrev.alternativeTitler shouldContain "Vedtak om saksomkostninger til bidragsmottaker"
+    }
+
+    @Test
+    fun `Skal hente titler for dokumentvalg for orkestrert vedtak`() {
+        enableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
+        every { bidragVedtakConsumer.hentVedtak(eq("1")) } returns
+            opprettVedtakDto()
+                .copy(
+                    type = Vedtakstype.KLAGE,
+                    stønadsendringListe =
+                        listOf(
+                            opprettStonadsEndringDto().copy(
+                                grunnlagReferanseListe = listOf("1"),
+                                periodeListe =
+                                    listOf(
+                                        VedtakPeriodeDto(
+                                            ÅrMånedsperiode(LocalDate.parse("2025-01-01"), null),
+                                            BigDecimal.ZERO,
+                                            null,
+                                            "",
+                                            null,
+                                            listOf("1"),
+                                        ),
+                                    ),
+                            ),
+                            opprettStonadsEndringDto().copy(
+                                grunnlagReferanseListe = listOf("2"),
+                                periodeListe =
+                                    listOf(
+                                        VedtakPeriodeDto(
+                                            ÅrMånedsperiode(LocalDate.parse("2025-01-01"), null),
+                                            BigDecimal.ZERO,
+                                            null,
+                                            "",
+                                            null,
+                                            listOf("2"),
+                                        ),
+                                    ),
+                            ),
+                        ),
+                    grunnlagListe =
+                        listOf(
+                            GrunnlagDto(
+                                innhold = ObjectMapper().createObjectNode(),
+                                type = Grunnlagstype.DELBEREGNING_SUM_INNTEKT,
+                                referanse = "",
+                            ),
+                            GrunnlagDto(
+                                innhold =
+                                    POJONode(
+                                        VedtakOrkestreringDetaljerGrunnlag(
+                                            1,
+                                            YearMonth.now(),
+                                            YearMonth.now(),
+                                        ),
+                                    ),
+                                type = Grunnlagstype.VEDTAK_ORKESTRERING_DETALJER,
+                                referanse = "",
+                            ),
+                            GrunnlagDto(
+                                innhold =
+                                    POJONode(
+                                        ResultatFraVedtakGrunnlag(
+                                            2,
+                                            false,
+                                        ),
+                                    ),
+                                type = Grunnlagstype.RESULTAT_FRA_VEDTAK,
+                                referanse = "2",
+                            ),
+                            GrunnlagDto(
+                                innhold =
+                                    POJONode(
+                                        ResultatFraVedtakGrunnlag(
+                                            3,
+                                            true,
+                                        ),
+                                    ),
+                                type = Grunnlagstype.RESULTAT_FRA_VEDTAK,
+                                referanse = "1",
+                            ),
+                        ),
+                )
+
+        every { bidragVedtakConsumer.hentVedtak(eq("2")) } returns
+            opprettVedtakDto()
+                .copy(
+                    type = Vedtakstype.ALDERSJUSTERING,
+                    stønadsendringListe =
+                        listOf(
+                            opprettStonadsEndringDto().copy(
+                                grunnlagReferanseListe = listOf("1"),
+                            ),
+                            opprettStonadsEndringDto().copy(
+                                grunnlagReferanseListe = listOf("2"),
+                            ),
+                        ),
+                )
+
+        val dokumentValgListe =
+            dokumentValgService!!.hentDokumentMalListeV2(
+                HentDokumentValgRequest(
+                    vedtakId = "1",
+                    vedtakType = Vedtakstype.KLAGE,
+                    behandlingType = "BIDRAG",
+                    erFattetBeregnet = true,
+                    stonadType = Stønadstype.BIDRAG,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                ),
+            )
+
+        dokumentValgListe.dokumentMalDetaljer.size shouldBe 6
+        val dokumentValgListeDokumentMalIder = dokumentValgListe.dokumentMalDetaljer.map { it.key }
+        dokumentValgListeDokumentMalIder.shouldContain("BI01B50")
+        dokumentValgListeDokumentMalIder.shouldContain(brevkodeAldersjustering)
+        dokumentValgListeDokumentMalIder.shouldContain(brevkodeForsideVedtak)
+
+        dokumentValgListe.automatiskOpprettDokumenter.size shouldBe 3
+        val automatiskeOpprettetDokumentMalIder = dokumentValgListe.automatiskOpprettDokumenter.map { it.malId }
+        automatiskeOpprettetDokumentMalIder.shouldContain("BI01B50")
+        automatiskeOpprettetDokumentMalIder.shouldContain(brevkodeAldersjustering)
+        automatiskeOpprettetDokumentMalIder.shouldContain(brevkodeForsideVedtak)
+        dokumentValgListe.automatiskOpprettDokumenter.find { it.malId == brevkodeForsideVedtak }!!.tittel shouldBe "Forside for klagevedtak"
     }
 
     @Test

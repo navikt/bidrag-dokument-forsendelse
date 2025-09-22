@@ -84,7 +84,7 @@ fun Rolletype.toName(): String? =
         Rolletype.BIDRAGSMOTTAKER -> "Bidragsmottaker"
         Rolletype.BIDRAGSPLIKTIG -> "Bidragspliktig"
         Rolletype.BARN -> "Barn"
-        Rolletype.REELMOTTAKER -> "Reel mottaker"
+        Rolletype.REELMOTTAKER -> "Reell mottaker"
         else -> null
     }
 

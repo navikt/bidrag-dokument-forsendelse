@@ -49,16 +49,18 @@ class DokumentValgServiceTest {
     lateinit var sakService: SakService
     var tittelService: ForsendelseTittelService? = null
     var dokumentValgService: DokumentValgService? = null
+    val vedtakId = "21321321"
 
     @BeforeEach
     fun init() {
         mockkObject(UnleashFeaturesProvider)
         enableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
-        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, true)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer)
         dokumentValgService =
-            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!, true)
+            DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
         every { bidragVedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
+        every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns opprettVedtakDto()
         every { bidragBehandlingConsumer.hentBehandling(any()) } returns opprettBehandlingDto()
     }
 
@@ -88,7 +90,7 @@ class DokumentValgServiceTest {
         assertSoftly {
             dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01G01"
-            dokumentValgListe["BI01G01"]!!.beskrivelse shouldBe "Vedtak innkrev. barnebidrag og gjeld"
+            dokumentValgListe["BI01G01"]!!.beskrivelse shouldBe "Vedtak innkreving av bidragsgjeld"
             dokumentValgListe shouldContainKey "BI01G02"
             dokumentValgListe["BI01G02"]!!.beskrivelse shouldBe "Vedtak innkreving opphør"
             dokumentValgListe shouldContainKey "BI01S02"
@@ -440,7 +442,6 @@ class DokumentValgServiceTest {
 
     @Test
     fun `Skal hente dokumentvalg for vedtak opphør 18 åring`() {
-        val vedtakId = "21321321"
         every { bidragVedtakConsumer.hentVedtak(eq(vedtakId)) } returns
             opprettVedtakDto()
                 .copy(
@@ -1150,7 +1151,7 @@ class DokumentValgServiceTest {
 
         assertSoftly {
             dokumentValgListe.size shouldBe 4
-            dokumentValgListe["BI01P11"]!!.tittel shouldBe "Ektefellebidrag, NOTAT P11 T"
+            dokumentValgListe["BI01P11"]!!.tittel shouldBe "Ektefellebidrag, Notat P11 T"
         }
     }
 }

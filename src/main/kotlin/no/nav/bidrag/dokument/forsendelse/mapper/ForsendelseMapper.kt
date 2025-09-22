@@ -1,5 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
+import no.nav.bidrag.commons.security.utils.TokenUtils
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
+import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Adresse
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
@@ -44,6 +48,7 @@ import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseStatusTo
 import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseTypeTo
 import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerTo as MottakerToBestilling
 
 fun Dokument.tilDokumentStatusDto() =
     when (dokumentStatus) {
@@ -77,6 +82,48 @@ fun Dokument.tilArkivSystemDto() =
         DokumentArkivSystem.FORSENDELSE -> DokumentArkivSystemDto.FORSENDELSE
         else -> DokumentArkivSystemDto.UKJENT
     }
+
+fun Dokument.tilBestillingForespørsel(): DokumentBestillingForespørsel {
+    val saksbehandlerIdent = if (TokenUtils.erApplikasjonsbruker()) forsendelse.opprettetAvIdent else null
+    val erBatchbrev =
+        ferdigstill ||
+            forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") ||
+            UnleashFeatures.OPPRETT_BATCHBREV.isEnabled
+    return DokumentBestillingForespørsel(
+        erBatchBrev = erBatchbrev,
+        dokumentreferanse = dokumentreferanse,
+        saksnummer = forsendelse.saksnummer,
+        tittel = tittel,
+        gjelderId = forsendelse.gjelderIdent,
+        enhet = forsendelse.enhet,
+        vedtakId = forsendelse.behandlingInfo?.vedtakId,
+        behandlingId = forsendelse.behandlingInfo?.behandlingId,
+        språk = språk ?: forsendelse.språk,
+        saksbehandler = saksbehandlerIdent?.let { Saksbehandler(it) },
+        barnIBehandling = forsendelse.behandlingInfo?.barnIBehandling?.toList() ?: emptyList(),
+        mottaker =
+            forsendelse.mottaker?.let { mottaker ->
+                MottakerToBestilling(
+                    mottaker.ident,
+                    mottaker.navn,
+                    mottaker.språk,
+                    adresse =
+                        mottaker.hentAdresse()?.let {
+                            no.nav.bidrag.dokument.forsendelse.consumer.dto.MottakerAdresseTo(
+                                adresselinje1 = it.adresselinje1,
+                                adresselinje2 = it.adresselinje2,
+                                adresselinje3 = it.adresselinje3,
+                                bruksenhetsnummer = it.bruksenhetsnummer,
+                                postnummer = it.postnummer,
+                                landkode = it.landkode,
+                                landkode3 = it.landkode3,
+                                poststed = it.poststed,
+                            )
+                        },
+                )
+            },
+    )
+}
 
 fun Dokument.tilOpprettDokumentForespørsel() =
     OpprettDokumentForespørsel(

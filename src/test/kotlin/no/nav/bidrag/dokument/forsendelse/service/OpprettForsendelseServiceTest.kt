@@ -325,6 +325,7 @@ class OpprettForsendelseServiceTest {
             mapOf(
                 DOKUMENTMAL_NOTAT to
                     DokumentMalDetaljer(
+                        "",
                         "Tittel notat",
                         type = DokumentMalType.NOTAT,
                     ),
@@ -367,6 +368,7 @@ class OpprettForsendelseServiceTest {
             mapOf(
                 DOKUMENTMAL_NOTAT to
                     DokumentMalDetaljer(
+                        "",
                         "Tittel notat",
                         type = DokumentMalType.NOTAT,
                     ),
@@ -456,6 +458,7 @@ class OpprettForsendelseServiceTest {
             mapOf(
                 DOKUMENTMAL_NOTAT to
                     DokumentMalDetaljer(
+                        "",
                         "Tittel notat",
                         type = DokumentMalType.NOTAT,
                     ),
@@ -482,6 +485,7 @@ class OpprettForsendelseServiceTest {
             mapOf(
                 DOKUMENTMAL_NOTAT to
                     DokumentMalDetaljer(
+                        "",
                         "Tittel notat",
                         type = DokumentMalType.NOTAT,
                     ),

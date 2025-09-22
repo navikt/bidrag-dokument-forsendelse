@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
@@ -24,8 +25,6 @@ class ForsendelseTittelService(
     private val behandlingConsumer: BidragBehandlingConsumer,
     private val dokumentBestillingConsumer: BidragDokumentBestillingConsumer,
     private val samhandlerConsumer: BidragSamhandlerConsumer,
-    @Value("\${HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED:false}")
-    private val hentDetaljerFraVedtakBehandlingEnabled: Boolean,
 ) {
     fun opprettDokumentTittel(
         forsendelse: OpprettForsendelseForespørsel,
@@ -59,7 +58,7 @@ class ForsendelseTittelService(
     fun opprettForsendelseTittel(forsendelse: Forsendelse): String {
         val sak = sakService.hentSak(forsendelse.saksnummer)
         val vedtak =
-            if (hentDetaljerFraVedtakBehandlingEnabled) {
+            if (UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled) {
                 forsendelse.behandlingInfo?.vedtakId?.let {
                     vedtakConsumer.hentVedtak(it)
                 }
@@ -84,7 +83,7 @@ class ForsendelseTittelService(
     fun opprettForsendelseTittel(forespørsel: OpprettForsendelseForespørsel): String? {
         val sak = sakService.hentSak(forespørsel.saksnummer)
         val vedtak =
-            if (hentDetaljerFraVedtakBehandlingEnabled) {
+            if (UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled) {
                 forespørsel.behandlingInfo?.vedtakId?.let {
                     vedtakConsumer.hentVedtak(it)
                 }
@@ -106,7 +105,14 @@ class ForsendelseTittelService(
     }
 
     fun opprettForsendelseBehandlingPrefiks(behandlingInfo: BehandlingInfo?): String? {
-        val vedtak = if (hentDetaljerFraVedtakBehandlingEnabled) behandlingInfo?.vedtakId?.let { vedtakConsumer.hentVedtak(it) } else null
+        val vedtak =
+            if (UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled) {
+                behandlingInfo?.vedtakId?.let {
+                    vedtakConsumer.hentVedtak(it)
+                }
+            } else {
+                null
+            }
         val behandling = if (vedtak == null) behandlingInfo?.behandlingId?.let { behandlingConsumer.hentBehandling(it) } else null
         val gjelderKlage = behandlingInfo?.gjelderKlage(vedtak, behandling) ?: false
         val klagePostfiks = if (gjelderKlage) " klage" else ""
