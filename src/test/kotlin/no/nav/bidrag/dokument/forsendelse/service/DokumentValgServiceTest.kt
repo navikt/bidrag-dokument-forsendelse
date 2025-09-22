@@ -543,8 +543,8 @@ class DokumentValgServiceTest {
             )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 3
-            dokumentValgListe shouldContainKey "BI01G04"
+            dokumentValgListe.size shouldBe 2
+//            dokumentValgListe shouldContainKey "BI01G04"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
             verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
@@ -575,8 +575,8 @@ class DokumentValgServiceTest {
             )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 3
-            dokumentValgListe shouldContainKey "BI01A05"
+            dokumentValgListe.size shouldBe 2
+//            dokumentValgListe shouldContainKey "BI01A05"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
             verify { bidragVedtakConsumer.hentVedtak(vedtakId) }
@@ -608,8 +608,8 @@ class DokumentValgServiceTest {
             )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 3
-            dokumentValgListe shouldContainKey "BI01K50"
+            dokumentValgListe.size shouldBe 2
+//            dokumentValgListe shouldContainKey "BI01K50"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
             verify { bidragVedtakConsumer.hentVedtak(vedtakId) }

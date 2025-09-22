@@ -169,9 +169,7 @@ class DokumentValgService(
                         if (!it.kildeapplikasjon.startsWith("bidrag-behandling")) {
                             request.erFattetBeregnet
                         } else {
-                            it.type != Vedtakstype.INNKREVING &&
-                                it.grunnlagListe.any { gr -> gr.type.name.startsWith("DELBEREGNING") } ||
-                                it.kildeapplikasjon.startsWith("bidrag-behandling")
+                            true
                         }
                     val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
                     val inneholderAldersjustering =

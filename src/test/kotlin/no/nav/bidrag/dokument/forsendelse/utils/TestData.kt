@@ -389,6 +389,7 @@ fun opprettVedtakDto(): VedtakDto =
         stønadsendringListe = listOf(opprettStonadsEndringDto()),
         engangsbeløpListe = emptyList(),
         opprettetAv = "",
+        kildeapplikasjon = "bidrag-behandling",
         opprettetTidspunkt = LocalDateTime.now(),
         vedtakstidspunkt = LocalDateTime.now(),
         enhetsnummer = Enhetsnummer(JOURNALFØRENDE_ENHET),
@@ -404,7 +405,6 @@ fun opprettVedtakDto(): VedtakDto =
         opprettetAvNavn = "",
         fastsattILand = "",
         innkrevingUtsattTilDato = LocalDate.now(),
-        kildeapplikasjon = "",
         unikReferanse = "",
     )
 
