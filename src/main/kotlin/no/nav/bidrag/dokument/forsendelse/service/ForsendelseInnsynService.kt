@@ -163,6 +163,7 @@ class ForsendelseInnsynService(
                 HentDokumentValgRequest(
                     vedtakId = it.vedtakId,
                     behandlingId = it.behandlingId,
+                    forsendelseId = forsendelseId,
                     vedtakType = it.vedtakType,
                     behandlingType = it.toBehandlingType(),
                     soknadFra = it.soknadFra,

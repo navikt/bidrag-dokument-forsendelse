@@ -7,15 +7,18 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.utvidelser.gjelderKlage
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelseBehandlingType
+import no.nav.bidrag.dokument.forsendelse.utvidelser.toName
 import no.nav.bidrag.domene.ident.SamhandlerId
+import no.nav.bidrag.transport.behandling.vedtak.response.saksnummer
+import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,6 +28,7 @@ class ForsendelseTittelService(
     private val behandlingConsumer: BidragBehandlingConsumer,
     private val dokumentBestillingConsumer: BidragDokumentBestillingConsumer,
     private val samhandlerConsumer: BidragSamhandlerConsumer,
+    private val forsendelseService: ForsendelseRepository,
 ) {
     fun opprettDokumentTittel(
         forsendelse: OpprettForsendelseForespørsel,
@@ -53,6 +57,15 @@ class ForsendelseTittelService(
             }
 
         return "${dokumentMal.tittel} til $rolleNavn"
+    }
+
+    fun hentForsendelseRolle(request: HentDokumentValgRequest?): String {
+        val forsendelseId = request?.forsendelseId ?: return ""
+        val forsendelse = forsendelseService.medForsendelseId(forsendelseId)!!
+        val sak = sakService.hentSak(forsendelse.saksnummer)
+        val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
+        val rolleTekst = gjelderRolle?.type?.toName()?.lowercase()
+        return rolleTekst?.let { " til $it" } ?: ""
     }
 
     fun opprettForsendelseTittel(forsendelse: Forsendelse): String {

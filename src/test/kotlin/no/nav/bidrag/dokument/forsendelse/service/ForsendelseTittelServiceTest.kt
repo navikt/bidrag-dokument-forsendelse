@@ -14,6 +14,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsu
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
+import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BA
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
@@ -67,6 +68,9 @@ class ForsendelseTittelServiceTest {
     @MockkBean
     lateinit var sakService: SakService
 
+    @MockkBean
+    lateinit var forsendelseRepository: ForsendelseRepository
+
     lateinit var forsendelseTittelService: ForsendelseTittelService
 
     @BeforeEach
@@ -80,6 +84,7 @@ class ForsendelseTittelServiceTest {
                 behandlingConsumer,
                 dokumentBestillingConsumer,
                 samhandlerConsumer,
+                forsendelseRepository,
             )
         every { dokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
 

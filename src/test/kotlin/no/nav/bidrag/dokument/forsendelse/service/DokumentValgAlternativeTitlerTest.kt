@@ -573,6 +573,7 @@ class DokumentValgAlternativeTitlerTest {
                         ),
                 )
 
+        every { tittelService.hentForsendelseRolle(any()) } returns " til bidragsmottaker"
         val dokumentValgListe =
             dokumentValgService!!.hentDokumentMalListeV2(
                 HentDokumentValgRequest(
@@ -596,7 +597,7 @@ class DokumentValgAlternativeTitlerTest {
         automatiskeOpprettetDokumentMalIder.shouldContain("BI01B50")
         automatiskeOpprettetDokumentMalIder.shouldContain(brevkodeAldersjustering)
         automatiskeOpprettetDokumentMalIder.shouldContain(brevkodeForsideVedtak)
-        dokumentValgListe.automatiskOpprettDokumenter.find { it.malId == brevkodeForsideVedtak }!!.tittel shouldBe "Forside for klagevedtak"
+        dokumentValgListe.automatiskOpprettDokumenter.find { it.malId == brevkodeForsideVedtak }!!.tittel shouldBe "Klagevedtak om barnebidrag til bidragsmottaker (forside)"
     }
 
     @Test

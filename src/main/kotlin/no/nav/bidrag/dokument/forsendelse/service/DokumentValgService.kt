@@ -278,9 +278,10 @@ class DokumentValgService(
 
         var beskrivelse = malInfo?.beskrivelse ?: tittel
         if (malId == brevkodeForsideVedtak) {
+            val foreløpigTittel = "Omgjøringsvedtak om barnebidrag${tittelService.hentForsendelseRolle(request)} (forside)"
             tittel =
                 request?.tilBehandlingInfo()?.gjelderKlage()?.ifTrue {
-                    originalTittel.replace("omgjøringsvedtak", "klagevedtak")
+                    foreløpigTittel.replace("Omgjøringsvedtak", "Klagevedtak", ignoreCase = false)
                 } ?: originalTittel
             beskrivelse = tittel
         }
