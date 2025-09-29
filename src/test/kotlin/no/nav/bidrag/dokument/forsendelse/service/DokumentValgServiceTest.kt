@@ -17,6 +17,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
+import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
@@ -46,6 +47,9 @@ class DokumentValgServiceTest {
     lateinit var bidragBehandlingConsumer: BidragBehandlingConsumer
 
     @MockkBean
+    lateinit var forsendelseRepository: ForsendelseRepository
+
+    @MockkBean
     lateinit var sakService: SakService
     var tittelService: ForsendelseTittelService? = null
     var dokumentValgService: DokumentValgService? = null
@@ -55,7 +59,7 @@ class DokumentValgServiceTest {
     fun init() {
         mockkObject(UnleashFeaturesProvider)
         enableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
-        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, forsendelseRepository)
         dokumentValgService =
             DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
