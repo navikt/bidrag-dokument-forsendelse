@@ -1931,7 +1931,7 @@
         "INNKREVING",
         "OPPHØR"
       ],
-      "behandlingStatus": "FATTET_MANUELT",
+      "behandlingStatus": "FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
         "BI01G01",
