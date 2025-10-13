@@ -170,6 +170,8 @@ val vedleggLenkeMap =
         "N6_FYLLUT_SÆRBIDRAG" to "https://www.nav.no/fyllut/nav540013",
         "N6_FYLLUT_SÆRBIDRAG_SVAR" to "https://www.nav.no/fyllut/nav540014",
         "N6_FYLLUT_SLETTING_BIDRAGSGJELD" to "https://www.nav.no/fyllut/nav540011",
+        "N6_FYLLUT_UTTALELSE_BARNEBIDRAG" to "https://www.nav.no/fyllut/nav550071",
+        "N6_FYLLUT_MELDING_SKATT_INNKREVING_BARNEBIDRAG" to "https://www.nav.no/fyllut/nav520501",
         "W3" to
             "https://www.nav.no/_/attachment/inline/7ee5c0c6-7b2c-466d-bb88-2ff51475513b:c1a1c3c4f1ff4518b61142e2394ac3733a271049/Skolens%20bekreftelse%20p%C3%A5%20skolegang.docx",
         "N6_BL" to
