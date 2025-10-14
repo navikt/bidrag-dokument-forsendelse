@@ -1931,6 +1931,29 @@
         "INNKREVING",
         "OPPHØR"
       ],
+      "behandlingStatus": "FATTET_MANUELT",
+      "forvaltning": "BIDRAG",
+      "brevkoder": [
+        "BI01G01",
+        "BI01G02"
+      ]
+    },
+    {
+      "soknadType": [
+        "INNKREVINGSGRUNNLAG",
+        "PRIVAT_AVTALE"
+      ],
+      "soknadFra": [
+        "BARN_18_ÅR",
+        "BIDRAGSMOTTAKER",
+        "BIDRAGSPLIKTIG",
+        "VERGE"
+      ],
+      "erVedtakIkkeTilbakekreving": false,
+      "stonadType": "BIDRAG",
+      "vedtakType": [
+        "INNKREVING"
+      ],
       "behandlingStatus": "FATTET",
       "forvaltning": "BIDRAG",
       "brevkoder": [
