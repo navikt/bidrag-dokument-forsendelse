@@ -238,7 +238,7 @@ class DokumentValgServiceTest {
             )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 3
+            dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S07"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
@@ -1019,7 +1019,7 @@ class DokumentValgServiceTest {
             )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 3
+            dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S07"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
