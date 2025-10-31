@@ -4,7 +4,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Mottaker
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.opprettReferanseId
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
@@ -26,6 +28,7 @@ import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostRequest
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import org.springframework.stereotype.Service
+import java.lang.Exception
 import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
@@ -35,7 +38,7 @@ class FerdigstillForsendelseService(
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val bidragDokumentConsumer: BidragDokumentConsumer,
-    private val fysiskDokumentService: FysiskDokumentService,
+    private val personConsumer: BidragPersonConsumer,
 ) {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     fun ferdigstillOgHentForsendelse(
@@ -45,6 +48,14 @@ class FerdigstillForsendelseService(
     ): Forsendelse? {
         ferdigstillForsendelse(forsendelseId, lokalUtskrift, ingenDistribusjon)
         return forsendelseTjeneste.medForsendelseId(forsendelseId)
+    }
+
+    private fun hentMottakerNavn(mottaker: Mottaker): String? {
+        if (mottaker.navn == null || mottaker.identType != MottakerIdentType.FNR || mottaker.ident == null) return mottaker.navn
+        if (mottaker.navn.isEmpty()) {
+            return personConsumer.hentPerson(mottaker.ident)?.visningsnavn ?: "Mangler navn"
+        }
+        return mottaker.navn
     }
 
     @Transactional
@@ -70,7 +81,7 @@ class FerdigstillForsendelseService(
                     if (!forsendelse.erNotat) {
                         AvsenderMottakerDto(
                             ident = forsendelse.mottaker!!.ident,
-                            navn = forsendelse.mottaker.navn,
+                            navn = hentMottakerNavn(forsendelse.mottaker),
                             type =
                                 when (forsendelse.mottaker.identType) {
                                     MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER

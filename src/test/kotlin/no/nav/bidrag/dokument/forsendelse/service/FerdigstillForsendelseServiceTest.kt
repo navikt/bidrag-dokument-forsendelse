@@ -10,6 +10,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.verify
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.EttersendingsoppgaveVedlegg
@@ -26,8 +27,10 @@ import no.nav.bidrag.dokument.forsendelse.utils.nyttDokument
 import no.nav.bidrag.dokument.forsendelse.utils.opprettAdresseDo
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.domene.enums.diverse.Språk
+import no.nav.bidrag.domene.ident.Personident
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
+import no.nav.bidrag.transport.person.PersonDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -43,7 +46,7 @@ class FerdigstillForsendelseServiceTest {
     lateinit var bidragDokumentConsumer: BidragDokumentConsumer
 
     @MockkBean
-    lateinit var fysiskDokumentService: FysiskDokumentService
+    lateinit var personConsumer: BidragPersonConsumer
 
     @MockkBean
     lateinit var saksbehandlerInfoManager: SaksbehandlerInfoManager
@@ -57,10 +60,10 @@ class FerdigstillForsendelseServiceTest {
                 saksbehandlerInfoManager,
                 forsendelseTjeneste,
                 bidragDokumentConsumer,
-                fysiskDokumentService,
+                personConsumer,
             )
         every { forsendelseTjeneste.lagre(any()) } returns opprettForsendelse2()
-        every { fysiskDokumentService.hentFysiskDokument(any<Dokument>()) } returns DOKUMENT_FIL.toByteArray()
+        every { personConsumer.hentPerson(any<String>()) } returns PersonDto(Personident(MOTTAKER_IDENT), MOTTAKER_NAVN, kortnavn = MOTTAKER_NAVN)
         every { saksbehandlerInfoManager.erApplikasjonBruker() } returns true
         every { bidragDokumentConsumer.opprettJournalpost(any()) } returns OpprettJournalpostResponse(NY_JOURNALPOSTID)
     }
