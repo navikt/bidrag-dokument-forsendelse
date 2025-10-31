@@ -2188,7 +2188,8 @@
       "behandlingStatus": "FATTET_MANUELT",
       "forvaltning": "BIDRAG",
       "brevkoder": [
-        "BI01S07"
+        "BI01S07",
+        "BI01A02"
       ]
     },
     {

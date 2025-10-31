@@ -155,7 +155,7 @@ class DokumentValgAlternativeTitlerTest {
             )
 
         assertSoftly {
-            dokumentValgListe.size shouldBe 3
+            dokumentValgListe.size shouldBe 4
             dokumentValgListe shouldContainKey "BI01S02"
             val fritekstBrev = dokumentValgListe["BI01S02"]!!
             fritekstBrev.alternativeTitler shouldHaveSize 1
