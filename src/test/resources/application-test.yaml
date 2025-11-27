@@ -34,7 +34,6 @@ GCP_CREDENTIALS_PATH: fake_service_account.json
 DISABLE_CLIENTSIDE_ENCRYPTION: true
 UNLEASH_SERVER_API_TOKEN: 123123
 UNLEASH_SERVER_API_ENV: development
-HENT_DOKUMENTVALG_DETALJER_FRA_VEDTAK_BEHANDLING_ENABLED: true
 no.nav.security.jwt:
   client:
     registration:
@@ -147,6 +146,3 @@ spring:
   datasource.type: com.zaxxer.hikari.HikariDataSource
   datasource.url: jdbc:h2:mem:testdb;MODE=PostgreSQL;INIT=RUNSCRIPT FROM 'classpath:db/init.sql'
   jpa.hibernate.hbmddl-auto: create-drop
-    
-    
-    docker run -it --rm -v $(pwd):/nais navikt/deployment:v1 /app/deploy --dry-run --print-payload --resource /nais/nais.yaml --vars /nais/feature.yaml
