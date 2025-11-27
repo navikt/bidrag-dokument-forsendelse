@@ -64,22 +64,22 @@ class RestConfig(
         configureJackson(restTemplate)
         return restTemplate
     }
+}
 
-    private fun configureJackson(restTemplate: RestTemplate) {
+fun configureJackson(restTemplate: RestTemplate) {
+    restTemplate.messageConverters
+        .stream()
+        .filter { obj -> MappingJackson2HttpMessageConverter::class.java.isInstance(obj) }
+        .map { obj -> MappingJackson2HttpMessageConverter::class.java.cast(obj) }
+        .findFirst()
+        .ifPresent { converter: MappingJackson2HttpMessageConverter ->
+            converter.objectMapper = commonObjectmapper
+        }
+
+    restTemplate.messageConverters =
         restTemplate.messageConverters
-            .stream()
-            .filter { obj -> MappingJackson2HttpMessageConverter::class.java.isInstance(obj) }
-            .map { obj -> MappingJackson2HttpMessageConverter::class.java.cast(obj) }
-            .findFirst()
-            .ifPresent { converter: MappingJackson2HttpMessageConverter ->
-                converter.objectMapper = commonObjectmapper
-            }
-
-        restTemplate.messageConverters =
-            restTemplate.messageConverters
-                .filter { obj -> !MappingJackson2XmlHttpMessageConverter::class.java.isInstance(obj) }
-                .toMutableList()
-    }
+            .filter { obj -> !MappingJackson2XmlHttpMessageConverter::class.java.isInstance(obj) }
+            .toMutableList()
 }
 
 @Profile("nais")

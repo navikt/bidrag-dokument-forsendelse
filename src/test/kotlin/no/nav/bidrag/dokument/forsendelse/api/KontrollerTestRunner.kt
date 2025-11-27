@@ -8,6 +8,7 @@ import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
 import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.config.configureJackson
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
 import no.nav.bidrag.transport.dokument.AvvikType
@@ -71,10 +72,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiserForsendelse(any()) } returns Unit
-        httpHeaderTestRestTemplate.restTemplate.messageConverters.clear()
-        httpHeaderTestRestTemplate.restTemplate.messageConverters.add(
-            MappingJackson2HttpMessageConverter(commonObjectmapper),
-        )
+        configureJackson(httpHeaderTestRestTemplate.restTemplate)
     }
 
     @AfterEach
