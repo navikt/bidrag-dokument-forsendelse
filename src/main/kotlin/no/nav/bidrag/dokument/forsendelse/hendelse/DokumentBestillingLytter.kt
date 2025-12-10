@@ -56,6 +56,7 @@ class DokumentBestillingLytter(
     private val DOKUMENTMAL_COUNTER_NAME = "forsendelse_dokumentmal_opprettet"
 
     @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Async
     fun bestill(dokumentBestilling: DokumentBestilling) {
