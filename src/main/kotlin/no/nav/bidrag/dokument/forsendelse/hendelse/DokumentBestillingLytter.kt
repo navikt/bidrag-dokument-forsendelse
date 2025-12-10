@@ -56,10 +56,11 @@ class DokumentBestillingLytter(
     private val DOKUMENTMAL_COUNTER_NAME = "forsendelse_dokumentmal_opprettet"
 
     @EventListener
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Async
     fun bestill(dokumentBestilling: DokumentBestilling) {
+        // Ikke håndter hendelse som venter på commit. Den sender videre ny hendelse etter commit til databasen er utført
+        if (dokumentBestilling.waitForCommit) return
         val (forsendelseId, dokumentreferanse) = dokumentBestilling
         val forsendelse =
             forsendelseRepository.medForsendelseId(forsendelseId)

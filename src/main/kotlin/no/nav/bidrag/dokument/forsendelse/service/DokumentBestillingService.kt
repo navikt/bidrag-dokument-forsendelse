@@ -16,15 +16,12 @@ class DokumentBestillingService(
         forsendelseId: Long,
         dokumentreferanse: String,
     ) {
-        applicationEventPublisher.publishEvent(DokumentBestilling(forsendelseId, dokumentreferanse))
+        applicationEventPublisher.publishEvent(DokumentBestilling(forsendelseId, dokumentreferanse, waitForCommit = true))
     }
 
     @Async
-    fun bestillAsync(
-        forsendelseId: Long,
-        dokumentreferanse: String,
-    ) {
-        applicationEventPublisher.publishEvent(DokumentBestilling(forsendelseId, dokumentreferanse))
+    fun bestillAsync(bestilling: DokumentBestilling) {
+        applicationEventPublisher.publishEvent(bestilling)
     }
 
     fun hentDokumentmalDetaljer(): Map<String, DokumentMalDetaljer> = dokumentBestillingKonsumer.dokumentmalDetaljer()
