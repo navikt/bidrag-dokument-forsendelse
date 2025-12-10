@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.retry.annotation.EnableRetry
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import javax.sql.DataSource
 
@@ -38,6 +39,7 @@ import javax.sql.DataSource
 @EnableSchedulerLock(defaultLockAtMostFor = "30m")
 @Import(CorrelationIdFilter::class, DefaultCorsFilter::class, UserMdcFilter::class, MdcFilter::class)
 @EnableSaksbehandlernavnProvider
+@EnableAsync
 class DefaultConfiguration {
     @Bean
     fun lockProvider(dataSource: DataSource): LockProvider =

@@ -88,7 +88,7 @@ class DokumentTjeneste(
 
     private fun bestillDokumentHvisNødvendig(dokument: Dokument) {
         if (dokument.dokumentStatus == DokumentStatus.IKKE_BESTILT) {
-            dokumentBestillingService.bestill(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
+            dokumentBestillingService.bestillAsync(dokument.forsendelse.forsendelseId!!, dokument.dokumentreferanse)
         }
     }
 
