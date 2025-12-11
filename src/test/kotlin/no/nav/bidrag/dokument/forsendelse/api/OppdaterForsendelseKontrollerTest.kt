@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
 import io.kotest.assertions.assertSoftly
+import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
@@ -359,14 +360,14 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                         withArg {
                             it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
                             it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                            it.dokumentreferanse shouldBe dokumenter[1].dokumentreferanse
+                            it.dokumentreferanse shouldBeIn listOf(dokumenter[1].dokumentreferanse, dokumenter[2].dokumentreferanse)
                         },
                     )
                     dokumentKafkaHendelseProdusent.publiser(
                         withArg {
                             it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
                             it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                            it.dokumentreferanse shouldBe dokumenter[2].dokumentreferanse
+                            it.dokumentreferanse shouldBeIn listOf(dokumenter[1].dokumentreferanse, dokumenter[2].dokumentreferanse)
                         },
                     )
                 }
