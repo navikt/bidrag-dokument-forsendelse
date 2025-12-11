@@ -901,39 +901,40 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         response.statusCode shouldBe HttpStatus.OK
 
         val forsendelseId = response.body!!.forsendelseId!!
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelseMedEnDokument = testDataManager.hentForsendelse(forsendelseId)!!
+            forsendelseMedEnDokument.dokumenter shouldHaveSize 3
+            val dokumentSomSkalSlettes = forsendelseMedEnDokument.dokumenter.hoveddokument!!
 
-        val forsendelseMedEnDokument = testDataManager.hentForsendelse(forsendelseId)!!
-        forsendelseMedEnDokument.dokumenter shouldHaveSize 3
-        val dokumentSomSkalSlettes = forsendelseMedEnDokument.dokumenter.hoveddokument!!
+            val responseNyDokument =
+                utførSlettDokumentForespørsel(forsendelseId, dokumentSomSkalSlettes.dokumentreferanse)
+            responseNyDokument.statusCode shouldBe HttpStatus.OK
 
-        val responseNyDokument =
-            utførSlettDokumentForespørsel(forsendelseId, dokumentSomSkalSlettes.dokumentreferanse)
-        responseNyDokument.statusCode shouldBe HttpStatus.OK
+            val forsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
-        val forsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+            forsendelse.dokumenter shouldHaveSize 3
+            val slettetDokument =
+                forsendelse.dokumenter.find { it.dokumentId == dokumentSomSkalSlettes.dokumentId }!!
+            slettetDokument.tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
+            slettetDokument.slettetTidspunkt!! shouldHaveSameDayAs LocalDate.now()
 
-        forsendelse.dokumenter shouldHaveSize 3
-        val slettetDokument =
-            forsendelse.dokumenter.find { it.dokumentId == dokumentSomSkalSlettes.dokumentId }!!
-        slettetDokument.tilknyttetSom shouldBe DokumentTilknyttetSom.VEDLEGG
-        slettetDokument.slettetTidspunkt!! shouldHaveSameDayAs LocalDate.now()
+            val nyHoveddokument = forsendelse.dokumenter.hoveddokument
+            nyHoveddokument shouldNotBe null
+            nyHoveddokument!!.tittel shouldBe TITTEL_VEDLEGG_1
+            nyHoveddokument.slettetTidspunkt shouldBe null
 
-        val nyHoveddokument = forsendelse.dokumenter.hoveddokument
-        nyHoveddokument shouldNotBe null
-        nyHoveddokument!!.tittel shouldBe TITTEL_VEDLEGG_1
-        nyHoveddokument.slettetTidspunkt shouldBe null
+            val vedlegger = forsendelse.dokumenter.vedlegger
+            vedlegger shouldHaveSize 1
+            vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_2
+            vedlegger[0].slettetTidspunkt shouldBe null
 
-        val vedlegger = forsendelse.dokumenter.vedlegger
-        vedlegger shouldHaveSize 1
-        vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_2
-        vedlegger[0].slettetTidspunkt shouldBe null
+            val responseForsendelse = utførHentJournalpost(forsendelse.forsendelseId.toString())
 
-        val responseForsendelse = utførHentJournalpost(forsendelse.forsendelseId.toString())
-
-        responseForsendelse.statusCode shouldBe HttpStatus.OK
-        responseForsendelse.body!!
-            .journalpost!!
-            .dokumenter.size shouldBe 2
+            responseForsendelse.statusCode shouldBe HttpStatus.OK
+            responseForsendelse.body!!
+                .journalpost!!
+                .dokumenter.size shouldBe 2
+        }
     }
 
     @Test
