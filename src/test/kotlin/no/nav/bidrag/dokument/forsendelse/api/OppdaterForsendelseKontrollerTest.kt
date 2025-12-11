@@ -314,8 +314,8 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.OK
 
-        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
             assertSoftly {
                 oppdatertForsendelse.dokumenter.size shouldBe 5
                 val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
