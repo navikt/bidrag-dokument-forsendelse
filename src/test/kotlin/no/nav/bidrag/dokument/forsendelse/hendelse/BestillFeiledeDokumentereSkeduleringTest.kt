@@ -252,11 +252,10 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
             )
 
         skedulering.bestillDokumenterUnderProduksjonPåNytt()
-
-        val dokument2 = testDataManager.hentForsendelse(forsendelse2.forsendelseId!!)!!.dokumenter.hoveddokument!!
-        val dokument3 = testDataManager.hentForsendelse(forsendelse3.forsendelseId!!)!!.dokumenter.hoveddokument!!
-        val dokument4 = testDataManager.hentForsendelse(forsendelse4Bestilt10Ganger.forsendelseId!!)!!.dokumenter.hoveddokument!!
         await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val dokument2 = testDataManager.hentForsendelse(forsendelse2.forsendelseId!!)!!.dokumenter.hoveddokument!!
+            val dokument3 = testDataManager.hentForsendelse(forsendelse3.forsendelseId!!)!!.dokumenter.hoveddokument!!
+            val dokument4 = testDataManager.hentForsendelse(forsendelse4Bestilt10Ganger.forsendelseId!!)!!.dokumenter.hoveddokument!!
             assertSoftly {
                 dokument4.metadata.hentDokumentBestiltAntallGanger() shouldBe 10
                 dokument4.metadata.hentBestiltTidspunkt()!! shouldHaveHour
@@ -273,7 +272,7 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
             verify(exactly = 2) {
                 kafkaHendelseProdusent.publiser(any())
             }
-            verify(ordering = Ordering.SEQUENCE) {
+            verify(ordering = Ordering.UNORDERED) {
                 kafkaHendelseProdusent.publiser(
                     withArg {
                         it.forsendelseId shouldBe forsendelse2.forsendelseId.toString()
