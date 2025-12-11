@@ -325,7 +325,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
-        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.IKKE_BESTILT
         journalpost.avsenderMottaker!!.ident shouldBe SAMHANDLER_ID
         journalpost.avsenderMottaker?.navn shouldBe MOTTAKER_NAVN
     }
@@ -406,7 +406,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
         val journalpost = forsendelseResponse.body!!.journalpost
         forsendelseResponse.body!!.journalpost shouldNotBe null
-        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.IKKE_BESTILT
     }
 
     @Test
@@ -476,7 +476,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         forsendelse.dokumenter shouldHaveSize 1
         val hoveddokument = forsendelse.dokumenter.hoveddokument!!
-        hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+        hoveddokument.dokumentStatus shouldBe DokumentStatus.IKKE_BESTILT
         hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
         hoveddokument.tittel shouldBe "Ektefellebidrag, Tittel notat"
     }
