@@ -7,6 +7,7 @@ import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.service.KodeverkProvider
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.transport.felles.commonObjectmapper
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder
@@ -84,9 +85,13 @@ fun configureJackson(restTemplate: RestTemplate) {
 
 @Profile("nais")
 @Configuration
-class InitKodeverkCache {
+class InitializeCaches(
+    val bidragDokumentBestillingConsumer: BidragDokumentBestillingConsumer,
+) {
     @PostConstruct
-    fun initKodeverkCache() {
+    fun initCache() {
+        bidragDokumentBestillingConsumer.støttedeDokumentmaler()
+        bidragDokumentBestillingConsumer.dokumentmalDetaljer()
         KodeverkProvider.initialiserKodeverkCache()
     }
 }

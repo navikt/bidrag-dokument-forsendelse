@@ -33,9 +33,9 @@ import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
+import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 import java.time.LocalDateTime
 
 private val LOGGER = KotlinLogging.logger {}
@@ -53,9 +53,12 @@ class DokumentBestillingLytter(
     @Suppress("ktlint:standard:property-naming")
     private val DOKUMENTMAL_COUNTER_NAME = "forsendelse_dokumentmal_opprettet"
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Async
     fun bestill(dokumentBestilling: DokumentBestilling) {
+        // Ikke håndter hendelse som venter på commit. Den sender videre ny hendelse etter commit til databasen er utført
+        if (dokumentBestilling.waitForCommit) return
         val (forsendelseId, dokumentreferanse) = dokumentBestilling
         val forsendelse =
             forsendelseRepository.medForsendelseId(forsendelseId)
@@ -73,12 +76,12 @@ class DokumentBestillingLytter(
 
         try {
             if (erStatiskDokument(dokument.dokumentmalId)) {
-                oppdaterStatusForDokumentProduksjon(dokument, true)
+                oppdaterStatusForDokumentProduksjon(dokument, true, dokumentBestilling.bestiltAvBruker)
                 measureBestilling(forsendelse, dokument)
                 return
             }
             if (erFraDokumentProduksjon(dokument.dokumentmalId)) {
-                oppdaterStatusForDokumentProduksjon(dokument, false)
+                oppdaterStatusForDokumentProduksjon(dokument, false, dokumentBestilling.bestiltAvBruker)
                 measureBestilling(forsendelse, dokument)
                 return
             }
@@ -125,6 +128,7 @@ class DokumentBestillingLytter(
     private fun oppdaterStatusForDokumentProduksjon(
         dokument: Dokument,
         erStatiskDokument: Boolean,
+        bestiltAvBruker: String?,
     ) {
         if (erRedigerbar(dokument.dokumentmalId!!)) {
             LOGGER.info {
@@ -157,7 +161,7 @@ class DokumentBestillingLytter(
                     arkivsystem = DokumentArkivSystem.BIDRAG,
                     dokumentStatus = DokumentStatus.FERDIGSTILT,
                     ferdigstiltTidspunkt = LocalDateTime.now(),
-                    ferdigstiltAvIdent = TokenUtils.hentSaksbehandlerIdent(),
+                    ferdigstiltAvIdent = bestiltAvBruker ?: TokenUtils.hentSaksbehandlerIdent(),
                     metadata =
                         run {
                             val metadata = dokument.metadata
