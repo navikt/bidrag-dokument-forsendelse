@@ -4,6 +4,7 @@ data class DokumentBestilling(
     val forsendelseId: Long,
     val dokumentreferanse: String,
     val waitForCommit: Boolean = true,
+    val bestiltAvBruker: String? = null,
 )
 
 data class ForsendelseHendelseBestilling(

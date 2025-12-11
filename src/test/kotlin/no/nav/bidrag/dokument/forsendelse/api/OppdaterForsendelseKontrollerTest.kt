@@ -38,9 +38,11 @@ import no.nav.bidrag.transport.dokument.forsendelse.MottakerTo
 import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
+import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -245,7 +247,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             dokumenter[1].tittel shouldBe "Ny dokument 1"
             dokumenter[2].tittel shouldBe "Ny dokument 2 bestilt"
 
-            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+            await.atMost(Duration.ofSeconds(2)).untilAsserted {
+                stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+            }
         }
     }
 
@@ -311,60 +315,61 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         respons.statusCode shouldBe HttpStatus.OK
 
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            assertSoftly {
+                oppdatertForsendelse.dokumenter.size shouldBe 5
+                val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
+                dokumenter[0].tittel shouldBe "Ny tittel hoveddok"
+                dokumenter[1].tittel shouldBe "Ny tittel dok bestilt med kafka melding"
+                dokumenter[2].tittel shouldBe "Ny tittel dok 2 bestilt med kafka melding"
+                dokumenter[3].tittel shouldBe "Ny dokument 1 ekstern kilde"
+                dokumenter[4].tittel shouldBe "Ny dokument 2 bestilt via bidrag-dokument-bestilling"
 
-        assertSoftly {
-            oppdatertForsendelse.dokumenter.size shouldBe 5
-            val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
-            dokumenter[0].tittel shouldBe "Ny tittel hoveddok"
-            dokumenter[1].tittel shouldBe "Ny tittel dok bestilt med kafka melding"
-            dokumenter[2].tittel shouldBe "Ny tittel dok 2 bestilt med kafka melding"
-            dokumenter[3].tittel shouldBe "Ny dokument 1 ekstern kilde"
-            dokumenter[4].tittel shouldBe "Ny dokument 2 bestilt via bidrag-dokument-bestilling"
+                dokumenter[0].dokumentmalId shouldBe HOVEDDOKUMENT_DOKUMENTMAL
+                dokumenter[1].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
+                dokumenter[2].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
+                dokumenter[3].dokumentmalId shouldBe null
+                dokumenter[4].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE
 
-            dokumenter[0].dokumentmalId shouldBe HOVEDDOKUMENT_DOKUMENTMAL
-            dokumenter[1].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
-            dokumenter[2].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
-            dokumenter[3].dokumentmalId shouldBe null
-            dokumenter[4].dokumentmalId shouldBe DOKUMENTMAL_UTGÅENDE
+                dokumenter[0].dokumentStatus shouldBe DokumentStatus.UNDER_REDIGERING
+                dokumenter[1].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+                dokumenter[2].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+                dokumenter[3].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
+                dokumenter[4].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
 
-            dokumenter[0].dokumentStatus shouldBe DokumentStatus.UNDER_REDIGERING
-            dokumenter[1].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
-            dokumenter[2].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
-            dokumenter[3].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
-            dokumenter[4].dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+                dokumenter[1].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
+                dokumenter[2].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
+                dokumenter[3].metadata.hentDokumentBestiltAntallGanger() shouldBe 0
+                dokumenter[4].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
+                dokumenter[1].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
+                dokumenter[2].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
+                dokumenter[3].metadata.hentBestiltTidspunkt() shouldBe null
+                dokumenter[4].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
 
-            dokumenter[1].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
-            dokumenter[2].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
-            dokumenter[3].metadata.hentDokumentBestiltAntallGanger() shouldBe 0
-            dokumenter[4].metadata.hentDokumentBestiltAntallGanger() shouldBe 1
-            dokumenter[1].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
-            dokumenter[2].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
-            dokumenter[3].metadata.hentBestiltTidspunkt() shouldBe null
-            dokumenter[4].metadata.hentBestiltTidspunkt()!! shouldHaveSameDayAs LocalDateTime.now()
+                dokumenter[1].arkivsystem shouldBe DokumentArkivSystem.UKJENT
+                dokumenter[2].arkivsystem shouldBe DokumentArkivSystem.UKJENT
+                dokumenter[3].arkivsystem shouldBe DokumentArkivSystem.JOARK
+                dokumenter[4].arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
 
-            dokumenter[1].arkivsystem shouldBe DokumentArkivSystem.UKJENT
-            dokumenter[2].arkivsystem shouldBe DokumentArkivSystem.UKJENT
-            dokumenter[3].arkivsystem shouldBe DokumentArkivSystem.JOARK
-            dokumenter[4].arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-
-            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
-            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
-            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
-            verify(ordering = Ordering.SEQUENCE) {
-                dokumentKafkaHendelseProdusent.publiser(
-                    withArg {
-                        it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
-                        it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                        it.dokumentreferanse shouldBe dokumenter[1].dokumentreferanse
-                    },
-                )
-                dokumentKafkaHendelseProdusent.publiser(
-                    withArg {
-                        it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
-                        it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                        it.dokumentreferanse shouldBe dokumenter[2].dokumentreferanse
-                    },
-                )
+                stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+                stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
+                stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
+                verify(ordering = Ordering.SEQUENCE) {
+                    dokumentKafkaHendelseProdusent.publiser(
+                        withArg {
+                            it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
+                            it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                            it.dokumentreferanse shouldBe dokumenter[1].dokumentreferanse
+                        },
+                    )
+                    dokumentKafkaHendelseProdusent.publiser(
+                        withArg {
+                            it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
+                            it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                            it.dokumentreferanse shouldBe dokumenter[2].dokumentreferanse
+                        },
+                    )
+                }
             }
         }
     }
@@ -645,8 +650,9 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             dokumenter[0].tittel shouldBe "Tittel hoveddok"
             dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
             dokumenter[1].erStatiskDokument() shouldBe true
-
-            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+            await.atMost(Duration.ofSeconds(2)).untilAsserted {
+                stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+            }
         }
 
         val responsSlett =
@@ -750,11 +756,14 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
         val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
         assertSoftly {
-            oppdatertForsendelse.dokumenter.size shouldBe 2
-            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
-            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
-            oppdatertForsendelse.dokumenter.vedlegger[0].språk shouldBe "DE"
-            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE_2)
+            await.atMost(Duration.ofSeconds(2)).untilAsserted {
+                oppdatertForsendelse.dokumenter.size shouldBe 2
+                oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+                oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+                oppdatertForsendelse.dokumenter.vedlegger[0].språk shouldBe "DE"
+
+                stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE_2)
+            }
         }
     }
 

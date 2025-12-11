@@ -22,9 +22,11 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
+import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 import java.time.LocalDateTime
 
 class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
@@ -95,18 +97,19 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         )
 
         skedulering.bestillFeiledeDokumenterPåNytt()
-
-        stubUtils.Valider().bestillDokumentKaltMed(
-            DOKUMENTMAL_UTGÅENDE_2,
-            "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
-            "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\"",
-        )
-        stubUtils.Valider().bestillDokumentKaltMed(
-            "MAL2",
-            "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
-            "\"dokumentreferanse\":\"${forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse}\"",
-        )
-        stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            stubUtils.Valider().bestillDokumentKaltMed(
+                DOKUMENTMAL_UTGÅENDE_2,
+                "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
+                "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\"",
+            )
+            stubUtils.Valider().bestillDokumentKaltMed(
+                "MAL2",
+                "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
+                "\"dokumentreferanse\":\"${forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse}\"",
+            )
+            stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
+        }
     }
 
     @Test
@@ -253,41 +256,43 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
         val dokument2 = testDataManager.hentForsendelse(forsendelse2.forsendelseId!!)!!.dokumenter.hoveddokument!!
         val dokument3 = testDataManager.hentForsendelse(forsendelse3.forsendelseId!!)!!.dokumenter.hoveddokument!!
         val dokument4 = testDataManager.hentForsendelse(forsendelse4Bestilt10Ganger.forsendelseId!!)!!.dokumenter.hoveddokument!!
-        assertSoftly {
-            dokument4.metadata.hentDokumentBestiltAntallGanger() shouldBe 10
-            dokument4.metadata.hentBestiltTidspunkt()!! shouldHaveHour
-                LocalDateTime
-                    .now()
-                    .minusHours(2)
-                    .hour
-            dokument2.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
-            dokument3.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
-            dokument2.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
-            dokument3.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
-        }
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            assertSoftly {
+                dokument4.metadata.hentDokumentBestiltAntallGanger() shouldBe 10
+                dokument4.metadata.hentBestiltTidspunkt()!! shouldHaveHour
+                    LocalDateTime
+                        .now()
+                        .minusHours(2)
+                        .hour
+                dokument2.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
+                dokument3.metadata.hentDokumentBestiltAntallGanger() shouldBe 2
+                dokument2.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
+                dokument3.metadata.hentBestiltTidspunkt()!! shouldHaveHour LocalDateTime.now().hour
+            }
 
-        verify(exactly = 2) {
-            kafkaHendelseProdusent.publiser(any())
+            verify(exactly = 2) {
+                kafkaHendelseProdusent.publiser(any())
+            }
+            verify(ordering = Ordering.SEQUENCE) {
+                kafkaHendelseProdusent.publiser(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse2.forsendelseId.toString()
+                        it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                        it.dokumentreferanse shouldBe forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
+                    },
+                )
+                kafkaHendelseProdusent.publiser(
+                    withArg {
+                        it.forsendelseId shouldBe forsendelse3.forsendelseId.toString()
+                        it.hendelseType shouldBe DokumentHendelseType.BESTILLING
+                        it.dokumentreferanse shouldBe forsendelse3.dokumenter.hoveddokument!!.dokumentreferanse
+                    },
+                )
+            }
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
+            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_2)
         }
-        verify(ordering = Ordering.SEQUENCE) {
-            kafkaHendelseProdusent.publiser(
-                withArg {
-                    it.forsendelseId shouldBe forsendelse2.forsendelseId.toString()
-                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                    it.dokumentreferanse shouldBe forsendelse2.dokumenter.hoveddokument!!.dokumentreferanse
-                },
-            )
-            kafkaHendelseProdusent.publiser(
-                withArg {
-                    it.forsendelseId shouldBe forsendelse3.forsendelseId.toString()
-                    it.hendelseType shouldBe DokumentHendelseType.BESTILLING
-                    it.dokumentreferanse shouldBe forsendelse3.dokumenter.hoveddokument!!.dokumentreferanse
-                },
-            )
-        }
-        stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
-        stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
-        stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_2)
     }
 
     @Test
@@ -360,14 +365,14 @@ class BestillFeiledeDokumentereSkeduleringTest : TestContainerRunner() {
             )
 
         skedulering.bestill(forsendelse1.dokumenter)
-
-        stubUtils.Valider().bestillDokumentKaltMed(
-            DOKUMENTMAL_UTGÅENDE_2,
-            "\"erBatchBrev\":true",
-            "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
-            "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\"",
-        )
-
-        stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            stubUtils.Valider().bestillDokumentKaltMed(
+                DOKUMENTMAL_UTGÅENDE_2,
+                "\"erBatchBrev\":true",
+                "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}",
+                "\"dokumentreferanse\":\"${forsendelse1.dokumenter.hoveddokument!!.dokumentreferanse}\"",
+            )
+            stubUtils.Valider().bestillDokumentIkkeKalt("MAL3")
+        }
     }
 }

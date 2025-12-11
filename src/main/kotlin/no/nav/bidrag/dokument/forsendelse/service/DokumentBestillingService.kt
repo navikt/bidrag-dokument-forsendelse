@@ -1,5 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
+import no.nav.bidrag.commons.security.utils.TokenUtils
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
@@ -16,7 +17,14 @@ class DokumentBestillingService(
         forsendelseId: Long,
         dokumentreferanse: String,
     ) {
-        applicationEventPublisher.publishEvent(DokumentBestilling(forsendelseId, dokumentreferanse, waitForCommit = true))
+        applicationEventPublisher.publishEvent(
+            DokumentBestilling(
+                forsendelseId,
+                dokumentreferanse,
+                waitForCommit = true,
+                bestiltAvBruker = TokenUtils.hentSaksbehandlerIdent(),
+            ),
+        )
     }
 
     @Async

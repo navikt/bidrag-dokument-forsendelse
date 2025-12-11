@@ -67,7 +67,13 @@ class DokumentSkedulering(
                         " Dokumentet ble sist bestilt ${it.metadata.hentBestiltTidspunkt()} " +
                         "og bestilt totalt ${it.metadata.hentDokumentBestiltAntallGanger()} ganger"
                 }
-                bestillingLytter.bestill(DokumentBestilling(it.forsendelse.forsendelseId!!, it.dokumentreferanse))
+                bestillingLytter.bestill(
+                    DokumentBestilling(
+                        it.forsendelse.forsendelseId!!,
+                        it.dokumentreferanse,
+                        waitForCommit = false,
+                    ),
+                )
             }
         }
     }

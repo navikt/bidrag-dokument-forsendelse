@@ -36,8 +36,6 @@ import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 import java.time.LocalDateTime
 
 private val LOGGER = KotlinLogging.logger {}
@@ -78,12 +76,12 @@ class DokumentBestillingLytter(
 
         try {
             if (erStatiskDokument(dokument.dokumentmalId)) {
-                oppdaterStatusForDokumentProduksjon(dokument, true)
+                oppdaterStatusForDokumentProduksjon(dokument, true, dokumentBestilling.bestiltAvBruker)
                 measureBestilling(forsendelse, dokument)
                 return
             }
             if (erFraDokumentProduksjon(dokument.dokumentmalId)) {
-                oppdaterStatusForDokumentProduksjon(dokument, false)
+                oppdaterStatusForDokumentProduksjon(dokument, false, dokumentBestilling.bestiltAvBruker)
                 measureBestilling(forsendelse, dokument)
                 return
             }
@@ -130,6 +128,7 @@ class DokumentBestillingLytter(
     private fun oppdaterStatusForDokumentProduksjon(
         dokument: Dokument,
         erStatiskDokument: Boolean,
+        bestiltAvBruker: String?,
     ) {
         if (erRedigerbar(dokument.dokumentmalId!!)) {
             LOGGER.info {
@@ -162,7 +161,7 @@ class DokumentBestillingLytter(
                     arkivsystem = DokumentArkivSystem.BIDRAG,
                     dokumentStatus = DokumentStatus.FERDIGSTILT,
                     ferdigstiltTidspunkt = LocalDateTime.now(),
-                    ferdigstiltAvIdent = TokenUtils.hentSaksbehandlerIdent(),
+                    ferdigstiltAvIdent = bestiltAvBruker ?: TokenUtils.hentSaksbehandlerIdent(),
                     metadata =
                         run {
                             val metadata = dokument.metadata
