@@ -551,16 +551,17 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
-        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
-
-        assertSoftly {
-            oppdatertForsendelse.dokumenter.size shouldBe 2
-            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
-            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
-            oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
-            oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
-            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+            assertSoftly {
+                oppdatertForsendelse.dokumenter.size shouldBe 2
+                oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+                oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+                oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
+                oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.FERDIGSTILT
+                stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+            }
         }
     }
 
@@ -586,22 +587,23 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val responseNyDokument = utførLeggTilDokumentForespørsel(forsendelseId, opprettDokumentForespørsel)
         responseNyDokument.statusCode shouldBe HttpStatus.OK
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
-        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
-
-        assertSoftly {
-            oppdatertForsendelse.dokumenter.size shouldBe 2
-            oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
-            oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
-            oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
-            oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
-            oppdatertForsendelse.dokumenter.vedlegger[0]
-                .metadata
-                .erSkjema() shouldBe true
-            oppdatertForsendelse.dokumenter.vedlegger[0]
-                .metadata
-                .erStatiskDokument() shouldBe true
-            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
+            assertSoftly {
+                oppdatertForsendelse.dokumenter.size shouldBe 2
+                oppdatertForsendelse.dokumenter.hoveddokument?.tittel shouldBe TITTEL_HOVEDDOKUMENT
+                oppdatertForsendelse.dokumenter.vedlegger[0].tittel shouldBe TITTEL_VEDLEGG_1
+                oppdatertForsendelse.dokumenter.vedlegger[0].arkivsystem shouldBe DokumentArkivSystem.BIDRAG
+                oppdatertForsendelse.dokumenter.vedlegger[0].dokumentStatus shouldBe DokumentStatus.MÅ_KONTROLLERES
+                oppdatertForsendelse.dokumenter.vedlegger[0]
+                    .metadata
+                    .erSkjema() shouldBe true
+                oppdatertForsendelse.dokumenter.vedlegger[0]
+                    .metadata
+                    .erStatiskDokument() shouldBe true
+                stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR)
+            }
         }
     }
 
@@ -640,40 +642,39 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.OK
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
-        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+            val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
+            assertSoftly {
+                dokumenter.size shouldBe 2
 
-        val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
-        assertSoftly {
-            dokumenter.size shouldBe 2
-
-            dokumenter[0].tittel shouldBe "Tittel hoveddok"
-            dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
-            dokumenter[1].erStatiskDokument() shouldBe true
-            await.atMost(Duration.ofSeconds(2)).untilAsserted {
+                dokumenter[0].tittel shouldBe "Tittel hoveddok"
+                dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
+                dokumenter[1].erStatiskDokument() shouldBe true
                 stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
             }
-        }
 
-        val responsSlett =
-            utførOppdaterForsendelseForespørsel(
-                forsendelse.forsendelseIdMedPrefix,
-                OppdaterForsendelseForespørsel(
-                    dokumenter =
-                        listOf(
-                            OppdaterDokumentForespørsel(
-                                dokumentreferanse = hoveddokument.dokumentreferanse,
+            val responsSlett =
+                utførOppdaterForsendelseForespørsel(
+                    forsendelse.forsendelseIdMedPrefix,
+                    OppdaterForsendelseForespørsel(
+                        dokumenter =
+                            listOf(
+                                OppdaterDokumentForespørsel(
+                                    dokumentreferanse = hoveddokument.dokumentreferanse,
+                                ),
+                                OppdaterDokumentForespørsel(
+                                    fjernTilknytning = true,
+                                    dokumentreferanse = dokumenter[1].dokumentreferanse,
+                                ),
                             ),
-                            OppdaterDokumentForespørsel(
-                                fjernTilknytning = true,
-                                dokumentreferanse = dokumenter[1].dokumentreferanse,
-                            ),
-                        ),
-                ),
-            )
-        responsSlett.statusCode shouldBe HttpStatus.OK
-        val oppdatertForsendelseEtterSlett = testDataManager.hentForsendelse(forsendelseId)!!
-        oppdatertForsendelseEtterSlett.dokumenter.size shouldBe 1
+                    ),
+                )
+            responsSlett.statusCode shouldBe HttpStatus.OK
+            val oppdatertForsendelseEtterSlett = testDataManager.hentForsendelse(forsendelseId)!!
+            oppdatertForsendelseEtterSlett.dokumenter.size shouldBe 1
+        }
     }
 
     @Test
@@ -716,21 +717,22 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
             )
         val respons = utførOppdaterForsendelseForespørsel(forsendelse.forsendelseIdMedPrefix, oppdaterForespørsel)
         respons.statusCode shouldBe HttpStatus.OK
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
 
-        val oppdatertForsendelse = testDataManager.hentForsendelse(forsendelseId)!!
+            assertSoftly {
+                oppdatertForsendelse.dokumenter.size shouldBe 3
 
-        assertSoftly {
-            oppdatertForsendelse.dokumenter.size shouldBe 3
+                val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
+                dokumenter[0].tittel shouldBe "Tittel hoveddok"
+                dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
+                dokumenter[1].språk shouldBe "DE"
+                dokumenter[2].tittel shouldBe TITTEL_VEDLEGG_2
+                dokumenter[2].språk shouldBe "NB"
 
-            val dokumenter = oppdatertForsendelse.dokumenter.sortertEtterRekkefølge
-            dokumenter[0].tittel shouldBe "Tittel hoveddok"
-            dokumenter[1].tittel shouldBe TITTEL_VEDLEGG_1
-            dokumenter[1].språk shouldBe "DE"
-            dokumenter[2].tittel shouldBe TITTEL_VEDLEGG_2
-            dokumenter[2].språk shouldBe "NB"
-
-            stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
-            stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+                stubUtils.Valider().bestillDokumentKaltMed(DOKUMENTMAL_UTGÅENDE)
+                stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_STATISK_VEDLEGG)
+            }
         }
     }
 
