@@ -321,13 +321,14 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentPersonKaltMed(SAMHANDLER_ID)
             stubUtils.Valider().hentPersonSpråkIkkeKaltMed(SAMHANDLER_ID)
         }
-
-        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
-        val journalpost = forsendelseResponse.body!!.journalpost
-        forsendelseResponse.body!!.journalpost shouldNotBe null
-        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.IKKE_BESTILT
-        journalpost.avsenderMottaker!!.ident shouldBe SAMHANDLER_ID
-        journalpost.avsenderMottaker?.navn shouldBe MOTTAKER_NAVN
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+            val journalpost = forsendelseResponse.body!!.journalpost
+            forsendelseResponse.body!!.journalpost shouldNotBe null
+            journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
+            journalpost.avsenderMottaker!!.ident shouldBe SAMHANDLER_ID
+            journalpost.avsenderMottaker?.navn shouldBe MOTTAKER_NAVN
+        }
     }
 
     @Test
@@ -385,28 +386,30 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
 
-        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+            assertSoftly {
+                forsendelse.mottaker shouldNotBe null
 
-        assertSoftly {
-            forsendelse.mottaker shouldNotBe null
+                val mottaker = forsendelse.mottaker!!
+                mottaker.ident shouldBe MOTTAKER_IDENT
+                mottaker.navn shouldBe MOTTAKER_NAVN
+                mottaker.språk shouldBe SPRÅK_NORSK_BOKMÅL
+                mottaker.identType shouldBe MottakerIdentType.FNR
 
-            val mottaker = forsendelse.mottaker!!
-            mottaker.ident shouldBe MOTTAKER_IDENT
-            mottaker.navn shouldBe MOTTAKER_NAVN
-            mottaker.språk shouldBe SPRÅK_NORSK_BOKMÅL
-            mottaker.identType shouldBe MottakerIdentType.FNR
+                mottaker.adresse shouldBe null
 
-            mottaker.adresse shouldBe null
+                stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
+                stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
+            }
 
-            stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
-            stubUtils.Valider().hentPersonSpråkIkkeKaltMed(MOTTAKER_IDENT)
+            val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
+            val journalpost = forsendelseResponse.body!!.journalpost
+            forsendelseResponse.body!!.journalpost shouldNotBe null
+
+            journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.UNDER_PRODUKSJON
         }
-
-        val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
-        val journalpost = forsendelseResponse.body!!.journalpost
-        forsendelseResponse.body!!.journalpost shouldNotBe null
-        journalpost!!.dokumenter[0].status shouldBe DokumentStatusDto.IKKE_BESTILT
     }
 
     @Test
@@ -432,10 +435,12 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
             stubUtils.Valider().hentPersonKaltMed(MOTTAKER_IDENT)
             stubUtils.Valider().hentPersonSpråkKaltMed(MOTTAKER_IDENT)
 
-            stubUtils.Valider().bestillDokumentKaltMed(
-                HOVEDDOKUMENT_DOKUMENTMAL,
-                "\"språk\":\"EN\"",
-            )
+            await.atMost(Duration.ofSeconds(2)).untilAsserted {
+                stubUtils.Valider().bestillDokumentKaltMed(
+                    HOVEDDOKUMENT_DOKUMENTMAL,
+                    "\"språk\":\"EN\"",
+                )
+            }
         }
 
         val forsendelseResponse = utførHentJournalpost(response.body!!.forsendelseId.toString())
@@ -470,15 +475,16 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
         response.statusCode shouldBe HttpStatus.OK
+        await.atMost(Duration.ofSeconds(2)).untilAsserted {
+            val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
+            forsendelse.forsendelseType shouldBe ForsendelseType.NOTAT
 
-        val forsendelse = testDataManager.hentForsendelse(response.body?.forsendelseId!!)!!
-        forsendelse.forsendelseType shouldBe ForsendelseType.NOTAT
-
-        forsendelse.dokumenter shouldHaveSize 1
-        val hoveddokument = forsendelse.dokumenter.hoveddokument!!
-        hoveddokument.dokumentStatus shouldBe DokumentStatus.IKKE_BESTILT
-        hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
-        hoveddokument.tittel shouldBe "Ektefellebidrag, Tittel notat"
+            forsendelse.dokumenter shouldHaveSize 1
+            val hoveddokument = forsendelse.dokumenter.hoveddokument!!
+            hoveddokument.dokumentStatus shouldBe DokumentStatus.UNDER_PRODUKSJON
+            hoveddokument.arkivsystem shouldBe DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER
+            hoveddokument.tittel shouldBe "Ektefellebidrag, Tittel notat"
+        }
     }
 
     @Test
