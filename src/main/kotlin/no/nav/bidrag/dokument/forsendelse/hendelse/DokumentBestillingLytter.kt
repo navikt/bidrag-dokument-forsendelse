@@ -86,7 +86,7 @@ class DokumentBestillingLytter(
                 return
             }
 
-            val arkivSystem = sendBestilling(forsendelse, dokument)
+            val arkivSystem = sendBestilling(forsendelse, dokument, dokumentBestilling.bestiltAvBruker)
             measureBestilling(forsendelse, dokument)
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
@@ -178,11 +178,12 @@ class DokumentBestillingLytter(
     private fun sendBestilling(
         forsendelse: Forsendelse,
         dokument: Dokument,
+        bestiltAvBruker: String?,
     ): DokumentArkivSystemDto? {
         val dokumentMalId = dokument.dokumentmalId!!
 
         if (forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
-            val bestilling = tilForespørsel(forsendelse, dokument)
+            val bestilling = tilForespørsel(forsendelse, dokument, bestiltAvBruker)
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {
                 "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} " +
@@ -287,8 +288,10 @@ class DokumentBestillingLytter(
     private fun tilForespørsel(
         forsendelse: Forsendelse,
         dokument: Dokument,
+        bestiltAvBruker: String?,
     ): DokumentBestillingForespørsel {
-        val saksbehandlerIdent = if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
+        val saksbehandlerIdent =
+            bestiltAvBruker ?: if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
         val erBatchbrev =
             dokument.ferdigstill ||
                 forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") ||
