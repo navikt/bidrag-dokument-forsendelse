@@ -13,6 +13,9 @@ env:
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.prod-fss-pub.nais.io/bidrag-dokument
   BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
 
+  BIDRAG_DOKUMENT_JOURNALPOST_URL: https://bidrag-dokument-journalpost.prod-fss-pub.nais.io/bidrag-dokument-journalpost
+  BIDRAG_DOKUMENT_JOURNALPOST_SCOPE: prod-fss.bidrag.bidrag-dokument-journalpost
+
   BIDRAG_SAK_URL: https://bidrag-sak.prod-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: prod-fss.bidrag.bidrag-sak
 
@@ -70,6 +73,7 @@ outbound-access-hosts:
    - bidrag-organisasjon.prod-fss-pub.nais.io
    - innsending-api-gcp.intern.nav.no
    - bidrag-unleash-api.nav.cloud.nais.io
+   - bidrag-dokument-journalpost.prod-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.bidrag.commons.security.SikkerhetsKontekst
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentJournalpostConsumer
 import no.nav.bidrag.dokument.forsendelse.model.DokumentBestilling
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
@@ -18,7 +19,7 @@ private val LOGGER = KotlinLogging.logger {}
 class DokumentSkedulering(
     private val dokumentTjeneste: DokumentTjeneste,
     private val bestillingLytter: DokumentBestillingLytter,
-    private val dokumentConsumer: BidragDokumentConsumer,
+    private val dokumentJournalpostConsumer: BidragDokumentJournalpostConsumer,
 ) {
     @Scheduled(cron = "\${REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE}")
     @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
@@ -30,6 +31,24 @@ class DokumentSkedulering(
     @SchedulerLock(name = "bestilleDokumenterUnderProduksjonPaNyttSkeduler", lockAtLeastFor = "10m")
     fun bestilleDokumenterUnderProduksjonPåNyttSkeduler() {
         bestillDokumenterUnderProduksjonPåNytt()
+    }
+
+    @Scheduled(cron = "\${REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
+    @SchedulerLock(name = "oppdaterStatusPåDokumentUnderProduksjon", lockAtLeastFor = "10m")
+    fun oppdaterStatusPåDokumentUnderProduksjon() {
+        LOGGER.info {
+            "Oppdaterer status på dokumenter i T_JP i Bisys databasen som har status 'UNDER_PRODUKSJON'"
+        }
+        val respons = dokumentJournalpostConsumer.oppdaterStatusPåDokumentUnderProduksjon()
+        LOGGER.info {
+            """Resultat på oppdatere status på dokumenter i T_JP i Bisys databasen som har status 'UNDER_PRODUKSJON': 
+                | Antall journalposter oppdatert status: ${respons.journalposterMedDokumentSomErFerdigstilt.size}
+                | Antall journalposter som fortsatt er under produksjon: ${respons.journalposterMedDokumentSomIkkeErFerdigstilt.size}
+                | Antall journalposter hvor dokument er slettet: ${respons.journalposterHvorDokumentErSlettet.size}
+                | 
+                | Rådata: $respons
+            """.trimMargin()
+        }
     }
 
     fun bestillFeiledeDokumenterPåNytt() {
