@@ -66,6 +66,6 @@ class BidragDokumentJournalpostConsumer(
                 .path("/api/admin/oppdaterStatus")
                 .build()
                 .toUri(),
-            OppdaterStatusPåDokumenterUnderProduksjonRequestDto(false, 0, 5000),
+            OppdaterStatusPåDokumenterUnderProduksjonRequestDto(false, 0, 500),
         )
 }
