@@ -33,7 +33,7 @@ class DokumentSkedulering(
         bestillDokumenterUnderProduksjonPåNytt()
     }
 
-    @Scheduled(cron = "\${REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
+    @Scheduled(cron = "\${SJEKK_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
     @SchedulerLock(name = "oppdaterStatusPåDokumentUnderProduksjon", lockAtLeastFor = "10m")
     fun oppdaterStatusPåDokumentUnderProduksjon() {
         LOGGER.info {
