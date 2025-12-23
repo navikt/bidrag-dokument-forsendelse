@@ -5,6 +5,7 @@ AZURE_APP_CLIENT_SECRET: asdasdsad214123sadas
 LAGRE_DIST_INFO_CRON: "0 * * * * *"
 OPPDATER_DIST_STATUS_CRON: "0 * * * * *"
 REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
+SJEKK_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
 REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 * * * * *"
 SYNKRONISER_STATUS_DOKUMENTER_CRON: "*/1 * * * * *"
 RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE: "*/1 * * * * *"
@@ -13,6 +14,7 @@ TOPIC_DOKUMENT: bidrag.dokument
 TOPIC_JOURNALPOST: bidrag.journalpost
 BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestilling
 BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
+BIDRAG_DOKUMENT_JOURNALPOST_URL: http://localhost:${wiremock.server.port}/dokumentjp
 BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
 BIDRAG_SAK_URL: http://localhost:${wiremock.server.port}/sak
 BIDRAG_PERSON_URL: http://localhost:${wiremock.server.port}/person
@@ -48,6 +50,15 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
       bidrag-dokument:
         resource-url: ${BIDRAG_DOKUMENT_URL}
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port:1234}/aad/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://123/.default
+        authentication:
+          client-id: 123
+          client-secret: 123
+          client-auth-method: client_secret_basic
+      bidrag-dokument-journalpost:
+        resource-url: ${BIDRAG_DOKUMENT_JOURNALPOST_URL}
         token-endpoint-url: http://localhost:${mock-oauth2-server.port:1234}/aad/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: api://123/.default

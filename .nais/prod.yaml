@@ -13,6 +13,9 @@ env:
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument.prod-fss-pub.nais.io/bidrag-dokument
   BIDRAG_DOKUMENT_SCOPE: prod-fss.bidrag.bidrag-dokument
 
+  BIDRAG_DOKUMENT_JOURNALPOST_URL: https://bidrag-dokument-journalpost.prod-fss-pub.nais.io/bidrag-dokument-journalpost
+  BIDRAG_DOKUMENT_JOURNALPOST_SCOPE: prod-fss.bidrag.bidrag-dokument-journalpost
+
   BIDRAG_SAK_URL: https://bidrag-sak.prod-fss-pub.nais.io/bidrag-sak
   BIDRAG_SAK_SCOPE: prod-fss.bidrag.bidrag-sak
 
@@ -45,6 +48,7 @@ env:
   SYNKRONISER_STATUS_DOKUMENTER_CRON: "0 0 */12 * * ?"
   SYNKRONISER_STATUS_DOKUMENTER_ENABLED: true
   REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
+  SJEKK_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */5 * * * *"
   REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 * * * * *"
   RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE: "0 0 */1 * * ?"
   GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH: gcp-kms://projects/bidrag-prod-8f72/locations/europe-north1/keyRings/bidrag-dokument-forsendelse/cryptoKeys/clientside_document_encryption
@@ -70,6 +74,7 @@ outbound-access-hosts:
    - bidrag-organisasjon.prod-fss-pub.nais.io
    - innsending-api-gcp.intern.nav.no
    - bidrag-unleash-api.nav.cloud.nais.io
+   - bidrag-dokument-journalpost.prod-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

@@ -13,6 +13,9 @@ env:
   BIDRAG_DOKUMENT_URL: https://bidrag-dokument-feature.dev-fss-pub.nais.io/bidrag-dokument
   BIDRAG_DOKUMENT_SCOPE: dev-fss.bidrag.bidrag-dokument-feature
 
+  BIDRAG_DOKUMENT_JOURNALPOST_URL: https://bidrag-dokument-journalpost-feature.dev-fss-pub.nais.io/bidrag-dokument-journalpost
+  BIDRAG_DOKUMENT_JOURNALPOST_SCOPE: dev-fss.bidrag.bidrag-dokument-journalpost-feature
+
   TOPIC_DOKUMENT: bidrag.dokument-feature
   TOPIC_JOURNALPOST: bidrag.journalpost-feature
 
@@ -48,6 +51,7 @@ env:
   SYNKRONISER_STATUS_DOKUMENTER_ENABLED: true
   REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */10 * * * *"
   REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE: "0 */10 * * * *"
+  SJEKK_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE: "0 */5 * * * *"
   RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE: "0 0 */12 * * ?"
   KAFKA_MAX_RETRY: 5
   GCP_BUCKET_DOCUMENT_KMS_KEY_PATH: projects/bidrag-dev-45a9/locations/europe-north1/keyRings/bidrag-dokument-forsendelse-feature/cryptoKeys/bucket-dokument-encryption
@@ -66,6 +70,7 @@ outbound-access-apps:
    - bidrag-kodeverk
    - bidrag-samhandler-q1
 outbound-access-hosts:
+   - bidrag-dokument-journalpost-feature.dev-fss-pub.nais.io
    - bidrag-dokument-feature.dev-fss-pub.nais.io
    - bidrag-person-q1.dev-fss-pub.nais.io
    - bidrag-sak-q1.dev-fss-pub.nais.io
