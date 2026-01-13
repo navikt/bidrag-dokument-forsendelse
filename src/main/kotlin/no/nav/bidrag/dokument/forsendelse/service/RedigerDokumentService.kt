@@ -2,6 +2,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusTo
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseStatusTo
@@ -21,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.service.pdf.PDFDokumentDetails
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.validerKanEndreForsendelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hentDokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.sortertEtterRekkefølge
+import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentMetadata
 import no.nav.bidrag.transport.dokument.forsendelse.DokumentDetaljer
 import no.nav.bidrag.transport.dokument.forsendelse.DokumentRedigeringMetadataResponsDto
@@ -251,8 +253,16 @@ class RedigerDokumentService(
     }
 
     private fun hentDokumentDetaljer(dokumentMetadata: DokumentMetadata): DokumentDetaljer {
-        val dokumentFil = fysiskDokumentService.hentFysiskDokument(dokumentMetadata)
-        val numerOfPages = PDFDokumentDetails().getNumberOfPages(dokumentFil)
+        val numerOfPages =
+            if (UnleashFeatures.REDIGER_ELDRE_DOKUMENTER_V2.isEnabled &&
+                dokumentMetadata.arkivsystem == DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
+            ) {
+                1
+            } else {
+                val dokumentFil = fysiskDokumentService.hentFysiskDokument(dokumentMetadata)
+                PDFDokumentDetails().getNumberOfPages(dokumentFil)
+            }
+
         return DokumentDetaljer(
             tittel = dokumentMetadata.tittel ?: dokumentMetadata.dokumentreferanse ?: "",
             dokumentreferanse = dokumentMetadata.dokumentreferanse,
