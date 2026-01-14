@@ -28,14 +28,16 @@ class DokumentKontroller(
     fun hentDokument(
         @PathVariable forsendelseIdMedPrefix: ForsendelseId,
         @PathVariable dokumentreferanse: String,
-    ): ResponseEntity<ByteArray> =
-        ResponseEntity
+    ): ResponseEntity<ByteArray> {
+        val result = fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse)
+        return ResponseEntity
             .ok()
-            .contentType(MediaType.APPLICATION_PDF)
+            .contentType(result.mediatype)
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=$dokumentreferanse.pdf",
-            ).body(fysiskDokumentService.hentDokument(forsendelseIdMedPrefix.numerisk, dokumentreferanse))
+            ).body(result.data)
+    }
 
     @GetMapping("/dokumentreferanse/{dokumentreferanse}")
     @Operation(

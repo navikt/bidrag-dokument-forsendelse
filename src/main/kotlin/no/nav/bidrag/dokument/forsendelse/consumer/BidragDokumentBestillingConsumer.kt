@@ -60,9 +60,18 @@ class BidragDokumentBestillingConsumer(
     fun produser(
         dokumentmalId: String,
         forespørsel: DokumentBestillingForespørsel? = null,
+        bestillHtml: Boolean = false,
     ): ByteArray? {
         LOGGER.info("Henter dokument med dokumentmalId $dokumentmalId")
-        return postForEntity(createUri("/produser/$dokumentmalId"), forespørsel)
+        return postForEntity(
+            UriComponentsBuilder
+                .fromUri(url)
+                .path("/produser/$dokumentmalId")
+                .queryParam("bestillHtml", bestillHtml)
+                .build()
+                .toUri(),
+            forespørsel,
+        )
     }
 
     @Cacheable(DOKUMENTMALER_CACHE)

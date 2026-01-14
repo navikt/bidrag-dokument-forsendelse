@@ -1,12 +1,12 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.tilArkivSystemDto
 import no.nav.bidrag.dokument.forsendelse.mapper.tilBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.mapper.tilDokumentStatusDto
-import no.nav.bidrag.dokument.forsendelse.mapper.tilOpprettDokumentForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeForsendelse
@@ -22,6 +22,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekk
 import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentFormatDto
 import no.nav.bidrag.transport.dokument.DokumentMetadata
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 
 private val log = KotlinLogging.logger {}
@@ -29,6 +30,15 @@ private val log = KotlinLogging.logger {}
 fun Dokument.erStatiskDokument() = arkivsystem == DokumentArkivSystem.BIDRAG && metadata.erStatiskDokument()
 
 fun Dokument.erDokumentFraProduksjon() = arkivsystem == DokumentArkivSystem.BIDRAG && !metadata.erStatiskDokument()
+
+fun Dokument.erRedigerbarHtmlDokument() =
+    (arkivsystem == DokumentArkivSystem.BIDRAG && dokumentStatus == DokumentStatus.UNDER_REDIGERING) ||
+        (arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER && UnleashFeatures.REDIGER_ELDRE_DOKUMENTER_V2.isEnabled)
+
+data class HentDokumentResult(
+    val data: ByteArray,
+    val mediatype: MediaType = MediaType.APPLICATION_PDF,
+)
 
 @Component
 class FysiskDokumentService(
@@ -42,7 +52,7 @@ class FysiskDokumentService(
     fun hentDokument(
         forsendelseId: Long,
         dokumentreferanse: String,
-    ): ByteArray {
+    ): HentDokumentResult {
         val forsendelse =
             forsendelseTjeneste.medForsendelseId(forsendelseId)
                 ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
@@ -51,17 +61,25 @@ class FysiskDokumentService(
         val dokument = forsendelse.dokumenter.hentDokument(dokumentreferanse)!!
 
         if (dokument.dokumentStatus == DokumentStatus.KONTROLLERT) {
-            return dokumentStorageService.hentFil(dokument.filsti)
+            return HentDokumentResult(dokumentStorageService.hentFil(dokument.filsti))
         }
 
         if (dokument.erStatiskDokument()) {
-            return hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
+            return HentDokumentResult(hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(forsendelseId, dokumentreferanse))
         }
         if (dokument.erDokumentFraProduksjon()) {
-            return bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel())
-                ?: fantIkkeDokument(forsendelseId, dokumentreferanse)
+            return HentDokumentResult(
+                bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel())
+                    ?: fantIkkeDokument(forsendelseId, dokumentreferanse),
+            )
         }
-
+        if (dokument.erRedigerbarHtmlDokument()) {
+            return HentDokumentResult(
+                bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel(), true)
+                    ?: fantIkkeDokument(forsendelseId, dokumentreferanse),
+                MediaType.TEXT_HTML,
+            )
+        }
         val arkivSystem = dokument.arkivsystem
         throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
     }
@@ -95,7 +113,7 @@ class FysiskDokumentService(
             hentDokument(
                 dokumentMetadata.journalpostId!!.numerisk,
                 dokumentMetadata.dokumentreferanse!!,
-            )
+            ).data
         } else {
             bidragDokumentConsumer.hentDokument(
                 dokumentMetadata.journalpostId,
@@ -108,7 +126,7 @@ class FysiskDokumentService(
             hentDokument(
                 dokument.forsendelse.forsendelseId!!,
                 dokument.dokumentreferanse,
-            )
+            ).data
         } else if (dokument.arkivsystem == DokumentArkivSystem.FORSENDELSE) {
             val originalDokument = dokumentTjeneste.hentOriginalDokument(dokument)
             return if (originalDokument.dokumentreferanse == dokument.dokumentreferanse) {
