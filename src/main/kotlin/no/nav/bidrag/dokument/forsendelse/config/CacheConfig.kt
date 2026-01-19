@@ -68,7 +68,7 @@ class CacheConfig {
         caffeineCacheManager.registerCustomCache(TILGANG_PERSON_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(TILGANG_SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         caffeineCacheManager.registerCustomCache(VEDTAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
-        caffeineCacheManager.registerCustomCache(BEHANDLING_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
+        caffeineCacheManager.registerCustomCache(BEHANDLING_CACHE, Caffeine.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build())
         caffeineCacheManager.registerCustomCache(SAK_CACHE, Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build())
         return caffeineCacheManager
     }
