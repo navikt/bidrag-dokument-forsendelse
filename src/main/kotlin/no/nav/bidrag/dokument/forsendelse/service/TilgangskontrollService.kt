@@ -12,7 +12,7 @@ class TilgangskontrollService(
 ) {
     fun sjekkTilgangSak(saksnummer: String) {
         if (SikkerhetsKontekst.erIApplikasjonKontekst()) return
-        if (!bidragTIlgangskontrollConsumer.sjekkTilgangSak(saksnummer)) ingenTilgang("Ingen tilgang til saksnummer $saksnummer")
+//        if (!bidragTIlgangskontrollConsumer.sjekkTilgangSak(saksnummer)) ingenTilgang("Ingen tilgang til saksnummer $saksnummer")
     }
 
     fun sjekkTilgangForsendelse(forsendelse: Forsendelse) {

@@ -254,7 +254,7 @@ class RedigerDokumentService(
 
     private fun hentDokumentDetaljer(dokumentMetadata: DokumentMetadata): DokumentDetaljer {
         val numerOfPages =
-            if (UnleashFeatures.REDIGER_ELDRE_DOKUMENTER_V2.isEnabled &&
+            if (UnleashFeatures.REDIGERING_NY_KLIENT.isEnabled &&
                 dokumentMetadata.arkivsystem == DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
             ) {
                 1

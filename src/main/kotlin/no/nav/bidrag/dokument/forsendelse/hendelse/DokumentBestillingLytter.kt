@@ -98,11 +98,18 @@ class DokumentBestillingLytter(
                     metadata =
                         run {
                             val metadata = dokument.metadata
-                            metadata.lagreBestiltTidspunkt(LocalDateTime.now())
-                            metadata.inkrementerBestiltAntallGanger()
+                            if (!UnleashFeatures.SKRU_AV_BREVKLIENT.isEnabled) {
+                                metadata.lagreBestiltTidspunkt(LocalDateTime.now())
+                                metadata.inkrementerBestiltAntallGanger()
+                            }
                             metadata.copy()
                         },
-                    dokumentStatus = DokumentStatus.UNDER_PRODUKSJON,
+                    dokumentStatus =
+                        if (UnleashFeatures.SKRU_AV_BREVKLIENT.isEnabled) {
+                            DokumentStatus.UNDER_REDIGERING
+                        } else {
+                            DokumentStatus.UNDER_PRODUKSJON
+                        },
                 ),
             )
         } catch (e: Exception) {
@@ -183,6 +190,13 @@ class DokumentBestillingLytter(
         val dokumentMalId = dokument.dokumentmalId!!
 
         if (forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
+            if (UnleashFeatures.SKRU_AV_BREVKLIENT.isEnabled) {
+                LOGGER.info {
+                    "Brevklient er skrudd av: Dokument med mal ${dokument.dokumentmalId} og tittel ${dokument.tittel} " +
+                        "knyttet til forsendelse ${dokument.forsendelseId} kan bare redigeres via ny redigeringsklient"
+                }
+                return DokumentArkivSystemDto.MIDLERTIDLIG_BREVLAGER
+            }
             val bestilling = tilForespørsel(forsendelse, dokument, bestiltAvBruker)
             val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
             LOGGER.info {

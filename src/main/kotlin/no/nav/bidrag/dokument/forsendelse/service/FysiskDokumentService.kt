@@ -33,7 +33,7 @@ fun Dokument.erDokumentFraProduksjon() = arkivsystem == DokumentArkivSystem.BIDR
 
 fun Dokument.erRedigerbarHtmlDokument() =
     (arkivsystem == DokumentArkivSystem.BIDRAG && dokumentStatus == DokumentStatus.UNDER_REDIGERING) ||
-        (arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER && UnleashFeatures.REDIGER_ELDRE_DOKUMENTER_V2.isEnabled)
+        (arkivsystem == DokumentArkivSystem.MIDLERTIDLIG_BREVLAGER && UnleashFeatures.REDIGERING_NY_KLIENT.isEnabled)
 
 data class HentDokumentResult(
     val data: ByteArray,

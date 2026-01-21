@@ -10,7 +10,8 @@ enum class UnleashFeatures(
     DOKUMENTVALG_FRA_VEDTAK_BEHANDLING("forsendelse.dokumentvalg_vedtak_behandling", false),
     OPPRETT_BATCHBREV("forsendelse.opprett_batchbrev", false),
     VIS_BATCHBREV_NYERE_ENN_3_DAGER("forsendelse.batchbrev_nyere_enn_3_dager", false),
-    REDIGER_ELDRE_DOKUMENTER_V2("forsendelse.redigering_av_dokumenter", false),
+    REDIGERING_NY_KLIENT("forsendelse.redigering_av_dokumenter", false),
+    SKRU_AV_BREVKLIENT("forsendelse.skru_av_brevklient", false),
     ;
 
     private var defaultValue = false
