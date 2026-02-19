@@ -97,6 +97,7 @@ class OpprettForsendelseServiceTest {
         every { forsendelseTittelService.opprettForsendelseTittel(any<OpprettForsendelseForespørsel>()) } returns "Vedtak om bidrag"
         every { dokumenttjeneste.opprettNyttDokument(any(), any<List<OpprettDokumentForespørsel>>()) } returns emptyList()
         every { forsendelseTjeneste.lagre(any()) } returns opprettForsendelse2()
+        every { forsendelseTjeneste.hentForsendelserForBehandlingMedStatusUnderOpprettelse(any()) } returns emptyList()
         every { dokumentBestillingService.hentDokumentmalDetaljer() } returns emptyMap()
         every { sakService.hentSak(any()) } returns opprettSak()
         every { vedtakConsumer.hentVedtak(any()) } returns opprettVedtakDto()
@@ -434,6 +435,7 @@ class OpprettForsendelseServiceTest {
         opprettForsendelseService!!.opprettForsendelse(opprettForsendelseForespørselEngangsbelop)
 
         verify(ordering = Ordering.SEQUENCE) {
+            forsendelseTjeneste.hentForsendelserForBehandlingMedStatusUnderOpprettelse(any())
             forsendelseTjeneste.lagre(
                 withArg {
                     it.behandlingInfo!!.behandlingType shouldBe null
@@ -441,6 +443,7 @@ class OpprettForsendelseServiceTest {
                     it.behandlingInfo!!.engangsBelopType shouldBe null
                 },
             )
+            forsendelseTjeneste.hentForsendelserForBehandlingMedStatusUnderOpprettelse(any())
             forsendelseTjeneste.lagre(
                 withArg {
                     it.behandlingInfo!!.behandlingType shouldBe null
