@@ -5,6 +5,7 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsen
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
 import no.nav.bidrag.dokument.forsendelse.service.SaksbehandlerInfoManager
 import no.nav.bidrag.dokument.forsendelse.service.TilgangskontrollService
+import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Propagation
@@ -32,6 +33,19 @@ class ForsendelseTjeneste(
         val forsendelse = forsendelseRepository.medForsendelseId(forsendelseId)
         forsendelse?.let { tilgangskontrollService.sjekkTilgangForsendelse(it) }
         return forsendelse
+    }
+
+    fun hentForsendelserForBehandlingMedStatusUnderOpprettelse(request: OpprettForsendelseForespørsel): List<Forsendelse> {
+        val behandlingInfo = request.behandlingInfo ?: return emptyList()
+        return forsendelseRepository
+            .hentForsendelserForBehandlingMedStatusUnderOpprettelse(
+                request.saksnummer,
+                behandlingInfo.soknadId,
+                behandlingInfo.stonadType,
+                behandlingInfo.engangsBelopType,
+                behandlingInfo.erFattetBeregnet,
+                behandlingInfo.vedtakId,
+            ).filter { it.mottaker?.ident == request.mottaker?.ident && it.gjelderIdent == request.gjelderIdent }
     }
 
     fun hentForsendelserHvorEttersendingIkkeOpprettet(): List<Forsendelse> = forsendelseRepository.hentEttersendingerSomIkkeErOpprettet()
