@@ -80,7 +80,15 @@ class OpprettForsendelseService(
         tilgangskontrollService.sjekkTilgangSak(forespørsel.saksnummer)
         val forsendelseType = hentForsendelseType(forespørsel)
         forespørsel.valider(forsendelseType)
+
         SIKKER_LOGG.info { "Oppretter forsendelse for forespørsel $forespørsel med forsendelseType $forsendelseType" }
+        val eksisterendeForsendelse = hentSammeForsendelseUnderOpprettelseForBehandling(forespørsel)
+        if (eksisterendeForsendelse != null) {
+            return OpprettForsendelseRespons(
+                forsendelseId = eksisterendeForsendelse.forsendelseId,
+                forsendelseType = eksisterendeForsendelse.tilForsendelseType(),
+            )
+        }
         val forsendelse = opprettForsendelseFraForespørsel(forespørsel, forsendelseType)
         val dokumenter =
             dokumenttjeneste.opprettNyttDokument(forsendelse, dokumenterMedOppdatertTittel(forespørsel, forsendelseType))
@@ -102,6 +110,17 @@ class OpprettForsendelseService(
                     )
                 },
         )
+    }
+
+    fun hentSammeForsendelseUnderOpprettelseForBehandling(forespørsel: OpprettForsendelseForespørsel): Forsendelse? {
+        try {
+            if (forespørsel.dokumenter.isNotEmpty()) return null
+            val forsendelser = forsendelseTjeneste.hentForsendelserForBehandlingMedStatusUnderOpprettelse(forespørsel)
+            return forsendelser.firstOrNull()
+        } catch (e: Exception) {
+            secureLogger.error(e) { "Feil ved henting av eksisterende forsendelse under opprettelse for behandling. Request: $forespørsel" }
+            return null
+        }
     }
 
     private fun dokumenterMedOppdatertTittel(

@@ -1,6 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.persistence.database.repository
 
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
+import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -61,4 +63,20 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
         "select f from forsendelse f where f.ettersendingsoppgave is not null and f.ettersendingsoppgave.innsendingsId is null and f.status = 'DISTRIBUERT' and f.journalpostIdFagarkiv is not null",
     )
     fun hentEttersendingerSomIkkeErOpprettet(): List<Forsendelse>
+
+    @Query(
+        "select f from forsendelse f where f.saksnummer = :saksnummer and f.behandlingInfo.soknadId = :soknadId " +
+            "and (:engangsbelopType is null or f.behandlingInfo.engangsBelopType = :engangsbelopType)" +
+            "and (:stonadType is null or f.behandlingInfo.stonadType = :stonadType)" +
+            "and (:erFattetBeregnet is null or f.behandlingInfo.erFattetBeregnet = :erFattetBeregnet)" +
+            "and (:vedtakId is null or f.behandlingInfo.vedtakId = :vedtakId) and f.status = 'UNDER_OPPRETTELSE'",
+    )
+    fun hentForsendelserForBehandlingMedStatusUnderOpprettelse(
+        saksnummer: String?,
+        soknadId: String?,
+        stonadType: Stønadstype?,
+        engangsbelopType: Engangsbeløptype?,
+        erFattetBeregnet: Boolean? = null,
+        vedtakId: String? = null,
+    ): List<Forsendelse>
 }
