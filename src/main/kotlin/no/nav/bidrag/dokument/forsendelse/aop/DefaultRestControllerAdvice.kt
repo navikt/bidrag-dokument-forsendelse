@@ -59,7 +59,7 @@ class DefaultRestControllerAdvice {
     @ExceptionHandler(HttpStatusCodeException::class)
     fun handleHttpClientErrorException(exception: HttpStatusCodeException): ResponseEntity<*> {
         val errorMessage = getErrorMessage(exception)
-        LOGGER.error(errorMessage, exception)
+        LOGGER.warn(exception) { errorMessage }
         val payloadFeilmelding =
             exception.responseBodyAsString.isEmpty().ifTrue { exception.message }
                 ?: exception.responseBodyAsString
