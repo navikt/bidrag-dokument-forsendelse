@@ -146,7 +146,12 @@ class DokumentBestillingLytter(
             dokumentTjeneste.lagreDokument(
                 dokument.copy(
                     arkivsystem = DokumentArkivSystem.BIDRAG,
-                    dokumentStatus = DokumentStatus.MÅ_KONTROLLERES,
+                    dokumentStatus =
+                        if (erSkjema(dokument.dokumentmalId)) {
+                            DokumentStatus.MÅ_KONTROLLERES
+                        } else {
+                            DokumentStatus.UNDER_REDIGERING
+                        },
                     metadata =
                         run {
                             val metadata = dokument.metadata

@@ -67,12 +67,6 @@ class FysiskDokumentService(
         if (dokument.erStatiskDokument()) {
             return HentDokumentResult(hentStatiskDokument(dokument.dokumentmalId!!) ?: fantIkkeDokument(forsendelseId, dokumentreferanse))
         }
-        if (dokument.erDokumentFraProduksjon()) {
-            return HentDokumentResult(
-                bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel())
-                    ?: fantIkkeDokument(forsendelseId, dokumentreferanse),
-            )
-        }
         if (dokument.erRedigerbarHtmlDokument()) {
             return HentDokumentResult(
                 bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel(), true)
@@ -80,6 +74,13 @@ class FysiskDokumentService(
                 MediaType.TEXT_HTML,
             )
         }
+        if (dokument.erDokumentFraProduksjon()) {
+            return HentDokumentResult(
+                bidragDokumentBestillingConsumer.produser(dokument.dokumentmalId!!, dokument.tilBestillingForespørsel())
+                    ?: fantIkkeDokument(forsendelseId, dokumentreferanse),
+            )
+        }
+
         val arkivSystem = dokument.arkivsystem
         throw FantIkkeDokument("Kan ikke hente dokument $dokumentreferanse med forsendelseId $forsendelseId fra arkivsystem = $arkivSystem")
     }

@@ -50,8 +50,9 @@ class DokumentValgService(
     lateinit var dokumentValgTittelMap: Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>>
 
     val standardBrevkoder = listOf("BI01S02", "BI01S10") // BI01S67 - Adresseforespørsel
-    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10")
-    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10")
+    val standardBrevkoderNy = listOf("FRITEKST") // BI01S67 - Adresseforespørsel
+    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10", "FRITEKST")
+    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10", "FRITEKST")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
     val notaterKlage = listOf("BI01P17")
 
@@ -86,12 +87,19 @@ class DokumentValgService(
     fun hentDokumentMalListe(request: HentDokumentValgRequest? = null): Map<String, DokumentMalDetaljer> =
         hentDokumentMalListeV2(request).dokumentMalDetaljer
 
+    private fun hentStandardBrevkoder() =
+        if (UnleashFeatures.REDIGERING_NY_KLIENT.isEnabled) {
+            standardBrevkoder + standardBrevkoderNy
+        } else {
+            standardBrevkoder
+        }
+
     fun hentDokumentMalListeV2(request: HentDokumentValgRequest? = null): HentDokumentValgResponse {
-        if (request == null) return HentDokumentValgResponse(standardBrevkoder.associateWith { mapToMalDetaljer(it) })
+        if (request == null) return HentDokumentValgResponse(hentStandardBrevkoder().associateWith { mapToMalDetaljer(it) })
         val requestUtfylt = hentUtfyltDokumentValgDetaljer(request)
         val maler =
             hentDokumentMalListeForRequest(requestUtfylt)
-                ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
+                ?: hentStandardBrevkoder().associateWith { mapToMalDetaljer(it, request) }
 
         val automatiskOpprettDokumenter = bestemDokumentMallisteForVedtak(request)
         return HentDokumentValgResponse(
