@@ -164,7 +164,15 @@ class DokumentValgService(
                 .hentVedtak(vedtakId = request.vedtakId!!)
                 ?.let {
                     val behandlingType =
-                        if (it.stønadsendringListe.isNotEmpty()) it.stønadsendringListe[0].type.name else it.engangsbeløpListe[0].type.name
+                        if (it.stønadsendringListe.isNotEmpty()) {
+                            it.stønadsendringListe
+                                .filter {
+                                    it.periodeListe.none { it.resultatkode == "AutomatiskOpphør" }
+                                }[0]
+                                .type.name
+                        } else {
+                            it.engangsbeløpListe[0].type.name
+                        }
                     val erFattetBeregnet =
                         if (!it.kildeapplikasjon.startsWith("bidrag-behandling")) {
                             request.erFattetBeregnet
