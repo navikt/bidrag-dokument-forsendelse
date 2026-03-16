@@ -1,34 +1,68 @@
 version: "3.9"
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:6.2.1
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-
   kafka:
-    image: confluentinc/cp-kafka:6.2.1
-    depends_on:
-      - zookeeper
+    image: confluentinc/cp-kafka:latest
     ports:
       - "9092:9092"
-    expose:
-      - '29092'
+    volumes:
+      - kafka-data:/var/lib/kafka/data
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_HEAP_SIZE: 512M
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      CLUSTER_ID: 'MkRGN0Y0QjJENDM1RkQxN0E0QjRCRDM2MzU1Q0E2NkU='
+  kafka-ui:
+    container_name: kafbat-ui-local
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - "7576:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    depends_on:
+      - kafka
+  kafka-ui-dev:
+    container_name: kafbat-ui
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - "7577:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION: /client.keystore.p12
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD: "changeme"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: nav-dev-kafka-nav-dev.aivencloud.com:26484 # SSL LISTENER!
+      KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION: /client.truststore.jks
+      KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD: "changeme"
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # DISABLE COMMON NAME VERIFICATION
+    volumes:
+      - ./ssl/client.truststore.jks:/client.truststore.jks
+      - ./ssl/client.keystore.p12:/client.keystore.p12
+  adminer:
+    image: adminer:latest
+    ports:
+      - "7575:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: database
+    depends_on:
+      - database
   database:
-    image: postgres:latest
+    image: postgres:16.10
+    extra_hosts:
+      - host.docker.internal:host-gateway
     ports:
       - "5454:5432"
+      - "5551:5551"
     environment:
       POSTGRES_USER: cloudsqliamuser
       POSTGRES_PASSWORD: admin
@@ -45,6 +79,8 @@ services:
 
 volumes:
   db:
+    driver: local
+  kafka-data:
     driver: local
   storage:
     driver: local
