@@ -49,10 +49,10 @@ class DokumentValgService(
     lateinit var dokumentValgMap: Map<BehandlingType, List<DokumentBehandlingDetaljer>>
     lateinit var dokumentValgTittelMap: Map<BehandlingType, List<DokumentBehandlingTittelDetaljer>>
 
-    val standardBrevkoder = listOf("BI01S02", "BI01S10", "BI01B05") // BI01S67 - Adresseforespørsel
+    val standardBrevkoder = listOf("BI01S02", "BI01S10", "BI01S11") // BI01S67 - Adresseforespørsel
     val standardBrevkoderNy = listOf("FRITEKST") // BI01S67 - Adresseforespørsel
-    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10", "FRITEKST", "BI01B05")
-    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10", "FRITEKST", "BI01B05")
+    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10", "FRITEKST", "BI01S11")
+    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10", "FRITEKST", "BI01S11")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
     val notaterKlage = listOf("BI01P17")
 
