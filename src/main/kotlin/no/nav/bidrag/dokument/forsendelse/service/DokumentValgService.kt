@@ -51,8 +51,8 @@ class DokumentValgService(
 
     val standardBrevkoder = listOf("BI01S02", "BI01S10", "BI01B05") // BI01S67 - Adresseforespørsel
     val standardBrevkoderNy = listOf("FRITEKST") // BI01S67 - Adresseforespørsel
-    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10", "FRITEKST")
-    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10", "FRITEKST")
+    val ekstraBrevkoderVedtakFattet = listOf("BI01S02", "BI01S10", "FRITEKST", "BI01B05")
+    val ekstraBrevkoderVedtakIkkeFattet = listOf("BI01S02", "BI01S10", "FRITEKST", "BI01B05")
     val notaterBrevkoder = listOf("BI01P11", "BI01P18", "BI01X01", "BI01X02")
     val notaterKlage = listOf("BI01P17")
 
