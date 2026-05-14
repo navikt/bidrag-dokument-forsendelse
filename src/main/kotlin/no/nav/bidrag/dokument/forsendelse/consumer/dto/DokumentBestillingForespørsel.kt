@@ -11,6 +11,7 @@ data class DokumentBestillingForespørsel(
     val saksnummer: String,
     val vedtakId: String? = null,
     val behandlingId: String? = null,
+    val søknadId: String? = null,
     val dokumentreferanse: String? = null,
     val tittel: String? = null,
     val enhet: String? = null,

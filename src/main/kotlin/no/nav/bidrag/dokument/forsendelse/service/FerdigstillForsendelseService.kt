@@ -52,8 +52,8 @@ class FerdigstillForsendelseService(
 
     private fun hentMottakerNavn(mottaker: Mottaker): String? {
         if (mottaker.navn == null || mottaker.identType != MottakerIdentType.FNR || mottaker.ident == null) return mottaker.navn
-        if (mottaker.navn.isEmpty()) {
-            return personConsumer.hentPerson(mottaker.ident)?.visningsnavn ?: "Mangler navn"
+        if (mottaker.navn!!.isEmpty()) {
+            return personConsumer.hentPerson(mottaker.ident!!)?.visningsnavn ?: "Mangler navn"
         }
         return mottaker.navn
     }
@@ -81,9 +81,9 @@ class FerdigstillForsendelseService(
                     if (!forsendelse.erNotat) {
                         AvsenderMottakerDto(
                             ident = forsendelse.mottaker!!.ident,
-                            navn = hentMottakerNavn(forsendelse.mottaker),
+                            navn = hentMottakerNavn(forsendelse.mottaker!!),
                             type =
-                                when (forsendelse.mottaker.identType) {
+                                when (forsendelse.mottaker!!.identType) {
                                     MottakerIdentType.SAMHANDLER -> AvsenderMottakerDtoIdType.SAMHANDLER
                                     else -> AvsenderMottakerDtoIdType.FNR
                                 },
