@@ -38,7 +38,6 @@ import no.nav.bidrag.transport.dokument.forsendelse.OppdaterDokumentForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseForespørsel
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.web.client.exchange
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus

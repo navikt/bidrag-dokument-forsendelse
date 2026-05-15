@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.8</version>
+    <version>4.0.6</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>no.nav</groupId>
@@ -15,17 +15,17 @@
   <name>bidrag-dokument-forsendelse</name>
   <properties>
     <java.version>21</java.version>
-    <kotlin.version>2.2.10</kotlin.version>
-    <bidrag-felles.version>2026.05.13.083229</bidrag-felles.version>
+    <kotlin.version>2.2.21</kotlin.version>
+    <bidrag-felles.version>2026.05.13.140439-SB4</bidrag-felles.version>
     <logback-encoder.version>9.0</logback-encoder.version>
-    <token-support.version>5.0.28</token-support.version>
-    <springdoc-openapi-ui.version>2.8.14</springdoc-openapi-ui.version>
-    <springframework-cloud.version>4.3.0</springframework-cloud.version>
+    <token-support.version>6.0.6</token-support.version>
+    <springdoc-openapi-ui.version>3.0.3</springdoc-openapi-ui.version>
+    <springframework-cloud.version>5.0.2</springframework-cloud.version>
     <kotest.version>5.9.1</kotest.version>
     <mockk.version>4.0.2</mockk.version>
     <flyway.version>11.17.2</flyway.version>
     <kotlin-logging-jvm.version>7.0.13</kotlin-logging-jvm.version>
-    <testcontainers.version>1.21.4</testcontainers.version>
+    <testcontainers.version>2.0.1</testcontainers.version>
     <shedlock.version>6.10.0</shedlock.version>
     <google-cloud-storage.version>2.32.0</google-cloud-storage.version>
     <google-cloud-libraries-bom.version>26.72.0</google-cloud-libraries-bom.version>
@@ -93,8 +93,8 @@
 
     <!--Spring-->
     <dependency>
-      <groupId>org.springframework.kafka</groupId>
-      <artifactId>spring-kafka</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-kafka</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -134,10 +134,7 @@
       <groupId>org.springframework.session</groupId>
       <artifactId>spring-session-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-cache</artifactId>
@@ -195,8 +192,8 @@
     <!-- Database -->
     <dependency>
       <groupId>io.hypersistence</groupId>
-      <artifactId>hypersistence-utils-hibernate-63</artifactId>
-      <version>3.10.1</version>
+      <artifactId>hypersistence-utils-hibernate-70</artifactId>
+      <version>3.15.2</version>
     </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
@@ -211,13 +208,13 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
-      <version>2.3.232</version>
+      <version>2.4.240</version>
     </dependency>
     <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
-      <version>${flyway.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-flyway</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-database-postgresql</artifactId>
@@ -303,12 +300,12 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.5.20</version>
+      <version>1.5.32</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.20</version>
+      <version>1.5.32</version>
     </dependency>
     <dependency>
       <groupId>net.logstash.logback</groupId>
@@ -328,7 +325,7 @@
     <dependency>
       <groupId>io.getunleash</groupId>
       <artifactId>unleash-client-java</artifactId>
-      <version>11.0.2</version>
+      <version>11.2.1</version>
     </dependency>
     <!--Test-->
     <dependency>
@@ -388,21 +385,35 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.kafka</groupId>
-      <artifactId>spring-kafka-test</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-kafka-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-resttestclient</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
+      <artifactId>testcontainers-postgresql</artifactId>
       <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>${testcontainers.version}</version>
+      <version>1.21.4</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.wiremock.integrations</groupId>
+      <artifactId>wiremock-spring-boot</artifactId>
+      <version>4.2.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -460,7 +471,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>ktlint</id>

@@ -13,15 +13,16 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import jakarta.persistence.SequenceGenerator
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DistribusjonKanal
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseTema
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.ForsendelseType
-import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Parameter
+import org.hibernate.annotations.NativeGenerator
 import org.hibernate.annotations.Type
 import org.hibernate.engine.spi.SessionFactoryImplementor
 import org.hibernate.engine.spi.SharedSessionContractImplementor
+import org.hibernate.type.MappingContext
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
@@ -31,16 +32,15 @@ import java.time.ZoneOffset
 @Entity(name = "forsendelse")
 data class Forsendelse(
     @Id
-    @GeneratedValue(generator = "sequence-generator")
-    @GenericGenerator(
-        name = "sequence-generator",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = [
-            Parameter(name = "sequence_name", value = "forsendelse_forsendelse_id_seq"),
-            Parameter(name = "initial_value", value = "1000000000"),
-            Parameter(name = "min_value", value = "1000000000"),
-            Parameter(name = "increment_size", value = "1"),
-        ],
+    @GeneratedValue(generator = "forsendelse_forsendelse_id_seq_gen")
+    @NativeGenerator(
+        sequenceForm =
+            SequenceGenerator(
+                name = "forsendelse_forsendelse_id_seq_gen",
+                sequenceName = "forsendelse_forsendelse_id_seq",
+                initialValue = 1000000000,
+                allocationSize = 1,
+            ),
     )
     val forsendelseId: Long? = null,
     @Enumerated(EnumType.STRING)
@@ -157,6 +157,15 @@ class ForsendelseMetadataDoConverter : ImmutableType<ForsendelseMetadataDo>(Fors
     }
 
     override fun getSqlType(): Int = Types.OTHER
+
+    override fun getColumnSpan(mappingContext: MappingContext?): Int = 1
+
+    override fun getSqlTypeCodes(mappingContext: MappingContext?): IntArray = intArrayOf(getSqlType())
+
+    override fun toColumnNullness(
+        value: Any?,
+        mappingContext: MappingContext?,
+    ): BooleanArray = booleanArrayOf(value != null)
 
     override fun compare(
         p0: Any?,
