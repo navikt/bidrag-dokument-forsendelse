@@ -137,7 +137,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                         "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}," +
                         "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
                         "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
+                        "\"vedtakId\":null,\"behandlingId\":null,\"søknadId\":null," +
                         "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
                         "\"tittel\":\"${hoveddokument.tittel}\"," +
                         "\"enhet\":\"${forsendelse.enhet}\"," +
@@ -159,7 +159,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
         val opprettForsendelseForespørsel =
             nyOpprettForsendelseForespørsel().copy(
                 batchId = "FB050",
-                behandlingInfo = BehandlingInfoDto(barnIBehandling = listOf("123123123123")),
+                behandlingInfo = BehandlingInfoDto(barnIBehandling = listOf("123123123123"), soknadId = "12333"),
             )
 
         val response = utførOpprettForsendelseForespørsel(opprettForsendelseForespørsel)
@@ -183,7 +183,7 @@ class OpprettForsendelseKontrollerTest : KontrollerTestRunner() {
                         "\"saksbehandler\":{\"ident\":\"Z999444\",\"navn\":null}," +
                         "\"gjelderId\":\"${forsendelse.gjelderIdent}\"," +
                         "\"saksnummer\":\"${forsendelse.saksnummer}\"," +
-                        "\"vedtakId\":null,\"behandlingId\":null," +
+                        "\"vedtakId\":null,\"behandlingId\":null,\"søknadId\":\"12333\"," +
                         "\"dokumentreferanse\":\"${hoveddokument.dokumentreferanse}\"," +
                         "\"tittel\":\"${hoveddokument.tittel}\"," +
                         "\"enhet\":\"${forsendelse.enhet}\"," +

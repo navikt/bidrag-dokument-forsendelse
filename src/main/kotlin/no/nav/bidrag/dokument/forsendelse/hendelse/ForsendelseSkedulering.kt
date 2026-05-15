@@ -74,7 +74,7 @@ class ForsendelseSkedulering(
         try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService
-                    .hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
+                    .hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv!!)
                     ?.takeIf {
                         it.journalstatus == JournalpostStatus.DISTRIBUERT ||
                             it.journalstatus == JournalpostStatus.EKSPEDERT ||
@@ -233,7 +233,7 @@ class ForsendelseSkedulering(
         return try {
             if (!forsendelse.journalpostIdFagarkiv.isNullOrEmpty()) {
                 distribusjonService
-                    .hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv)
+                    .hentDistribusjonInfo(forsendelse.journalpostIdFagarkiv!!)
                     ?.takeIf {
                         secureLogger.info { "Hentet distribusjonsinfo $it for forsendelse ${forsendelse.forsendelseId}" }
                         forsendelse.distribusjonKanal == null ||

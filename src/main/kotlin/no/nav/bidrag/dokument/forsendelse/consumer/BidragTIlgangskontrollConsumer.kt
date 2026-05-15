@@ -6,6 +6,12 @@ import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.TILGANG_P
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.TILGANG_SAK_CACHE
 import no.nav.bidrag.dokument.forsendelse.config.CacheConfig.Companion.TILGANG_TEMA_CACHE
 import no.nav.bidrag.dokument.forsendelse.model.fantIkkeSak
+import no.nav.bidrag.domene.ident.Personident
+import no.nav.bidrag.domene.sak.Saksnummer
+import no.nav.bidrag.transport.tilgang.TilgangTilPersonRequest
+import no.nav.bidrag.transport.tilgang.TilgangTilSakRequest
+import no.nav.bidrag.transport.tilgang.TilgangTilTemaRequest
+import no.nav.bidrag.transport.tilgang.TilgangskontrollResponse
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -33,7 +39,10 @@ class BidragTIlgangskontrollConsumer(
     @BrukerCacheable(TILGANG_SAK_CACHE)
     fun sjekkTilgangSak(saksnummer: String): Boolean {
         return try {
-            postForEntity(createUri("/api/tilgang/sak"), saksnummer) ?: false
+            postForNonNullEntity<TilgangskontrollResponse>(
+                createUri("/v2/api/tilgang/sak"),
+                TilgangTilSakRequest(Saksnummer(saksnummer)),
+            ).harTilgang
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             if (e.statusCode == HttpStatus.NOT_FOUND) fantIkkeSak(saksnummer)
@@ -45,7 +54,10 @@ class BidragTIlgangskontrollConsumer(
     @BrukerCacheable(TILGANG_PERSON_CACHE)
     fun sjekkTilgangPerson(personnummer: String): Boolean {
         return try {
-            postForEntity(createUri("/api/tilgang/person"), personnummer) ?: false
+            postForNonNullEntity<TilgangskontrollResponse>(
+                createUri("/v2/api/tilgang/person"),
+                TilgangTilPersonRequest(Personident(personnummer)),
+            ).harTilgang
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             throw e
@@ -56,7 +68,7 @@ class BidragTIlgangskontrollConsumer(
     @BrukerCacheable(TILGANG_TEMA_CACHE)
     fun sjekkTilgangTema(tema: String): Boolean {
         return try {
-            postForEntity(createUri("/api/tilgang/tema"), tema) ?: false
+            postForNonNullEntity<TilgangskontrollResponse>(createUri("/v2/api/tilgang/tema"), TilgangTilTemaRequest(tema)).harTilgang
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.FORBIDDEN) return false
             throw e

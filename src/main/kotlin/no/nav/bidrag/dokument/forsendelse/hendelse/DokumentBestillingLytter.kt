@@ -75,12 +75,12 @@ class DokumentBestillingLytter(
         }
 
         try {
-            if (erStatiskDokument(dokument.dokumentmalId)) {
+            if (erStatiskDokument(dokument.dokumentmalId!!)) {
                 oppdaterStatusForDokumentProduksjon(dokument, true, dokumentBestilling.bestiltAvBruker)
                 measureBestilling(forsendelse, dokument)
                 return
             }
-            if (erFraDokumentProduksjon(dokument.dokumentmalId)) {
+            if (erFraDokumentProduksjon(dokument.dokumentmalId!!)) {
                 oppdaterStatusForDokumentProduksjon(dokument, false, dokumentBestilling.bestiltAvBruker)
                 measureBestilling(forsendelse, dokument)
                 return
@@ -145,7 +145,7 @@ class DokumentBestillingLytter(
                             val metadata = dokument.metadata
                             if (erStatiskDokument) {
                                 metadata.markerSomStatiskDokument()
-                                if (erSkjema(dokument.dokumentmalId)) metadata.markerSomSkjema()
+                                if (erSkjema(dokument.dokumentmalId!!)) metadata.markerSomSkjema()
                             }
                             metadata.copy()
                         },
@@ -184,7 +184,7 @@ class DokumentBestillingLytter(
 
         if (forsendelse.kanBestillesFraBidragDokumentBestilling(dokumentMalId)) {
             val bestilling = tilForespørsel(forsendelse, dokument, bestiltAvBruker)
-            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId)
+            val respons = dokumentBestillingKonsumer.bestill(bestilling, dokument.dokumentmalId!!)
             LOGGER.info {
                 "Bestilte ny dokument med mal ${dokument.dokumentmalId} og tittel ${bestilling.tittel} " +
                     "for dokumentreferanse ${bestilling.dokumentreferanse}. Dokument er satt til å bli ferdigstilt automatisk ${dokument.ferdigstill}. Dokumentet er arkivert i ${respons?.arkivSystem?.name}"
@@ -266,7 +266,7 @@ class DokumentBestillingLytter(
     private fun BehandlingInfo?.erAldersjusteringFattetGjennomNyLøsning(): Boolean =
         this?.let {
             if (vedtakType == Vedtakstype.ALDERSJUSTERING && vedtakId != null) {
-                val vedtak = vedtakConsumer.hentVedtak(vedtakId)
+                val vedtak = vedtakConsumer.hentVedtak(vedtakId!!)
                 vedtak?.kildeapplikasjon != "bisys"
             } else {
                 false
@@ -305,6 +305,7 @@ class DokumentBestillingLytter(
             enhet = forsendelse.enhet,
             vedtakId = forsendelse.behandlingInfo?.vedtakId,
             behandlingId = forsendelse.behandlingInfo?.behandlingId,
+            søknadId = forsendelse.behandlingInfo?.soknadId,
             språk = dokument.språk ?: forsendelse.språk,
             saksbehandler = saksbehandlerIdent?.let { Saksbehandler(it) },
             barnIBehandling = forsendelse.behandlingInfo?.barnIBehandling?.toList() ?: emptyList(),

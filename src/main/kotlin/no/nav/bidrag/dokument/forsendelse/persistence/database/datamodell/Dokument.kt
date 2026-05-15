@@ -94,7 +94,7 @@ data class Dokument(
             if (arkivsystem == DokumentArkivSystem.FORSENDELSE &&
                 !journalpostIdOriginal.isNullOrEmpty()
             ) {
-                journalpostIdOriginal.toLong()
+                journalpostIdOriginal!!.toLong()
             } else {
                 forsendelse.forsendelseId
             }

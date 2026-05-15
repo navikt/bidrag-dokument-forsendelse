@@ -449,7 +449,7 @@ fun opprettStonadsEndringDto() =
 fun opprettSak(): BidragssakDto =
     BidragssakDto(
         eierfogd = Enhetsnummer(JOURNALFØRENDE_ENHET),
-        kategori = Sakskategori.U,
+        kategori = Sakskategori.UTLAND,
         levdeAdskilt = false,
         opprettetDato = LocalDate.now(),
         saksnummer = Saksnummer(SAKSNUMMER),
