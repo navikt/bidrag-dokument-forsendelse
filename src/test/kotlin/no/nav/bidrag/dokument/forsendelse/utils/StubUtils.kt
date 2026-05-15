@@ -49,6 +49,7 @@ import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveResponseDto
 import no.nav.bidrag.transport.dokument.OpprettJournalpostResponse
 import no.nav.bidrag.transport.person.PersonDto
+import no.nav.bidrag.transport.tilgang.TilgangskontrollResponse
 import org.junit.Assert
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
@@ -162,10 +163,10 @@ class StubUtils {
         status: HttpStatus = HttpStatus.OK,
     ) {
         WireMock.stubFor(
-            WireMock.post(WireMock.urlMatching("/tilgangskontroll/api/tilgang/sak")).willReturn(
+            WireMock.post(WireMock.urlMatching("/tilgangskontroll/v2/api/tilgang/sak")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
-                    .withBody(result.toString()),
+                    .withBody(objectMapper.writeValueAsString(TilgangskontrollResponse(result))),
             ),
         )
     }
@@ -175,10 +176,10 @@ class StubUtils {
         status: HttpStatus = HttpStatus.OK,
     ) {
         WireMock.stubFor(
-            WireMock.post(WireMock.urlMatching("/tilgangskontroll/api/tilgang/person")).willReturn(
+            WireMock.post(WireMock.urlMatching("/tilgangskontroll/v2/api/tilgang/person")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
-                    .withBody(result.toString()),
+                    .withBody(objectMapper.writeValueAsString(TilgangskontrollResponse(result))),
             ),
         )
     }
@@ -188,10 +189,10 @@ class StubUtils {
         status: HttpStatus = HttpStatus.OK,
     ) {
         WireMock.stubFor(
-            WireMock.post(WireMock.urlMatching("/tilgangskontroll/api/tilgang/tema")).willReturn(
+            WireMock.post(WireMock.urlMatching("/tilgangskontroll/v2/api/tilgang/tema")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
-                    .withBody(result.toString()),
+                    .withBody(objectMapper.writeValueAsString(TilgangskontrollResponse(result))),
             ),
         )
     }
