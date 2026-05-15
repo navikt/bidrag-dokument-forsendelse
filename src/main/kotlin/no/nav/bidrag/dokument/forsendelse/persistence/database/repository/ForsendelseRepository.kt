@@ -13,7 +13,14 @@ interface ForsendelseRepository : CrudRepository<Forsendelse, Long> {
     @Query("SELECT f FROM forsendelse f WHERE f.unikReferanse = :unikReferanse and status not in ('AVBRUTT', 'SLETTET')")
     fun hentForsendelseMedUnikReferanse(unikReferanse: String): Forsendelse?
 
-    @Query("select f from forsendelse f where f.saksnummer = :saksnummer")
+    @Query(
+        "select distinct f from forsendelse f " +
+            "left join fetch f.dokumenter " +
+            "left join fetch f.mottaker " +
+            "left join fetch f.behandlingInfo " +
+            "left join fetch f.ettersendingsoppgave " +
+            "where f.saksnummer = :saksnummer",
+    )
     fun hentAlleMedSaksnummer(saksnummer: String): List<Forsendelse>
 
     @Query("select f from forsendelse f where f.behandlingInfo.soknadId = :soknadId")
