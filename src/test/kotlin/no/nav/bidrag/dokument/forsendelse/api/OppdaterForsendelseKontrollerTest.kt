@@ -356,14 +356,14 @@ class OppdaterForsendelseKontrollerTest : KontrollerTestRunner() {
                 stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES)
                 stubUtils.Valider().bestillDokumentIkkeKalt(DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2)
                 verify(ordering = Ordering.UNORDERED) {
-                    dokumentKafkaHendelseProdusent.publiser(
+                    dokumentKafkaHendelseProdusent!!.publiser(
                         withArg {
                             it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
                             it.hendelseType shouldBe DokumentHendelseType.BESTILLING
                             it.dokumentreferanse shouldBeIn listOf(dokumenter[1].dokumentreferanse, dokumenter[2].dokumentreferanse)
                         },
                     )
-                    dokumentKafkaHendelseProdusent.publiser(
+                    dokumentKafkaHendelseProdusent!!.publiser(
                         withArg {
                             it.forsendelseId shouldBe forsendelse.forsendelseId.toString()
                             it.hendelseType shouldBe DokumentHendelseType.BESTILLING

@@ -1,8 +1,9 @@
 package no.nav.bidrag.dokument.forsendelse
 
-import StubUtils
 import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.bidrag.commons.service.AppContext
+import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
+import no.nav.bidrag.dokument.forsendelse.utils.StubUtils
 import no.nav.bidrag.dokument.forsendelse.utils.TestDataManager
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
@@ -24,10 +25,10 @@ import org.wiremock.spring.EnableWireMock
     classes = [BidragDokumentForsendelseTest::class, StubUtils::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@EnableWireMock
+@EnableWireMock(ConfigureWireMock(port = 0))
 @EnableMockOAuth2Server
 @ExtendWith(SpringExtension::class)
-@Import(AppContext::class)
+@Import(AppContext::class, DokumentKafkaHendelseProdusent::class)
 abstract class CommonTestRunner {
     @Autowired
     lateinit var stubUtils: StubUtils

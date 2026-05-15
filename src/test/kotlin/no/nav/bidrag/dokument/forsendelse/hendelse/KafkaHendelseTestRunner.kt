@@ -27,7 +27,6 @@ import java.time.Duration
 
 private val log = KotlinLogging.logger {}
 
-@SpringBootTest
 @EmbeddedKafka(
     partitions = 1,
     topics = ["bidrag.dokument", "bidrag.journalpost"],

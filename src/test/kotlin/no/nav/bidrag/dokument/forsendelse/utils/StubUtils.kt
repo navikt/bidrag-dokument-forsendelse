@@ -1,3 +1,5 @@
+package no.nav.bidrag.dokument.forsendelse.utils
+
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
@@ -9,7 +11,6 @@ import com.github.tomakehurst.wiremock.matching.ContainsPattern
 import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import io.mockk.every
-import no.nav.bidrag.commons.service.AppContext
 import no.nav.bidrag.commons.service.KodeverkKoderBetydningerResponse
 import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
@@ -20,24 +21,6 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentmalInnholdType
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.SaksbehandlerInfoResponse
 import no.nav.bidrag.dokument.forsendelse.model.isNotNullOrEmpty
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_NOTAT
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_STATISK_VEDLEGG_REDIGERBAR
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_2
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_3
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENTMAL_UTGÅENDE_KAN_IKKE_BESTILLES_2
-import no.nav.bidrag.dokument.forsendelse.utils.DOKUMENT_FIL
-import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_IDENT
-import no.nav.bidrag.dokument.forsendelse.utils.MOTTAKER_NAVN
-import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_IDENT
-import no.nav.bidrag.dokument.forsendelse.utils.SAKSBEHANDLER_NAVN
-import no.nav.bidrag.dokument.forsendelse.utils.nyOpprettJournalpostResponse
-import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
-import no.nav.bidrag.dokument.forsendelse.utils.opprettDokumentMetadataListe
-import no.nav.bidrag.dokument.forsendelse.utils.opprettSak
-import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
 import no.nav.bidrag.domene.ident.Personident
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
@@ -317,7 +300,7 @@ class StubUtils {
     }
 
     fun stubHentSaksbehandler() {
-        AppContext.getBean(WireMockServer::class.java).stubFor(
+        WireMock.stubFor(
             WireMock.get(WireMock.urlMatching("/organisasjon/saksbehandler/info/(.*)")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(HttpStatus.OK.value())

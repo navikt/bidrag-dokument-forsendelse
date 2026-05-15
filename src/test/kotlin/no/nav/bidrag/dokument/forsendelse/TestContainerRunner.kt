@@ -1,13 +1,14 @@
 package no.nav.bidrag.dokument.forsendelse
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.security.core.userdetails.User.withUsername
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.postgresql.PostgreSQLContainer
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -16,17 +17,15 @@ import java.net.http.HttpResponse.BodyHandlers
 
 private val log = KotlinLogging.logger {}
 
-@Testcontainers
 @ActiveProfiles(value = ["test", "testcontainer"])
 class TestContainerRunner : CommonTestRunner() {
     companion object {
         @Container
         protected val postgreSqlDb =
-            PostgreSQLContainer("postgres:15.4").apply {
+            PostgreSQLContainer("postgres:latest").apply {
                 withDatabaseName("bidrag-dokument-forsendelse")
                 withUsername("cloudsqliamuser")
                 withPassword("admin")
-                portBindings = listOf("7777:5432")
                 start()
             }
 

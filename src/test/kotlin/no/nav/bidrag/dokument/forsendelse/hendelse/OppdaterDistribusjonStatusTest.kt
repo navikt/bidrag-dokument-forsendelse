@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.ninjasquad.springmockk.SpykBean
+import com.ninjasquad.springmockk.MockkSpyBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.date.shouldHaveSameDayAs
@@ -44,7 +44,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
-    @SpykBean
+    @MockkSpyBean
     private lateinit var journalpostHendelseProdusent: JournalpostKafkaHendelseProdusent
 
     @Autowired

@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
-import com.ninjasquad.springmockk.SpykBean
+import com.ninjasquad.springmockk.MockkSpyBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAnyOf
@@ -9,6 +9,7 @@ import io.kotest.matchers.date.shouldHaveSameDayAs
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.Ordering
+import io.mockk.impl.annotations.SpyK
 import io.mockk.verify
 import jakarta.transaction.Transactional
 import no.nav.bidrag.dokument.forsendelse.persistence.bucket.GcpCloudStorage
@@ -46,7 +47,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 class ForsendelsePersistensIT : KontrollerTestContainerRunner() {
-    @SpykBean
+    @MockkSpyBean
     lateinit var gcpCloudStorage: GcpCloudStorage
 
     @Test

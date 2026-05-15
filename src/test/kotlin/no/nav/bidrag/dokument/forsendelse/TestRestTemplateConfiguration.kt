@@ -7,6 +7,7 @@ import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.restclient.RestTemplateBuilder
+import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,6 +26,16 @@ class TestRestTemplateConfiguration {
 
     @Value("\${AZURE_APP_CLIENT_ID}")
     private lateinit var clientId: String
+
+    @Bean
+    fun httpHeaderTestRestTemplate(): TestRestTemplate =
+        TestRestTemplate(
+            RestTemplateBuilder()
+                .additionalInterceptors({ request, body, execution ->
+                    request.headers.add(HttpHeaders.AUTHORIZATION, generateBearerToken())
+                    execution.execute(request, body)
+                }),
+        )
 
     //    private fun generateBearerToken(): String {
 //        val token = mockOAuth2Server.issueToken("aad", SAKSBEHANDLER_IDENT, clientId)

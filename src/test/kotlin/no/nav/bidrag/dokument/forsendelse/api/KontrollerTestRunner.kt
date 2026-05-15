@@ -1,7 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
 import com.ninjasquad.springmockk.MockkBean
-import enableUnleashFeature
 import io.mockk.every
 import io.mockk.mockkObject
 import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
@@ -10,6 +9,7 @@ import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
+import no.nav.bidrag.dokument.forsendelse.utils.enableUnleashFeature
 import no.nav.bidrag.transport.dokument.AvvikType
 import no.nav.bidrag.transport.dokument.Avvikshendelse
 import no.nav.bidrag.transport.dokument.DokumentMetadata
@@ -43,7 +43,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     lateinit var httpHeaderTestRestTemplate: TestRestTemplate
 
     @MockkBean
-    lateinit var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent
+    var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent? = null
 
     @MockkBean
     lateinit var forsendelseHendelseProdusent: JournalpostKafkaHendelseProdusent
@@ -65,7 +65,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         stubUtils.stubTilgangskontrollSak()
         stubUtils.stubTilgangskontrollPerson()
         stubUtils.stubTilgangskontrollTema()
-        every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
+        every { dokumentKafkaHendelseProdusent!!.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiserForsendelse(any()) } returns Unit
     }
