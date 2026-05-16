@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.service.KodeverkProvider
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
+import no.nav.bidrag.commons.web.config.RestOperationsAzure.CustomJacksonHttpMessageConverter
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.transport.felles.commonObjectmapper
@@ -29,8 +30,12 @@ import org.springframework.http.MediaType
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.client.observation.DefaultClientRequestObservationConvention
 import org.springframework.http.converter.AbstractGenericHttpMessageConverter
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
+import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
+import org.springframework.http.converter.xml.MarshallingHttpMessageConverter
 import org.springframework.web.client.RestTemplate
 import java.lang.reflect.Type
 
@@ -84,8 +89,12 @@ class RestConfig(
  */
 private fun createMessageConverters(): List<HttpMessageConverter<*>> =
     listOf(
+        ByteArrayHttpMessageConverter(),
         CustomJacksonHttpMessageConverter(commonObjectmapper),
         StringHttpMessageConverter(),
+        Jaxb2RootElementHttpMessageConverter(),
+        MarshallingHttpMessageConverter(),
+        FormHttpMessageConverter(),
     )
 
 /**
