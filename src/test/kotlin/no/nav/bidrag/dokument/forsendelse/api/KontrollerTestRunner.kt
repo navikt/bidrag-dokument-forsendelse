@@ -139,8 +139,8 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     protected fun utførHentJournalpostMedFeil(
         forsendelseId: String,
         saksnummer: String? = null,
-    ): ResponseEntity<Any> =
-        httpHeaderTestRestTemplate.getForEntity<Any>(
+    ): ResponseEntity<String> =
+        httpHeaderTestRestTemplate.getForEntity<String>(
             "${rootUri()}/journal/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
         )
 

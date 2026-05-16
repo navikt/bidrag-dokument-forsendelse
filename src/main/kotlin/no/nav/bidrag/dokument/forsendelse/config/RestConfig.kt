@@ -77,7 +77,6 @@ class RestConfig(
                     val connectionManager = HttpClientBuilder.create().setConnectionManager(pb).build()
                     HttpComponentsClientHttpRequestFactory(connectionManager)
                 }.additionalInterceptors(bearerTokenClientInterceptor)
-                .messageConverters(createMessageConverters())
                 .build()
         return restTemplate
     }
@@ -90,8 +89,8 @@ class RestConfig(
 private fun createMessageConverters(): List<HttpMessageConverter<*>> =
     listOf(
         ByteArrayHttpMessageConverter(),
-        CustomJacksonHttpMessageConverter(commonObjectmapper),
         StringHttpMessageConverter(),
+        CustomJacksonHttpMessageConverter(commonObjectmapper),
         Jaxb2RootElementHttpMessageConverter(),
         MarshallingHttpMessageConverter(),
         FormHttpMessageConverter(),

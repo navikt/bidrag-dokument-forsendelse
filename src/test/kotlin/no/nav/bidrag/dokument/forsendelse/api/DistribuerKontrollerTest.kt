@@ -50,11 +50,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null,
         ingenDistribusjon: Boolean? = false,
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<String> {
         val url = UriComponentsBuilder.fromUriString("${rootUri()}/journal/distribuer/$forsendelseId")
         batchId?.let { url.queryParam("batchId", it) }
         ingenDistribusjon?.let { url.queryParam("ingenDistribusjon", it) }
-        return httpHeaderTestRestTemplate.postForEntity<Any>(
+        return httpHeaderTestRestTemplate.postForEntity<String>(
             url.toUriString(),
             forespørsel?.let { HttpEntity(it) },
         )
