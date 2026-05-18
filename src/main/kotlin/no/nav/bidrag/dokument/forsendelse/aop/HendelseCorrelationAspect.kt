@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.CorrelationId.Companion.CORRELATION_ID_HEADER
+import no.nav.bidrag.transport.felles.commonObjectmapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.After
@@ -18,9 +19,7 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 @Aspect
 @Suppress("ktlint:standard:max-line-length")
-class HendelseCorrelationAspect(
-    private val objectMapper: ObjectMapper,
-) {
+class HendelseCorrelationAspect {
     @Before(
         value = "execution(* no.nav.bidrag.dokument.forsendelse.hendelse.DokumentHendelseLytter.prossesserDokumentHendelse(..)) && args(hendelse)",
     )
@@ -49,7 +48,7 @@ class HendelseCorrelationAspect(
 
     private fun hentSporingFraHendelse(hendelse: ConsumerRecord<String, String>): String? =
         try {
-            val jsonNode = objectMapper.readTree(hendelse.value())
+            val jsonNode = commonObjectmapper.readTree(hendelse.value())
             jsonNode["sporingId"].asText()
         } catch (e: Exception) {
             LOGGER.error("Det skjedde en feil ved konverting av melding fra hendelse", e)
