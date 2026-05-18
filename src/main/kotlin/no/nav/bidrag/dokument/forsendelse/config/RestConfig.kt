@@ -8,8 +8,8 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import jakarta.annotation.PostConstruct
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.service.KodeverkProvider
+import no.nav.bidrag.commons.util.CustomJacksonHttpMessageConverter
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
-import no.nav.bidrag.commons.web.config.RestOperationsAzure.CustomJacksonHttpMessageConverter
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.transport.felles.commonObjectmapper
@@ -33,10 +33,13 @@ import org.springframework.http.converter.AbstractGenericHttpMessageConverter
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.HttpMessageConverters
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.lang.reflect.Type
 
 @Configuration
@@ -44,24 +47,17 @@ import java.lang.reflect.Type
 @Import(RestOperationsAzure::class)
 class RestConfig(
     @Value("\${KODEVERK_URL}") kodeverkUrl: String,
-) {
+) : WebMvcConfigurer {
     init {
         KodeverkProvider.initialiser(kodeverkUrl)
     }
 
-    @Bean
-    fun clientRequestObservationConvention() = DefaultClientRequestObservationConvention()
+    override fun configureMessageConverters(converters: HttpMessageConverters.ServerBuilder) {
+        converters.addCustomConverter(CustomJacksonHttpMessageConverter(commonObjectmapper))
+    }
 
     @Bean
-    fun objectMapper(): ObjectMapper =
-        ObjectMapper()
-            .registerModule(KotlinModule.Builder().build())
-            .registerModule(JavaTimeModule())
-            .setDateFormat(
-                tools.jackson.databind.util
-                    .StdDateFormat(),
-            ).setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    fun clientRequestObservationConvention() = DefaultClientRequestObservationConvention()
 
     @Bean("azureLongerTimeout")
     @Scope("prototype")
