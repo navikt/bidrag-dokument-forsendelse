@@ -37,6 +37,7 @@ import org.junit.Assert
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import java.nio.charset.StandardCharsets
 import java.util.Arrays
 
@@ -376,7 +377,7 @@ class StubUtils {
             WireMock.post(WireMock.urlMatching("/bestilling/dokument/$dokumentmalId")).willReturn(
                 aClosedJsonResponse()
                     .withStatus(status.value())
-                    .withHeader(HttpHeaders.CONTENT_TYPE, "text/plain")
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                     .withBody(DOKUMENT_FIL.toByteArray()),
             ),
         )
