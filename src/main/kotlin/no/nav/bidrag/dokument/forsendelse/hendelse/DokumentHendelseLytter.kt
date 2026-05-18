@@ -21,6 +21,7 @@ import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.felles.commonObjectmapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener
@@ -32,7 +33,6 @@ private val log = KotlinLogging.logger {}
 
 @Component
 class DokumentHendelseLytter(
-    val objectMapper: ObjectMapper,
     val bidragDokumentConsumer: BidragDokumentConsumer,
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
@@ -233,7 +233,7 @@ class DokumentHendelseLytter(
 
     private fun tilDokumentHendelseObjekt(melding: ConsumerRecord<String, String>): DokumentHendelse {
         try {
-            return objectMapper.readValue(melding.value(), DokumentHendelse::class.java)
+            return commonObjectmapper.readValue(melding.value(), DokumentHendelse::class.java)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved konverting av melding fra hendelse", e)
             throw KunneIkkeLeseMeldingFraHendelse(e.message, e)

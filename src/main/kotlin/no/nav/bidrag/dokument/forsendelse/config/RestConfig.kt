@@ -1,10 +1,14 @@
 package no.nav.bidrag.dokument.forsendelse.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.util.StdDateFormat
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import jakarta.annotation.PostConstruct
 import no.nav.bidrag.commons.security.api.EnableSecurityConfiguration
 import no.nav.bidrag.commons.service.KodeverkProvider
+import no.nav.bidrag.commons.util.CustomJacksonHttpMessageConverter
 import no.nav.bidrag.commons.web.config.RestOperationsAzure
 import no.nav.bidrag.commons.web.interceptor.BearerTokenClientInterceptor
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
@@ -14,38 +18,46 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuil
 import org.apache.hc.core5.http.io.SocketConfig
 import org.apache.hc.core5.util.Timeout
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.boot.restclient.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
 import org.springframework.context.annotation.Scope
+import org.springframework.http.HttpInputMessage
+import org.springframework.http.HttpOutputMessage
+import org.springframework.http.MediaType
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.http.client.observation.DefaultClientRequestObservationConvention
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter
+import org.springframework.http.converter.AbstractGenericHttpMessageConverter
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
+import org.springframework.http.converter.FormHttpMessageConverter
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.HttpMessageConverters
+import org.springframework.http.converter.StringHttpMessageConverter
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
+import org.springframework.http.converter.xml.MarshallingHttpMessageConverter
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import java.lang.reflect.Type
 
 @Configuration
 @EnableSecurityConfiguration
 @Import(RestOperationsAzure::class)
 class RestConfig(
     @Value("\${KODEVERK_URL}") kodeverkUrl: String,
-) {
+) : WebMvcConfigurer {
     init {
         KodeverkProvider.initialiser(kodeverkUrl)
     }
 
-    @Bean
-    fun clientRequestObservationConvention() = DefaultClientRequestObservationConvention()
+    override fun configureMessageConverters(converters: HttpMessageConverters.ServerBuilder) {
+        converters.addCustomConverter(CustomJacksonHttpMessageConverter(commonObjectmapper))
+    }
 
     @Bean
-    fun jackson2ObjectMapperBuilder(): Jackson2ObjectMapperBuilder =
-        Jackson2ObjectMapperBuilder()
-            .dateFormat(StdDateFormat())
-            .failOnUnknownProperties(false)
-            .serializationInclusion(JsonInclude.Include.NON_NULL)
+    fun clientRequestObservationConvention() = DefaultClientRequestObservationConvention()
 
     @Bean("azureLongerTimeout")
     @Scope("prototype")
@@ -62,25 +74,61 @@ class RestConfig(
                     HttpComponentsClientHttpRequestFactory(connectionManager)
                 }.additionalInterceptors(bearerTokenClientInterceptor)
                 .build()
-        configureJackson(restTemplate)
         return restTemplate
     }
 }
 
-fun configureJackson(restTemplate: RestTemplate) {
-    restTemplate.messageConverters
-        .stream()
-        .filter { obj -> MappingJackson2HttpMessageConverter::class.java.isInstance(obj) }
-        .map { obj -> MappingJackson2HttpMessageConverter::class.java.cast(obj) }
-        .findFirst()
-        .ifPresent { converter: MappingJackson2HttpMessageConverter ->
-            converter.objectMapper = commonObjectmapper
-        }
+/**
+ * Creates a list of message converters with the common ObjectMapper.
+ * This ensures all REST calls use consistent Jackson configuration.
+ */
+private fun createMessageConverters(): List<HttpMessageConverter<*>> =
+    listOf(
+        ByteArrayHttpMessageConverter(),
+        StringHttpMessageConverter(),
+        CustomJacksonHttpMessageConverter(commonObjectmapper),
+        Jaxb2RootElementHttpMessageConverter(),
+        MarshallingHttpMessageConverter(),
+        FormHttpMessageConverter(),
+    )
 
-    restTemplate.messageConverters =
-        restTemplate.messageConverters
-            .filter { obj -> !MappingJackson2XmlHttpMessageConverter::class.java.isInstance(obj) }
-            .toMutableList()
+/**
+ * Custom JSON message converter that uses the shared ObjectMapper configuration.
+ * This avoids ClassLoader/version conflicts by ensuring all deserialization
+ * uses the same ObjectMapper instance.
+ */
+private class CustomJacksonHttpMessageConverter(
+    private val objectMapper: ObjectMapper,
+) : AbstractGenericHttpMessageConverter<Any>(
+        MediaType.APPLICATION_JSON,
+        MediaType("application", "*+json"),
+    ) {
+    override fun supports(clazz: Class<*>): Boolean = true
+
+    override fun read(
+        type: Type,
+        contextClass: Class<*>?,
+        inputMessage: HttpInputMessage,
+    ): Any = objectMapper.readValue(inputMessage.body, objectMapper.constructType(type))
+
+    override fun readInternal(
+        clazz: Class<out Any>,
+        inputMessage: HttpInputMessage,
+    ): Any = objectMapper.readValue(inputMessage.body, clazz)
+
+    override fun writeInternal(
+        obj: Any,
+        type: Type?,
+        outputMessage: HttpOutputMessage,
+    ) {
+        outputMessage.body.use { os ->
+            if (type == null) {
+                objectMapper.writeValue(os, obj)
+            } else {
+                objectMapper.writerFor(objectMapper.constructType(type)).writeValue(os, obj)
+            }
+        }
+    }
 }
 
 @Profile("nais")

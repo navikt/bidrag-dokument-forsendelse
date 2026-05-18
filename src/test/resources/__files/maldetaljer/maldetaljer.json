@@ -2825,5 +2825,20 @@
     "nyDokumentProduksjon": true,
     "innholdType": "VEDTAK",
     "tilhorerEnheter": []
+  },
+  "FRITEKST": {
+    "malId": "FRITEKST",
+    "tittel": "Friktestbrev 2",
+    "beskrivelse": "Friktestbrev 2",
+    "type": "UTGÅENDE",
+    "kanBestilles": true,
+    "kreverVedtak": false,
+    "kreverBehandling": false,
+    "redigerbar": true,
+    "språk": [],
+    "statiskInnhold": false,
+    "nyDokumentProduksjon": true,
+    "innholdType": "VARSEL_STANDARD",
+    "tilhorerEnheter": []
   }
 }

@@ -296,9 +296,9 @@ class OppdaterForsendelseService(
             }
 
         val slettetDokumenter = logiskSlettetDokumenterFraForespørsel + fysiskSlettetDokumenter
+        validerIkkeLagtTilDuplikatDokument(oppdaterteDokumenter)
         lagreDokumenter(oppdaterteDokumenter)
         flyttLenkeTilNyDokumentHvisOriginalDokumentErSlettet(slettetDokumenter)
-        validerIkkeLagtTilDuplikatDokument(oppdaterteDokumenter)
         return oppdaterteDokumenter.sortertEtterRekkefølge
     }
 
@@ -309,19 +309,20 @@ class OppdaterForsendelseService(
     private fun validerIkkeLagtTilDuplikatDokument(oppdaterteDokumenter: List<Dokument>) {
         oppdaterteDokumenter.forEach { oppdatertDokument ->
             val originalDokument = dokumentTjeneste.hentOriginalDokument(oppdatertDokument)
-            oppdaterteDokumenter
-                .filter { it.dokumentreferanse != originalDokument.dokumentreferanse }
-                .any {
-                    it.erFraAnnenKilde &&
-                        it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal &&
-                        it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
-                }.ifTrue {
-                    throw UgyldigForespørsel(
-                        "Kan ikke legge til samme dokument flere ganger til forsendelse." +
-                            " Original dokument ${originalDokument.dokumentreferanse} " +
-                            "med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}",
-                    )
-                }
+            val flereEnn1 =
+                oppdaterteDokumenter
+                    .filter {
+                        it.erFraAnnenKilde &&
+                            it.dokumentreferanseOriginal == originalDokument.dokumentreferanseOriginal &&
+                            it.journalpostIdOriginal == originalDokument.journalpostIdOriginal
+                    }.size > 1
+            if (flereEnn1) {
+                throw UgyldigForespørsel(
+                    "Kan ikke legge til samme dokument flere ganger til forsendelse." +
+                        " Original dokument ${originalDokument.dokumentreferanse} " +
+                        "med referanse til ${originalDokument.journalpostIdOriginal}:${originalDokument.dokumentreferanseOriginal}",
+                )
+            }
         }
     }
 

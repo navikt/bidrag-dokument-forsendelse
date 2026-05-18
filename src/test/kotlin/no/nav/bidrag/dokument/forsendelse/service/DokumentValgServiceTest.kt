@@ -1,8 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import StubUtils
 import com.ninjasquad.springmockk.MockkBean
-import enableUnleashFeature
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
@@ -18,6 +16,8 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
+import no.nav.bidrag.dokument.forsendelse.utils.StubUtils
+import no.nav.bidrag.dokument.forsendelse.utils.enableUnleashFeature
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto

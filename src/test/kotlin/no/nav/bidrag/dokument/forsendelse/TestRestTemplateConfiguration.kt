@@ -6,16 +6,22 @@ import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.boot.restclient.RestTemplateBuilder
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpHeaders
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
+import org.springframework.http.converter.StringHttpMessageConverter
+import org.springframework.test.web.servlet.client.RestTestClient
+import org.springframework.web.client.RestTemplate
 
 @Configuration
 @Profile("test")
+@AutoConfigureTestRestTemplate
 class TestRestTemplateConfiguration {
     @Autowired
     private lateinit var mockOAuth2Server: MockOAuth2Server
@@ -30,8 +36,7 @@ class TestRestTemplateConfiguration {
                 .additionalInterceptors({ request, body, execution ->
                     request.headers.add(HttpHeaders.AUTHORIZATION, generateBearerToken())
                     execution.execute(request, body)
-                })
-                .requestFactory { _ -> HttpComponentsClientHttpRequestFactory() },
+                }),
         )
 
     //    private fun generateBearerToken(): String {

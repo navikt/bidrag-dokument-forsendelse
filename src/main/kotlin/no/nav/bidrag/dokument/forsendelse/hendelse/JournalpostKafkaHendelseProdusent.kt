@@ -18,6 +18,7 @@ import no.nav.bidrag.transport.dokument.JournalpostHendelse
 import no.nav.bidrag.transport.dokument.JournalpostStatus
 import no.nav.bidrag.transport.dokument.JournalpostType
 import no.nav.bidrag.transport.dokument.Sporingsdata
+import no.nav.bidrag.transport.felles.commonObjectmapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.retry.annotation.Backoff
@@ -29,14 +30,13 @@ private val log = KotlinLogging.logger {}
 @Component
 class JournalpostKafkaHendelseProdusent(
     private val kafkaTemplate: KafkaTemplate<String, String>,
-    private val objectMapper: ObjectMapper,
     @Value("\${TOPIC_JOURNALPOST}") val topic: String,
 ) {
     @Retryable(value = [Exception::class], maxAttempts = 10, backoff = Backoff(delay = 1000, maxDelay = 12000, multiplier = 2.0))
     fun publiser(journalpostHendelse: JournalpostHendelse) {
         log.info("Publiserer JournalpostHendelse for forsendelse ${journalpostHendelse.journalpostId}")
         SIKKER_LOGG.info("Publiserer JournalpostHendelse $journalpostHendelse")
-        kafkaTemplate.send(topic, journalpostHendelse.journalpostId, objectMapper.writeValueAsString(journalpostHendelse))
+        kafkaTemplate.send(topic, journalpostHendelse.journalpostId, commonObjectmapper.writeValueAsString(journalpostHendelse))
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 10, backoff = Backoff(delay = 1000, maxDelay = 12000, multiplier = 2.0))
@@ -68,10 +68,19 @@ class JournalpostKafkaHendelseProdusent(
                     },
                 status =
                     when (forsendelse.status) {
-                        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.DISTRIBUERT
-                        ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
-                        ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
-                        ForsendelseStatus.FERDIGSTILT ->
+                        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> {
+                            JournalpostStatus.DISTRIBUERT
+                        }
+
+                        ForsendelseStatus.SLETTET -> {
+                            JournalpostStatus.UTGÅR
+                        }
+
+                        ForsendelseStatus.AVBRUTT -> {
+                            JournalpostStatus.FEILREGISTRERT
+                        }
+
+                        ForsendelseStatus.FERDIGSTILT -> {
                             if (forsendelse.distribusjonKanal == DistribusjonKanal.INGEN_DISTRIBUSJON) {
                                 JournalpostStatus.DISTRIBUERT
                             } else if (forsendelse.erUtgående) {
@@ -79,8 +88,9 @@ class JournalpostKafkaHendelseProdusent(
                             } else {
                                 JournalpostStatus.FERDIGSTILT
                             }
+                        }
 
-                        ForsendelseStatus.UNDER_PRODUKSJON ->
+                        ForsendelseStatus.UNDER_PRODUKSJON -> {
                             if (forsendelse.dokumenter.erAlleFerdigstilt) {
                                 if (forsendelse.kanDistribueres()) {
                                     JournalpostStatus.KLAR_FOR_DISTRIBUSJON
@@ -90,8 +100,11 @@ class JournalpostKafkaHendelseProdusent(
                             } else {
                                 JournalpostStatus.UNDER_PRODUKSJON
                             }
+                        }
 
-                        ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_PRODUKSJON
+                        ForsendelseStatus.UNDER_OPPRETTELSE -> {
+                            JournalpostStatus.UNDER_PRODUKSJON
+                        }
                     },
             ),
         )

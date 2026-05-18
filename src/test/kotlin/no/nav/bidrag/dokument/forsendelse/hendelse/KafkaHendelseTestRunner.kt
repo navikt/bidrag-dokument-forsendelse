@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.test.EmbeddedKafkaBroker
@@ -28,8 +29,13 @@ private val log = KotlinLogging.logger {}
 
 @EmbeddedKafka(
     partitions = 1,
-    bootstrapServersProperty = "spring.kafka.bootstrap-servers",
     topics = ["bidrag.dokument", "bidrag.journalpost"],
+    brokerProperties = [
+        "listeners=EXTERNAL://localhost:0,CONTROLLER://localhost:0",
+        "listener.security.protocol.map=EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT",
+        "controller.listener.names=CONTROLLER",
+        "inter.broker.listener.name=EXTERNAL",
+    ],
 )
 abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     @Value("\${TOPIC_DOKUMENT}")
@@ -56,7 +62,7 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     lateinit var embeddedKafkaBroker: EmbeddedKafkaBroker
 
     fun readFromJournalpostTopic(journalpostId: String? = null): JournalpostHendelse? {
-        val consumer = configureConsumer(topicJournalpost)
+        val consumer = configureConsumer(topicJournalpost)!!
         return try {
             val result = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(4000))
             result shouldNotBe null
@@ -79,7 +85,7 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     }
 
     fun readAllFromJournalpostTopic(): List<JournalpostHendelse> {
-        val consumer = configureConsumer(topicJournalpost)
+        val consumer = configureConsumer(topicJournalpost)!!
         return try {
             val result = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(4000))
             result shouldNotBe null
@@ -94,7 +100,7 @@ abstract class KafkaHendelseTestRunner : CommonTestRunner() {
     }
 
     fun configureConsumer(topic: String): Consumer<Int, String>? {
-        val consumerProps = KafkaTestUtils.consumerProps("testGroup", "true", embeddedKafkaBroker)
+        val consumerProps = KafkaTestUtils.consumerProps(embeddedKafkaBroker, "testgroup", true)
         consumerProps[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
         consumerProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java

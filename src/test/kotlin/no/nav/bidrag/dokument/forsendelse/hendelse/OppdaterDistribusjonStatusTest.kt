@@ -1,7 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.ninjasquad.springmockk.SpykBean
+import com.ninjasquad.springmockk.MockkSpyBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.date.shouldHaveSameDayAs
@@ -31,8 +31,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
@@ -44,7 +44,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class OppdaterDistribusjonStatusTest : KafkaHendelseTestRunner() {
-    @SpykBean
+    @MockkSpyBean
     private lateinit var journalpostHendelseProdusent: JournalpostKafkaHendelseProdusent
 
     @Autowired

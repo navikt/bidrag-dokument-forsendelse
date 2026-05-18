@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.consumer.dto
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.bidrag.domene.enums.beregning.Resultatkode
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
@@ -34,8 +35,8 @@ data class BehandlingDto(
     @Schema(type = "string", format = "date", example = "01.12.2025")
     @JsonFormat(pattern = "yyyy-MM-dd")
     val virkningstidspunkt: LocalDate? = null,
-    @Schema(name = "årsak", enumAsRef = true)
+    @get:Schema(name = "årsak")
     val årsak: VirkningstidspunktÅrsakstype? = null,
-    @Schema(enumAsRef = true)
+    @get:Schema(enumAsRef = true)
     val avslag: Resultatkode? = null,
 )

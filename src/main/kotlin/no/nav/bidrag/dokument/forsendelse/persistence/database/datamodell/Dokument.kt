@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import no.nav.bidrag.dokument.forsendelse.model.toStringByReflection
@@ -19,11 +20,11 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentArk
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentStatus
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.DokumentTilknyttetSom
 import no.nav.bidrag.transport.dokument.forsendelse.DokumentDetaljer
-import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Parameter
+import org.hibernate.annotations.NativeGenerator
 import org.hibernate.annotations.Type
 import org.hibernate.engine.spi.SessionFactoryImplementor
 import org.hibernate.engine.spi.SharedSessionContractImplementor
+import org.hibernate.type.MappingContext
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
@@ -39,16 +40,15 @@ import java.time.LocalDateTime
 )
 data class Dokument(
     @Id
-    @GeneratedValue(generator = "sequence-generator")
-    @GenericGenerator(
-        name = "sequence-generator",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = [
-            Parameter(name = "sequence_name", value = "dokument_dokument_id_seq"),
-            Parameter(name = "initial_value", value = "100000000"),
-            Parameter(name = "min_value", value = "100000000"),
-            Parameter(name = "increment_size", value = "1"),
-        ],
+    @GeneratedValue(generator = "dokument_id_seq_gen")
+    @NativeGenerator(
+        sequenceForm =
+            SequenceGenerator(
+                name = "dokument_id_seq_gen",
+                sequenceName = "dokument_dokument_id_seq",
+                initialValue = 100000000,
+                allocationSize = 1,
+            ),
     )
     val dokumentId: Long? = null,
     val dokumentreferanseOriginal: String? = null,
@@ -225,11 +225,20 @@ class DokumentMetadataDoConverter : ImmutableType<DokumentMetadataDo>(DokumentMe
 
     override fun getSqlType(): Int = Types.OTHER
 
+    override fun getColumnSpan(mappingContext: MappingContext?): Int = 1
+
+    override fun getSqlTypeCodes(mappingContext: MappingContext?): IntArray = intArrayOf(getSqlType())
+
     override fun compare(
         p0: Any?,
         p1: Any?,
         p2: SessionFactoryImplementor?,
     ): Int = 0
+
+    override fun toColumnNullness(
+        value: Any?,
+        mappingContext: MappingContext?,
+    ): BooleanArray = booleanArrayOf(value != null)
 
     override fun fromStringValue(sequence: CharSequence?): DokumentMetadataDo =
         try {

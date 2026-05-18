@@ -1,11 +1,8 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import StubUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.POJONode
 import com.ninjasquad.springmockk.MockkBean
-import disableUnleashFeature
-import enableUnleashFeature
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
@@ -18,6 +15,9 @@ import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
+import no.nav.bidrag.dokument.forsendelse.utils.StubUtils
+import no.nav.bidrag.dokument.forsendelse.utils.disableUnleashFeature
+import no.nav.bidrag.dokument.forsendelse.utils.enableUnleashFeature
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto

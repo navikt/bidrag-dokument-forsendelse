@@ -1,16 +1,15 @@
 package no.nav.bidrag.dokument.forsendelse.api
 
 import com.ninjasquad.springmockk.MockkBean
-import enableUnleashFeature
 import io.mockk.every
 import io.mockk.mockkObject
 import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
 import no.nav.bidrag.commons.web.EnhetFilter
 import no.nav.bidrag.dokument.forsendelse.CommonTestRunner
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
-import no.nav.bidrag.dokument.forsendelse.config.configureJackson
 import no.nav.bidrag.dokument.forsendelse.hendelse.DokumentKafkaHendelseProdusent
 import no.nav.bidrag.dokument.forsendelse.hendelse.JournalpostKafkaHendelseProdusent
+import no.nav.bidrag.dokument.forsendelse.utils.enableUnleashFeature
 import no.nav.bidrag.transport.dokument.AvvikType
 import no.nav.bidrag.transport.dokument.Avvikshendelse
 import no.nav.bidrag.transport.dokument.DokumentMetadata
@@ -23,21 +22,18 @@ import no.nav.bidrag.transport.dokument.forsendelse.OppdaterForsendelseResponse
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseRespons
-import no.nav.bidrag.transport.felles.commonObjectmapper
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.getForEntity
-import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.getForEntity
+import org.springframework.boot.resttestclient.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import kotlin.text.clear
 
 abstract class KontrollerTestRunner : CommonTestRunner() {
     @LocalServerPort
@@ -47,7 +43,7 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     lateinit var httpHeaderTestRestTemplate: TestRestTemplate
 
     @MockkBean
-    lateinit var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent
+    var dokumentKafkaHendelseProdusent: DokumentKafkaHendelseProdusent? = null
 
     @MockkBean
     lateinit var forsendelseHendelseProdusent: JournalpostKafkaHendelseProdusent
@@ -69,10 +65,9 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
         stubUtils.stubTilgangskontrollSak()
         stubUtils.stubTilgangskontrollPerson()
         stubUtils.stubTilgangskontrollTema()
-        every { dokumentKafkaHendelseProdusent.publiser(any()) } returns Unit
+        every { dokumentKafkaHendelseProdusent!!.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiser(any()) } returns Unit
         every { forsendelseHendelseProdusent.publiserForsendelse(any()) } returns Unit
-        configureJackson(httpHeaderTestRestTemplate.restTemplate)
     }
 
     @AfterEach
@@ -144,8 +139,8 @@ abstract class KontrollerTestRunner : CommonTestRunner() {
     protected fun utførHentJournalpostMedFeil(
         forsendelseId: String,
         saksnummer: String? = null,
-    ): ResponseEntity<Any> =
-        httpHeaderTestRestTemplate.getForEntity<Any>(
+    ): ResponseEntity<String> =
+        httpHeaderTestRestTemplate.getForEntity<String>(
             "${rootUri()}/journal/$forsendelseId${saksnummer?.let { "?saksnummer=$it" }}",
         )
 
