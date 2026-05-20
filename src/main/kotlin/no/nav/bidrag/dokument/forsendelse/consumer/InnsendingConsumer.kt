@@ -24,7 +24,7 @@ private val LOGGER = KotlinLogging.logger {}
 
 @Service
 class InnsendingConsumer(
-    @Value("\${INNSENDING_API_URL}") val url: URI,
+    @Value($$"${INNSENDING_API_URL}") val url: URI,
     @Qualifier("azureService") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "innsending-api") {
     private fun createUri(path: String? = null) =

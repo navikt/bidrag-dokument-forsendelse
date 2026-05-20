@@ -46,7 +46,7 @@ import java.lang.reflect.Type
 @EnableSecurityConfiguration
 @Import(RestOperationsAzure::class)
 class RestConfig(
-    @Value("\${KODEVERK_URL}") kodeverkUrl: String,
+    @Value($$"${KODEVERK_URL}") kodeverkUrl: String,
 ) : WebMvcConfigurer {
     init {
         KodeverkProvider.initialiser(kodeverkUrl)

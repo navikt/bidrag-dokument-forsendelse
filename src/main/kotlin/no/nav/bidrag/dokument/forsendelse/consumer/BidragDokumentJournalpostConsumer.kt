@@ -48,7 +48,7 @@ data class OppdaterStatusPåDokumenterUnderProduksjonRequestDto(
 
 @Service
 class BidragDokumentJournalpostConsumer(
-    @Value("\${BIDRAG_DOKUMENT_JOURNALPOST_URL}") val url: URI,
+    @Value($$"${BIDRAG_DOKUMENT_JOURNALPOST_URL}") val url: URI,
     @Qualifier("azureLongerTimeout") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-dokument-journalpost") {
     private fun createUri(path: String?) =

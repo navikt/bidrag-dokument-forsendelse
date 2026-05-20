@@ -18,8 +18,8 @@ import java.net.URI
 
 @Service
 class BidragBehandlingConsumer(
-    @Value("\${BIDRAG_BEHANDLING_URL}") val url: URI,
-    @Qualifier("azure") private val restTemplate: RestOperations,
+    @param:Value($$"${BIDRAG_BEHANDLING_URL}") val url: URI,
+    @param:Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-behandling") {
     private fun createUri(path: String?) =
         UriComponentsBuilder

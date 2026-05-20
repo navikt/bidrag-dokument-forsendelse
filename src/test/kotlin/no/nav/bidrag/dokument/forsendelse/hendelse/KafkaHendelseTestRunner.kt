@@ -38,10 +38,10 @@ private val log = KotlinLogging.logger {}
     ],
 )
 abstract class KafkaHendelseTestRunner : CommonTestRunner() {
-    @Value("\${TOPIC_DOKUMENT}")
+    @Value($$"${TOPIC_DOKUMENT}")
     private lateinit var topicDokument: String
 
-    @Value("\${TOPIC_JOURNALPOST}")
+    @Value($$"${TOPIC_JOURNALPOST}")
     private lateinit var topicJournalpost: String
 
     @BeforeEach

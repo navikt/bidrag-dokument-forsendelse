@@ -23,7 +23,7 @@ inline fun <reified T> typeReference() = object : ParameterizedTypeReference<T>(
 
 @Service
 class BidragDokumentBestillingConsumer(
-    @Value("\${BIDRAG_DOKUMENT_BESTILLING_URL}") val url: URI,
+    @Value($$"${BIDRAG_DOKUMENT_BESTILLING_URL}") val url: URI,
     @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-dokument-bestilling") {
     companion object {

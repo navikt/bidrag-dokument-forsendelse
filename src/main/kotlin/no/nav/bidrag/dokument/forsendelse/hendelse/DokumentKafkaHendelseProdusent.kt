@@ -1,6 +1,5 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
 import no.nav.bidrag.transport.dokument.DokumentHendelse
@@ -16,7 +15,7 @@ private val log = KotlinLogging.logger {}
 @Component
 class DokumentKafkaHendelseProdusent(
     private val kafkaTemplate: KafkaTemplate<String, String>,
-    @Value("\${TOPIC_DOKUMENT}") val topic: String,
+    @Value($$"${TOPIC_DOKUMENT}") val topic: String,
 ) {
     @Retryable(value = [Exception::class], maxAttempts = 10, backoff = Backoff(delay = 1000, maxDelay = 12000, multiplier = 2.0))
     fun publiser(dokumentHendelse: DokumentHendelse) {

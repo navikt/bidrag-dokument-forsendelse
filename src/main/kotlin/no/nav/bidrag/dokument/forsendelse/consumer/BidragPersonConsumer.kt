@@ -20,7 +20,7 @@ import java.net.URI
 
 @Service
 class BidragPersonConsumer(
-    @Value("\${BIDRAG_PERSON_URL}") val url: URI,
+    @Value($$"${BIDRAG_PERSON_URL}") val url: URI,
     @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-person") {
     private fun createUri(path: String?) =

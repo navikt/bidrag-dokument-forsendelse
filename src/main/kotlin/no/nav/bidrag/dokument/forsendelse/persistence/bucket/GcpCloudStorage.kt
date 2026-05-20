@@ -33,12 +33,12 @@ private val LOGGER = KotlinLogging.logger {}
 @Component
 @Scope(SCOPE_SINGLETON)
 class GcpCloudStorage(
-    @Value("\${BUCKET_NAME}") private val bucketNavn: String,
-    @Value("\${GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH}") private val kmsClientsideFilename: String,
-    @Value("\${GCP_HOST:#{null}}") private val host: String? = null,
-    @Value("\${GCP_CREDENTIALS_PATH:#{null}}") private val credentialsPath: String? = null,
+    @Value($$"${BUCKET_NAME}") private val bucketNavn: String,
+    @Value($$"${GCP_DOCUMENT_CLIENTSIDE_KMS_KEY_PATH}") private val kmsClientsideFilename: String,
+    @Value($$"${GCP_HOST:#{null}}") private val host: String? = null,
+    @Value($$"${GCP_CREDENTIALS_PATH:#{null}}") private val credentialsPath: String? = null,
     // Only use when running application locally
-    @Value("\${DISABLE_CLIENTSIDE_ENCRYPTION:false}") private val disableClientsideEncryption: Boolean,
+    @Value($$"${DISABLE_CLIENTSIDE_ENCRYPTION:false}") private val disableClientsideEncryption: Boolean,
 ) {
     private var keyVersion = -1
     private val retrySetting =

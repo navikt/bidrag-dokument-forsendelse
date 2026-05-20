@@ -18,7 +18,7 @@ import java.net.URI
 
 @Service
 class BidragVedtakConsumer(
-    @Value("\${BIDRAG_VEDTAK_URL}") val url: URI,
+    @Value($$"${BIDRAG_VEDTAK_URL}") val url: URI,
     @Qualifier("azure") private val restTemplate: RestOperations,
 ) : AbstractRestClient(restTemplate, "bidrag-vedtak") {
     private fun createUri(path: String?) =

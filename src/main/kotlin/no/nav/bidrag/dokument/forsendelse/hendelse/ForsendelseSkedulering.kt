@@ -26,7 +26,7 @@ class ForsendelseSkedulering(
     private val forsendelseTjeneste: ForsendelseTjeneste,
     private val distribusjonService: DistribusjonService,
     private val forsendelseHendelseBestilling: ForsendelseHendelseBestillingService,
-    @Value("\${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int,
+    @Value($$"${LAGRE_DIST_INFO_PAGE_SIZE:10}") private val distInfoPageSize: Int,
 ) {
     @Scheduled(cron = "0 */5 * * * *")
     @SchedulerLock(name = "opprettEttersendingsoppgave", lockAtLeastFor = "10m")
@@ -35,21 +35,21 @@ class ForsendelseSkedulering(
         opprettEttersendingHvisIkkeOpprettet()
     }
 
-    @Scheduled(cron = "\${LAGRE_DIST_INFO_CRON}")
+    @Scheduled(cron = $$"${LAGRE_DIST_INFO_CRON}")
     @SchedulerLock(name = "lagreDistribusjonsinfo", lockAtLeastFor = "10m")
     @Transactional
     fun lagreDistribusjonsinfoSkeduler() {
         lagreDistribusjoninfo()
     }
 
-    @Scheduled(cron = "\${OPPDATER_DIST_STATUS_CRON}")
+    @Scheduled(cron = $$"${OPPDATER_DIST_STATUS_CRON}")
     @SchedulerLock(name = "oppdaterDistribusjonstatus", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterDistribusjonstatusSkeduler() {
         oppdaterDistribusjonstatus()
     }
 
-    @Scheduled(cron = "\${RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE}")
+    @Scheduled(cron = $$"${RESYNK_FORSENDELSE_DISTRIBUSJON_SCHEDULE}")
     @SchedulerLock(name = "resynkDistribusjoninfoNavNo", lockAtLeastFor = "10m")
     @Transactional
     fun resynkDistribusjoninfoNavNoSkeduler() {

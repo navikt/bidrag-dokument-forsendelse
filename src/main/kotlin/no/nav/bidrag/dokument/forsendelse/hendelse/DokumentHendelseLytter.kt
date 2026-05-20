@@ -38,13 +38,13 @@ class DokumentHendelseLytter(
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
     val ferdigstillForsendelseService: FerdigstillForsendelseService,
     val distribusjonService: DistribusjonService,
-    @Value("\${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean,
+    @Value($$"${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean,
 ) {
     /**
      * Sjekker om dokumenter som har status UNDER_REDIGERING er ferdigstilt eller ikke og ferdigstiller dokumentet hvis de er det
      * Denne feilen kan oppstå hvis kvittering fra brevserver ikke blir sendt på ritkig måte pga feil i verdikjeden.
      */
-    @Scheduled(cron = "\${SYNKRONISER_STATUS_DOKUMENTER_CRON}")
+    @Scheduled(cron = $$"${SYNKRONISER_STATUS_DOKUMENTER_CRON}")
     @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterStatusPaFerdigstilteDokumenterSkeduler() {
@@ -113,7 +113,7 @@ class DokumentHendelseLytter(
         }
     }
 
-    @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
+    @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = [$$"${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {
         val hendelse = tilDokumentHendelseObjekt(melding)
 

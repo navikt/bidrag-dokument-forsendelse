@@ -37,7 +37,7 @@ class CacheConfig {
 
     @Bean
     fun cacheManager(
-        @Value("\${NAIS_CLUSTER_NAME:dev-gcp}") clusterName: String,
+        @Value($$"${NAIS_CLUSTER_NAME:dev-gcp}") clusterName: String,
     ): CacheManager {
         val isProd = clusterName.startsWith("prod")
         val caffeineCacheManager = CaffeineCacheManager()

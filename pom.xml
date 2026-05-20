@@ -415,6 +415,7 @@
       <groupId>org.wiremock.integrations</groupId>
       <artifactId>wiremock-spring-boot</artifactId>
       <version>4.2.1</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -449,6 +450,7 @@
         <configuration>
           <args>
             <arg>-Xjsr305=strict</arg>
+            <arg>-Xannotation-default-target=param-property</arg>
           </args>
           <jvmTarget>21</jvmTarget>
           <compilerPlugins>

@@ -38,10 +38,10 @@ abstract class KontrollerTestContainerRunner : TestContainerRunner() {
     @LocalServerPort
     private val port = 0
 
-    @Value("\${BUCKET_NAME}")
+    @Value($$"${BUCKET_NAME}")
     lateinit var bucketNavn: String
 
-    @Value("\${GCP_HOST:#{null}}")
+    @Value($$"${GCP_HOST:#{null}}")
     private val host: String? = null
 
     @Autowired
