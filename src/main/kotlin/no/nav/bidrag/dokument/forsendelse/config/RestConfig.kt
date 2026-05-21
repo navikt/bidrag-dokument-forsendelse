@@ -78,59 +78,6 @@ class RestConfig(
     }
 }
 
-/**
- * Creates a list of message converters with the common ObjectMapper.
- * This ensures all REST calls use consistent Jackson configuration.
- */
-private fun createMessageConverters(): List<HttpMessageConverter<*>> =
-    listOf(
-        ByteArrayHttpMessageConverter(),
-        StringHttpMessageConverter(),
-        CustomJacksonHttpMessageConverter(commonObjectmapper),
-        Jaxb2RootElementHttpMessageConverter(),
-        MarshallingHttpMessageConverter(),
-        FormHttpMessageConverter(),
-    )
-
-/**
- * Custom JSON message converter that uses the shared ObjectMapper configuration.
- * This avoids ClassLoader/version conflicts by ensuring all deserialization
- * uses the same ObjectMapper instance.
- */
-private class CustomJacksonHttpMessageConverter(
-    private val objectMapper: ObjectMapper,
-) : AbstractGenericHttpMessageConverter<Any>(
-        MediaType.APPLICATION_JSON,
-        MediaType("application", "*+json"),
-    ) {
-    override fun supports(clazz: Class<*>): Boolean = true
-
-    override fun read(
-        type: Type,
-        contextClass: Class<*>?,
-        inputMessage: HttpInputMessage,
-    ): Any = objectMapper.readValue(inputMessage.body, objectMapper.constructType(type))
-
-    override fun readInternal(
-        clazz: Class<out Any>,
-        inputMessage: HttpInputMessage,
-    ): Any = objectMapper.readValue(inputMessage.body, clazz)
-
-    override fun writeInternal(
-        obj: Any,
-        type: Type?,
-        outputMessage: HttpOutputMessage,
-    ) {
-        outputMessage.body.use { os ->
-            if (type == null) {
-                objectMapper.writeValue(os, obj)
-            } else {
-                objectMapper.writerFor(objectMapper.constructType(type)).writeValue(os, obj)
-            }
-        }
-    }
-}
-
 @Profile("nais")
 @Configuration
 class InitializeCaches(
