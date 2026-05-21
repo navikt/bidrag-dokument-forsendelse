@@ -137,18 +137,33 @@ fun Dokument.tilOpprettDokumentForespørsel() =
 
 private fun Forsendelse.tilJournalpostStatus() =
     when (this.status) {
-        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> JournalpostStatus.EKSPEDERT
-        ForsendelseStatus.SLETTET -> JournalpostStatus.UTGÅR
-        ForsendelseStatus.AVBRUTT -> JournalpostStatus.FEILREGISTRERT
-        ForsendelseStatus.FERDIGSTILT -> if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
-        ForsendelseStatus.UNDER_PRODUKSJON ->
+        ForsendelseStatus.DISTRIBUERT_LOKALT, ForsendelseStatus.DISTRIBUERT -> {
+            JournalpostStatus.EKSPEDERT
+        }
+
+        ForsendelseStatus.SLETTET -> {
+            JournalpostStatus.UTGÅR
+        }
+
+        ForsendelseStatus.AVBRUTT -> {
+            JournalpostStatus.FEILREGISTRERT
+        }
+
+        ForsendelseStatus.FERDIGSTILT -> {
+            if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
+        }
+
+        ForsendelseStatus.UNDER_PRODUKSJON -> {
             if (this.dokumenter.erAlleFerdigstilt) {
                 if (erUtgående) JournalpostStatus.KLAR_FOR_DISTRIBUSJON else JournalpostStatus.FERDIGSTILT
             } else {
                 JournalpostStatus.UNDER_PRODUKSJON
             }
+        }
 
-        ForsendelseStatus.UNDER_OPPRETTELSE -> JournalpostStatus.UNDER_OPPRETTELSE
+        ForsendelseStatus.UNDER_OPPRETTELSE -> {
+            JournalpostStatus.UNDER_OPPRETTELSE
+        }
     }
 
 fun Forsendelse.tilJournalpostDto(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) =

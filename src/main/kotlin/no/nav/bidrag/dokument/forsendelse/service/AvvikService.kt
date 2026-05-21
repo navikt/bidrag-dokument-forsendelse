@@ -61,9 +61,18 @@ class AvvikService(
             throw UgyldigAvvikForForsendelse("Kan ikke utføre avvik $avvikType på forsendelse $forsendelseId")
         }
         when (avvikType) {
-            AvvikType.FEILFORE_SAK -> avbrytForsendelse(forsendelseId)
-            AvvikType.SLETT_JOURNALPOST -> slettForsendelse(forsendelseId)
-            AvvikType.ENDRE_FAGOMRADE -> endreFagområde(forsendelseId, avvikshendelse)
+            AvvikType.FEILFORE_SAK -> {
+                avbrytForsendelse(forsendelseId)
+            }
+
+            AvvikType.SLETT_JOURNALPOST -> {
+                slettForsendelse(forsendelseId)
+            }
+
+            AvvikType.ENDRE_FAGOMRADE -> {
+                endreFagområde(forsendelseId, avvikshendelse)
+            }
+
             else -> {}
         }
         log.info { "Utførte avvik $avvikType for forsendelseId $forsendelseId og enhet $enhet" }
