@@ -380,6 +380,7 @@ fun opprettBehandlingDto(): BehandlingDto =
         behandlerenhet = JOURNALFØRENDE_ENHET,
         id = 1,
         søknadsid = 1,
+        roller = emptySet(),
     )
 
 fun opprettVedtakDto(): VedtakDto =
