@@ -42,7 +42,9 @@ data class BehandlingDto(
     @get:Schema(enumAsRef = true)
     val avslag: Resultatkode? = null,
     val roller: Set<RolleDto>,
-)
+) {
+    val søknadsbarn get() = roller.filter { it.rolletype == Rolletype.BARN }
+}
 
 data class RolleDto(
     val id: Long,

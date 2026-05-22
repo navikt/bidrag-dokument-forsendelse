@@ -225,7 +225,7 @@ class DokumentValgService(
                 .hentBehandling(
                     request.behandlingId!!,
                 )?.let { behandling ->
-                    val rolle = søknadsid?.let { behandling.roller.find { rolle -> rolle.søknader.any { it.søknadsId == søknadsid } } }
+                    val rolle = søknadsid?.let { behandling.søknadsbarn.find { rolle -> rolle.søknader.any { it.søknadsId == søknadsid } } }
                     val rolleSøknad = rolle?.søknader?.find { it.søknadsId == søknadsid }
                     request.copy(
                         behandlingType = rolle?.stønadstype?.name ?: behandling.stønadstype?.name ?: behandling.engangsbeløptype?.name,
