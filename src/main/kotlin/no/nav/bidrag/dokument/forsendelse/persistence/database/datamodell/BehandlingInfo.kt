@@ -17,6 +17,7 @@ import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import org.hibernate.annotations.Type
 import org.hibernate.engine.spi.SessionFactoryImplementor
 import org.hibernate.engine.spi.SharedSessionContractImplementor
+import org.hibernate.type.MappingContext
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
@@ -89,6 +90,15 @@ class BarnIBehandlingConverter : ImmutableType<BarnIBehandling>(BarnIBehandling:
     }
 
     override fun getSqlType(): Int = Types.OTHER
+
+    override fun getColumnSpan(mappingContext: MappingContext?): Int = 1
+
+    override fun getSqlTypeCodes(mappingContext: MappingContext?): IntArray = intArrayOf(getSqlType())
+
+    override fun toColumnNullness(
+        value: Any?,
+        mappingContext: MappingContext?,
+    ): BooleanArray = booleanArrayOf(value != null)
 
     override fun compare(
         p0: Any?,

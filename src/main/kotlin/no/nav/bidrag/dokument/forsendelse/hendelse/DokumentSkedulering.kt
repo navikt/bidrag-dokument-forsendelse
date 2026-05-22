@@ -21,19 +21,19 @@ class DokumentSkedulering(
     private val bestillingLytter: DokumentBestillingLytter,
     private val dokumentJournalpostConsumer: BidragDokumentJournalpostConsumer,
 ) {
-    @Scheduled(cron = "\${REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE}")
+    @Scheduled(cron = $$"${REBESTILL_DOKUMENTER_BESTILLING_FEILET_SCHEDULE}")
     @SchedulerLock(name = "bestillFeiledeDokumenterPaNytt", lockAtLeastFor = "10m")
     fun bestillFeiledeDokumenterPåNyttSkeduler() {
         bestillFeiledeDokumenterPåNytt()
     }
 
-    @Scheduled(cron = "\${REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
+    @Scheduled(cron = $$"${REBESTILL_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
     @SchedulerLock(name = "bestilleDokumenterUnderProduksjonPaNyttSkeduler", lockAtLeastFor = "10m")
     fun bestilleDokumenterUnderProduksjonPåNyttSkeduler() {
         bestillDokumenterUnderProduksjonPåNytt()
     }
 
-    @Scheduled(cron = "\${SJEKK_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
+    @Scheduled(cron = $$"${SJEKK_DOKUMENTER_UNDER_PRODUKSJON_SCHEDULE}")
     @SchedulerLock(name = "oppdaterStatusPåDokumentUnderProduksjon", lockAtLeastFor = "10m")
     fun oppdaterStatusPåDokumentUnderProduksjon() {
         LOGGER.info {

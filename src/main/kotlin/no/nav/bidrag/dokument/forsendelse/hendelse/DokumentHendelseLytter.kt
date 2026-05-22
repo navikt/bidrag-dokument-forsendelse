@@ -21,6 +21,7 @@ import no.nav.bidrag.transport.dokument.DokumentArkivSystemDto
 import no.nav.bidrag.transport.dokument.DokumentHendelse
 import no.nav.bidrag.transport.dokument.DokumentHendelseType
 import no.nav.bidrag.transport.dokument.DokumentStatusDto
+import no.nav.bidrag.transport.felles.commonObjectmapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener
@@ -32,19 +33,18 @@ private val log = KotlinLogging.logger {}
 
 @Component
 class DokumentHendelseLytter(
-    val objectMapper: ObjectMapper,
     val bidragDokumentConsumer: BidragDokumentConsumer,
     val dokumentTjeneste: DokumentTjeneste,
     val journalpostKafkaHendelseProdusent: JournalpostKafkaHendelseProdusent,
     val ferdigstillForsendelseService: FerdigstillForsendelseService,
     val distribusjonService: DistribusjonService,
-    @Value("\${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean,
+    @Value($$"${SYNKRONISER_STATUS_DOKUMENTER_ENABLED:false}") private val synkroniserDokumentStatusEnabled: Boolean,
 ) {
     /**
      * Sjekker om dokumenter som har status UNDER_REDIGERING er ferdigstilt eller ikke og ferdigstiller dokumentet hvis de er det
      * Denne feilen kan oppstå hvis kvittering fra brevserver ikke blir sendt på ritkig måte pga feil i verdikjeden.
      */
-    @Scheduled(cron = "\${SYNKRONISER_STATUS_DOKUMENTER_CRON}")
+    @Scheduled(cron = $$"${SYNKRONISER_STATUS_DOKUMENTER_CRON}")
     @SchedulerLock(name = "oppdaterStatusPaFerdigstilteDokumenter", lockAtLeastFor = "10m")
     @Transactional
     fun oppdaterStatusPaFerdigstilteDokumenterSkeduler() {
@@ -113,7 +113,7 @@ class DokumentHendelseLytter(
         }
     }
 
-    @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = ["\${TOPIC_DOKUMENT}"])
+    @KafkaListener(groupId = "bidrag-dokument-forsendelse", topics = [$$"${TOPIC_DOKUMENT}"])
     fun prossesserDokumentHendelse(melding: ConsumerRecord<String, String>) {
         val hendelse = tilDokumentHendelseObjekt(melding)
 
@@ -233,7 +233,7 @@ class DokumentHendelseLytter(
 
     private fun tilDokumentHendelseObjekt(melding: ConsumerRecord<String, String>): DokumentHendelse {
         try {
-            return objectMapper.readValue(melding.value(), DokumentHendelse::class.java)
+            return commonObjectmapper.readValue(melding.value(), DokumentHendelse::class.java)
         } catch (e: Exception) {
             log.error("Det skjedde en feil ved konverting av melding fra hendelse", e)
             throw KunneIkkeLeseMeldingFraHendelse(e.message, e)

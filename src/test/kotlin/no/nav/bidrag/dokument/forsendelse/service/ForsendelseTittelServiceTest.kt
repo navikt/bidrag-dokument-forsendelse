@@ -1,8 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
-import StubUtils
 import com.ninjasquad.springmockk.MockkBean
-import enableUnleashFeature
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkObject
@@ -19,6 +17,8 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BA
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BM
 import no.nav.bidrag.dokument.forsendelse.utils.GJELDER_IDENT_BP
+import no.nav.bidrag.dokument.forsendelse.utils.StubUtils
+import no.nav.bidrag.dokument.forsendelse.utils.enableUnleashFeature
 import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettForsendelse2

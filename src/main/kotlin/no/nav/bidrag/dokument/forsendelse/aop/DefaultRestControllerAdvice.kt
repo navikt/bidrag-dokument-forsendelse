@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.aop
 
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.model.FantIkkeDokument
 import no.nav.bidrag.dokument.forsendelse.model.KanIkkeFerdigstilleForsendelse
@@ -35,7 +35,7 @@ class DefaultRestControllerAdvice {
     fun handleInvalidValueExceptions(exception: Exception): ResponseEntity<*> {
         val cause = exception.cause
         val valideringsFeil =
-            if (cause is MissingKotlinParameterException) {
+            if (cause is MismatchedInputException) {
                 createMissingKotlinParameterViolation(
                     cause,
                 )
@@ -73,14 +73,14 @@ class DefaultRestControllerAdvice {
         val errorMessage = StringBuilder()
         exception.responseHeaders
             ?.get("Warning")
-            ?.let { if (it.size > 0) errorMessage.append(it[0]) }
+            ?.let { if (it.isNotEmpty()) errorMessage.append(it[0]) }
         if (exception.statusText.isNotNullOrEmpty()) {
             errorMessage.append(exception.statusText)
         }
         return errorMessage.toString()
     }
 
-    private fun createMissingKotlinParameterViolation(ex: MissingKotlinParameterException): String {
+    private fun createMissingKotlinParameterViolation(ex: MismatchedInputException): String {
         val errorFieldRegex = Regex("\\.([^.]*)\\[\\\"(.*)\"\\]\$")
         val paths =
             ex.path.map { errorFieldRegex.find(it.description)!! }.map {
@@ -118,7 +118,7 @@ class DefaultRestControllerAdvice {
         LOGGER.warn("Forsendelsen kan ikke endres: ${exception.message}", exception)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .header(HttpHeaders.WARNING, exception.message)
+            .header(HttpHeaders.WARNING, exception.message ?: "Kan ikke endres")
             .build<Any>()
     }
 

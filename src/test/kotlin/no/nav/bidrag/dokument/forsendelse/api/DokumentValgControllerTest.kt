@@ -18,7 +18,7 @@ import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.boot.resttestclient.postForEntity
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod

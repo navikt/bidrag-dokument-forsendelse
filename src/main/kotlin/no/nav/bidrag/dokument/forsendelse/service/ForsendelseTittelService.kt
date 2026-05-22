@@ -43,7 +43,10 @@ class ForsendelseTittelService(
         val gjelderRm = sak?.roller?.find { it.reellMottaker?.ident?.verdi == forsendelse.mottaker?.ident }?.reellMottaker
         val rolleNavn =
             when {
-                gjelderRm != null && gjelderRm.verge -> "verge"
+                gjelderRm != null && gjelderRm.verge -> {
+                    "verge"
+                }
+
                 // Kan være at RM er BM i saken
                 gjelderRm != null && SamhandlerId(gjelderRm.ident.verdi).gyldig() -> {
                     samhandlerConsumer
@@ -52,8 +55,14 @@ class ForsendelseTittelService(
                         ?.name
                         ?.lowercase() ?: ""
                 }
-                rolleGjelder != null -> rolleGjelder.type.name.lowercase()
-                else -> return null
+
+                rolleGjelder != null -> {
+                    rolleGjelder.type.name.lowercase()
+                }
+
+                else -> {
+                    return null
+                }
             }
 
         return "${dokumentMal.tittel} til $rolleNavn"

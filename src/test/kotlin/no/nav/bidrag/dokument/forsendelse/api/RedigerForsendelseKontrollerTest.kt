@@ -21,7 +21,7 @@ import no.nav.bidrag.transport.dokument.forsendelse.DokumentStatusTo
 import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseStatusTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.web.client.getForEntity
+import org.springframework.boot.resttestclient.getForEntity
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus

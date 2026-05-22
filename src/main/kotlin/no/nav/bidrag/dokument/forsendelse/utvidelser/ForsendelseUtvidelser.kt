@@ -25,10 +25,14 @@ val Forsendelse.forsendelseIdMedPrefix get() = "BIF-$forsendelseId"
 
 fun <T, R> T?.takeIfNotNullOrEmpty(block: (T) -> R): R? =
     if (this == null ||
-        this is String &&
-        this.trim().isEmpty() ||
-        this is List<*> &&
-        this.isEmpty()
+        (
+            this is String &&
+                this.trim().isEmpty()
+        ) ||
+        (
+            this is List<*> &&
+                this.isEmpty()
+        )
     ) {
         null
     } else {
@@ -102,13 +106,31 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(
             vedtak.engangsbeløpListe[0].type
         } ?: behandling?.engangsbeløptype ?: engangsBelopType
     return when (stønadstypeValue) {
-        Stønadstype.FORSKUDD -> "Bidragsforskudd"
-        Stønadstype.BIDRAG -> "Barnebidrag"
-        Stønadstype.BIDRAG18AAR -> "Barnebidrag 18 år"
-        Stønadstype.EKTEFELLEBIDRAG -> "Ektefellebidrag"
-        Stønadstype.OPPFOSTRINGSBIDRAG -> "Oppfostringbidrag"
-        Stønadstype.MOTREGNING -> "Motregning"
-        else ->
+        Stønadstype.FORSKUDD -> {
+            "Bidragsforskudd"
+        }
+
+        Stønadstype.BIDRAG -> {
+            "Barnebidrag"
+        }
+
+        Stønadstype.BIDRAG18AAR -> {
+            "Barnebidrag 18 år"
+        }
+
+        Stønadstype.EKTEFELLEBIDRAG -> {
+            "Ektefellebidrag"
+        }
+
+        Stønadstype.OPPFOSTRINGSBIDRAG -> {
+            "Oppfostringbidrag"
+        }
+
+        Stønadstype.MOTREGNING -> {
+            "Motregning"
+        }
+
+        else -> {
             when (engangsbeløptypeValue) {
                 Engangsbeløptype.SAERTILSKUDD, Engangsbeløptype.SÆRTILSKUDD, Engangsbeløptype.SÆRBIDRAG -> "Særtilskudd"
                 Engangsbeløptype.DIREKTE_OPPGJOR, Engangsbeløptype.DIREKTE_OPPGJØR -> "Direkte oppgjør"
@@ -119,6 +141,7 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(
                 Engangsbeløptype.TILBAKEKREVING -> "Tilbakekreving"
                 else -> behandlingType?.lowercase()?.replace("_", " ")?.replaceFirstChar { it.uppercase() }
             }
+        }
     }
 }
 

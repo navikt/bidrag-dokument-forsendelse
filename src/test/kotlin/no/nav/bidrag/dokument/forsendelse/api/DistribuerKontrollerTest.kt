@@ -31,8 +31,8 @@ import no.nav.bidrag.transport.dokument.DistribuerJournalpostResponse
 import no.nav.bidrag.transport.dokument.OpprettDokumentDto
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.web.client.getForEntity
-import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.boot.resttestclient.getForEntity
+import org.springframework.boot.resttestclient.postForEntity
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -50,11 +50,11 @@ class DistribuerKontrollerTest : KontrollerTestRunner() {
         forespørsel: DistribuerJournalpostRequest? = null,
         batchId: String? = null,
         ingenDistribusjon: Boolean? = false,
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<String> {
         val url = UriComponentsBuilder.fromUriString("${rootUri()}/journal/distribuer/$forsendelseId")
         batchId?.let { url.queryParam("batchId", it) }
         ingenDistribusjon?.let { url.queryParam("ingenDistribusjon", it) }
-        return httpHeaderTestRestTemplate.postForEntity<Any>(
+        return httpHeaderTestRestTemplate.postForEntity<String>(
             url.toUriString(),
             forespørsel?.let { HttpEntity(it) },
         )

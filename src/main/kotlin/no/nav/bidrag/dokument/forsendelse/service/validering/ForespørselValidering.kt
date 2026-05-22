@@ -105,7 +105,8 @@ object ForespørselValidering {
         )
         if (this.dokumentreferanse.isNotNullOrEmpty() || this.journalpostId.isNotNullOrEmpty()) {
             feilmeldinger.validerErSann(
-                this.journalpostId.isNotNullOrEmpty() || this.dokumentreferanse.isNotNullOrEmpty() && this.journalpostId.isNotNullOrEmpty(),
+                this.journalpostId.isNotNullOrEmpty() ||
+                    (this.dokumentreferanse.isNotNullOrEmpty() && this.journalpostId.isNotNullOrEmpty()),
                 "Både journalpostId og dokumentreferanse må " +
                     "settes hvis dokumentereferanse er satt dokumentreferanse=${this.dokumentreferanse}.",
             )

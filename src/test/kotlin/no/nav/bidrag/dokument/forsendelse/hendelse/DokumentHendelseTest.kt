@@ -1,6 +1,6 @@
 package no.nav.bidrag.dokument.forsendelse.hendelse
 
-import com.ninjasquad.springmockk.SpykBean
+import com.ninjasquad.springmockk.MockkSpyBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.date.shouldHaveSameDayAs
@@ -31,10 +31,10 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 class DokumentHendelseTest : KafkaHendelseTestRunner() {
-    @SpykBean
+    @MockkSpyBean
     private lateinit var dokumentTjeneste: DokumentTjeneste
 
-    @SpykBean
+    @MockkSpyBean
     private lateinit var journalpostHendelseProdusent: JournalpostKafkaHendelseProdusent
 
     @BeforeEach
