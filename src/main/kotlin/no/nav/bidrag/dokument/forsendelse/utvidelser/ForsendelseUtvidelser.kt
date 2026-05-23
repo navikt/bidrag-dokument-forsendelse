@@ -111,7 +111,10 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(
                                 søknad == null || søknadsid == null || søknadsid == søknad.søknadsid
                             }
                     }
-            return@run if (stønadstypeVedtak == null && søknadsid != null) {
+            // Behandling er i ferd med å bli opprettet. Da brukes det som kommer fra input pga race-condition
+            if (behandling == null && behandlingId != null) {
+                stonadType
+            } else if (stønadstypeVedtak == null && søknadsid != null) {
                 val rolle =
                     behandling?.søknadsbarn?.find {
                         it.søknader.any { it.søknadsId == søknadsid }
