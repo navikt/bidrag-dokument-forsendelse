@@ -119,7 +119,7 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(
                     behandling?.søknadsbarn?.find {
                         it.søknader.any { it.søknadsId == søknadsid }
                     }
-                rolle?.stønadstype ?: behandling?.stønadstype ?: stonadType
+                rolle?.stønadstype ?: stonadType
             } else {
                 behandling?.stønadstype ?: stonadType
             }
