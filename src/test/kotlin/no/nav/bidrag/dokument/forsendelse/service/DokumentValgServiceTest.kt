@@ -3,6 +3,7 @@ package no.nav.bidrag.dokument.forsendelse.service
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.maps.shouldContainKey
+import io.kotest.matchers.maps.shouldNotContainKey
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkObject
@@ -13,6 +14,8 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.RolleDto
+import no.nav.bidrag.dokument.forsendelse.consumer.dto.RolleSøknadDto
 import no.nav.bidrag.dokument.forsendelse.model.KLAGE_ANKE_ENHET
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.persistence.database.repository.ForsendelseRepository
@@ -22,6 +25,7 @@ import no.nav.bidrag.dokument.forsendelse.utils.opprettBehandlingDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettEngangsbelopDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettStonadsEndringDto
 import no.nav.bidrag.dokument.forsendelse.utils.opprettVedtakDto
+import no.nav.bidrag.domene.enums.rolle.Rolletype
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
@@ -846,7 +850,6 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01S56"
             dokumentValgListe shouldContainKey "BI01S57"
             dokumentValgListe shouldContainKey "BI01S58"
-            dokumentValgListe shouldContainKey "BI01S59"
             dokumentValgListe shouldContainKey "BI01S10"
         }
     }
@@ -1156,6 +1159,119 @@ class DokumentValgServiceTest {
         assertSoftly {
             dokumentValgListe.size shouldBe 4
             dokumentValgListe["BI01P11"]!!.tittel shouldBe "Ektefellebidrag, Notat P11 T"
+        }
+    }
+
+    @Test
+    fun `Skal bruke søknadId til å velge rolledata ved henting av dokumentvalg fra behandling`() {
+        val behandlingId = "21321321"
+        val soknadId = "2002"
+
+        every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns
+            opprettBehandlingDto().copy(
+                vedtakstype = Vedtakstype.ENDRING,
+                stønadstype = Stønadstype.BIDRAG,
+                søktAv = SøktAvType.BIDRAGSMOTTAKER,
+                behandlerenhet = "4806",
+                roller =
+                    setOf(
+                        RolleDto(
+                            id = 10,
+                            rolletype = Rolletype.BARN,
+                            delAvOpprinneligBehandling = true,
+                            erRevurdering = false,
+                            stønadstype = Stønadstype.BIDRAG18AAR,
+                            saksnummer = "123",
+                            søknader =
+                                listOf(
+                                    RolleSøknadDto(
+                                        søknadsId = 2002L,
+                                        søknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                                        enhet = KLAGE_ANKE_ENHET.ENHET_KLANKE_OSLO_AKERSHUS.kode,
+                                        vedtakstype = Vedtakstype.FASTSETTELSE,
+                                    ),
+                                ),
+                        ),
+                    ),
+            )
+
+        val dokumentMalListeForSøknad =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    behandlingId = behandlingId,
+                    vedtakType = Vedtakstype.FASTSETTELSE,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    erFattetBeregnet = null,
+                    soknadId = soknadId,
+                ),
+            )
+
+        val dokumentMalListeIkkeSøknad =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    behandlingId = behandlingId,
+                    vedtakType = Vedtakstype.FASTSETTELSE,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    erFattetBeregnet = null,
+                ),
+            )
+
+        assertSoftly {
+            // BI01S03 = Nav har mottatt søknad om barnebidrag etter fylte 18 år - forhåndsvarsel
+            dokumentMalListeForSøknad.shouldContainKey("BI01S03")
+            dokumentMalListeIkkeSøknad.shouldNotContainKey("BI01S03")
+            verify { bidragBehandlingConsumer.hentBehandling(behandlingId) }
+        }
+    }
+
+    @Test
+    fun `Skal falle tilbake til behandlingdata nar soknadId ikke matcher rolle i behandling`() {
+        val behandlingId = "21321321"
+
+        every { bidragBehandlingConsumer.hentBehandling(eq(behandlingId)) } returns
+            opprettBehandlingDto().copy(
+                vedtakstype = Vedtakstype.ENDRING,
+                stønadstype = Stønadstype.BIDRAG,
+                søktAv = SøktAvType.BIDRAGSMOTTAKER,
+                behandlerenhet = "4806",
+                roller =
+                    setOf(
+                        RolleDto(
+                            id = 10,
+                            rolletype = Rolletype.BARN,
+                            delAvOpprinneligBehandling = true,
+                            erRevurdering = false,
+                            stønadstype = Stønadstype.BIDRAG18AAR,
+                            saksnummer = "123",
+                            søknader =
+                                listOf(
+                                    RolleSøknadDto(
+                                        søknadsId = 2002L,
+                                        søknadFra = SøktAvType.BIDRAGSPLIKTIG,
+                                        enhet = KLAGE_ANKE_ENHET.ENHET_KLANKE_OSLO_AKERSHUS.kode,
+                                        vedtakstype = Vedtakstype.FASTSETTELSE,
+                                    ),
+                                ),
+                        ),
+                    ),
+            )
+
+        val dokumentMalListe =
+            dokumentValgService!!.hentDokumentMalListe(
+                HentDokumentValgRequest(
+                    behandlingId = behandlingId,
+                    vedtakType = Vedtakstype.ENDRING,
+                    behandlingType = Stønadstype.BIDRAG.name,
+                    soknadFra = SøktAvType.BIDRAGSMOTTAKER,
+                    enhet = "4806",
+                    soknadId = "1234",
+                    erFattetBeregnet = null,
+                ),
+            )
+
+        assertSoftly {
+            dokumentMalListe.shouldNotContainKey("BI01S03")
+            verify { bidragBehandlingConsumer.hentBehandling(behandlingId) }
         }
     }
 }
