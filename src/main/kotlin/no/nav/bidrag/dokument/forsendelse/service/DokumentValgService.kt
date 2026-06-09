@@ -171,10 +171,11 @@ class DokumentValgService(
                             vedtak.stønadsendringListe
                                 .filter {
                                     it.periodeListe.none { it.resultatkode == "AutomatiskOpphør" }
-                                }.first {
+                                }.firstOrNull {
                                     val søknad = vedtak.grunnlagListe.hentSøknadForPerson(it.kravhaver, it.type)
                                     søknad == null || søknadsid == null || søknadsid == søknad.søknadsid
-                                }.type.name
+                                }?.type
+                                ?.name ?: request.stonadType?.name
                         } else {
                             vedtak.engangsbeløpListe[0].type.name
                         }
