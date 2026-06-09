@@ -183,27 +183,47 @@ class DokumentValgService(
             bidragVedtakConsumer
                 .hentVedtak(vedtakId = request.vedtakId!!)
                 ?.let { vedtak ->
-                    val behandlingType =
-                        if (vedtak.stønadsendringListe.isNotEmpty()) {
+                    val vedtakOrkestrert =
+                        // Caser hvor det er FF vedtak med innkreving. Vil da hente innhold fra opprinnelig vedtak istedenfor
+                        if (vedtak.type == Vedtakstype.INNKREVING && vedtak.erOrkestrertVedtak) {
                             vedtak.stønadsendringListe
+                                .map { s ->
+                                    val sistePeriode =
+                                        s.periodeListe.maxByOrNull { p ->
+                                            p.periode.fom
+                                        } ?: return@map vedtak
+                                    val resultatFraAnnenVedtak =
+                                        vedtak.grunnlagListe.finnResultatFraAnnenVedtak(
+                                            sistePeriode.grunnlagReferanseListe,
+                                        )
+                                    resultatFraAnnenVedtak?.vedtaksid?.let {
+                                        bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())
+                                    } ?: vedtak
+                                }.firstOrNull() ?: vedtak
+                        } else {
+                            vedtak
+                        }
+                    val behandlingType =
+                        if (vedtakOrkestrert.stønadsendringListe.isNotEmpty()) {
+                            vedtakOrkestrert.stønadsendringListe
                                 .filter {
                                     it.periodeListe.none { it.resultatkode == "AutomatiskOpphør" }
                                 }.firstOrNull {
-                                    val søknad = vedtak.grunnlagListe.hentSøknadForPerson(it.kravhaver, it.type)
+                                    val søknad = vedtakOrkestrert.grunnlagListe.hentSøknadForPerson(it.kravhaver, it.type)
                                     søknad == null || søknadsid == null || søknadsid == søknad.søknadsid
                                 }?.type
                                 ?.name ?: request.stonadType?.name
                         } else {
-                            vedtak.engangsbeløpListe[0].type.name
+                            vedtakOrkestrert.engangsbeløpListe[0].type.name
                         }
                     val erFattetBeregnet =
-                        if (!vedtak.kildeapplikasjon.startsWith("bidrag-behandling")) {
+                        if (!vedtakOrkestrert.kildeapplikasjon.startsWith("bidrag-behandling")) {
                             request.erFattetBeregnet
                         } else {
                             true
                         }
                     val erVedtakIkkeTilbakekreving =
-                        vedtak.engangsbeløpListe.any { gr ->
+                        vedtakOrkestrert.engangsbeløpListe.any { gr ->
                             gr.resultatkode ==
                                 ResultatKode.IKKE_TILBAKEKREVING
                         }
@@ -226,12 +246,12 @@ class DokumentValgService(
                             }
                     request.copy(
                         behandlingType = behandlingType,
-                        vedtakType = vedtak.type,
+                        vedtakType = vedtakOrkestrert.type,
                         erFattetBeregnet = erFattetBeregnet,
                         erOrkestrertVedtak = vedtak.erOrkestrertVedtak && !vedtak.omgjøringsvedtakErEnesteVedtak,
                         inneholderAldersjustering = inneholderAldersjustering,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
-                        enhet = request.enhet ?: vedtak.enhetsnummer?.verdi,
+                        enhet = request.enhet ?: vedtakOrkestrert.enhetsnummer?.verdi,
                     )
                 }
         } else if (request.behandlingId != null &&
