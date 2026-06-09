@@ -21,12 +21,12 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTil
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
 import no.nav.bidrag.dokument.forsendelse.utvidelser.gjelderKlage
+import no.nav.bidrag.dokument.forsendelse.utvidelser.harOpprettetForholdsmessigFordeling
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.felles.grunnlag.VirkningstidspunktGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåEgenReferanse
 import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadForPerson
-import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadFraGrunnlagsreferanseListe
 import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
 import no.nav.bidrag.transport.behandling.vedtak.response.finnResultatFraAnnenVedtak
 import no.nav.bidrag.transport.behandling.vedtak.response.omgjøringsvedtakErEnesteVedtak
@@ -127,6 +127,23 @@ class DokumentValgService(
 
             val erDirekteAvslag =
                 virkningstidspunktGrunnlag.isNotEmpty() && virkningstidspunktGrunnlag.all { it.innhold.avslag != null }
+            val erForholdsmessigFordeling =
+                it.erOrkestrertVedtak &&
+                    it.stønadsendringListe.any { s ->
+                        s.periodeListe.any { p ->
+                            val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
+                            val vedtakAnnen =
+                                resultatFraAnnenVedtak?.vedtaksid?.let {
+                                    bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())
+                                }
+                            vedtakAnnen?.grunnlagListe?.harOpprettetForholdsmessigFordeling() == true
+                        }
+                    }
+
+            if (erForholdsmessigFordeling) {
+                return emptyList()
+            }
+
             val inneholderAldersjustering =
                 it.erOrkestrertVedtak &&
                     it.stønadsendringListe.any { s ->
