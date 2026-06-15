@@ -42,6 +42,9 @@ env:
   BIDRAG_SAMHANDLER_URL: http://bidrag-samhandler-q2
   BIDRAG_SAMHANDLER_SCOPE: dev-gcp.bidrag.bidrag-samhandler-q2
 
+  BIDRAG_BBM_URL: https://bidrag-bbm.dev-fss-pub.nais.io
+  BIDRAG_BBM_SCOPE: dev-fss.bidrag.bidrag-bbm
+
   LAGRE_DIST_INFO_PAGE_SIZE: 10
   LAGRE_DIST_INFO_CRON: "0 */10 * * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 */10 * * * ?"
@@ -77,6 +80,9 @@ outbound-access-hosts:
    - bidrag-organisasjon.dev-fss-pub.nais.io
    - innsending-api-gcp.intern.dev.nav.no
    - bidrag-unleash-api.nav.cloud.nais.io
+   - bidrag-bbm-feature.dev-fss-pub.nais.io
+   - bidrag-bbm.dev-fss-pub.nais.io
+   - bidrag-bbm.prod-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag

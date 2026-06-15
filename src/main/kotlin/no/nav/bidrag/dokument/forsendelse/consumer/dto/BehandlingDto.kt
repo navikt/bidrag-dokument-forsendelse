@@ -43,6 +43,16 @@ data class BehandlingDto(
     val avslag: Resultatkode? = null,
     val roller: Set<RolleDto>,
 ) {
+    fun finnSøknadsbarnForSøknad(søknadsId: Long) =
+        if (erKlageEllerOmgjøring) {
+        } else {
+            søknadsbarn.filter {
+                it.søknader.any {
+                    it.søknadsId == søknadsId
+                }
+            }
+        }
+
     val søknadsbarn get() = roller.filter { it.rolletype == Rolletype.BARN }
 }
 
@@ -63,7 +73,9 @@ data class RolleDto(
     val harLøpendeForskudd: Boolean? = false,
     val harLøpendeBidrag: Boolean? = false,
     val søknader: List<RolleSøknadDto> = emptyList(),
-)
+) {
+    val erOver18År get() = fødselsdato?.let { LocalDate.now().minusYears(18).isAfter(it) } ?: false
+}
 
 data class RolleSøknadDto(
     val søknadsId: Long,
