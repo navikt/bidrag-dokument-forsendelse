@@ -162,7 +162,7 @@ class OpprettForsendelseService(
     }
 
     private fun hentRollerISøknad(behandlingInfo: BehandlingInfoDto): List<String> {
-        return if (behandlingInfo.soknadId == null) {
+        return if (behandlingInfo.soknadId == null || behandlingInfo.barnIBehandling.isNotEmpty()) {
             behandlingInfo.barnIBehandling
         } else {
             try {
