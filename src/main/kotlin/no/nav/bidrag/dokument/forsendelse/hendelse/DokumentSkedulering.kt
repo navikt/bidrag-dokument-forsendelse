@@ -83,7 +83,8 @@ class DokumentSkedulering(
             dokumenter.forEach {
                 try {
                     LOGGER.info {
-                        "Bestiller dokument med mal ${it.dokumentmalId} og tittel ${it.tittel} for dokumentreferanse ${it.dokumentreferanse}." +
+                        "Bestiller dokument med mal ${it.dokumentmalId} og tittel ${it.tittel} " +
+                            "for dokumentreferanse ${it.dokumentreferanse}." +
                             " Dokumentet ble sist bestilt ${it.metadata.hentBestiltTidspunkt()} " +
                             "og bestilt totalt ${it.metadata.hentDokumentBestiltAntallGanger()} ganger"
                     }
