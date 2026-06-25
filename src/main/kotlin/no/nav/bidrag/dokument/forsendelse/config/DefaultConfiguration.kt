@@ -31,6 +31,7 @@ import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import java.util.concurrent.Executor
+import java.util.concurrent.ThreadPoolExecutor
 import javax.sql.DataSource
 
 @EnableAspectJAutoProxy
@@ -69,6 +70,7 @@ class AsyncConfig : AsyncConfigurer {
         executor.maxPoolSize = 10
         executor.queueCapacity = 25
         executor.setThreadNamePrefix("Async-")
+        executor.setRejectedExecutionHandler(ThreadPoolExecutor.CallerRunsPolicy())
         executor.setTaskDecorator(ThreadLocalTaskDecorator())
         executor.initialize()
         return executor
