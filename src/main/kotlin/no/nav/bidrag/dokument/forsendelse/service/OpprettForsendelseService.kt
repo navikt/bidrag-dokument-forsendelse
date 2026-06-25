@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.SIKKER_LOGG
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBBMConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.mapper.ForespørselMapper.tilMottakerDo
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseType
@@ -20,6 +21,9 @@ import no.nav.bidrag.dokument.forsendelse.service.dao.ForsendelseTjeneste
 import no.nav.bidrag.dokument.forsendelse.service.validering.ForespørselValidering.valider
 import no.nav.bidrag.dokument.forsendelse.utvidelser.harNotat
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBehandlingInfo
+import no.nav.bidrag.domene.enums.behandling.Behandlingstatus
+import no.nav.bidrag.domene.enums.rolle.Rolletype
+import no.nav.bidrag.transport.dokument.forsendelse.BehandlingInfoDto
 import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
 import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseConflictResponse
 import no.nav.bidrag.transport.dokument.forsendelse.JournalTema
@@ -41,6 +45,7 @@ class OpprettForsendelseService(
     private val dokumenttjeneste: DokumentTjeneste,
     private val saksbehandlerInfoManager: SaksbehandlerInfoManager,
     private val forsendelseTittelService: ForsendelseTittelService,
+    private val bbmConsumer: BidragBBMConsumer,
 ) {
     fun behandleDataIntegrityException(
         e: DataIntegrityViolationException,
@@ -156,6 +161,31 @@ class OpprettForsendelseService(
             ?: ForsendelseType.UTGÅENDE
     }
 
+    private fun hentRollerISøknad(behandlingInfo: BehandlingInfoDto): List<String> {
+        return if (behandlingInfo.soknadId == null || behandlingInfo.barnIBehandling.isNotEmpty()) {
+            behandlingInfo.barnIBehandling
+        } else {
+            try {
+                val søknad =
+                    bbmConsumer
+                        .hentSøknad(behandlingInfo.soknadId!!.toLong())
+                        ?.søknad ?: return behandlingInfo.barnIBehandling
+
+                søknad.partISøknadListe
+                    .filter {
+                        !listOf(
+                            Behandlingstatus.FEILREGISTRERT,
+                            Behandlingstatus.TRUKKET,
+                        ).contains(it.behandlingstatus)
+                    }.filter {
+                        it.rolletype == Rolletype.BARN
+                    }.mapNotNull { it.personident }
+            } catch (e: Exception) {
+                return behandlingInfo.barnIBehandling
+            }
+        }
+    }
+
     private fun opprettForsendelseFraForespørsel(
         forespørsel: OpprettForsendelseForespørsel,
         forsendelseType: ForsendelseType,
@@ -164,6 +194,19 @@ class OpprettForsendelseService(
         val mottakerIdent = forespørsel.mottaker!!.ident
         val mottakerInfo = mottakerIdent?.let { personConsumer.hentPerson(mottakerIdent) }
         val mottakerSpråk = forespørsel.språk ?: mottakerIdent?.let { personConsumer.hentPersonSpråk(mottakerIdent) } ?: "NB"
+        val behandlingInfo = forespørsel.behandlingInfo
+        val forespørselJustert =
+            if (behandlingInfo != null) {
+                forespørsel
+                    .copy(
+                        behandlingInfo =
+                            behandlingInfo.copy(
+                                barnIBehandling = hentRollerISøknad(behandlingInfo),
+                            ),
+                    )
+            } else {
+                forespørsel
+            }
         val forsendelse =
             Forsendelse(
                 unikReferanse = forespørsel.unikReferanse,
@@ -171,7 +214,7 @@ class OpprettForsendelseService(
                 batchId = if (forespørsel.batchId.isNullOrEmpty()) null else forespørsel.batchId,
                 forsendelseType = forsendelseType,
                 gjelderIdent = forespørsel.gjelderIdent,
-                behandlingInfo = forespørsel.tilBehandlingInfo(),
+                behandlingInfo = forespørselJustert.tilBehandlingInfo(),
                 enhet = forespørsel.enhet,
                 tittel =
                     if (forespørsel.opprettTittel == true && forsendelseType !== ForsendelseType.NOTAT) {

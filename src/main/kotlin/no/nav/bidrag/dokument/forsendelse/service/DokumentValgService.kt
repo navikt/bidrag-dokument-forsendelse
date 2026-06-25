@@ -21,10 +21,12 @@ import no.nav.bidrag.dokument.forsendelse.persistence.database.model.erVedtakTil
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isValid
 import no.nav.bidrag.dokument.forsendelse.persistence.database.model.isVedtaktypeValid
 import no.nav.bidrag.dokument.forsendelse.utvidelser.gjelderKlage
+import no.nav.bidrag.dokument.forsendelse.utvidelser.harOpprettetForholdsmessigFordeling
 import no.nav.bidrag.domene.enums.grunnlag.Grunnlagstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.felles.grunnlag.VirkningstidspunktGrunnlag
 import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåEgenReferanse
+import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadForPerson
 import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
 import no.nav.bidrag.transport.behandling.vedtak.response.finnResultatFraAnnenVedtak
 import no.nav.bidrag.transport.behandling.vedtak.response.omgjøringsvedtakErEnesteVedtak
@@ -125,6 +127,23 @@ class DokumentValgService(
 
             val erDirekteAvslag =
                 virkningstidspunktGrunnlag.isNotEmpty() && virkningstidspunktGrunnlag.all { it.innhold.avslag != null }
+            val erForholdsmessigFordeling =
+                it.erOrkestrertVedtak &&
+                    it.stønadsendringListe.any { s ->
+                        s.periodeListe.any { p ->
+                            val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
+                            val vedtakAnnen =
+                                resultatFraAnnenVedtak?.vedtaksid?.let {
+                                    bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())
+                                }
+                            vedtakAnnen?.grunnlagListe?.harOpprettetForholdsmessigFordeling() == true
+                        }
+                    }
+
+            if (erForholdsmessigFordeling) {
+                return emptyList()
+            }
+
             val inneholderAldersjustering =
                 it.erOrkestrertVedtak &&
                     it.stønadsendringListe.any { s ->
@@ -160,31 +179,62 @@ class DokumentValgService(
         if (request == null) {
             null
         } else if (request.vedtakId != null && UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled) {
+            val søknadsid = request.soknadId?.toLong()
             bidragVedtakConsumer
                 .hentVedtak(vedtakId = request.vedtakId!!)
-                ?.let {
+                ?.let { vedtak ->
+                    val vedtakOrkestrert =
+                        // Caser hvor det er FF vedtak med innkreving. Vil da hente innhold fra opprinnelig vedtak istedenfor
+                        if (vedtak.type == Vedtakstype.INNKREVING && vedtak.erOrkestrertVedtak) {
+                            vedtak.stønadsendringListe
+                                .map { s ->
+                                    val sistePeriode =
+                                        s.periodeListe.maxByOrNull { p ->
+                                            p.periode.fom
+                                        } ?: return@map vedtak
+                                    val resultatFraAnnenVedtak =
+                                        vedtak.grunnlagListe.finnResultatFraAnnenVedtak(
+                                            sistePeriode.grunnlagReferanseListe,
+                                        )
+                                    resultatFraAnnenVedtak?.vedtaksid?.let {
+                                        bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())
+                                    } ?: vedtak
+                                }.firstOrNull() ?: vedtak
+                        } else {
+                            vedtak
+                        }
                     val behandlingType =
-                        if (it.stønadsendringListe.isNotEmpty()) {
-                            it.stønadsendringListe
+                        if (vedtakOrkestrert.stønadsendringListe.isNotEmpty()) {
+                            vedtakOrkestrert.stønadsendringListe
                                 .filter {
                                     it.periodeListe.none { it.resultatkode == "AutomatiskOpphør" }
-                                }[0]
-                                .type.name
+                                }.firstOrNull {
+                                    val søknad = vedtakOrkestrert.grunnlagListe.hentSøknadForPerson(it.kravhaver, it.type)
+                                    søknad == null || søknadsid == null || søknadsid == søknad.søknadsid
+                                }?.type
+                                ?.name ?: request.stonadType?.name
                         } else {
-                            it.engangsbeløpListe[0].type.name
+                            vedtakOrkestrert.engangsbeløpListe[0].type.name
                         }
                     val erFattetBeregnet =
-                        if (!it.kildeapplikasjon.startsWith("bidrag-behandling")) {
+                        if (!vedtakOrkestrert.kildeapplikasjon.startsWith("bidrag-behandling")) {
                             request.erFattetBeregnet
                         } else {
                             true
                         }
-                    val erVedtakIkkeTilbakekreving = it.engangsbeløpListe.any { gr -> gr.resultatkode == ResultatKode.IKKE_TILBAKEKREVING }
+                    val erVedtakIkkeTilbakekreving =
+                        vedtakOrkestrert.engangsbeløpListe.any { gr ->
+                            gr.resultatkode ==
+                                ResultatKode.IKKE_TILBAKEKREVING
+                        }
                     val inneholderAldersjustering =
-                        it.erOrkestrertVedtak &&
-                            it.stønadsendringListe.any { s ->
+                        vedtak.erOrkestrertVedtak &&
+                            vedtak.stønadsendringListe.any { s ->
                                 s.periodeListe.any { p ->
-                                    val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
+                                    val resultatFraAnnenVedtak =
+                                        vedtak.grunnlagListe.finnResultatFraAnnenVedtak(
+                                            p.grunnlagReferanseListe,
+                                        )
                                     val vedtakstype =
                                         resultatFraAnnenVedtak?.vedtakstype ?: run {
                                             resultatFraAnnenVedtak?.vedtaksid?.let {
@@ -196,29 +246,32 @@ class DokumentValgService(
                             }
                     request.copy(
                         behandlingType = behandlingType,
-                        vedtakType = it.type,
+                        vedtakType = vedtakOrkestrert.type,
                         erFattetBeregnet = erFattetBeregnet,
-                        erOrkestrertVedtak = it.erOrkestrertVedtak && !it.omgjøringsvedtakErEnesteVedtak,
+                        erOrkestrertVedtak = vedtak.erOrkestrertVedtak && !vedtak.omgjøringsvedtakErEnesteVedtak,
                         inneholderAldersjustering = inneholderAldersjustering,
                         erVedtakIkkeTilbakekreving = erVedtakIkkeTilbakekreving,
-                        enhet = request.enhet ?: it.enhetsnummer?.verdi,
+                        enhet = request.enhet ?: vedtakOrkestrert.enhetsnummer?.verdi,
                     )
                 }
         } else if (request.behandlingId != null &&
             request.erFattetBeregnet == null &&
             UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING.isEnabled
         ) {
+            val søknadsid = request.soknadId?.toLong()
             behandlingConsumer
                 .hentBehandling(
                     request.behandlingId!!,
-                )?.let {
+                )?.let { behandling ->
+                    val rolle = søknadsid?.let { behandling.søknadsbarn.find { rolle -> rolle.søknader.any { it.søknadsId == søknadsid } } }
+                    val rolleSøknad = rolle?.søknader?.find { it.søknadsId == søknadsid }
                     request.copy(
-                        behandlingType = it.stønadstype?.name ?: it.engangsbeløptype?.name,
-                        vedtakType = it.vedtakstype,
-                        soknadFra = request.soknadFra ?: it.søktAv,
+                        behandlingType = rolle?.stønadstype?.name ?: behandling.stønadstype?.name ?: behandling.engangsbeløptype?.name,
+                        vedtakType = rolleSøknad?.vedtakstype ?: behandling.vedtakstype,
+                        soknadFra = rolleSøknad?.søknadFra ?: request.soknadFra ?: behandling.søktAv,
                         erFattetBeregnet = null,
                         erVedtakIkkeTilbakekreving = false,
-                        enhet = request.enhet ?: it.behandlerenhet,
+                        enhet = rolleSøknad?.enhet ?: request.enhet ?: behandling.behandlerenhet,
                     )
                 }
         } else {

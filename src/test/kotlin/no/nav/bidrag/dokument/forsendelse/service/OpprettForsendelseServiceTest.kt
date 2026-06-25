@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.Ordering
 import io.mockk.every
 import io.mockk.verify
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBBMConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragPersonConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
@@ -75,6 +76,9 @@ class OpprettForsendelseServiceTest {
     lateinit var sakService: SakService
 
     @MockkBean
+    lateinit var bbmConsumer: BidragBBMConsumer
+
+    @MockkBean
     lateinit var forsendelseTittelService: ForsendelseTittelService
     var opprettForsendelseService: OpprettForsendelseService? = null
 
@@ -89,6 +93,7 @@ class OpprettForsendelseServiceTest {
                 dokumenttjeneste,
                 saksbehandlerInfoManager,
                 forsendelseTittelService,
+                bbmConsumer,
             )
         every { tilgangskontrollService.sjekkTilgangSak(any()) } returns Unit
         every { tilgangskontrollService.sjekkTilgangPerson(any()) } returns Unit

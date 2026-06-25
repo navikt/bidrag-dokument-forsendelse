@@ -14,6 +14,7 @@ import no.nav.bidrag.domene.enums.rolle.Rolletype
 import no.nav.bidrag.domene.enums.vedtak.Engangsbeløptype
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
+import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadForPerson
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveVedleggDto
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
@@ -96,11 +97,33 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(
     vedtak: VedtakDto? = null,
     behandling: BehandlingDto? = null,
 ): String? {
+    val søknadsid = soknadId?.toLong()
     val stønadstypeValue =
-        vedtak
-            ?.stønadsendringListe
-            ?.isNotEmpty()
-            ?.ifTrue { vedtak.stønadsendringListe[0].type } ?: behandling?.stønadstype ?: stonadType
+        run {
+            val stønadstypeVedtak =
+                vedtak
+                    ?.stønadsendringListe
+                    ?.isNotEmpty()
+                    ?.ifTrue {
+                        vedtak.stønadsendringListe
+                            .first {
+                                val søknad = vedtak.grunnlagListe.hentSøknadForPerson(it.kravhaver, it.type)
+                                søknad == null || søknadsid == null || søknadsid == søknad.søknadsid
+                            }
+                    }
+            // Behandling er i ferd med å bli opprettet. Da brukes det som kommer fra input pga race-condition
+            if (behandling == null && behandlingId != null) {
+                stonadType
+            } else if (stønadstypeVedtak == null && søknadsid != null) {
+                val rolle =
+                    behandling?.søknadsbarn?.find {
+                        it.søknader.any { it.søknadsId == søknadsid }
+                    }
+                rolle?.stønadstype ?: stonadType
+            } else {
+                behandling?.stønadstype ?: stonadType
+            }
+        }
     val engangsbeløptypeValue =
         vedtak?.engangsbeløpListe?.isNotEmpty()?.ifTrue {
             vedtak.engangsbeløpListe[0].type

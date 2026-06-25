@@ -13,6 +13,7 @@ NAIS_APP_NAME: bidrag-dokument-forsendelse
 TOPIC_DOKUMENT: bidrag.dokument
 TOPIC_JOURNALPOST: bidrag.journalpost
 BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestilling
+BIDRAG_BMMB_URL: http://localhost:${wiremock.server.port}/bbm
 BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
 BIDRAG_DOKUMENT_JOURNALPOST_URL: http://localhost:${wiremock.server.port}/dokumentjp
 BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
@@ -122,6 +123,15 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
       bidrag-samhandler:
         resource-url: ${BIDRAG_SAMHANDLER_URL}
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port:1234}/aad/token
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: api://123/.default
+        authentication:
+          client-id: 123
+          client-secret: 123
+          client-auth-method: client_secret_basic
+      bidrag-bbm:
+        resource-url: ${BIDRAG_BBM_URL}
         token-endpoint-url: http://localhost:${mock-oauth2-server.port:1234}/aad/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: api://123/.default

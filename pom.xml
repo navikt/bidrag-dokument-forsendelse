@@ -16,14 +16,14 @@
   <properties>
     <java.version>21</java.version>
     <kotlin.version>2.2.21</kotlin.version>
-    <bidrag-felles.version>2026.05.20.125928-SB4</bidrag-felles.version>
+    <bidrag-felles.version>2026.06.05.195300</bidrag-felles.version>
     <logback-encoder.version>9.0</logback-encoder.version>
     <token-support.version>6.0.6</token-support.version>
     <springdoc-openapi-ui.version>3.0.3</springdoc-openapi-ui.version>
     <springframework-cloud.version>5.0.2</springframework-cloud.version>
     <kotest.version>5.9.1</kotest.version>
     <mockk.version>5.0.1</mockk.version>
-    <flyway.version>11.17.2</flyway.version>
+    <flyway.version>12.6.1</flyway.version>
     <kotlin-logging-jvm.version>7.0.13</kotlin-logging-jvm.version>
     <testcontainers.version>2.0.5</testcontainers.version>
     <shedlock.version>6.10.0</shedlock.version>
