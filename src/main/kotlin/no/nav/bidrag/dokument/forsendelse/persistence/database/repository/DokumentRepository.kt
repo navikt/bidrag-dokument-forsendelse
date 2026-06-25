@@ -16,7 +16,7 @@ interface DokumentRepository : CrudRepository<Dokument, Long> {
     fun findByDokumentId(dokumentId: Long?): Dokument?
 
     @Query(
-        "select d from dokument d where d.dokumentStatus = 'BESTILLING_FEILET' " +
+        "select d from dokument d where d.dokumentStatus in ('BESTILLING_FEILET', 'IKKE_BESTILT')" +
             "and d.slettetTidspunkt is null and d.forsendelse.status = 'UNDER_PRODUKSJON'",
     )
     fun hentDokumenterSomHarStatusBestillingFeilet(): List<Dokument>
