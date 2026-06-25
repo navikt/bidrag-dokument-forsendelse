@@ -81,18 +81,24 @@ class DokumentSkedulering(
     fun bestill(dokumenter: List<Dokument>) {
         SikkerhetsKontekst.medApplikasjonKontekst {
             dokumenter.forEach {
-                LOGGER.info {
-                    "Bestiller dokument med mal ${it.dokumentmalId} og tittel ${it.tittel} for dokumentreferanse ${it.dokumentreferanse}." +
-                        " Dokumentet ble sist bestilt ${it.metadata.hentBestiltTidspunkt()} " +
-                        "og bestilt totalt ${it.metadata.hentDokumentBestiltAntallGanger()} ganger"
+                try {
+                    LOGGER.info {
+                        "Bestiller dokument med mal ${it.dokumentmalId} og tittel ${it.tittel} for dokumentreferanse ${it.dokumentreferanse}." +
+                            " Dokumentet ble sist bestilt ${it.metadata.hentBestiltTidspunkt()} " +
+                            "og bestilt totalt ${it.metadata.hentDokumentBestiltAntallGanger()} ganger"
+                    }
+                    bestillingLytter.bestill(
+                        DokumentBestilling(
+                            it.forsendelse.forsendelseId!!,
+                            it.dokumentreferanse,
+                            waitForCommit = false,
+                        ),
+                    )
+                } catch (e: Exception) {
+                    LOGGER.error(e) {
+                        "Feil ved bestilling av dokument med mal ${it.dokumentmalId} og tittel ${it.tittel} for dokumentreferanse ${it.dokumentreferanse}."
+                    }
                 }
-                bestillingLytter.bestill(
-                    DokumentBestilling(
-                        it.forsendelse.forsendelseId!!,
-                        it.dokumentreferanse,
-                        waitForCommit = false,
-                    ),
-                )
             }
         }
     }
