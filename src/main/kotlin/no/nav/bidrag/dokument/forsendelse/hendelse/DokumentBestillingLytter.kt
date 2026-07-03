@@ -5,7 +5,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import jakarta.transaction.Transactional
 import no.nav.bidrag.commons.CorrelationId
 import no.nav.bidrag.commons.security.utils.TokenUtils
-import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
@@ -294,12 +293,9 @@ class DokumentBestillingLytter(
     ): DokumentBestillingForespørsel {
         val saksbehandlerIdent =
             bestiltAvBruker ?: if (saksbehandlerInfoManager.erApplikasjonBruker()) forsendelse.opprettetAvIdent else null
-        val erBatchbrev =
-            dokument.ferdigstill ||
-                forsendelse.opprettetAvIdent.startsWith("bidrag-automatisk-jobb") ||
-                UnleashFeatures.OPPRETT_BATCHBREV.isEnabled
+        val skalAutomatiskFerdigstilles = dokument.ferdigstill
         return DokumentBestillingForespørsel(
-            erBatchBrev = erBatchbrev,
+            erBatchBrev = skalAutomatiskFerdigstilles,
             dokumentreferanse = dokument.dokumentreferanse,
             saksnummer = forsendelse.saksnummer,
             tittel = dokument.tittel,
