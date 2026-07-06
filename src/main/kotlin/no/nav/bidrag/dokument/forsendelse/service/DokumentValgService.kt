@@ -28,6 +28,8 @@ import no.nav.bidrag.transport.behandling.felles.grunnlag.VirkningstidspunktGrun
 import no.nav.bidrag.transport.behandling.felles.grunnlag.filtrerOgKonverterBasertPåEgenReferanse
 import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadForPerson
 import no.nav.bidrag.transport.behandling.vedtak.response.erOrkestrertVedtak
+import no.nav.bidrag.transport.behandling.vedtak.response.erTrukketFFRevurdering
+import no.nav.bidrag.transport.behandling.vedtak.response.erVedtakAvvistRevurderingsøknad
 import no.nav.bidrag.transport.behandling.vedtak.response.finnResultatFraAnnenVedtak
 import no.nav.bidrag.transport.behandling.vedtak.response.omgjøringsvedtakErEnesteVedtak
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
@@ -140,35 +142,34 @@ class DokumentValgService(
                         }
                     }
 
-            if (erForholdsmessigFordeling) {
-                return emptyList()
-            }
-
-            val inneholderAldersjustering =
-                it.erOrkestrertVedtak &&
-                    it.stønadsendringListe.any { s ->
-                        s.periodeListe.any { p ->
-                            val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
-                            val vedtakstype =
-                                resultatFraAnnenVedtak?.vedtakstype ?: run {
-                                    resultatFraAnnenVedtak?.vedtaksid?.let {
-                                        bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())?.type
-                                    }
-                                }
-                            vedtakstype == Vedtakstype.ALDERSJUSTERING && resultatFraAnnenVedtak != null
-                        }
-                    }
-
             val dokumentmalListe = mutableListOf<String>()
+
+            if (!erForholdsmessigFordeling) {
+                val inneholderAldersjustering =
+                    it.erOrkestrertVedtak &&
+                        it.stønadsendringListe.any { s ->
+                            s.periodeListe.any { p ->
+                                val resultatFraAnnenVedtak = it.grunnlagListe.finnResultatFraAnnenVedtak(p.grunnlagReferanseListe)
+                                val vedtakstype =
+                                    resultatFraAnnenVedtak?.vedtakstype ?: run {
+                                        resultatFraAnnenVedtak?.vedtaksid?.let {
+                                            bidragVedtakConsumer.hentVedtak(vedtakId = it.toString())?.type
+                                        }
+                                    }
+                                vedtakstype == Vedtakstype.ALDERSJUSTERING && resultatFraAnnenVedtak != null
+                            }
+                        }
+                if (!erDirekteAvslag) {
+                    dokumentmalListe.add("BI01B50")
+                }
+                if (inneholderAldersjustering) {
+                    dokumentmalListe.add(brevkodeAldersjustering)
+                }
+            }
             if (!it.omgjøringsvedtakErEnesteVedtak) {
                 dokumentmalListe.add(brevkodeForsideVedtak)
             }
-            if (!erDirekteAvslag) {
-                dokumentmalListe.add("BI01B50")
-            }
-            if (inneholderAldersjustering) {
-                dokumentmalListe.add(brevkodeAldersjustering)
-            }
+
             dokumentmalListe.map { mapToMalDetaljer(it, request, false) }
         } else {
             emptyList()
@@ -220,7 +221,8 @@ class DokumentValgService(
                         if (!vedtakOrkestrert.kildeapplikasjon.startsWith("bidrag-behandling")) {
                             request.erFattetBeregnet
                         } else {
-                            true
+                            // Opprett varselbrev hvis det er trukket FF for revurderingsbarn
+                            søknadsid == null || !vedtak.erTrukketFFRevurdering(søknadsid)
                         }
                     val erVedtakIkkeTilbakekreving =
                         vedtakOrkestrert.engangsbeløpListe.any { gr ->

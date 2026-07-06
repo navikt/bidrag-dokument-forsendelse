@@ -16,6 +16,9 @@ import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.enums.vedtak.Vedtakstype
 import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadForPerson
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
+import no.nav.bidrag.transport.behandling.vedtak.response.erTrukketFFRevurdering
+import no.nav.bidrag.transport.behandling.vedtak.response.erVedtakAvvistRevurderingsøknad
+import no.nav.bidrag.transport.behandling.vedtak.response.hentStønadsendringForSøknad
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveVedleggDto
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
 
@@ -105,11 +108,7 @@ fun BehandlingInfo.tilBeskrivelseBehandlingType(
                     ?.stønadsendringListe
                     ?.isNotEmpty()
                     ?.ifTrue {
-                        vedtak.stønadsendringListe
-                            .first {
-                                val søknad = vedtak.grunnlagListe.hentSøknadForPerson(it.kravhaver, it.type)
-                                søknad == null || søknadsid == null || søknadsid == søknad.søknadsid
-                            }
+                        vedtak.hentStønadsendringForSøknad(søknadsid)
                     }
             // Behandling er i ferd med å bli opprettet. Da brukes det som kommer fra input pga race-condition
             if (behandling == null && behandlingId != null) {
@@ -181,8 +180,9 @@ fun BehandlingInfo.tilBeskrivelse(
     val behandlingType = this.tilBeskrivelseBehandlingType(vedtak, behandling)
     val gjelderKlage = this.gjelderKlage(vedtak, behandling)
 
+    val avvistRevurdering = behandling?.søknadsid != null && vedtak != null && vedtak.erTrukketFFRevurdering(behandling.søknadsid)
     val stringBuilder = mutableListOf<String>()
-    if (vedtakId.isNotNullOrEmpty() || erFattetBeregnet != null) {
+    if (!avvistRevurdering && (vedtakId.isNotNullOrEmpty() || erFattetBeregnet != null)) {
         if (gjelderKlage) stringBuilder.add("Klagevedtak") else stringBuilder.add("Vedtak")
         if (behandlingType != null) {
             stringBuilder.add("om ${behandlingType.lowercase()}")
