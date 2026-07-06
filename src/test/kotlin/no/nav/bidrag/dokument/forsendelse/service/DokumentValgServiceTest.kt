@@ -10,6 +10,7 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBBMConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
@@ -51,6 +52,7 @@ class DokumentValgServiceTest {
     lateinit var bidragBehandlingConsumer: BidragBehandlingConsumer
 
     @MockkBean
+    lateinit var bbmConsumer: BidragBBMConsumer
     lateinit var forsendelseRepository: ForsendelseRepository
 
     @MockkBean
@@ -63,7 +65,7 @@ class DokumentValgServiceTest {
     fun init() {
         mockkObject(UnleashFeaturesProvider)
         enableUnleashFeature(UnleashFeatures.DOKUMENTVALG_FRA_VEDTAK_BEHANDLING)
-        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, forsendelseRepository)
+        tittelService = ForsendelseTittelService(sakService, bidragVedtakConsumer, bidragBehandlingConsumer, bidragDokumentBestillingConsumer, samhandlerConsumer, forsendelseRepository, bbmConsumer)
         dokumentValgService =
             DokumentValgService(bidragDokumentBestillingConsumer, bidragVedtakConsumer, bidragBehandlingConsumer, tittelService!!)
         every { bidragDokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()

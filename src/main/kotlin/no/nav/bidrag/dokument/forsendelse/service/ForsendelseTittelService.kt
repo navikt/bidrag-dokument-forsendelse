@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.service
 
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBBMConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
@@ -15,7 +16,6 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelse
 import no.nav.bidrag.dokument.forsendelse.utvidelser.tilBeskrivelseBehandlingType
 import no.nav.bidrag.dokument.forsendelse.utvidelser.toName
 import no.nav.bidrag.domene.ident.SamhandlerId
-import no.nav.bidrag.transport.behandling.vedtak.response.saksnummer
 import no.nav.bidrag.transport.dokument.forsendelse.HentDokumentValgRequest
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettDokumentForespørsel
 import no.nav.bidrag.transport.dokument.forsendelse.OpprettForsendelseForespørsel
@@ -29,6 +29,7 @@ class ForsendelseTittelService(
     private val dokumentBestillingConsumer: BidragDokumentBestillingConsumer,
     private val samhandlerConsumer: BidragSamhandlerConsumer,
     private val forsendelseService: ForsendelseRepository,
+    private val bbmConsumer: BidragBBMConsumer,
 ) {
     fun opprettDokumentTittel(
         forsendelse: OpprettForsendelseForespørsel,
@@ -97,8 +98,9 @@ class ForsendelseTittelService(
             } else {
                 null
             }
+        val søknad = forsendelse.behandlingInfo?.soknadId?.let { bbmConsumer.hentSøknad(it.toLong()) }
         val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forsendelse.gjelderIdent }
-        return forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type, vedtak, behandling)
+        return forsendelse.behandlingInfo?.tilBeskrivelse(gjelderRolle?.type, vedtak, behandling, søknad)
             ?: forsendelse.dokumenter.hoveddokument?.tittel ?: "Forsendelse ${forsendelse.forsendelseId}"
     }
 
@@ -122,8 +124,9 @@ class ForsendelseTittelService(
             } else {
                 null
             }
+        val søknad = forespørsel.behandlingInfo?.soknadId?.let { bbmConsumer.hentSøknad(it.toLong()) }
         val gjelderRolle = sak?.roller?.find { it.fødselsnummer?.verdi == forespørsel.gjelderIdent }
-        return forespørsel.tilBehandlingInfo()?.tilBeskrivelse(gjelderRolle?.type, vedtak, behandling)
+        return forespørsel.tilBehandlingInfo()?.tilBeskrivelse(gjelderRolle?.type, vedtak, behandling, søknad)
     }
 
     fun opprettForsendelseBehandlingPrefiks(behandlingInfo: BehandlingInfo?): String? {

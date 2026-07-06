@@ -7,6 +7,7 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.bidrag.commons.unleash.UnleashFeaturesProvider
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBBMConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragSamhandlerConsumer
@@ -71,6 +72,8 @@ class ForsendelseTittelServiceTest {
     @MockkBean
     lateinit var forsendelseRepository: ForsendelseRepository
 
+    @MockkBean
+    lateinit var bbmConsumer: BidragBBMConsumer
     lateinit var forsendelseTittelService: ForsendelseTittelService
 
     @BeforeEach
@@ -85,6 +88,7 @@ class ForsendelseTittelServiceTest {
                 dokumentBestillingConsumer,
                 samhandlerConsumer,
                 forsendelseRepository,
+                bbmConsumer,
             )
         every { dokumentBestillingConsumer.dokumentmalDetaljer() } returns StubUtils.getDokumentMalDetaljerResponse()
 
