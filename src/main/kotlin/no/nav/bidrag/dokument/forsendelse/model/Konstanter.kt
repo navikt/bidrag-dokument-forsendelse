@@ -41,4 +41,4 @@ enum class KLAGE_ANKE_ENHET(
     ENHET_KLANKE_NORD("4295"),
 }
 
-val KLAGE_ANKE_ENHET_KODER = KLAGE_ANKE_ENHET.values().map { it.kode }
+val KLAGE_ANKE_ENHET_KODER = KLAGE_ANKE_ENHET.entries.map { it.kode }

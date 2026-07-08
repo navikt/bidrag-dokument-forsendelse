@@ -164,6 +164,7 @@ class ForsendelseInnsynService(
                     vedtakId = it.vedtakId,
                     behandlingId = it.behandlingId,
                     forsendelseId = forsendelseId,
+                    soknadId = it.soknadId,
                     vedtakType = it.vedtakType,
                     behandlingType = it.toBehandlingType(),
                     soknadFra = it.soknadFra,

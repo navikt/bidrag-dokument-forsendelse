@@ -257,10 +257,7 @@ class DokumentBestillingLytter(
         val erAldersjusteringFattetGjennomNyLøsning = behandlingInfo.erAldersjusteringFattetGjennomNyLøsning()
         return dokumentDetaljer.kanBestilles ||
             erFattetGjennomNyLøsning ||
-            (
-                dokumentDetaljer.kreverBehandling &&
-                    erOpprettetGjennomNyLøsning
-            ) ||
+            erOpprettetGjennomNyLøsning ||
             erAldersjusteringFattetGjennomNyLøsning
     }
 

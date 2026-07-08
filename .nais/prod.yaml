@@ -42,6 +42,9 @@ env:
   BIDRAG_SAMHANDLER_URL: http://bidrag-samhandler
   BIDRAG_SAMHANDLER_SCOPE: prod-gcp.bidrag.bidrag-samhandler
 
+  BIDRAG_BBM_URL: https://bidrag-bbm.prod-fss-pub.nais.io
+  BIDRAG_BBM_SCOPE: prod-fss.bidrag.bidrag-bbm
+
   LAGRE_DIST_INFO_PAGE_SIZE: 500
   LAGRE_DIST_INFO_CRON: "0 0 */3 * * ?"
   OPPDATER_DIST_STATUS_CRON: "0 0 */12 * * ?"
@@ -78,6 +81,7 @@ outbound-access-hosts:
    - innsending-api-gcp.intern.nav.no
    - bidrag-unleash-api.nav.cloud.nais.io
    - bidrag-dokument-journalpost.prod-fss-pub.nais.io
+   - bidrag-bbm.prod-fss-pub.nais.io
 azure_access_inbound:
   - application: bisys
     namespace: bidrag
