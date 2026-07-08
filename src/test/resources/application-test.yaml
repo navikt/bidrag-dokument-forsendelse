@@ -13,7 +13,7 @@ NAIS_APP_NAME: bidrag-dokument-forsendelse
 TOPIC_DOKUMENT: bidrag.dokument
 TOPIC_JOURNALPOST: bidrag.journalpost
 BIDRAG_DOKUMENT_BESTILLING_URL: http://localhost:${wiremock.server.port}/bestilling
-BIDRAG_BMM_URL: http://localhost:${wiremock.server.port}/bbm
+BIDRAG_BBM_URL: http://localhost:${wiremock.server.port}/bbm
 BIDRAG_DOKUMENT_URL: http://localhost:${wiremock.server.port}/dokument
 BIDRAG_DOKUMENT_JOURNALPOST_URL: http://localhost:${wiremock.server.port}/dokumentjp
 BIDRAG_ORGANISASJON_URL: http://localhost:${wiremock.server.port}/organisasjon
