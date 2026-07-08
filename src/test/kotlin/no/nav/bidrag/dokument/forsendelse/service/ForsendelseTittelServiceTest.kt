@@ -460,7 +460,7 @@ class ForsendelseTittelServiceTest {
                 ),
             )
 
-        tittel shouldBe "Vedtak om barnebidrag 18 år til bidragsmottaker"
+        tittel shouldBe "Vedtak til bidragsmottaker"
     }
 
     @Test
