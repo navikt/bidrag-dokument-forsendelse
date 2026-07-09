@@ -1,6 +1,7 @@
 package no.nav.bidrag.dokument.forsendelse.consumer
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.commons.web.client.AbstractRestClient
 import no.nav.bidrag.domene.enums.behandling.Behandlingstema
 import no.nav.bidrag.domene.enums.rolle.SøktAvType
@@ -40,9 +41,11 @@ class BidragBBMConsumer(
             )
         } catch (e: Exception) {
             if (e is HttpClientErrorException && e.statusCode.is4xxClientError) {
+                secureLogger.warn { "Fant ikke søknad med søknadsid $søknadsid" }
                 null
             } else {
-                throw e
+                secureLogger.error(e) { "Feil ved henting av søknad fra Bidrag BBM. Ignorere feilen" }
+                null
             }
         }
 }
