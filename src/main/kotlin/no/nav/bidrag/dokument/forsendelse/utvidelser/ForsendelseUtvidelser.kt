@@ -216,8 +216,8 @@ fun BehandlingInfo.tilBeskrivelse(
             } else {
                 stringBuilder.add("om ${behandlingType.lowercase()}")
             }
-            if (gjelderRevurderingssøknad) stringBuilder.add("for revurderingsbarn")
         }
+        if (gjelderRevurderingssøknad) stringBuilder.add("for revurderingsbarn")
     }
 
     if (rolle != null) {
