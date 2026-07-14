@@ -18,6 +18,7 @@ import no.nav.bidrag.transport.behandling.beregning.felles.HentSøknadResponse
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.behandling.vedtak.response.erTrukketFFRevurdering
 import no.nav.bidrag.transport.behandling.vedtak.response.hentStønadsendringForSøknad
+import no.nav.bidrag.transport.behandling.vedtak.response.søknadGjelderRevurdering
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveVedleggDto
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
 
@@ -181,6 +182,17 @@ fun BehandlingInfo.tilBeskrivelse(
     val gjelderKlage = this.gjelderKlage(vedtak, behandling)
 
     val avvistRevurdering = soknadId != null && vedtak != null && vedtak.erTrukketFFRevurdering(soknadId.toLong())
+    val gjelderRevurderingssøknad =
+        if (soknadId != null && vedtak != null) {
+            vedtak.søknadGjelderRevurdering(soknadId.toLong())
+        } else if (søknad != null) {
+            søknad.søknad.behandlingstype.erForholdsmessigFordeling
+        } else if (soknadId != null && behandling != null) {
+            val søknadsbarnRevurdering = behandling.finnSøknadsbarnForSøknad(soknadId.toLong())
+            søknadsbarnRevurdering.isNotEmpty() && søknadsbarnRevurdering.all { it.erRevurdering == true }
+        } else {
+            false
+        }
     val erForholdsmessigFordeling = søknad?.søknad?.behandlingstype?.erForholdsmessigFordeling == true
     val stringBuilder = mutableListOf<String>()
     if (avvistRevurdering && erForholdsmessigFordeling) {
@@ -196,6 +208,7 @@ fun BehandlingInfo.tilBeskrivelse(
         if (gjelderKlage) stringBuilder.add("Klagevedtak") else stringBuilder.add("Vedtak")
         if (behandlingType != null) {
             stringBuilder.add("om ${behandlingType.lowercase()}")
+            if (gjelderRevurderingssøknad) stringBuilder.add("for revurderingsbarn")
         }
     } else {
         stringBuilder.add("Orientering/Varsel")
@@ -206,6 +219,7 @@ fun BehandlingInfo.tilBeskrivelse(
                 stringBuilder.add("om ${behandlingType.lowercase()}")
             }
         }
+        if (gjelderRevurderingssøknad) stringBuilder.add("for revurderingsbarn")
     }
 
     if (rolle != null) {

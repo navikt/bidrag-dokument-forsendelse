@@ -44,12 +44,9 @@ data class BehandlingDto(
     val roller: Set<RolleDto>,
 ) {
     fun finnSøknadsbarnForSøknad(søknadsId: Long) =
-        if (erKlageEllerOmgjøring) {
-        } else {
-            søknadsbarn.filter {
-                it.søknader.any {
-                    it.søknadsId == søknadsId
-                }
+        søknadsbarn.filter {
+            it.søknader.any {
+                it.søknadsId == søknadsId
             }
         }
 
