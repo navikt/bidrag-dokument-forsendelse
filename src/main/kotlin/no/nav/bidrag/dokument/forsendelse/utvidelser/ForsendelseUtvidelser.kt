@@ -182,7 +182,15 @@ fun BehandlingInfo.tilBeskrivelse(
     val gjelderKlage = this.gjelderKlage(vedtak, behandling)
 
     val avvistRevurdering = soknadId != null && vedtak != null && vedtak.erTrukketFFRevurdering(soknadId.toLong())
-    val gjelderRevurderingssøknad = soknadId != null && vedtak != null && vedtak.søknadGjelderRevurdering(soknadId.toLong())
+    val gjelderRevurderingssøknad =
+        if (soknadId != null && vedtak != null) {
+            vedtak.søknadGjelderRevurdering(soknadId.toLong())
+        } else if (soknadId != null && behandling != null) {
+            val søknadsbarnRevurdering = behandling.finnSøknadsbarnForSøknad(soknadId.toLong())
+            søknadsbarnRevurdering.isNotEmpty() && søknadsbarnRevurdering.all { it.erRevurdering == true }
+        } else {
+            false
+        }
     val erForholdsmessigFordeling = søknad?.søknad?.behandlingstype?.erForholdsmessigFordeling == true
     val stringBuilder = mutableListOf<String>()
     if (avvistRevurdering && erForholdsmessigFordeling) {
@@ -208,6 +216,7 @@ fun BehandlingInfo.tilBeskrivelse(
             } else {
                 stringBuilder.add("om ${behandlingType.lowercase()}")
             }
+            if (gjelderRevurderingssøknad) stringBuilder.add("for revurderingsbarn")
         }
     }
 
