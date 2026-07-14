@@ -18,6 +18,7 @@ import no.nav.bidrag.transport.behandling.beregning.felles.HentSøknadResponse
 import no.nav.bidrag.transport.behandling.vedtak.response.VedtakDto
 import no.nav.bidrag.transport.behandling.vedtak.response.erTrukketFFRevurdering
 import no.nav.bidrag.transport.behandling.vedtak.response.hentStønadsendringForSøknad
+import no.nav.bidrag.transport.behandling.vedtak.response.søknadGjelderRevurdering
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsoppgaveVedleggDto
 import no.nav.bidrag.transport.dokument.OpprettEttersendingsppgaveDto
 
@@ -181,6 +182,7 @@ fun BehandlingInfo.tilBeskrivelse(
     val gjelderKlage = this.gjelderKlage(vedtak, behandling)
 
     val avvistRevurdering = soknadId != null && vedtak != null && vedtak.erTrukketFFRevurdering(soknadId.toLong())
+    val gjelderRevurderingssøknad = soknadId != null && vedtak != null && vedtak.søknadGjelderRevurdering(soknadId.toLong())
     val erForholdsmessigFordeling = søknad?.søknad?.behandlingstype?.erForholdsmessigFordeling == true
     val stringBuilder = mutableListOf<String>()
     if (avvistRevurdering && erForholdsmessigFordeling) {
@@ -196,6 +198,7 @@ fun BehandlingInfo.tilBeskrivelse(
         if (gjelderKlage) stringBuilder.add("Klagevedtak") else stringBuilder.add("Vedtak")
         if (behandlingType != null) {
             stringBuilder.add("om ${behandlingType.lowercase()}")
+            if (gjelderRevurderingssøknad) stringBuilder.add("for revurderingsbarn")
         }
     } else {
         stringBuilder.add("Orientering/Varsel")
