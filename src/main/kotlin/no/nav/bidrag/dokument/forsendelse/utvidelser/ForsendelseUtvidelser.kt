@@ -185,6 +185,8 @@ fun BehandlingInfo.tilBeskrivelse(
     val gjelderRevurderingssøknad =
         if (soknadId != null && vedtak != null) {
             vedtak.søknadGjelderRevurdering(soknadId.toLong())
+        } else if (søknad != null) {
+            søknad.søknad.behandlingstype.erForholdsmessigFordeling
         } else if (soknadId != null && behandling != null) {
             val søknadsbarnRevurdering = behandling.finnSøknadsbarnForSøknad(soknadId.toLong())
             søknadsbarnRevurdering.isNotEmpty() && søknadsbarnRevurdering.all { it.erRevurdering == true }
