@@ -687,7 +687,7 @@ class DokumentValgServiceTest {
             dokumentValgListe shouldContainKey "BI01A01"
             dokumentValgListe shouldContainKey "BI01S02"
             dokumentValgListe shouldContainKey "BI01S10"
-            verify(exactly = 0) { bidragBehandlingConsumer.hentBehandling(behandlingId) }
+            verify(exactly = 1) { bidragBehandlingConsumer.hentBehandling(behandlingId) }
         }
     }
 

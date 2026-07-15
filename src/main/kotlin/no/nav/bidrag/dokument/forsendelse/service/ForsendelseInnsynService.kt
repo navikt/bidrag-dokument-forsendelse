@@ -2,8 +2,11 @@ package no.nav.bidrag.dokument.forsendelse.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.mapper.DokumentDtoMetadata
+import no.nav.bidrag.dokument.forsendelse.mapper.hentBarnIBehandling
 import no.nav.bidrag.dokument.forsendelse.mapper.tilForsendelseRespons
 import no.nav.bidrag.dokument.forsendelse.mapper.tilJournalpostDto
 import no.nav.bidrag.dokument.forsendelse.model.HentDokumentValgResponse
@@ -39,6 +42,8 @@ class ForsendelseInnsynService(
     private val dokumentValgService: DokumentValgService,
     private val dokumentTjeneste: DokumentTjeneste,
     private val forsendelseTittelService: ForsendelseTittelService,
+    private val vedtakConsumer: BidragVedtakConsumer,
+    private val behandlingConsumer: BidragBehandlingConsumer,
 ) {
     fun hentForsendelserIkkeDistribuert(): List<ForsendelseIkkeDistribuertResponsTo> {
         val journalpostDtoer =
@@ -134,7 +139,12 @@ class ForsendelseInnsynService(
         val forsendelser = forsendelseTjeneste.hentAlleMedSaksnummer(saksnummer)
 
         return forsendelser.filtrerIkkeFerdigstiltEllerArkivert
-            .map { it.tilForsendelseRespons(tilDokumenterMetadata(it.dokumenter)) }
+            .map {
+                it.tilForsendelseRespons(
+                    tilDokumenterMetadata(it.dokumenter),
+                    it.behandlingInfo.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
+                )
+            }
     }
 
     fun hentForsendelse(
@@ -144,11 +154,18 @@ class ForsendelseInnsynService(
         val forsendelse = forsendelseTjeneste.medForsendelseId(forsendelseId) ?: fantIkkeForsendelse(forsendelseId)
         if (!saksnummer.isNullOrEmpty() && saksnummer != forsendelse.saksnummer) fantIkkeForsendelse(forsendelseId, saksnummer)
 
-        return forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+        return forsendelse.tilForsendelseRespons(
+            tilDokumenterMetadata(forsendelse.dokumenter),
+            forsendelse.behandlingInfo.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
+        )
     }
 
     fun tilForsendelseRespons(forsendelse: Forsendelse): ForsendelseResponsTo {
-        val forsendelseRespons = forsendelse.tilForsendelseRespons(tilDokumenterMetadata(forsendelse.dokumenter))
+        val forsendelseRespons =
+            forsendelse.tilForsendelseRespons(
+                tilDokumenterMetadata(forsendelse.dokumenter),
+                forsendelse.behandlingInfo.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
+            )
         return forsendelseRespons.tittel.isNullOrEmpty().ifTrue {
             forsendelseRespons.copy(
                 tittel = forsendelseTittelService.opprettForsendelseTittel(forsendelse),
