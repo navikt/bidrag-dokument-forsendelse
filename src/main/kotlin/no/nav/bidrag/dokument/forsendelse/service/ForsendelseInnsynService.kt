@@ -142,7 +142,7 @@ class ForsendelseInnsynService(
             .map {
                 it.tilForsendelseRespons(
                     tilDokumenterMetadata(it.dokumenter),
-                    it.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
+                    it.behandlingInfo.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
                 )
             }
     }
@@ -156,7 +156,7 @@ class ForsendelseInnsynService(
 
         return forsendelse.tilForsendelseRespons(
             tilDokumenterMetadata(forsendelse.dokumenter),
-            forsendelse.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
+            forsendelse.behandlingInfo.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
         )
     }
 
@@ -164,7 +164,7 @@ class ForsendelseInnsynService(
         val forsendelseRespons =
             forsendelse.tilForsendelseRespons(
                 tilDokumenterMetadata(forsendelse.dokumenter),
-                forsendelse.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
+                forsendelse.behandlingInfo.hentBarnIBehandling(vedtakConsumer, behandlingConsumer),
             )
         return forsendelseRespons.tittel.isNullOrEmpty().ifTrue {
             forsendelseRespons.copy(

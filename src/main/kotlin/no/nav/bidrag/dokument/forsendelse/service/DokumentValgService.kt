@@ -10,6 +10,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.BidragDokumentBestillingConsu
 import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalDetaljer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentMalType
+import no.nav.bidrag.dokument.forsendelse.mapper.hentBarnIBehandling
 import no.nav.bidrag.dokument.forsendelse.model.HentDokumentValgResponse
 import no.nav.bidrag.dokument.forsendelse.model.ResultatKode
 import no.nav.bidrag.dokument.forsendelse.model.ifTrue
@@ -98,6 +99,7 @@ class DokumentValgService(
                 ?: standardBrevkoder.associateWith { mapToMalDetaljer(it, request) }
 
         val automatiskOpprettDokumenter = bestemDokumentMallisteForVedtak(request)
+        val behandlingInfo = request.tilBehandlingInfo()
         return HentDokumentValgResponse(
             maler
                 .toList()
@@ -112,6 +114,7 @@ class DokumentValgService(
                     }
                 }.toMap(),
             bestemDokumentMallisteForVedtak(request),
+            barnIBehandlingDetaljer = behandlingInfo.hentBarnIBehandling(bidragVedtakConsumer, behandlingConsumer),
         )
     }
 

@@ -9,6 +9,7 @@ import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForesp�
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Adresse
+import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.BehandlingInfo
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Dokument
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Ettersendingsoppgave
 import no.nav.bidrag.dokument.forsendelse.persistence.database.datamodell.Forsendelse
@@ -412,20 +413,20 @@ fun Forsendelse.tilForsendelseRespons(
         },
 )
 
-fun Forsendelse.hentBarnIBehandling(
+fun BehandlingInfo?.hentBarnIBehandling(
     vedtakConsumer: BidragVedtakConsumer,
     behandlingConsumer: BidragBehandlingConsumer,
 ): List<ForsendelseBarnIBehandlingDto> {
     try {
-        if (behandlingInfo == null) return emptyList()
-        return if (behandlingInfo.vedtakId != null) {
-            val vedtak = vedtakConsumer.hentVedtak(behandlingInfo.vedtakId)
+        if (this == null) return emptyList()
+        return if (vedtakId != null) {
+            val vedtak = vedtakConsumer.hentVedtak(vedtakId)
             vedtak
                 ?.stønadsendringListe
                 ?.filter {
                     val søknaderPerson = vedtak.grunnlagListe.hentSøknadsiderForPerson(it.kravhaver, it.type)
-                    behandlingInfo.soknadId == null || søknaderPerson.isEmpty() ||
-                        søknaderPerson.contains(behandlingInfo.soknadId.toLong())
+                    soknadId == null || søknaderPerson.isEmpty() ||
+                        søknaderPerson.contains(soknadId.toLong())
                 }?.map {
                     ForsendelseBarnIBehandlingDto(
                         ident = it.kravhaver.verdi,
@@ -433,12 +434,12 @@ fun Forsendelse.hentBarnIBehandling(
                         erBidrag18År = it.type == Stønadstype.BIDRAG18AAR,
                     )
                 } ?: emptyList()
-        } else if (behandlingInfo.behandlingId != null) {
-            val behandling = behandlingConsumer.hentBehandling(behandlingInfo.behandlingId)
+        } else if (behandlingId != null) {
+            val behandling = behandlingConsumer.hentBehandling(behandlingId)
             behandling
                 ?.roller
                 ?.filter {
-                    behandlingInfo.soknadId == null || it.søknader.any { it.søknadsId.toString() == behandlingInfo.soknadId }
+                    soknadId == null || it.søknader.any { it.søknadsId.toString() == soknadId }
                 }?.map {
                     ForsendelseBarnIBehandlingDto(
                         ident = it.ident!!,
