@@ -442,6 +442,7 @@ fun HentDokumentValgRequest.tilBehandlingInfo(): BehandlingInfo =
         behandlingId = this.behandlingId,
         vedtakType = this.vedtakType,
         engangsBelopType = this.engangsBelopType,
+        soknadId = this.soknadId,
         stonadType = this.stonadType,
         soknadType = this.soknadType,
         erFattetBeregnet = this.erFattetBeregnet,
