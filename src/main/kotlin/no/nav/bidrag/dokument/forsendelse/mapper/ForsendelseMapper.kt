@@ -1,7 +1,10 @@
 package no.nav.bidrag.dokument.forsendelse.mapper
 
 import no.nav.bidrag.commons.security.utils.TokenUtils
+import no.nav.bidrag.commons.util.secureLogger
 import no.nav.bidrag.dokument.forsendelse.config.UnleashFeatures
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragBehandlingConsumer
+import no.nav.bidrag.dokument.forsendelse.consumer.BidragVedtakConsumer
 import no.nav.bidrag.dokument.forsendelse.consumer.dto.DokumentBestillingForespørsel
 import no.nav.bidrag.dokument.forsendelse.model.Saksbehandler
 import no.nav.bidrag.dokument.forsendelse.model.alpha3LandkodeTilAlpha2
@@ -25,7 +28,9 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.erUtgående
 import no.nav.bidrag.dokument.forsendelse.utvidelser.forsendelseIdMedPrefix
 import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
+import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.ident.SamhandlerId
+import no.nav.bidrag.transport.behandling.vedtak.response.gjelderRevurderingsbarn
 import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDtoIdType
@@ -43,6 +48,7 @@ import no.nav.bidrag.transport.dokument.forsendelse.DokumentRespons
 import no.nav.bidrag.transport.dokument.forsendelse.DokumentStatusTo
 import no.nav.bidrag.transport.dokument.forsendelse.EttersendingsoppgaveDto
 import no.nav.bidrag.transport.dokument.forsendelse.EttersendingsoppgaveVedleggDto
+import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseBarnIBehandlingDto
 import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseResponsTo
 import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseStatusTo
 import no.nav.bidrag.transport.dokument.forsendelse.ForsendelseTypeTo
@@ -310,97 +316,133 @@ fun Mottaker.hentAdresse(): Adresse? =
         adresse
     }
 
-fun Forsendelse.tilForsendelseRespons(dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap()) =
-    ForsendelseResponsTo(
-        forsendelseId = forsendelseId!!,
-        mottaker =
-            this.mottaker?.let {
-                MottakerTo(
-                    ident = it.ident ?: "",
-                    språk = it.språk,
-                    navn = it.navn,
-                    adresse =
-                        it.hentAdresse()?.let { adresse ->
-                            no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo(
-                                adresselinje1 = adresse.adresselinje1,
-                                adresselinje2 = adresse.adresselinje2,
-                                adresselinje3 = adresse.adresselinje3,
-                                bruksenhetsnummer = adresse.bruksenhetsnummer,
-                                poststed = adresse.poststed,
-                                postnummer = adresse.postnummer,
-                                landkode = adresse.landkode,
-                                landkode3 = adresse.landkode3,
-                            )
-                        },
+fun Forsendelse.tilForsendelseRespons(
+    dokumenterMetadata: Map<String, DokumentDtoMetadata>? = emptyMap(),
+    barnIBehandlingDetaljer: List<ForsendelseBarnIBehandlingDto> = emptyList(),
+) = ForsendelseResponsTo(
+    forsendelseId = forsendelseId!!,
+    mottaker =
+        this.mottaker?.let {
+            MottakerTo(
+                ident = it.ident ?: "",
+                språk = it.språk,
+                navn = it.navn,
+                adresse =
+                    it.hentAdresse()?.let { adresse ->
+                        no.nav.bidrag.transport.dokument.forsendelse.MottakerAdresseTo(
+                            adresselinje1 = adresse.adresselinje1,
+                            adresselinje2 = adresse.adresselinje2,
+                            adresselinje3 = adresse.adresselinje3,
+                            bruksenhetsnummer = adresse.bruksenhetsnummer,
+                            poststed = adresse.poststed,
+                            postnummer = adresse.postnummer,
+                            landkode = adresse.landkode,
+                            landkode3 = adresse.landkode3,
+                        )
+                    },
+            )
+        },
+    ettersendingsoppgave = this@tilForsendelseRespons.ettersendingsoppgave?.let { it.tilEttersendingsoppaveDto() },
+    behandlingInfo =
+        this.behandlingInfo?.let {
+            BehandlingInfoResponseDto(
+                vedtakId = it.vedtakId,
+                behandlingId = it.behandlingId,
+                soknadId = it.soknadId,
+                behandlingType = it.toBehandlingType(),
+                erFattet = it.erFattetBeregnet != null || it.vedtakId != null,
+                barnIBehandling = it.barnIBehandling.toList(),
+                barnIBehandlingDetaljer = barnIBehandlingDetaljer,
+            )
+        },
+    gjelderIdent = this.gjelderIdent,
+    arkivJournalpostId = this.journalpostIdFagarkiv,
+    tittel = if (this.status == ForsendelseStatus.UNDER_OPPRETTELSE) tittel else this.dokumenter.hoveddokument?.tittel,
+    tema = this.tema.name,
+    saksnummer = this.saksnummer,
+    forsendelseType =
+        when (this.forsendelseType) {
+            ForsendelseType.NOTAT -> ForsendelseTypeTo.NOTAT
+            ForsendelseType.UTGÅENDE -> ForsendelseTypeTo.UTGÅENDE
+        },
+    status = this.tilForsendelseStatusTo(),
+    opprettetDato = this.opprettetTidspunkt.toLocalDate(),
+    dokumentDato = this.dokumentDato?.toLocalDate(),
+    distribuertDato = this.distribuertTidspunkt?.toLocalDate(),
+    enhet = this.enhet,
+    opprettetAvIdent =
+        if (opprettetAvIdent == "bisys") {
+            "Bisys (Automatisk jobb)"
+        } else if (opprettetAvIdent == FORSENDELSE_APP_ID) {
+            "Bidrag (Automatisk jobb)"
+        } else {
+            opprettetAvIdent
+        },
+    opprettetAvNavn =
+        if (opprettetAvIdent == "bisys") {
+            "Bisys (Automatisk jobb)"
+        } else if (opprettetAvIdent == FORSENDELSE_APP_ID) {
+            "Bidrag (Automatisk jobb)"
+        } else {
+            opprettetAvNavn
+        },
+    dokumenter =
+        this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
+            DokumentRespons(
+                dokumentreferanse = it.dokumentreferanse,
+                originalDokumentreferanse =
+                    dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalDokumentreferanse()
+                        ?: it.dokumentreferanseOriginal,
+                originalJournalpostId =
+                    dokumenterMetadata
+                        ?.get(
+                            it.dokumentreferanse,
+                        )?.hentOriginalJournalpostId() ?: it.journalpostIdOriginal,
+                forsendelseId = it.forsendelseId?.toString(),
+                tittel = it.tittel,
+                journalpostId = it.journalpostId,
+                dokumentmalId = it.dokumentmalId,
+                arkivsystem = it.tilArkivSystemDto(),
+                redigeringMetadata = it.metadata.hentRedigeringmetadata(),
+                erSkjema = it.metadata.erSkjema(),
+                dokumentDato = it.dokumentDato,
+                status = it.tilDokumentStatusTo(),
+            )
+        },
+)
+
+fun Forsendelse.hentBarnIBehandling(
+    vedtakConsumer: BidragVedtakConsumer,
+    behandlingConsumer: BidragBehandlingConsumer,
+): List<ForsendelseBarnIBehandlingDto> {
+    try {
+        if (behandlingInfo == null) return emptyList()
+        return if (behandlingInfo.vedtakId != null) {
+            val vedtak = vedtakConsumer.hentVedtak(behandlingInfo.vedtakId)
+            vedtak?.stønadsendringListe?.map {
+                ForsendelseBarnIBehandlingDto(
+                    ident = it.kravhaver.verdi,
+                    erRevurderingsbarn = vedtak.gjelderRevurderingsbarn(it),
                 )
-            },
-        ettersendingsoppgave = this@tilForsendelseRespons.ettersendingsoppgave?.let { it.tilEttersendingsoppaveDto() },
-        behandlingInfo =
-            this.behandlingInfo?.let {
-                BehandlingInfoResponseDto(
-                    vedtakId = it.vedtakId,
-                    behandlingId = it.behandlingId,
-                    soknadId = it.soknadId,
-                    behandlingType = it.toBehandlingType(),
-                    erFattet = it.erFattetBeregnet != null || it.vedtakId != null,
-                    barnIBehandling = it.barnIBehandling.toList(),
+            } ?: emptyList()
+        } else if (behandlingInfo.behandlingId != null) {
+            val behandling = behandlingConsumer.hentBehandling(behandlingInfo.behandlingId)
+            behandling?.roller?.map {
+                ForsendelseBarnIBehandlingDto(
+                    ident = it.ident!!,
+                    erRevurderingsbarn = it.erRevurdering == true,
+                    erBidrag18År = it.stønadstype == Stønadstype.BIDRAG18AAR,
                 )
-            },
-        gjelderIdent = this.gjelderIdent,
-        arkivJournalpostId = this.journalpostIdFagarkiv,
-        tittel = if (this.status == ForsendelseStatus.UNDER_OPPRETTELSE) tittel else this.dokumenter.hoveddokument?.tittel,
-        tema = this.tema.name,
-        saksnummer = this.saksnummer,
-        forsendelseType =
-            when (this.forsendelseType) {
-                ForsendelseType.NOTAT -> ForsendelseTypeTo.NOTAT
-                ForsendelseType.UTGÅENDE -> ForsendelseTypeTo.UTGÅENDE
-            },
-        status = this.tilForsendelseStatusTo(),
-        opprettetDato = this.opprettetTidspunkt.toLocalDate(),
-        dokumentDato = this.dokumentDato?.toLocalDate(),
-        distribuertDato = this.distribuertTidspunkt?.toLocalDate(),
-        enhet = this.enhet,
-        opprettetAvIdent =
-            if (opprettetAvIdent == "bisys") {
-                "Bisys (Automatisk jobb)"
-            } else if (opprettetAvIdent == FORSENDELSE_APP_ID) {
-                "Bidrag (Automatisk jobb)"
-            } else {
-                opprettetAvIdent
-            },
-        opprettetAvNavn =
-            if (opprettetAvIdent == "bisys") {
-                "Bisys (Automatisk jobb)"
-            } else if (opprettetAvIdent == FORSENDELSE_APP_ID) {
-                "Bidrag (Automatisk jobb)"
-            } else {
-                opprettetAvNavn
-            },
-        dokumenter =
-            this.dokumenter.ikkeSlettetSortertEtterRekkefølge.map {
-                DokumentRespons(
-                    dokumentreferanse = it.dokumentreferanse,
-                    originalDokumentreferanse =
-                        dokumenterMetadata?.get(it.dokumentreferanse)?.hentOriginalDokumentreferanse()
-                            ?: it.dokumentreferanseOriginal,
-                    originalJournalpostId =
-                        dokumenterMetadata
-                            ?.get(
-                                it.dokumentreferanse,
-                            )?.hentOriginalJournalpostId() ?: it.journalpostIdOriginal,
-                    forsendelseId = it.forsendelseId?.toString(),
-                    tittel = it.tittel,
-                    journalpostId = it.journalpostId,
-                    dokumentmalId = it.dokumentmalId,
-                    arkivsystem = it.tilArkivSystemDto(),
-                    redigeringMetadata = it.metadata.hentRedigeringmetadata(),
-                    erSkjema = it.metadata.erSkjema(),
-                    dokumentDato = it.dokumentDato,
-                    status = it.tilDokumentStatusTo(),
-                )
-            },
-    )
+            } ?: emptyList()
+        } else {
+            emptyList()
+        }
+    } catch (e: Exception) {
+        // Log the exception or handle it appropriately
+        secureLogger.error(e) { "Error mapping behandlingInfo to ForsendelseBarnIBehandlingDto" }
+        return emptyList()
+    }
+}
 
 fun Ettersendingsoppgave.tilEttersendingsoppaveDto() =
     EttersendingsoppgaveDto(
