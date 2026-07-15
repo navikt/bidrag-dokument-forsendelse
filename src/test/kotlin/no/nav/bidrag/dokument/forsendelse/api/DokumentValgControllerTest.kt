@@ -130,7 +130,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01A01"]!!.beskrivelse shouldBe "Vedtak bidragsforskudd"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
-            stubUtils.Valider().hentVedtakKalt(vedtakId, 3)
+            stubUtils.Valider().hentVedtakKalt(vedtakId, 4)
         }
     }
 
@@ -170,7 +170,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01S27"]!!.beskrivelse shouldBe "Varsel om ny beregning av bidragsforskudd og varsel om mulig tilbakebetaling"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
-            stubUtils.Valider().hentBehandlingKalt(behandlingId)
+            stubUtils.Valider().hentBehandlingKalt(behandlingId, 2)
         }
     }
 
@@ -213,7 +213,7 @@ class DokumentValgControllerTest : KontrollerTestRunner() {
             dokumentValgMap["BI01A01"]!!.beskrivelse shouldBe "Vedtak bidragsforskudd"
             dokumentValgMap["BI01S02"]!!.beskrivelse shouldBe "Fritekstbrev"
             dokumentValgMap["BI01S10"]!!.beskrivelse shouldBe "Oversendelse av informasjon"
-            stubUtils.Valider().hentVedtakKalt(vedtakId, 3)
+            stubUtils.Valider().hentVedtakKalt(vedtakId, 4)
         }
     }
 
