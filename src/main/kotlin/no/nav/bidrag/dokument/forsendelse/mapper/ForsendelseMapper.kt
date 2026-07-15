@@ -30,6 +30,7 @@ import no.nav.bidrag.dokument.forsendelse.utvidelser.hoveddokument
 import no.nav.bidrag.dokument.forsendelse.utvidelser.ikkeSlettetSortertEtterRekkefølge
 import no.nav.bidrag.domene.enums.vedtak.Stønadstype
 import no.nav.bidrag.domene.ident.SamhandlerId
+import no.nav.bidrag.transport.behandling.felles.grunnlag.hentSøknadsiderForPerson
 import no.nav.bidrag.transport.behandling.vedtak.response.gjelderRevurderingsbarn
 import no.nav.bidrag.transport.dokument.AktorDto
 import no.nav.bidrag.transport.dokument.AvsenderMottakerDto
@@ -419,21 +420,32 @@ fun Forsendelse.hentBarnIBehandling(
         if (behandlingInfo == null) return emptyList()
         return if (behandlingInfo.vedtakId != null) {
             val vedtak = vedtakConsumer.hentVedtak(behandlingInfo.vedtakId)
-            vedtak?.stønadsendringListe?.map {
-                ForsendelseBarnIBehandlingDto(
-                    ident = it.kravhaver.verdi,
-                    erRevurderingsbarn = vedtak.gjelderRevurderingsbarn(it),
-                )
-            } ?: emptyList()
+            vedtak
+                ?.stønadsendringListe
+                ?.filter {
+                    val søknaderPerson = vedtak.grunnlagListe.hentSøknadsiderForPerson(it.kravhaver, it.type)
+                    behandlingInfo.soknadId == null || søknaderPerson.isEmpty() ||
+                        søknaderPerson.contains(behandlingInfo.soknadId.toLong())
+                }?.map {
+                    ForsendelseBarnIBehandlingDto(
+                        ident = it.kravhaver.verdi,
+                        erRevurderingsbarn = vedtak.gjelderRevurderingsbarn(it),
+                        erBidrag18År = it.type == Stønadstype.BIDRAG18AAR,
+                    )
+                } ?: emptyList()
         } else if (behandlingInfo.behandlingId != null) {
             val behandling = behandlingConsumer.hentBehandling(behandlingInfo.behandlingId)
-            behandling?.roller?.map {
-                ForsendelseBarnIBehandlingDto(
-                    ident = it.ident!!,
-                    erRevurderingsbarn = it.erRevurdering == true,
-                    erBidrag18År = it.stønadstype == Stønadstype.BIDRAG18AAR,
-                )
-            } ?: emptyList()
+            behandling
+                ?.roller
+                ?.filter {
+                    behandlingInfo.soknadId == null || it.søknader.any { it.søknadsId.toString() == behandlingInfo.soknadId }
+                }?.map {
+                    ForsendelseBarnIBehandlingDto(
+                        ident = it.ident!!,
+                        erRevurderingsbarn = it.erRevurdering == true,
+                        erBidrag18År = it.stønadstype == Stønadstype.BIDRAG18AAR,
+                    )
+                } ?: emptyList()
         } else {
             emptyList()
         }
